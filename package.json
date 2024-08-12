@@ -29,6 +29,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@rushstack/eslint-patch": "^1.10.4",
     "vue": "^3.4.29"
   },
   "devDependencies": {
@@ -43,7 +44,6 @@
     "@vue/eslint-config-prettier": "^9.0.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-storybook": "^0.8.0",
     "eslint-plugin-vue": "^9.23.0",
     "postcss": "^8.4.41",
