@@ -49,14 +49,17 @@ module.exports = {
                 math: 'always'
             }
         ],
-        "vue/max-attributes-per-line": ["error", {
-            "singleline": {
-                "max": 1
-            },
-            "multiline": {
-                "max": 1
+        'vue/max-attributes-per-line': [
+            'error',
+            {
+                singleline: {
+                    max: 1
+                },
+                multiline: {
+                    max: 1
+                }
             }
-        }],
+        ],
         'vue/html-indent': ['error', 4],
         'prettier/prettier': [
             process.env.NODE_ENV === 'production' ? 'error' : 'warn',
@@ -72,6 +75,6 @@ module.exports = {
                 bracketSameLine: false,
                 vueIndentScriptAndStyle: false
             }
-        ],
+        ]
     }
 }
