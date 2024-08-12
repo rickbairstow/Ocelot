@@ -18,7 +18,6 @@
             >
                 Vue 3
             </a>
-            .
         </h3>
     </div>
 </template>
