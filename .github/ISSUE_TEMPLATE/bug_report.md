@@ -4,7 +4,6 @@ about: Create a report to help us improve Ocelot UI
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 ## Issue Description
@@ -19,10 +18,12 @@ assignees: ''
 4. See error
 
 **Expected behavior:**
-- Describe what you expected to happen.
+
+-   Describe what you expected to happen.
 
 **Actual behavior:**
-- Describe what actually happened.
+
+-   Describe what actually happened.
 
 ## Possible Solution (optional)
 
@@ -34,10 +35,10 @@ assignees: ''
 
 ## Environment
 
-- **Ocelot UI Version:** [e.g., 1.0.0]
-- **Vue Version:** [e.g., 3.2.0]
-- **Browser & Version:** [e.g., Chrome 92, Firefox 90]
-- **Operating System:** [e.g., macOS 11.4, Windows 10]
+-   **Ocelot UI Version:** [e.g., 1.0.0]
+-   **Vue Version:** [e.g., 3.2.0]
+-   **Browser & Version:** [e.g., Chrome 92, Firefox 90]
+-   **Operating System:** [e.g., macOS 11.4, Windows 10]
 
 ## Additional Information
 

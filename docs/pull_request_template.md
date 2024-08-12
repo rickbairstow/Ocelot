@@ -7,7 +7,6 @@ Please provide a brief description of the changes made in this pull request.
 - Why is this change necessary?
 -->
 
-
 ## Changes
 
 <!--
@@ -16,7 +15,6 @@ Please provide a detail list of changes, this section should be understandable e
 - Change 2
 - Change 3
 -->
-
 
 ## Visual Changes
 
@@ -35,15 +33,14 @@ Detail the steps required to test, including any prerequisites, commands, and in
 
 <!-- Add any other context or information that reviewers should be aware of. -->
 
-
 ## Checklist
 
 **Please ensure all of the following tasks are completed:**
 
-- [ ] My code follows the style guidelines of this project.
-- [ ] I have performed a self-review of my code.
-- [ ] I have made corresponding changes to the documentation.
-- [ ] I have updated the stories for components added or changed in this PR.
-- [ ] My changes generate no new warnings.
-- [ ] I have added tests that prove my fix is effective or that my feature works.
-- [ ] New and existing unit tests pass locally with my changes.
+-   [ ] My code follows the style guidelines of this project.
+-   [ ] I have performed a self-review of my code.
+-   [ ] I have made corresponding changes to the documentation.
+-   [ ] I have updated the stories for components added or changed in this PR.
+-   [ ] My changes generate no new warnings.
+-   [ ] I have added tests that prove my fix is effective or that my feature works.
+-   [ ] New and existing unit tests pass locally with my changes.
