@@ -1,4 +1,6 @@
 /** @type { import('@storybook/vue3').Preview } */
+import '@Css/core.scss'
+
 const preview = {
     parameters: {
         controls: {
