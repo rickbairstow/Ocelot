@@ -1,8 +1,8 @@
 {
+    "endOfLine": "lf",
     "tabWidth": 4,
     "htmlWhitespaceSensitivity": "ignore",
     "trailingComma": "none",
-    "endOfLine": "lf",
     "singleAttributePerLine": true,
     "semi": false,
     "singleQuote": true,
