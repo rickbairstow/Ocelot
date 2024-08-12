@@ -5,7 +5,7 @@ module.exports = {
         'eslint:recommended',
         'plugin:storybook/recommended',
         'plugin:vuejs-accessibility/recommended',
-        'plugin:jsdoc/recommended-error',
+        'plugin:jsdoc/recommended',
         '@vue/eslint-config-prettier'
     ],
     plugins: ['vuejs-accessibility', 'jsdoc'],
@@ -78,6 +78,29 @@ module.exports = {
                 bracketSameLine: false,
                 vueIndentScriptAndStyle: false
             }
+        ],
+
+        // Enforce JSDoc rules
+        'jsdoc/require-jsdoc': [
+            'error',
+            {
+                require: {
+                    FunctionDeclaration: true,
+                    MethodDefinition: true,
+                    ClassDeclaration: true,
+                    ArrowFunctionExpression: true,
+                    FunctionExpression: true
+                }
+            }
         ]
-    }
+    },
+
+    overrides: [
+        {
+            files: ['*.stories.js'],
+            rules: {
+                'jsdoc/require-jsdoc': 'off'
+            }
+        }
+    ]
 }
