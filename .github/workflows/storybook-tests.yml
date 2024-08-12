@@ -1,7 +1,11 @@
 # .github/workflows/storybook-tests.yml
 
 name: 'Storybook Tests'
-on: push
+
+on:
+  workflow_dispatch:   # Allows manual triggering of the workflow
+  pull_request:        # Runs the workflow on PRs to enforce checks
+
 jobs:
   test:
     timeout-minutes: 60
