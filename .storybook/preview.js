@@ -10,7 +10,7 @@ const preview = {
             }
         }
     },
-    tags: ['autodocs'] //👇 Enables auto-generated documentation for all stories
+    tags: ['autodocs']
 }
 
 export default preview
