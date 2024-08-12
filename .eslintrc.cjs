@@ -68,7 +68,7 @@ module.exports = {
 
         // Prettier configuration - identical to .prettierrc config file.
         'prettier/prettier': [
-            'error',
+            process.env.NODE_ENV === 'production' ? 'error' : 'warn',
             {
                 tabWidth: 4,
                 singleAttributePerLine: true,
