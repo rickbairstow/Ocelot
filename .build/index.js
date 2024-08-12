@@ -8,10 +8,14 @@ import '@Css/core.scss'
 
 /**
  * Component Imports
- * Packages any provided components to the dist module file.
+ * Automatically imports all .vue components in the @Components directory, and
+ * then compiles them into an export list for use.
  */
-import HelloWorld from '@Components/HelloWorld.vue'
+const components = import.meta.glob('@Components/**/*.vue', { eager: true })
+const componentsExport = Object.entries(components).reduce((acc, [path, module]) => {
+    const componentName = path.split('/').pop().replace('.vue', '');
+    acc[componentName] = module.default;
+    return acc;
+}, {});
 
-export {
-    HelloWorld
-}
+export default { ...componentsExport }
