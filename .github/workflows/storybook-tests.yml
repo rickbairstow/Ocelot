@@ -3,8 +3,8 @@
 name: 'Storybook Tests'
 
 on:
-  workflow_dispatch:   # Allows manual triggering of the workflow
-  pull_request:        # Runs the workflow on PRs to enforce checks
+  workflow_dispatch:
+  pull_request:
 
 jobs:
   test:
@@ -35,12 +35,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps --verbose
 
       - name: Build Storybook
         run: yarn build-storybook --quiet
