@@ -38,7 +38,7 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright
-        run: npx playwright install --with-deps --verbose
+        run: npx playwright install --with-deps
 
       - name: Build Storybook
         run: yarn build-storybook --quiet
