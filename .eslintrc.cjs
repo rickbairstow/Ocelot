@@ -8,10 +8,7 @@ module.exports = {
         'plugin:jsdoc/recommended-error',
         '@vue/eslint-config-prettier'
     ],
-    plugins: [
-        'vuejs-accessibility',
-        'jsdoc'
-    ],
+    plugins: ['vuejs-accessibility', 'jsdoc'],
     parserOptions: {
         ecmaVersion: 'latest'
     },
