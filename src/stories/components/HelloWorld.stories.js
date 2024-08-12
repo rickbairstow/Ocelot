@@ -1,23 +1,23 @@
 import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
-  title: 'Components/HelloWorld',
-  component: HelloWorld,
+    title: 'Components/HelloWorld',
+    component: HelloWorld,
 
-  argTypes: {},
-  args: {},
+    argTypes: {},
+    args: {},
 
-  render: (args) => ({
-    components: { HelloWorld },
+    render: (args) => ({
+        components: { HelloWorld },
 
-    setup() {
-      return { args }
-    },
+        setup() {
+            return { args }
+        },
 
-    template: `
+        template: `
       <HelloWorld :msg="args.msg" />
     `
-  })
+    })
 }
 
 // Default Template
