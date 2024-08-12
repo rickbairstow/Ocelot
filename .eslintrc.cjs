@@ -15,12 +15,8 @@ module.exports = {
         node: true
     },
     rules: {
-        // indent: ["error", 4],
-        'vue/html-indent': ['error', 4],
         eqeqeq: ['error', 'always'],
         'vue/eqeqeq': ['error', 'always'],
-        'prettier/prettier':
-            process.env.NODE_ENV === 'production' ? 'error' : 'warn',
         'no-unused-vars':
             process.env.NODE_ENV === 'production' ? 'error' : 'warn',
         'vue/no-unused-vars':
@@ -52,6 +48,30 @@ module.exports = {
                 svg: 'always',
                 math: 'always'
             }
-        ]
+        ],
+        "vue/max-attributes-per-line": ["error", {
+            "singleline": {
+                "max": 1
+            },
+            "multiline": {
+                "max": 1
+            }
+        }],
+        'vue/html-indent': ['error', 4],
+        'prettier/prettier': [
+            process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+            {
+                tabWidth: 4,
+                singleAttributePerLine: true,
+                htmlWhitespaceSensitivity: 'ignore',
+                trailingComma: 'none',
+                endOfLine: 'lf',
+                semi: false,
+                singleQuote: true,
+                bracketSpacing: true,
+                bracketSameLine: false,
+                vueIndentScriptAndStyle: false
+            }
+        ],
     }
 }
