@@ -4,8 +4,10 @@ module.exports = {
         'plugin:vue/vue3-recommended',
         'eslint:recommended',
         'plugin:storybook/recommended',
+        'plugin:vuejs-accessibility/recommended',
         '@vue/eslint-config-prettier'
     ],
+    plugins: ['vuejs-accessibility'],
     parserOptions: {
         ecmaVersion: 'latest'
     },
