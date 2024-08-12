@@ -5,9 +5,13 @@ module.exports = {
         'eslint:recommended',
         'plugin:storybook/recommended',
         'plugin:vuejs-accessibility/recommended',
+        'plugin:jsdoc/recommended-error',
         '@vue/eslint-config-prettier'
     ],
-    plugins: ['vuejs-accessibility'],
+    plugins: [
+        'vuejs-accessibility',
+        'jsdoc'
+    ],
     parserOptions: {
         ecmaVersion: 'latest'
     },
