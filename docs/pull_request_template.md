@@ -1,37 +1,34 @@
 ## Description
+<!-- Provide a brief description of the changes made in this pull request. -->
 
-<!--
-Please provide a brief description of the changes made in this pull request.
 - What issue does this PR address? (e.g., Fixes #123)
 - What functionality does this PR add or modify?
 - Why is this change necessary?
--->
 
 ## Changes
+<!-- Provide a detail list of changes, this section should be understandable enough that someone could use it to recreate this PR manually. -->
 
-<!--
-Please provide a detail list of changes, this section should be understandable enough that someone could use it to recreate this PR manually.
 - Change 1
 - Change 2
 - Change 3
--->
 
 ## Visual Changes
-
 <!-- Provide any relevant before and after screenshots for each significant change. -->
 
 ## Testing
-
-<!--
-Detail the steps required to test, including any prerequisites, commands, and instructions. Ie:
+<!-- Detail the steps required to test, including any prerequisites, commands, and instructions. Ie:
 1. Run `npm install && npm run storybook`
 2. Go to the Button story
 3. Test that the button is clickable
 -->
 
-## Additional Information
+1. ---
+2. ---
+3. ---
 
+## Additional Information
 <!-- Add any other context or information that reviewers should be aware of. -->
+None.
 
 ## Checklist
 
