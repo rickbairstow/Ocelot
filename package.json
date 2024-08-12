@@ -23,21 +23,31 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "vue": "^3.4.29"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.8.0",
+    "@storybook/addon-essentials": "^8.2.8",
+    "@storybook/addon-interactions": "^8.2.8",
+    "@storybook/addon-links": "^8.2.8",
+    "@storybook/blocks": "^8.2.8",
+    "@storybook/test": "^8.2.8",
+    "@storybook/vue3": "^8.2.8",
+    "@storybook/vue3-vite": "^8.2.8",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-prettier": "^9.0.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
+    "eslint-plugin-storybook": "^0.8.0",
     "eslint-plugin-vue": "^9.23.0",
     "postcss": "^8.4.41",
     "prettier": "^3.2.5",
     "sass-embedded": "^1.77.8",
+    "storybook": "^8.2.8",
     "tailwindcss": "^3.4.9",
     "vite": "^5.3.1",
     "vite-plugin-vue-devtools": "^7.3.1"
