@@ -19,6 +19,7 @@ module.exports = {
         node: true
     },
     rules: {
+        'vue/multi-word-component-names': 0,
         eqeqeq: ['error', 'always'],
         'vue/eqeqeq': ['error', 'always'],
         'no-unused-vars':
