@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@rushstack/eslint-patch": "^1.10.4",
-    "vue": "^3.4.29"
+    "vue": "^3.4.37"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.2.8",
@@ -47,13 +47,15 @@
     "@storybook/test": "^8.2.8",
     "@storybook/vue3": "^8.2.8",
     "@storybook/vue3-vite": "^8.2.8",
-    "@vitejs/plugin-vue": "^5.0.5",
+    "@vitejs/plugin-vue": "^5.1.2",
     "@vue/eslint-config-prettier": "^9.0.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsdoc": "^50.0.1",
+    "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-storybook": "^0.8.0",
-    "eslint-plugin-vue": "^9.23.0",
+    "eslint-plugin-vue": "^9.27.0",
     "eslint-plugin-vuejs-accessibility": "^2.4.1",
     "postcss": "^8.4.41",
     "prettier": "^3.3.3",
@@ -64,7 +66,7 @@
     "stylelint-config-standard-scss": "^13.1.0",
     "stylelint-prettier": "^5.0.2",
     "tailwindcss": "^3.4.9",
-    "vite": "^5.3.1",
-    "vite-plugin-vue-devtools": "^7.3.1"
+    "vite": "^5.4.0",
+    "vite-plugin-vue-devtools": "^7.3.8"
   }
 }

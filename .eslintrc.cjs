@@ -6,9 +6,10 @@ module.exports = {
         'plugin:storybook/recommended',
         'plugin:vuejs-accessibility/recommended',
         'plugin:jsdoc/recommended',
+        'plugin:prettier/recommended',
         '@vue/eslint-config-prettier'
     ],
-    plugins: ['vuejs-accessibility', 'jsdoc'],
+    plugins: ['vuejs-accessibility', 'jsdoc', 'prettier'],
     parserOptions: {
         ecmaVersion: 'latest'
     },
@@ -64,8 +65,10 @@ module.exports = {
             }
         ],
         'vue/html-indent': ['error', 4],
+
+        // Prettier configuration - identical to .prettierrc config file.
         'prettier/prettier': [
-            process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+            'error',
             {
                 tabWidth: 4,
                 singleAttributePerLine: true,
