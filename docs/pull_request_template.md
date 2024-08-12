@@ -1,9 +1,9 @@
 ## Description
-<!-- Provide a brief description of the changes made in this pull request. -->
-
+<!-- Provide a brief description of the changes made in this pull request. Ie:
 - What issue does this PR address? (e.g., Fixes #123)
 - What functionality does this PR add or modify?
 - Why is this change necessary?
+-->
 
 ## Changes
 <!-- Provide a detail list of changes, this section should be understandable enough that someone could use it to recreate this PR manually. -->
@@ -22,13 +22,12 @@
 3. Test that the button is clickable
 -->
 
-1. ---
-2. ---
-3. ---
+1. ...
+2. ...
+3. ...
 
 ## Additional Information
 <!-- Add any other context or information that reviewers should be aware of. -->
-None.
 
 ## Checklist
 
