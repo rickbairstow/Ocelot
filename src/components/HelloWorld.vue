@@ -1,7 +1,7 @@
 <template>
-    <div class="greetings">
-        <h1 class="green">{{ msg }}</h1>
-        <h3>
+    <div>
+        <h1>{{ msg }}</h1>
+        <h2>
             You’ve successfully created a project with
             <a
                 href="https://vitejs.dev/"
@@ -18,7 +18,7 @@
             >
                 Vue 3
             </a>
-        </h3>
+        </h2>
     </div>
 </template>
 
