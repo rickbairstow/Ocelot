@@ -11,7 +11,7 @@ Please provide a brief description of the changes made in this pull request.
 ## Changes
 
 <!--
-Please provide a detail list of changes, this section should be understandable enough that someonen could use it to recreate this PR manually.
+Please provide a detail list of changes, this section should be understandable enough that someone could use it to recreate this PR manually.
 - Change 1
 - Change 2
 - Change 3
