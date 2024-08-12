@@ -1,4 +1,6 @@
 /** @type { import('@storybook/vue3').Preview } */
+import '@Css/core.scss'
+
 const preview = {
     parameters: {
         controls: {
@@ -8,7 +10,7 @@ const preview = {
             }
         }
     },
-    tags: ['autodocs'] //👇 Enables auto-generated documentation for all stories
+    tags: ['autodocs']
 }
 
 export default preview
