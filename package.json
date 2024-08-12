@@ -21,6 +21,16 @@
         "node": ">=0.20.0"
     },
     "type": "module",
+    "files": ["dist"],
+    "main": "./dist/ocelot-ui.umd.js",
+    "module": "./dist/ocelot-ui.es.js",
+    "exports": {
+        ".": {
+            "import": "./dist/ocelot-ui.es.js",
+            "require": "./dist/ocelot-ui.umd.js"
+        },
+        "./dist/style.css": "./dist/style.css"
+    },
     "scripts": {
         "dev": "vite",
         "build": "vite build",

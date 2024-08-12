@@ -100,7 +100,7 @@ module.exports = {
 
     overrides: [
         {
-            files: ['*.stories.js'],
+            files: ['*.stories.js', '*.config.js'],
             rules: {
                 'jsdoc/require-jsdoc': 'off'
             }
