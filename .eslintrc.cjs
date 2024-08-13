@@ -82,20 +82,6 @@ module.exports = {
                 bracketSameLine: false,
                 vueIndentScriptAndStyle: false
             }
-        ],
-
-        // Enforce JSDoc rules
-        'jsdoc/require-jsdoc': [
-            'error',
-            {
-                require: {
-                    FunctionDeclaration: true,
-                    MethodDefinition: true,
-                    ClassDeclaration: true,
-                    ArrowFunctionExpression: true,
-                    FunctionExpression: true
-                }
-            }
         ]
     },
 
