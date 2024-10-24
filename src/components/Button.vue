@@ -56,11 +56,13 @@ const styles = {
     },
     tertiary: {
         base: 'text-black bg-transparent border-transparent hover:bg-gray-200',
-        disabled: 'text-gray-900 bg-transparent border-transparent pointer-events-none'
+        disabled:
+            'text-gray-900 bg-transparent border-transparent pointer-events-none'
     },
     text: {
         base: 'text-blue-600 bg-transparent border-transparent hover:text-blue-700 hover:underline',
-        disabled: 'text-blue-900 bg-transparent border-transparent pointer-events-none'
+        disabled:
+            'text-blue-900 bg-transparent border-transparent pointer-events-none'
     }
 }
 
