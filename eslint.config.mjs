@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import prettier from "eslint-plugin-prettier"; // Import prettier plugin
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,8 +18,7 @@ export default [...compat.extends(
     "plugin:vue/vue3-recommended",
     "eslint:recommended",
     "plugin:storybook/recommended",
-    "plugin:vuejs-accessibility/recommended",
-    "@vue/eslint-config-prettier",
+    "plugin:vuejs-accessibility/recommended"
 ), {
     files: ["**/*.vue", "**/*.js", "**/*.ts", "**/*.tsx"],
 
@@ -26,6 +26,7 @@ export default [...compat.extends(
 
     plugins: {
         "vuejs-accessibility": vuejsAccessibility,
+        prettier: prettier // Use the imported prettier plugin
     },
 
     languageOptions: {
@@ -98,5 +99,7 @@ export default [...compat.extends(
             bracketSameLine: false,
             vueIndentScriptAndStyle: false,
         }],
+
+        "vue/multi-word-component-names": 0
     },
 }];
