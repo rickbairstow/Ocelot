@@ -9,11 +9,15 @@ export default defineConfig({
     plugins: [vue(), vueDevTools()],
     resolve: {
         alias: {
+            '@Root': fileURLToPath(new URL('./', import.meta.url)),
             '@': fileURLToPath(new URL('./src', import.meta.url)),
-            '@Css': fileURLToPath(new URL('./src/css', import.meta.url)),
             '@Components': fileURLToPath(
                 new URL('./src/components', import.meta.url)
-            )
+            ),
+            '@Composables': fileURLToPath(
+                new URL('./src/composables', import.meta.url)
+            ),
+            '@Css': fileURLToPath(new URL('./src/css', import.meta.url))
         }
     },
 
