@@ -29,4 +29,7 @@ coverage
 
 *.tsbuildinfo
 
+# Storybook
+storybook-static/
 *storybook.log
+.nyc_output/

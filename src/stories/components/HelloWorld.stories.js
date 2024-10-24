@@ -5,7 +5,9 @@ export default {
     component: HelloWorld,
 
     argTypes: {},
-    args: {},
+    args: {
+        msg: 'Hello there!'
+    },
 
     render: (args) => ({
         components: { HelloWorld },

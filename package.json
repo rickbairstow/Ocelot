@@ -21,53 +21,69 @@
         "node": ">=0.20.0"
     },
     "type": "module",
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/ocelot-ui.umd.js",
+    "module": "./dist/ocelot-ui.es.js",
+    "exports": {
+        ".": {
+            "import": "./dist/ocelot-ui.es.js",
+            "require": "./dist/ocelot-ui.umd.js"
+        },
+        "./dist/style.css": "./dist/style.css"
+    },
     "scripts": {
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
         "lint": "npm run eslint:check && npm run stylelint:check",
         "lint:fix": "npm run eslint:fix && npm run stylelint:fix",
-        "eslint:check": "eslint .",
-        "eslint:fix": "eslint . --fix",
+        "eslint:check": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore",
+        "eslint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
         "stylelint:check": "stylelint **/*.css **/*.scss",
         "stylelint:fix": "stylelint **/*.css **/*.scss --fix",
         "prettier:fix": "prettier --write src/",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+        "build-storybook": "storybook build",
+        "test-storybook": "test-storybook"
     },
     "dependencies": {
-        "vue": "^3.4.37"
+        "@rushstack/eslint-patch": "^1.10.4",
+        "vue": "^3.5.11"
     },
     "devDependencies": {
-        "@eslint/compat": "^1.1.1",
-        "@eslint/eslintrc": "^3.1.0",
-        "@eslint/js": "^9.9.0",
-        "@rushstack/eslint-patch": "^1.10.4",
+        "@storybook/addon-a11y": "^8.3.0",
         "@storybook/addon-essentials": "^8.2.8",
-        "@storybook/addon-interactions": "^8.2.8",
-        "@storybook/addon-links": "^8.2.8",
-        "@storybook/blocks": "^8.2.8",
-        "@storybook/test": "^8.2.8",
+        "@storybook/addon-interactions": "^8.3.6",
+        "@storybook/addon-links": "^8.3.6",
+        "@storybook/blocks": "^8.3.6",
+        "@storybook/test": "^8.3.5",
+        "@storybook/test-runner": "^0.19.1",
         "@storybook/vue3": "^8.2.8",
-        "@storybook/vue3-vite": "^8.2.8",
+        "@storybook/vue3-vite": "^8.3.5",
         "@vitejs/plugin-vue": "^5.1.2",
         "@vue/eslint-config-prettier": "^9.0.0",
         "autoprefixer": "^10.4.20",
-        "eslint": "^9.9.0",
-        "eslint-plugin-storybook": "^0.8.0",
+        "axe-playwright": "^2.0.1",
+        "concurrently": "^8.2.2",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-jsdoc": "^50.4.3",
+        "eslint-plugin-prettier": "^5.2.1",
+        "eslint-plugin-storybook": "^0.10.1",
         "eslint-plugin-vue": "^9.27.0",
         "eslint-plugin-vuejs-accessibility": "^2.4.1",
-        "globals": "^15.9.0",
         "postcss": "^8.4.41",
         "prettier": "^3.3.3",
         "sass-embedded": "^1.77.8",
         "storybook": "^8.2.8",
-        "stylelint": "^16.8.1",
+        "stylelint": "^16.10.0",
         "stylelint-config-standard": "^36.0.1",
         "stylelint-config-standard-scss": "^13.1.0",
         "stylelint-prettier": "^5.0.2",
-        "tailwindcss": "^3.4.9",
-        "vite": "^5.4.0",
-        "vite-plugin-vue-devtools": "^7.3.8"
+        "tailwindcss": "^3.4.12",
+        "vite": "^5.4.6",
+        "vite-plugin-vue-devtools": "^7.5.2"
     }
 }
