@@ -1,11 +1,11 @@
 import { availableIcons, availableSizes } from '@Composables/useIcons'
-import AtomIcon from '@Components/Icon.vue'
+import Icon from '@Components/Icon.vue'
 
 console.log({availableSizes})
 
 export default {
-    title: 'Atoms/Icon',
-    component: AtomIcon,
+    title: 'Components/Icon',
+    component: Icon,
 
     argTypes: {
         icon: {
@@ -24,14 +24,14 @@ export default {
     },
 
     render: (args) => ({
-        components: { AtomIcon },
+        components: { Icon },
 
         setup() {
             return { args }
         },
 
         template: `
-            <AtomIcon
+            <Icon
                 :icon="args.icon"
                 :loading="args.loading"
                 :size="args.size"
@@ -41,4 +41,4 @@ export default {
     })
 }
 
-export const Icon = {}
+export const IconSingle = {}
