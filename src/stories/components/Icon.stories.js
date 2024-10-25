@@ -1,8 +1,6 @@
 import { availableIcons, availableSizes } from '@Composables/useIcons'
 import Icon from '@Components/Icon.vue'
 
-console.log({availableSizes})
-
 export default {
     title: 'Components/Icon',
     component: Icon,

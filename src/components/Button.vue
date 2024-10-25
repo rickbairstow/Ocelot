@@ -34,7 +34,13 @@ const props = defineProps({
         type: String,
         default: 'primary',
         validator: (value) => {
-            return ['primary', 'secondary', 'tertiary', 'text'].includes(value)
+            return [
+                'primary',
+                'secondary',
+                'tertiary',
+                'text',
+                'none'
+            ].includes(value)
         }
     }
 })
@@ -63,6 +69,11 @@ const styles = {
         base: 'text-blue-600 bg-transparent border-transparent hover:text-blue-700 hover:underline',
         disabled:
             'text-blue-900 bg-transparent border-transparent pointer-events-none'
+    },
+    none: {
+        base: 'text-black bg-transparent border-transparent',
+        disabled:
+            'text-gray-900 bg-transparent border-transparent pointer-events-none'
     }
 }
 
