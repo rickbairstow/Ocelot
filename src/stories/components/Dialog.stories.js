@@ -4,7 +4,29 @@ export default {
     title: 'Components/Dialog',
     component: Dialog,
 
-    argTypes: {},
+    argTypes: {
+        default: {
+            control: 'text',
+            description: 'Body slot content',
+            table: {
+                type: { summary: 'any' }
+            }
+        },
+        defaultFooter: {
+            control: 'text',
+            description: 'Footer slot content',
+            table: {
+                type: { summary: 'any' }
+            }
+        },
+        defaultTitle: {
+            control: 'text',
+            description: 'Title slot content',
+            table: {
+                type: { summary: 'any' }
+            }
+        }
+    },
     args: {
         // slot content
         default: 'Dialog content',
@@ -67,4 +89,4 @@ export default {
     })
 }
 
-export const DialogStory = {}
+export const Default = {}
