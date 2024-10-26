@@ -26,7 +26,7 @@ export default {
         }
     },
     args: {
-        default: 'Badge content',
+        default: '<p>Badge content</p>',
         size: 'lg',
         type: 'default'
     },
