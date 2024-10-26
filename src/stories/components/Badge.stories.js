@@ -26,7 +26,7 @@ export default {
         }
     },
     args: {
-        default: '<p>Badge content</p>',
+        default: 'Badge content',
         size: 'lg',
         type: 'default'
     },
@@ -43,7 +43,7 @@ export default {
                 :size="args.size"
                 :type="args.type"
             >
-                {{ args.default }}
+                <p>{{ args.default }}</p>
             </Badge>
         `
     })
