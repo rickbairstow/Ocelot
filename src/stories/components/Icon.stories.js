@@ -39,4 +39,4 @@ export default {
     })
 }
 
-export const IconSingle = {}
+export const Default = {}
