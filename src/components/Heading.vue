@@ -40,6 +40,10 @@ const headingLookup = {
     6: 'text-lg leading-6' // 18px
 }
 
+/**
+ * Set which element shoudl render, ie h1-h6.
+ * @type {ComputedRef<string>}
+ */
 const headingElement = computed(() => {
     const { level } = props
     return `h${level}`
