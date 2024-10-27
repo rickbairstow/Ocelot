@@ -1,7 +1,7 @@
-/** @type { import('@storybook/vue3').Preview } */
 import '@Css/core.scss'
+import { withThemeByClassName } from '@storybook/addon-themes'
 
-const preview = {
+export default {
     parameters: {
         controls: {
             matchers: {
@@ -10,7 +10,14 @@ const preview = {
             }
         }
     },
-    tags: ['autodocs']
+    tags: ['autodocs'],
+    decorators: [
+        withThemeByClassName({
+            themes: {
+                Light: '',
+                Dark: 'dark'
+            },
+            defaultTheme: 'Light'
+        })
+    ]
 }
-
-export default preview
