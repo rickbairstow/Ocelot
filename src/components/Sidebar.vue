@@ -60,6 +60,9 @@ import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'
 
+const slots = useSlots()
+const isOpen = ref(false)
+
 const props = defineProps({
     showScrim: {
         default: true,
@@ -74,17 +77,22 @@ const props = defineProps({
     }
 })
 
-const slots = useSlots()
-const isOpen = ref(false)
-const open = () => (isOpen.value = true)
+/**
+ * Close the sidebar.
+ * @returns {boolean}
+ */
 const close = () => (isOpen.value = false)
 
-defineExpose({
-    close,
-    isOpen,
-    open
-})
+/**
+ * Open the sidebar.
+ * @returns {boolean}
+ */
+const open = () => (isOpen.value = true)
 
+/**
+ * Calculated classes related to position.
+ * @type {ComputedRef<string>}
+ */
 const sideClasses = computed(() => {
     const { side } = props
 
@@ -93,5 +101,14 @@ const sideClasses = computed(() => {
     }
 
     return 'right-0 border-l'
+})
+
+/**
+ * Expose functions and open state.
+ */
+defineExpose({
+    close,
+    isOpen,
+    open
 })
 </script>
