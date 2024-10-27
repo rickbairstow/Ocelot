@@ -85,7 +85,6 @@ export default {
                 :focus-to="args.focusTo"
                 :portal-target="args.portalTarget"
                 :small="args.small"
-                @close="close()"
             >
                 <template #title>
                     {{ args.defaultTitle }}
