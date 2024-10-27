@@ -1,4 +1,4 @@
-import HelloWorld from '@/components/HelloWorld.vue'
+import HelloWorld from '@Components/HelloWorld.vue'
 
 export default {
     title: 'Components/HelloWorld',
@@ -22,5 +22,4 @@ export default {
     })
 }
 
-// Default Template
 export const Default = {}

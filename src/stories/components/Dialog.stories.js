@@ -26,20 +26,32 @@ export default {
             table: {
                 type: { summary: 'any' }
             }
+        },
+        ariaLabel: {
+            control: 'text',
+            description: 'Aria label for the dialog.',
+        },
+        focusFrom: {
+            control: 'text',
+            description: 'The ID of the element that triggered the dialog. This allows the dialog to focus back to the element when closing.',
+        },
+        focusTo: {
+            control: 'text',
+            description: 'The ID of the element that should be focused when the dialog is open. This is handy for focusing on inputs when it opens, else by default this will focus on the dialog title.',
+        },
+        small: {
+            control: 'boolean',
+            description: 'Sets if the dialog should be smaller width for larger devices.',
         }
     },
 
     args: {
-        // slot content
         default: 'Dialog content',
         defaultFooter: 'Dialog footer',
         defaultTitle: 'Dialog title',
-
-        // props
         ariaLabel: 'My dialog',
         focusFrom: 'dialogueTrigger',
         focusTo: '',
-        isOpen: false,
         small: true
     },
 
@@ -71,7 +83,6 @@ export default {
                 :aria-label="args.ariaLabel"
                 :focus-from="args.focusFrom"
                 :focus-to="args.focusTo"
-                :is-open="args.isOpen"
                 :portal-target="args.portalTarget"
                 :small="args.small"
                 @close="close()"
