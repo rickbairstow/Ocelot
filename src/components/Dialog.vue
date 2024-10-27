@@ -8,10 +8,8 @@
                 role="complementary"
                 @keydown.esc="close"
             >
-                <button
-                    id="backdrop"
+                <Scrim
                     aria-label="Close dialog"
-                    class="fixed inset-0 opacity-90 bg-gray-500"
                     @click="close"
                 />
 
@@ -75,6 +73,7 @@
 import { computed, ref, useSlots, watch } from 'vue'
 import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
+import Scrim from '@Components/Scrim.vue'
 
 const slots = useSlots()
 const dialogueContent = ref(null)
