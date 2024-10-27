@@ -17,8 +17,8 @@ export default {
         },
 
         template: `
-      <HelloWorld :msg="args.msg" />
-    `
+            <HelloWorld :msg="args.msg" />
+        `
     })
 }
 

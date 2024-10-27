@@ -27,6 +27,7 @@ export default {
             }
         }
     },
+
     args: {
         // slot content
         default: 'Dialog content',
