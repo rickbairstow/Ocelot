@@ -22,7 +22,7 @@ export default {
         styleLevel: {
             control: 'select',
             description:
-                'Sets the style used for the heading, for cases where a specific level is needed but with different heading style.',
+                'Overrides the style to a given level, for cases where a specific style is needed with varying heading level elements.',
             options: ['1', '2', '3', '4', '5', '6']
         }
     },
@@ -42,7 +42,7 @@ export default {
         template: `
             <Heading
                 :level="args.level"
-                :style-level="args.level"
+                :style-level="args.styleLevel"
             >
                 {{ args.default }}
             </Heading>
