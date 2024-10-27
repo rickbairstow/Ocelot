@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/**
+    Vue transitions
+ */
+.v-enter-active,
+.v-leave-active {
+    transition: opacity .5s ease;
+}
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
+
+.slide-right-enter-active, .slide-right-leave-active {
+    transition: transform .5s ease, opacity .5s ease;
+}
+.slide-right-enter-from, .slide-right-leave-to {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.slide-left-enter-active, .slide-left-leave-active {
+    transition: transform .5s ease, opacity .5s ease;
+}
+.slide-left-enter-from, .slide-left-leave-to {
+    transform: translateX(-100%);
+    opacity: 0;
+}
