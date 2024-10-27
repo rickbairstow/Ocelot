@@ -1,5 +1,5 @@
 import Dialog from '@Components/Dialog.vue'
-import { ref } from "vue";
+import { ref } from 'vue'
 
 export default {
     title: 'Components/Dialog',
@@ -29,19 +29,22 @@ export default {
         },
         ariaLabel: {
             control: 'text',
-            description: 'Aria label for the dialog.',
+            description: 'Aria label for the dialog.'
         },
         focusFrom: {
             control: 'text',
-            description: 'The ID of the element that triggered the dialog. This allows the dialog to focus back to the element when closing.',
+            description:
+                'The ID of the element that triggered the dialog. This allows the dialog to focus back to the element when closing.'
         },
         focusTo: {
             control: 'text',
-            description: 'The ID of the element that should be focused when the dialog is open. This is handy for focusing on inputs when it opens, else by default this will focus on the dialog title.',
+            description:
+                'The ID of the element that should be focused when the dialog is open. This is handy for focusing on inputs when it opens, else by default this will focus on the dialog title.'
         },
         small: {
             control: 'boolean',
-            description: 'Sets if the dialog should be smaller width for larger devices.',
+            description:
+                'Sets if the dialog should be smaller width for larger devices.'
         }
     },
 
