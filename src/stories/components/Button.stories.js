@@ -1,4 +1,4 @@
-import Button from '@/components/Button.vue'
+import Button from '@Components/Button.vue'
 
 export default {
     title: 'Components/Button',
@@ -14,13 +14,16 @@ export default {
         },
         size: {
             control: 'select',
-            options: ['small', 'base', 'large']
+            options: ['small', 'base', 'large'],
+            description: 'Sets the size of the button.',
         },
         type: {
             control: 'select',
-            options: ['primary', 'secondary', 'tertiary', 'text', 'none']
+            options: ['primary', 'secondary', 'tertiary', 'text', 'none'],
+            description: 'Sets the style of the button.'
         }
     },
+
     args: {
         default: 'My Button',
         disabled: false,
@@ -47,31 +50,26 @@ export default {
         `
     })
 }
-
 export const Primary = {
     args: {
         type: 'primary'
     }
 }
-
 export const Secondary = {
     args: {
         type: 'secondary'
     }
 }
-
 export const Tertiary = {
     args: {
         type: 'tertiary'
     }
 }
-
 export const Text = {
     args: {
         type: 'text'
     }
 }
-
 export const None = {
     args: {
         type: 'none'

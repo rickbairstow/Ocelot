@@ -1,4 +1,5 @@
 import Dialog from '@Components/Dialog.vue'
+import { ref } from "vue";
 
 export default {
     title: 'Components/Dialog',
@@ -25,20 +26,32 @@ export default {
             table: {
                 type: { summary: 'any' }
             }
+        },
+        ariaLabel: {
+            control: 'text',
+            description: 'Aria label for the dialog.',
+        },
+        focusFrom: {
+            control: 'text',
+            description: 'The ID of the element that triggered the dialog. This allows the dialog to focus back to the element when closing.',
+        },
+        focusTo: {
+            control: 'text',
+            description: 'The ID of the element that should be focused when the dialog is open. This is handy for focusing on inputs when it opens, else by default this will focus on the dialog title.',
+        },
+        small: {
+            control: 'boolean',
+            description: 'Sets if the dialog should be smaller width for larger devices.',
         }
     },
 
     args: {
-        // slot content
         default: 'Dialog content',
         defaultFooter: 'Dialog footer',
         defaultTitle: 'Dialog title',
-
-        // props
         ariaLabel: 'My dialog',
         focusFrom: 'dialogueTrigger',
-        focusTo: 'dialogueTrigger',
-        isOpen: false,
+        focusTo: '',
         small: true
     },
 
@@ -46,15 +59,13 @@ export default {
         components: { Dialog },
 
         setup() {
-            const close = () => {
-                args.isOpen = false
+            const dialog = ref(null)
+
+            const openDialog = () => {
+                dialog.value.open()
             }
 
-            const open = () => {
-                args.isOpen = true
-            }
-
-            return { args, close, open }
+            return { args, dialog, openDialog }
         },
 
         template: `
@@ -62,16 +73,16 @@ export default {
 
             <button
                 id="dialogueTrigger"
-                @click="open()"
+                @click="openDialog()"
             >
-                Click to trigger dialog.
+                Click to open the Dialog
             </button>
 
             <Dialog
+                ref="dialog"
                 :aria-label="args.ariaLabel"
                 :focus-from="args.focusFrom"
                 :focus-to="args.focusTo"
-                :is-open="args.isOpen"
                 :portal-target="args.portalTarget"
                 :small="args.small"
                 @close="close()"
