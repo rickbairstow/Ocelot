@@ -9,7 +9,8 @@ export default {
         icon: {
             control: 'select',
             options: [...Object.keys(availableIcons).sort()],
-            description: 'Sets the icon to render, this should match an imported Tabler icon (see useIcons).'
+            description:
+                'Sets the icon to render, this should match an imported Tabler icon (see useIcons).'
         },
         size: {
             control: 'select',

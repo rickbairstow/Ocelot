@@ -4,6 +4,9 @@
         "stylelint-config-standard-scss",
         "stylelint-prettier/recommended"
     ],
+    "ignoreFiles": [
+        "storybook-static/**/*.css"
+    ],
     "rules": {
         "scss/at-rule-no-unknown": [
             true,

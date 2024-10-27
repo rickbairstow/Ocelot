@@ -15,7 +15,7 @@ export default {
         size: {
             control: 'select',
             options: ['small', 'base', 'large'],
-            description: 'Sets the size of the button.',
+            description: 'Sets the size of the button.'
         },
         type: {
             control: 'select',
