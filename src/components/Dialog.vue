@@ -4,7 +4,7 @@
             <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
             <section
                 v-if="isOpen"
-                class="fixed inset-0 z-[60] flex items-center justify-center sm:p-6"
+                class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="complementary"
                 @keydown.esc="close"
             >
@@ -77,16 +77,12 @@ import Scrim from '@Components/Scrim.vue'
 
 const slots = useSlots()
 const dialogueContent = ref(null)
+const isOpen = ref(false)
 
 const props = defineProps({
     ariaLabel: {
         required: true,
         type: String
-    },
-
-    isOpen: {
-        type: Boolean,
-        default: false
     },
 
     focusFrom: {
@@ -110,14 +106,11 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['close'])
-
 /**
- * Emits a close event.
+ * Closes the dialog.
+ * @returns {boolean}
  */
-const close = () => {
-    emit('close')
-}
+const close = () => (isOpen.value = false)
 
 /**
  * Check if an id resolves to a valid DOM element.
@@ -125,6 +118,12 @@ const close = () => {
  * @returns {HTMLElement|null}
  */
 const getEl = (id) => document.getElementById(id) ?? null
+
+/**
+ * Opens the dialog.
+ * @returns {boolean}
+ */
+const open = () => (isOpen.value = true)
 
 /**
  * Triggers focus on a given element.
@@ -145,7 +144,7 @@ const sizeClass = computed(() => {
  * Handles focus events with 1ms timeout for teleport functionality.
  */
 watch(
-    () => props.isOpen,
+    () => isOpen.value,
     (val) => {
         const { focusTo, focusFrom } = props
 
@@ -160,4 +159,13 @@ watch(
             }, 50)
     }
 )
+
+/**
+ * Expose functions and open state.
+ */
+defineExpose({
+    close,
+    isOpen,
+    open
+})
 </script>
