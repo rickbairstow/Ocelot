@@ -17,7 +17,8 @@ export default defineConfig({
             '@Composables': fileURLToPath(
                 new URL('./src/composables', import.meta.url)
             ),
-            '@Css': fileURLToPath(new URL('./src/css', import.meta.url))
+            '@Css': fileURLToPath(new URL('./src/css', import.meta.url)),
+            '@Utils': fileURLToPath(new URL('./src/utilities', import.meta.url))
         }
     },
 

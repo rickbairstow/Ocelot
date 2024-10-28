@@ -100,6 +100,8 @@ export default [...compat.extends(
             vueIndentScriptAndStyle: false,
         }],
 
-        "vue/multi-word-component-names": 0
+        "vue/multi-word-component-names": 0,
+
+        'vuejs-accessibility/label-has-for': 'off' // Doesn't seem to like binded for's.
     },
 }];
