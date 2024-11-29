@@ -328,7 +328,6 @@ const setSelected = (option) => {
 }
 const requestMoreOptions = () => emit('load-more-options')
 
-// Watchers
 watch(
     () => props.value,
     (newValue) => {
@@ -336,12 +335,12 @@ watch(
     }
 )
 
-// Lifecycle hooks
 onMounted(() => {
     selectedValue.value = Array.isArray(props.value)
         ? props.value
         : [props.value]
 })
+
 onBeforeUnmount(() => {
     document.removeEventListener('mousedown', closeOptions)
 })
