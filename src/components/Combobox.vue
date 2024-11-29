@@ -177,7 +177,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onDestroyed, ref, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import {
     computePosition,
     autoUpdate,
@@ -275,424 +275,75 @@ const loadMoreButton = ref(null)
 // Computed properties
 const optionsId = computed(() => `${props.id}_options`)
 const filteredOptions = computed(() => {
-    if (!props.options) return []
     if (!search.value) return props.options
-
-    const searchTerm = search.value?.trim().toLowerCase()
-
-    return props.options
-        ?.map((item) => {
-            // Grouped
-            if (item.group) {
-                const filteredGroupOptions = item.options.filter((option) =>
-                    option.text.toLowerCase().includes(searchTerm)
-                )
-                return filteredGroupOptions.length
-                    ? { group: item.group, options: filteredGroupOptions }
-                    : null
-            }
-
-            // Single
-            if (item.text.toLowerCase().includes(searchTerm)) return item
-        })
-        ?.filter(Boolean)
+    const searchTerm = search.value.trim().toLowerCase()
+    return props.options.filter((option) =>
+        option.text.toLowerCase().includes(searchTerm)
+    )
 })
-
-/**
- * Centralises the options ID for use in multiple places.
- * @returns {string}
- */
-const optionsId = computed(() => {
-    return `${props.id}_options`
-})
-
-/**
- * Calculates the max viewport height for the dropdown, based upon the small breakpoint.
- * @returns {number}
- */
-const viewportMaxHeight = computed(() => {
-    return window.innerWidth < breakpoints.value?.sm ? window.innerHeight : 200
-})
-
-/**
- * Calculates the text to display as placeholder on the input, providing the user with feedback on the current
- * selection. For multiselects the text is truncated by using "x options selected".
- * @returns {string|null}
- */
-const displayedPlaceholder = computed(() => {
-    const allOptions =
-        props.options?.flatMap((item) => (item.group ? item.options : item)) ||
-        []
-    const selectedCount = selectedValue.value?.length || 0
-
-    if (this.multiple && selectedCount) {
-        const pluralisation = selectedCount > 1 ? 's' : ''
-        return selectedCount === allOptions.length
-            ? 'All options selected'
-            : `${selectedCount} option${pluralisation} selected`
-    }
-
-    if (selectedCount) {
-        const selectedOption = allOptions.find(
-            (option) => option.value === selectedValue.value?.[0]
-        )
-        return selectedOption?.text || props.placeholder
-    }
-
-    return props.placeholder || null
-})
-
-/**
- * Collates aria language strings into one computed object.
- * @returns {{clearSelection: string, listDescription: string, inputLabel: string, instructions: string}}
- */
-const ariaLang = computed(() => {
-    const controls = `Use the arrow keys to navigate, and press Enter or Space to select ${props.multiple ? 'one or more options' : 'an option'}.`
-    const searchHelp = props.searchable ? 'Type to search, ' : ''
-    const instructions = `Press Enter to open the list of options. ${searchHelp}${controls}`
-
-    const selectedText = selectedText.value ? `${selectedText.value}.` : ''
-    const inputLabel = props.disabled
-        ? `${selectedText} Select is disabled.`
-        : `${selectedText} ${instructions}`
-
-    return {
-        clearSelection: 'Clear selection',
-        listDescription: controls,
-        inputLabel,
-        instructions: props.disabled ? '' : instructions // Only include instructions if not disabled
-    }
-})
-
-/**
- * ASSISTIVE TECH ONLY
- * Calculates text to announce for assistive tech when selecting or deselecting values. This does not output
- * visually, it is read out when using screen readers.
- * @returns { string }
- */
+const displayedPlaceholder = computed(() =>
+    selectedValue.value.length
+        ? `${selectedValue.value.length} selected`
+        : props.placeholder
+)
+const ariaLang = computed(() => ({
+    inputLabel: 'Select an option',
+    clearSelection: 'Clear selection',
+    instructions: 'Use arrow keys to navigate options'
+}))
 const selectedAssistiveText = computed(() => {
     const selectedText = props.options
-        ?.filter((option) => selectedValue.value?.includes(option.value))
+        .filter((option) => selectedValue.value.includes(option.value))
         .map((option) => option.text)
         .join(', ')
-
-    return selectedText
-        ? `Selected options: ${selectedText}`
-        : 'No options selected.'
+    return selectedText || 'No options selected.'
 })
 
-/**
- * Clears the selected values and emits to the parent. This lets us provide a means to "reset" selected values
- * to empty if we need to deselect.
- */
-const clearSelection = () => {
-    emit('input', props.multiple ? [] : null)
-    selectedValue.value = []
-
-    closeOptions()
-    focusInput()
-}
-
-/**
- * Closes the options, resets related states, and cleans up event listeners.
- * @param { boolean } [focus=false] - Sets if focus should return to the input when closing.
- */
-const closeOptions = (focus = false) => {
-    if (!isOpen.value || props.disabled) return
+// Methods
+const closeOptions = () => {
     isOpen.value = false
-
-    if (focus) focusInput()
-
-    search.value = ''
-    initialMaxHeight.value = 0
-    document.removeEventListener('keydown', handleKeyDown)
-    document.removeEventListener('mousedown', handleClickOutside)
 }
-
-/**
- * Triggers focus on the inputContainer's input element.
- */
-const focusInput = () => {
-    inputContainer.value?.querySelector('input')?.focus()
+const openOptions = () => {
+    isOpen.value = true
 }
-
-/**
- * Handles clicking outside the select component and triggers close.
- * @param { MouseEvent } event
- * TODO
- */
-const handleClickOutside = (event) => {
-    const container = this.$el
-    if (!container.contains(event.target)) closeOptions()
+const toggleOptions = () => {
+    isOpen.value ? closeOptions() : openOptions()
 }
-
-/**
- * Handles keyboard navigation and controls.
- * Implements arrow key navigation, enter/space for selection, and tab to exit focus.
- * @param { KeyboardEvent } event
- */
-const handleKeyDown = (event) => {
-    if (!isOpen.value) return
-
-    const flatFilteredOptions = filteredOptions.value?.flatMap((option) =>
-        option.group ? option.options : option
-    )
-    const options = Array.from(
-        optionsContainer.value?.querySelectorAll('.select-options-item')
-    )
-    const loadMoreButtonEl = loadMoreButton.value
-    const navigableElements = [...options, loadMoreButton].filter(Boolean)
-
-    const focusedIndex = navigableElements.indexOf(document.activeElement)
-
-    if (event.key === 'ArrowDown') {
-        event.preventDefault() // Stops the element scrolling with arrow keys
-        const nextIndex =
-            focusedIndex === -1
-                ? 0
-                : (focusedIndex + 1) % navigableElements.length
-        navigableElements[nextIndex]?.focus()
-    }
-
-    if (event.key === 'ArrowUp') {
-        event.preventDefault() // Stops the element scrolling with arrow keys
-        const prevIndex =
-            focusedIndex === -1
-                ? navigableElements.length - 1
-                : (focusedIndex - 1 + navigableElements.length) %
-                  navigableElements.length
-        navigableElements[prevIndex]?.focus()
-    }
-
-    if (
-        event.key === 'Enter' ||
-        (event.key === ' ' &&
-            document.activeElement !==
-                inputContainer.value?.querySelector('input'))
-    ) {
-        event.preventDefault()
-
-        if (document.activeElement) {
-            const isOption = document.activeElement?.classList.contains(
-                'select-options-item'
-            )
-            const isLoadMore = document.activeElement === loadMoreButtonEl
-
-            if (isOption) {
-                const optionIndex = options.indexOf(document.activeElement)
-                const selectedOption = flatFilteredOptions?.[optionIndex]
-
-                if (selectedOption) this.setSelected(selectedOption)
-            }
-
-            // Trigger load more
-            if (isLoadMore) requestMoreOptions()
-        }
-    }
-
-    // Trigger close when tabbing away from the options.
-    if (event.key === 'Tab') {
+const clearSelection = () => {
+    selectedValue.value = []
+    emit('input', props.multiple ? [] : null)
+}
+const setSelected = (option) => {
+    if (props.multiple) {
+        const newValue = selectedValue.value.includes(option.value)
+            ? selectedValue.value.filter((v) => v !== option.value)
+            : [...selectedValue.value, option.value]
+        selectedValue.value = newValue
+        emit('input', newValue)
+    } else {
+        selectedValue.value = [option.value]
+        emit('input', option.value)
         closeOptions()
     }
 }
+const requestMoreOptions = () => emit('load-more-options')
 
-/**
- * Initialises FloatingUi and adapts positioning automatically.
- */
-const initAutoPositioning = () => {
-    const inputContainerEl = inputContainer.value
-    const optionsContainerEl = optionsContainer.value
-
-    if (!inputContainerEl || !optionsContainerEl) return
-
-    autoUpdate(inputContainerEl, optionsContainerEl, () => {
-        computePosition(inputContainerEl, optionsContainerEl, {
-            placement: 'bottom-start',
-            middleware: [
-                offset(1),
-                flip(),
-                shift(),
-                size({
-                    apply: ({ availableHeight, elements }) => {
-                        const maxHeight = Math.min(
-                            availableHeight,
-                            viewportMaxHeight.value
-                        )
-                        Object.assign(elements.floating.style, {
-                            maxHeight: `${maxHeight}px`,
-                            overflowY: 'auto',
-                            width: '100%'
-                        })
-                    }
-                })
-            ]
-        }).then(({ x, y }) => {
-            floatingStyles.value = {
-                position: 'absolute',
-                top: `${y}px`,
-                left: `${x}px`
-            }
-        })
-    })
-}
-
-/**
- * Checks if the given option is selected.
- * @param {string|number} value
- * @returns {boolean}
- */
-const isOptionSelected = (value) => {
-    return !!selectedValue.value?.includes(value)
-}
-
-/**
- * Opens the options dropdown and runs initial positioning.
- * @param { boolean } [focus=false] - Focuses on the first enabled option when opening.
- * @returns {Promise<void>}
- */
-const openOptions = (focus = false) => {
-    if (isOpen.value || props.disabled) return
-
-    isOpen.value = true
-    initialMaxHeight.value = viewportMaxHeight.value
-    initAutoPositioning()
-
-    if (focus) {
-        new Promise((resolve) => {
-            requestAnimationFrame(resolve)
-        }).then(() => {
-            const options = Array.from(
-                optionsContainer.value?.querySelectorAll('.select-options-item')
-            )
-            for (let i = 0; i < options.length; i++) {
-                const option = options[i]
-                if (option.getAttribute('aria-disabled') !== 'true') {
-                    option.focus()
-                    break
-                }
-            }
-        })
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('mousedown', handleClickOutside)
-}
-
-/**
- * Emits a "load-more-options" event to the parent, this puts responsibility of loading options on the
- * parent, including the provision of loading state.
- */
-const requestMoreOptions = () => {
-    emit('load-more-options')
-}
-
-/**
- * Sets the initial selected values that are passed down from the parent via the watcher. Handling both
- * grouped (multiselect) and ungrouped options.
- * @param {Array|string|number} newValue - the selected values.
- */
-const setInitialSelected = (newValue) => {
-    const values = Array.isArray(newValue) ? newValue : [newValue]
-
-    const flattenedOptions = props.options?.flatMap((option) =>
-        option.group ? option.options : option
-    )
-
-    selectedValue.value = flattenedOptions
-        ?.filter((option) => values.includes(option.value))
-        .map((option) => option.value)
-        .reduce((unique, value) => {
-            if (!unique.includes(value)) unique.push(value)
-            return unique
-        }, [])
-}
-
-/**
- * Manages selection and emits the updated value(s) to the parent. Emits an array of values for multiple select
- * or single value for single select - similar to Vue's default behaviour.
- * @param {Object} option - The selected option object.
- */
-const setSelected = (option) => {
-    if (option.disabled) return
-
-    const newValue = option.value
-
-    if (props.multiple) {
-        selectedValue.value = selectedValue.value?.includes(newValue)
-            ? selectedValue.value.filter((val) => val !== newValue)
-            : (selectedValue.value = [...selectedValue.value, newValue])
-    } else {
-        selectedValue.value = [newValue]
-        closeOptions(true)
-    }
-
-    emit('input', props.multiple ? selectedValue.value : newValue)
-}
-
-/**
- * Toggle options - this is used specifically for when search is disabled, to provide a way to toggle.
- */
-const toggleOptions = () => {
-    if (props.disabled) return
-
-    isOpen.value ? closeOptions() : openOptions()
-}
-
-/**
- * Abstracted logic to calculate what element we need to focus on when loading more options.
- * @returns {*|null}
- */
-const calculateFocusTarget = () => {
-    const optionsContainer = optionsContainer.value
-    if (!optionsContainer) return null
-
-    const allOptions = Array.from(
-        optionsContainer?.querySelectorAll('.select-options-item')
-    )
-    return allOptions.length > 0 ? allOptions[allOptions.length - 1] : null
-}
-
-/**
- * Handles external option updates, ie load more, managing focus, tracking option length, and resetting the loading state.
- * @param {Array} updatedOptions
- */
+// Watchers
 watch(
-    () => props.options,
-    (updatedOptions) => {
-        if (currentOptionsLength.value !== updatedOptions?.length) {
-            const focusTarget = calculateFocusTarget()
-            if (focusTarget) focusTarget?.focus()
-        }
-        currentOptionsLength.value = updatedOptions.length
-    }
-)
-
-/**
- * Open the options when the user starts typing.
- * @param newValue
- */
-watch(
-    () => search.value,
+    () => props.value,
     (newValue) => {
-        if (newValue && !isOpen.value && !props.disabled) openOptions()
+        selectedValue.value = Array.isArray(newValue) ? newValue : [newValue]
     }
 )
 
-/**
- * Tracks changes to values passed in from the parent, and updates the selected values.
- */
-watch(
-    () => value,
-    (newValue) => {
-        setInitialSelected(newValue)
-    }
-)
-
-/**
- * Clean up event listeners.
- */
-onDestroyed(() => {
-    document.removeEventListener('mousedown', this.handleClickOutside)
+// Lifecycle hooks
+onMounted(() => {
+    selectedValue.value = Array.isArray(props.value)
+        ? props.value
+        : [props.value]
+})
+onBeforeUnmount(() => {
+    document.removeEventListener('mousedown', closeOptions)
 })
 </script>
 
