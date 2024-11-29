@@ -1,23 +1,25 @@
 <template>
     <div
-        class="select-container"
+        class="relative"
         @keydown.esc="closeOptions(true)"
     >
         <!-- Input / Search -->
         <div
             ref="inputContainer"
-            class="select-input-container"
-            :class="{
-                'select-input-container--disabled': disabled,
-                'select-input-container--wide': wide
-            }"
+            class="flex items-center border rounded-md overflow-hidden"
+            :class="wide ? 'w-full' : 'w-56'"
+            :class="
+                disabled
+                    ? 'bg-gray-200 pointer-events-none cursor-not-allowed'
+                    : ''
+            "
         >
             <input
                 :id="id"
                 v-model="search"
                 aria-haspopup="listbox"
                 autocomplete="off"
-                class="select-input-input"
+                class="w-full p-2 text-sm focus:outline-none"
                 type="text"
                 :aria-controls="optionsId"
                 :aria-describedby="`${id}_instructions`"
@@ -33,7 +35,7 @@
 
             <button
                 v-if="clearable && selectedValue.length && !disabled"
-                class="select-input-clear"
+                class="h-full w-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 focus:ring focus:ring-gray-300"
                 type="button"
                 :aria-label="ariaLang.clearSelection"
                 @click="clearSelection"
@@ -47,8 +49,7 @@
             v-show="isOpen && !disabled"
             :id="optionsId"
             ref="optionsContainer"
-            class="select-options-container"
-            role="listbox"
+            class="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md mt-1 w-full"
             :style="{ ...floatingStyles, maxHeight: `${initialMaxHeight}px` }"
         >
             <template v-if="filteredOptions.length > 0">
@@ -60,7 +61,7 @@
                     <template v-if="item.group">
                         <div
                             :key="`select_group_${index}`"
-                            class="select-options-group-header"
+                            class="bg-gray-50 font-semibold p-2 border-b text-sm"
                             role="presentation"
                             :aria-label="`Group: ${item.group}`"
                         >
@@ -69,14 +70,14 @@
 
                         <ul
                             :key="`group-options-${item.group}`"
-                            class="select-options-list"
+                            class="list-none"
                             role="group"
                             :aria-labelledby="`select_group_${index}`"
                         >
                             <li
                                 v-for="option in item.options"
                                 :key="option.value"
-                                class="select-options-item"
+                                class="px-4 py-2 cursor-pointer hover:bg-gray-100"
                                 role="option"
                                 tabindex="0"
                                 :aria-disabled="option.disabled"
@@ -90,10 +91,11 @@
                             >
                                 {{ option.text }}
                                 <div
+                                    v-if="isOptionSelected(option.value)"
                                     aria-hidden="true"
-                                    class="select-options-item--check"
+                                    class="text-green-500 font-bold"
                                 >
-                                    TICK
+                                    ✓
                                 </div>
                             </li>
                         </ul>
@@ -104,14 +106,14 @@
                 <ul
                     v-if="filteredOptions.some((item) => !item.group)"
                     :key="'ungrouped-options'"
-                    class="select-options-list"
+                    class="list-none"
                 >
                     <li
                         v-for="(item, index) in filteredOptions.filter(
                             (option) => !option.group
                         )"
                         :key="item.value || `option-${index}`"
-                        class="select-options-item"
+                        class="px-4 py-2 cursor-pointer hover:bg-gray-100"
                         role="option"
                         tabindex="0"
                         :aria-disabled="item.disabled"
@@ -123,10 +125,11 @@
                     >
                         {{ item.text }}
                         <div
+                            v-if="isOptionSelected(item.value)"
                             aria-hidden="true"
-                            class="select-options-item--check"
+                            class="text-green-500 font-bold"
                         >
-                            TICK
+                            ✓
                         </div>
                     </li>
                 </ul>
@@ -135,11 +138,10 @@
                 <button
                     v-if="hasMoreOptions"
                     ref="loadMoreButton"
-                    class="select-options-load-more"
+                    class="w-full text-center py-2 bg-gray-50 hover:bg-gray-100 focus:ring focus:ring-gray-300"
                     tabindex="0"
                     type="button"
                     :aria-disabled="loading"
-                    :class="{ 'select-options-load-more--disabled': loading }"
                     @click="requestMoreOptions()"
                 >
                     {{ loading ? 'Loading...' : 'Load more options' }}
@@ -150,7 +152,7 @@
             <p
                 v-else
                 aria-live="polite"
-                class="select-options-none"
+                class="p-4 text-center text-sm text-gray-500"
             >
                 No options found.
             </p>
@@ -161,7 +163,7 @@
             v-if="!disabled && selectedAssistiveText"
             :id="`${id}_selected_values`"
             aria-live="polite"
-            class="select-sr-only"
+            class="sr-only"
         >
             {{ selectedAssistiveText }}
         </div>
@@ -169,7 +171,7 @@
         <!-- Assistive feedback for instructions -->
         <div
             id="id_instructions"
-            class="select-sr-only"
+            class="sr-only"
         >
             {{ ariaLang.instructions }}
         </div>
@@ -188,38 +190,18 @@ import {
 } from '@floating-ui/dom'
 
 const props = defineProps({
-    clearable: {
-        default: false,
-        type: Boolean
-    },
-    disabled: {
-        default: false,
-        type: Boolean
-    },
-    id: {
-        required: true,
-        type: String
-    },
-    hasMoreOptions: {
-        default: false,
-        type: Boolean
-    },
-    loading: {
-        default: false,
-        type: Boolean
-    },
-    multiple: {
-        default: false,
-        type: Boolean
-    },
+    clearable: { default: false, type: Boolean },
+    disabled: { default: false, type: Boolean },
+    id: { required: true, type: String },
+    hasMoreOptions: { default: false, type: Boolean },
+    loading: { default: false, type: Boolean },
+    multiple: { default: false, type: Boolean },
     options: {
         default: () => [],
         type: Array,
         validator: (value) => {
-            // Custom validator to check that the data structure contains text and value keys, for both single and grouped options.
             if (!value) return false
-
-            const isValid = value.every((item) =>
+            return value.every((item) =>
                 item.group
                     ? typeof item.group === 'string' &&
                       Array.isArray(item.options) &&
@@ -228,51 +210,26 @@ const props = defineProps({
                       )
                     : item?.text && item?.value
             )
-
-            // Throw a custom error to give better context, instead of Vue's limited "invalid prop" error.
-            if (!isValid) {
-                throw new Error(
-                    'Invalid options: Each item must be an option with "text" and "value", or a group with "label" and "options".\n' +
-                        JSON.stringify(value, null, 2)
-                )
-            }
-
-            return isValid
         }
     },
-    placeholder: {
-        type: String,
-        default: 'Select an option.'
-    },
-    searchable: {
-        default: true,
-        type: Boolean
-    },
-    wide: {
-        default: false,
-        type: Boolean
-    },
-    value: {
-        type: [String, Number, Array],
-        default: null
-    }
+    placeholder: { type: String, default: 'Select an option.' },
+    searchable: { default: true, type: Boolean },
+    wide: { default: false, type: Boolean },
+    value: { type: [String, Number, Array], default: null }
 })
 
 const emit = defineEmits(['input', 'load-more-options'])
 
-// Reactive state
 const isOpen = ref(false)
 const search = ref('')
 const selectedValue = ref([])
 const floatingStyles = ref({})
 const initialMaxHeight = ref(200)
 
-// Refs for DOM elements
 const inputContainer = ref(null)
 const optionsContainer = ref(null)
 const loadMoreButton = ref(null)
 
-// Computed properties
 const optionsId = computed(() => `${props.id}_options`)
 const filteredOptions = computed(() => {
     if (!search.value) return props.options
@@ -299,7 +256,6 @@ const selectedAssistiveText = computed(() => {
     return selectedText || 'No options selected.'
 })
 
-// Methods
 const closeOptions = () => {
     isOpen.value = false
 }
@@ -345,177 +301,3 @@ onBeforeUnmount(() => {
     document.removeEventListener('mousedown', closeOptions)
 })
 </script>
-
-<style>
-.select-container {
-    font-size: 16px; /* reset */
-    position: relative;
-}
-
-.select-input-container {
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    display: flex;
-    height: 40px;
-    max-width: 100%;
-    overflow: hidden;
-    width: 100%;
-}
-
-.select-input-container--disabled {
-    background: #eee;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-.select-input-input {
-    all: unset; /* reset */
-
-    box-sizing: border-box;
-    display: block;
-    height: 100%;
-    min-width: 0;
-    padding: 0 12px;
-    width: 100%;
-}
-
-.select-input-input:placeholder-shown {
-    text-overflow: ellipsis;
-}
-
-.select-input-clear {
-    all: unset; /* reset */
-
-    align-items: center;
-    background: transparent;
-    box-sizing: border-box;
-    cursor: pointer;
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    width: 44px;
-}
-
-.select-input-clear:hover,
-.select-input-clear:focus {
-    background: #eee;
-}
-
-.select-options-container {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow:
-        0 4px 6px -1px rgb(0 0 0 / 0.1),
-        0 2px 4px -2px rgb(0 0 0 / 0.1);
-    color: #000;
-    position: relative;
-    transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
-    z-index: 10;
-}
-
-.select-options-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.select-options-group-header {
-    font-weight: 700;
-    padding: 8px 16px;
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #ddd;
-}
-
-.select-options-container .select-options-group-header:not(:first-of-type) {
-    border-top: 1px solid #ccc;
-}
-
-.select-options-item,
-.select-options-none {
-    margin: 0;
-    padding: 8px 16px;
-}
-
-.select-options-item {
-    cursor: pointer;
-    display: flex;
-    gap: 8px;
-    justify-content: space-between;
-}
-
-.select-options-item[aria-disabled='true'],
-.select-options-item[aria-disabled='true']:hover,
-.select-options-item[aria-disabled='true']:focus {
-    background-color: #eee;
-    color: #666;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-.select-options-item:hover,
-.select-options-item:focus,
-.select-options-load-more:hover,
-.select-options-load-more:focus {
-    background-color: #ccc;
-}
-
-.select-options-item--check {
-    display: none;
-}
-
-.select-options-item[aria-selected='true'] .select-options-item--check {
-    display: block;
-    flex: none;
-}
-
-.select-options-load-more {
-    all: unset;
-
-    box-sizing: border-box;
-    cursor: pointer;
-    padding: 8px 16px;
-    width: 100%;
-}
-
-.select-options-load-more--disabled {
-    pointer-events: none;
-}
-
-.select-sr-only {
-    border: 0;
-    clip: rect(0, 0, 0, 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-}
-
-.select-input-container:focus-within,
-.select-input-clear:focus,
-.select-options-item:focus,
-.select-options-load-more:focus {
-    outline: 1px solid;
-}
-.select-options-item:focus,
-.select-options-load-more:focus {
-    outline-offset: -1px;
-}
-
-@media (min-width: 640px) {
-    .select-input-container {
-        width: 224px;
-    }
-
-    .select-input-container--wide {
-        width: 100%;
-    }
-}
-</style>
