@@ -260,16 +260,12 @@ const props = defineProps({
 
 const emit = defineEmits(['input', 'load-more-options'])
 
-const breakpoints = ref({
-    sm: 640
-})
-
-const currentOptionsLength = ref(0)
-const floatingStyles = ref({})
-const initialMaxHeight = ref(0)
+// Reactive state
 const isOpen = ref(false)
 const search = ref('')
 const selectedValue = ref([])
+const floatingStyles = ref({})
+const initialMaxHeight = ref(200)
 
 // Refs for DOM elements
 const inputContainer = ref(null)
