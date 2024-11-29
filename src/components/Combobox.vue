@@ -52,7 +52,10 @@
             :style="{ ...floatingStyles, maxHeight: `${initialMaxHeight}px` }"
         >
             <template v-if="filteredOptions.length > 0">
-                <template v-for="(item, index) in filteredOptions">
+                <template
+                    v-for="(item, index) in filteredOptions"
+                    :key="index"
+                >
                     <!-- Grouped options -->
                     <template v-if="item.group">
                         <div
