@@ -271,7 +271,7 @@ const isOpen = ref(false)
 const search = ref('')
 const selectedValue = ref([])
 
-// Define refs
+// Refs for DOM elements
 const inputContainer = ref(null)
 const optionsContainer = ref(null)
 const loadMoreButton = ref(null)
