@@ -49,6 +49,7 @@
         "test-storybook": "test-storybook"
     },
     "dependencies": {
+        "@floating-ui/dom": "^1.6.12",
         "@rushstack/eslint-patch": "^1.10.4",
         "@tabler/icons": "^3.22.0",
         "@tabler/icons-vue": "^3.22.0",
