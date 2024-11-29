@@ -272,16 +272,8 @@ const inputContainer = ref(null)
 const optionsContainer = ref(null)
 const loadMoreButton = ref(null)
 
-onMounted(() => {
-    // Sets the current options length, this helps us know when more options have been loaded from the parent.
-    this.currentOptionsLength = this.options?.length
-})
-
-/**
- * Returns filtered options based upon the provided options and the user's search term. Covering both singular
- * and grouped options.
- * @returns {Array} - returns an array of options.
- */
+// Computed properties
+const optionsId = computed(() => `${props.id}_options`)
 const filteredOptions = computed(() => {
     if (!props.options) return []
     if (!search.value) return props.options
