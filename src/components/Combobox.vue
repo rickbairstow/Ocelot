@@ -6,20 +6,19 @@
         <!-- Input / Search -->
         <div
             ref="inputContainer"
-            class="flex items-center border rounded-md overflow-hidden"
-            :class="wide ? 'w-full' : 'w-56'"
-            :class="
-                disabled
-                    ? 'bg-gray-200 pointer-events-none cursor-not-allowed'
-                    : ''
-            "
+            class="flex items-center border rounded-lg overflow-hidden h-10"
+            :class="{
+                'bg-gray-200 cursor-not-allowed pointer-events-none': disabled,
+                'w-full': wide,
+                'w-56': !wide
+            }"
         >
             <input
                 :id="id"
                 v-model="search"
                 aria-haspopup="listbox"
                 autocomplete="off"
-                class="w-full p-2 text-sm focus:outline-none"
+                class="w-full px-3 text-sm focus:outline-none"
                 type="text"
                 :aria-controls="optionsId"
                 :aria-describedby="`${id}_instructions`"
@@ -49,104 +48,60 @@
             v-show="isOpen && !disabled"
             :id="optionsId"
             ref="optionsContainer"
-            class="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md mt-1 w-full"
-            :style="{ ...floatingStyles, maxHeight: `${initialMaxHeight}px` }"
+            class="absolute z-10 bg-white border border-gray-300 rounded-lg shadow-md mt-1 w-full max-h-60 overflow-auto"
+            role="listbox"
+            :style="floatingStyles"
         >
-            <template v-if="filteredOptions.length > 0">
-                <template
-                    v-for="(item, index) in filteredOptions"
-                    :key="index"
-                >
-                    <!-- Grouped options -->
-                    <template v-if="item.group">
-                        <div
-                            :key="`select_group_${index}`"
-                            class="bg-gray-50 font-semibold p-2 border-b text-sm"
-                            role="presentation"
-                            :aria-label="`Group: ${item.group}`"
+            <ul class="list-none">
+                <template v-if="filteredOptions.length > 0">
+                    <li
+                        v-for="(item, index) in mergedOptions"
+                        :key="`option-${index}`"
+                        class="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                        tabindex="!item.group ? 0 : null"
+                        :aria-disabled="item.disabled || null"
+                        :aria-selected="
+                            !item.group && isOptionSelected(item.value)
+                                ? 'true'
+                                : 'false'
+                        "
+                        :role="item.group ? 'presentation' : 'option'"
+                        @click="!item.group && setSelected(item)"
+                    >
+                        <span
+                            v-if="item.group"
+                            class="font-semibold text-sm text-gray-500"
                         >
                             {{ item.group }}
-                        </div>
-
-                        <ul
-                            :key="`group-options-${item.group}`"
-                            class="list-none"
-                            role="group"
-                            :aria-labelledby="`select_group_${index}`"
-                        >
-                            <li
-                                v-for="option in item.options"
-                                :key="option.value"
-                                class="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                                role="option"
-                                tabindex="0"
-                                :aria-disabled="option.disabled"
-                                :aria-label="option.text"
-                                :aria-selected="
-                                    isOptionSelected(option.value)
-                                        ? 'true'
-                                        : 'false'
-                                "
-                                @click="setSelected(option)"
+                        </span>
+                        <span v-else>
+                            {{ item.text }}
+                            <span
+                                v-if="isOptionSelected(item.value)"
+                                class="text-green-500 font-bold"
                             >
-                                {{ option.text }}
-                                <div
-                                    v-if="isOptionSelected(option.value)"
-                                    aria-hidden="true"
-                                    class="text-green-500 font-bold"
-                                >
-                                    ✓
-                                </div>
-                            </li>
-                        </ul>
-                    </template>
+                                ✓
+                            </span>
+                        </span>
+                    </li>
                 </template>
 
-                <!-- Ungrouped options -->
-                <ul
-                    v-if="filteredOptions.some((item) => !item.group)"
-                    :key="'ungrouped-options'"
-                    class="list-none"
-                >
-                    <li
-                        v-for="(item, index) in filteredOptions.filter(
-                            (option) => !option.group
-                        )"
-                        :key="item.value || `option-${index}`"
-                        class="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                        role="option"
-                        tabindex="0"
-                        :aria-disabled="item.disabled"
-                        :aria-label="item.text"
-                        :aria-selected="
-                            isOptionSelected(item.value) ? 'true' : 'false'
-                        "
-                        @click="setSelected(item)"
-                    >
-                        {{ item.text }}
-                        <div
-                            v-if="isOptionSelected(item.value)"
-                            aria-hidden="true"
-                            class="text-green-500 font-bold"
-                        >
-                            ✓
-                        </div>
-                    </li>
-                </ul>
-
                 <!-- Load more options -->
-                <button
+                <li
                     v-if="hasMoreOptions"
-                    ref="loadMoreButton"
-                    class="w-full text-center py-2 bg-gray-50 hover:bg-gray-100 focus:ring focus:ring-gray-300"
-                    tabindex="0"
-                    type="button"
-                    :aria-disabled="loading"
-                    @click="requestMoreOptions()"
+                    role="presentation"
                 >
-                    {{ loading ? 'Loading...' : 'Load more options' }}
-                </button>
-            </template>
+                    <button
+                        ref="loadMoreButton"
+                        class="w-full text-center py-2 bg-gray-50 hover:bg-gray-100 focus:ring focus:ring-gray-300"
+                        type="button"
+                        :aria-disabled="loading"
+                        @click="requestMoreOptions"
+                    >
+                        {{ loading ? 'Loading...' : 'Load more options' }}
+                    </button>
+                </li>
+            </ul>
 
             <!-- No options feedback -->
             <p
@@ -158,7 +113,7 @@
             </p>
         </div>
 
-        <!-- Assistive feedback for selected options -->
+        <!-- Assistive feedback -->
         <div
             v-if="!disabled && selectedAssistiveText"
             :id="`${id}_selected_values`"
@@ -167,8 +122,6 @@
         >
             {{ selectedAssistiveText }}
         </div>
-
-        <!-- Assistive feedback for instructions -->
         <div
             id="id_instructions"
             class="sr-only"
@@ -220,6 +173,7 @@ const props = defineProps({
 
 const emit = defineEmits(['input', 'load-more-options'])
 
+// Reactive states
 const isOpen = ref(false)
 const search = ref('')
 const selectedValue = ref([])
@@ -230,14 +184,30 @@ const inputContainer = ref(null)
 const optionsContainer = ref(null)
 const loadMoreButton = ref(null)
 
+// Computed properties
 const optionsId = computed(() => `${props.id}_options`)
 const filteredOptions = computed(() => {
     if (!search.value) return props.options
     const searchTerm = search.value.trim().toLowerCase()
-    return props.options.filter((option) =>
-        option.text.toLowerCase().includes(searchTerm)
-    )
+    return props.options
+        .map((item) => {
+            if (item.group) {
+                const filteredGroupOptions = item.options.filter((option) =>
+                    option.text.toLowerCase().includes(searchTerm)
+                )
+                return filteredGroupOptions.length
+                    ? { group: item.group, options: filteredGroupOptions }
+                    : null
+            }
+            if (item.text.toLowerCase().includes(searchTerm)) return item
+        })
+        .filter(Boolean)
 })
+const mergedOptions = computed(() =>
+    filteredOptions.value.flatMap((item) =>
+        item.group ? [{ group: item.group }, ...item.options] : [item]
+    )
+)
 const displayedPlaceholder = computed(() =>
     selectedValue.value.length
         ? `${selectedValue.value.length} selected`
@@ -250,32 +220,31 @@ const ariaLang = computed(() => ({
 }))
 const selectedAssistiveText = computed(() => {
     const selectedText = props.options
+        .flatMap((option) => (option.group ? option.options : [option]))
         .filter((option) => selectedValue.value.includes(option.value))
         .map((option) => option.text)
         .join(', ')
     return selectedText || 'No options selected.'
 })
 
-const closeOptions = () => {
-    isOpen.value = false
-}
-const openOptions = () => {
-    isOpen.value = true
-}
-const toggleOptions = () => {
-    isOpen.value ? closeOptions() : openOptions()
-}
+// **isOptionSelected**: Checks if an option is selected
+const isOptionSelected = (value) => selectedValue.value.includes(value)
+
+// Methods
+const closeOptions = () => (isOpen.value = false)
+const openOptions = () => (isOpen.value = true)
+const toggleOptions = () => (isOpen.value ? closeOptions() : openOptions())
 const clearSelection = () => {
     selectedValue.value = []
     emit('input', props.multiple ? [] : null)
 }
 const setSelected = (option) => {
+    if (option.disabled) return
     if (props.multiple) {
-        const newValue = selectedValue.value.includes(option.value)
+        selectedValue.value = selectedValue.value.includes(option.value)
             ? selectedValue.value.filter((v) => v !== option.value)
             : [...selectedValue.value, option.value]
-        selectedValue.value = newValue
-        emit('input', newValue)
+        emit('input', selectedValue.value)
     } else {
         selectedValue.value = [option.value]
         emit('input', option.value)
@@ -284,6 +253,7 @@ const setSelected = (option) => {
 }
 const requestMoreOptions = () => emit('load-more-options')
 
+// Watchers
 watch(
     () => props.value,
     (newValue) => {
@@ -296,7 +266,6 @@ onMounted(() => {
         ? props.value
         : [props.value]
 })
-
 onBeforeUnmount(() => {
     document.removeEventListener('mousedown', closeOptions)
 })
