@@ -78,7 +78,7 @@
         "eslint-plugin-vue": "^9.32.0",
         "eslint-plugin-vuejs-accessibility": "^2.4.1",
         "postcss": "^8.4.47",
-        "prettier": "^3.3.3",
+        "prettier": "^3.4.2",
         "sass-embedded": "^1.80.4",
         "storybook": "^8.3.6",
         "stylelint": "^16.10.0",
