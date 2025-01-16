@@ -2,9 +2,7 @@
     <div>
         <!-- text inputs -->
         <div class="flex flex-col gap-2">
-            <Label
-                :for="uuid"
-            >
+            <Label :for="uuid">
                 {{ label }}
             </Label>
 
