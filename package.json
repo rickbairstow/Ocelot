@@ -79,7 +79,7 @@
         "eslint-plugin-vuejs-accessibility": "^2.4.1",
         "postcss": "^8.4.47",
         "prettier": "^3.4.2",
-        "sass-embedded": "^1.80.4",
+        "sass-embedded": "^1.83.4",
         "storybook": "^8.5.0",
         "stylelint": "^16.13.2",
         "stylelint-config-standard": "^37.0.0",
