@@ -1,6 +1,6 @@
 const { injectAxe, checkA11y } = require('axe-playwright')
 
-let isAxeRunning = false;
+let isAxeRunning = false
 
 /*
  * See https://storybook.js.org/docs/writing-tests/test-runner#test-hook-api
