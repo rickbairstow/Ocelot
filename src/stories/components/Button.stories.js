@@ -50,26 +50,31 @@ export default {
         `
     })
 }
+
 export const Primary = {
     args: {
         type: 'primary'
     }
 }
+
 export const Secondary = {
     args: {
         type: 'secondary'
     }
 }
+
 export const Tertiary = {
     args: {
         type: 'tertiary'
     }
 }
+
 export const Text = {
     args: {
         type: 'text'
     }
 }
+
 export const None = {
     args: {
         type: 'none'
