@@ -6,6 +6,11 @@ export default {
     component: Input,
 
     argTypes: {
+        autoComplete: {
+            control: 'boolean',
+            description: 'Whether the input should allow browser autocomplete.'
+        },
+
         disabled: {
             control: 'boolean',
             description: 'Whether the input is disabled.'
@@ -80,6 +85,7 @@ export default {
     },
 
     args: {
+        autoComplete: true,
         disabled: false,
         label: 'First name',
         maxlength: 255,

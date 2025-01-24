@@ -20,7 +20,8 @@
 
                 <input
                     :id="uuid"
-                    class="min-w-0 flex-1 outline-none"
+                    class="min-w-0 flex-1 outline-hidden"
+                    :autocomplete="autoComplete ? 'on' : 'off'"
                     :class="[
                         slots?.prefix ? 'ps-0' : 'ps-3',
                         slots?.suffix ? 'pe-0' : 'pe-3'
@@ -56,6 +57,11 @@ const slots = useSlots()
 const uuid = generateUuid('input')
 
 const props = defineProps({
+    autoComplete: {
+        type: Boolean,
+        default: true
+    },
+
     disabled: {
         type: Boolean,
         default: false
