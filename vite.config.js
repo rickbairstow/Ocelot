@@ -3,13 +3,13 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import tailwindcss from "@tailwindcss/vite"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [vue(), vueDevTools()],
+    plugins: [vue(), vueDevTools(), tailwindcss()],
     resolve: {
         alias: {
-            '@Root': fileURLToPath(new URL('./', import.meta.url)),
             '@': fileURLToPath(new URL('./src', import.meta.url)),
             '@Components': fileURLToPath(
                 new URL('./src/components', import.meta.url)
