@@ -9,11 +9,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import tailwindConfig from '@Root/tailwind.config.js'
 import { availableIcons, availableSizes } from '@Composables/useIcons'
-import resolveConfig from 'tailwindcss/resolveConfig'
-
-const theme = resolveConfig(tailwindConfig)?.theme
 
 const props = defineProps({
     icon: {
@@ -48,7 +44,7 @@ const iconName = computed(() => {
  */
 const iconSize = computed(() => {
     const { size } = props
-    const calcSize = theme?.fontSize?.[size]?.[0] || 24
+    const calcSize = availableSizes?.[size] || 24
     return {
         height: calcSize,
         width: calcSize

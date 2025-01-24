@@ -51,7 +51,7 @@ const styles = {
         base: 'py-2 px-3',
         large: 'py-3 px-4'
     },
-    common: 'inline-flex items-center justify-center border rounded-lg',
+    common: 'inline-flex items-center justify-center border rounded-lg transition-colors cursor-pointer',
     primary: {
         base: 'text-white bg-blue-600 border-blue-400 hover:bg-blue-700',
         disabled: 'text-white bg-gray-400 border-gray-400 pointer-events-none'
