@@ -10,7 +10,7 @@
         <Button
             v-if="isClamped"
             class="mt-1"
-            type="tertiary"
+            type="text"
             :aria-label="buttonText"
             @click="toggleVisibility"
         >
@@ -27,14 +27,6 @@ const props = defineProps({
     lines: {
         type: Number,
         default: 4
-    },
-
-    localisation: {
-        type: Object,
-        default: () => ({
-            show_less: 'Show less',
-            show_more: 'Show more'
-        })
     }
 })
 
@@ -59,8 +51,7 @@ const clampClass = computed(() => {
 })
 
 const buttonText = computed(() => {
-    const { localisation } = props
-    return isVisible.value ? localisation?.show_less : localisation?.show_more
+    return isVisible.value ? 'Show less' : 'Show more'
 })
 
 const isClamped = computed(
