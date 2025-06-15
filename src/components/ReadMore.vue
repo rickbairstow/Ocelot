@@ -56,8 +56,9 @@ const buttonText = computed(() => {
 
 const isClamped = computed(
     () =>
-        contentSlot?.value &&
-        contentSlot?.value?.scrollHeight > contentSlot?.value?.clientHeight
+        !props.lines ||
+        (contentSlot?.value &&
+            contentSlot?.value?.scrollHeight > contentSlot?.value?.clientHeight)
 )
 
 const toggleVisibility = () => (isVisible.value = !isVisible.value)
