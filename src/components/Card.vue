@@ -1,6 +1,6 @@
 <template>
     <div
-        class="border rounded-lg overflow-hidden"
+        class="border rounded-lg overflow-hidden shadow-lg border-gray-100"
         :class="[sizeCss, vertical ? 'block' : 'flex']"
     >
         <!-- Image -->
