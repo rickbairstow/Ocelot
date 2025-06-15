@@ -83,7 +83,7 @@ const props = defineProps({
     vertical: {
         default: false,
         type: Boolean
-    },
+    }
 })
 
 const sizeCss = computed(() => {
@@ -94,6 +94,4 @@ const sizeCss = computed(() => {
     }
     return localLookup[props.size] ?? localLookup.base
 })
-
-const isVertical = computed(() => props.vertical)
 </script>
