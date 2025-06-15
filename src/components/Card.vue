@@ -89,8 +89,8 @@ const props = defineProps({
 const sizeCss = computed(() => {
     const localLookup = {
         small: 'w-sm',
-        base: 'w-md',
-        large: 'w-lg'
+        base: 'w-xl',
+        large: 'w-4xl'
     }
     return localLookup[props.size] ?? localLookup.base
 })

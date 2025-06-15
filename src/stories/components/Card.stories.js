@@ -24,6 +24,11 @@ export default {
             control: 'text',
             description: 'Image source',
         },
+        size: {
+            control: 'select',
+            options: ['small', 'base', 'large'],
+            description: 'Sets the size of the card.',
+        },
         title: {
             control: 'text',
             description: 'Title content',
@@ -43,8 +48,9 @@ export default {
         default: 'Card content goes here.',
         imageAlt: 'Card image',
         imageSrc: 'https://picsum.photos/id/1000/500/300',
+        size: 'base',
         title: 'Card Title',
-        vertical: false
+        vertical: false,
     },
 
     render: (args) => ({
@@ -57,6 +63,7 @@ export default {
                 :badges="args.badges"
                 :imageAlt="args.imageAlt"
                 :imageSrc="args.imageSrc"
+                :size="args.size"
                 :title="args.title"
                 :vertical="args.vertical"
             >
@@ -68,4 +75,13 @@ export default {
     })
 }
 
-export const Default = {}
+export const Horizontal = {
+    args: {
+        vertical: false
+    }
+}
+export const Vertical = {
+    args: {
+        vertical: true
+    }
+}
