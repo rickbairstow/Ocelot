@@ -14,28 +14,28 @@ export default {
         },
         default: {
             control: 'text',
-            description: 'Slot content',
+            description: 'Slot content'
         },
         imageAlt: {
             control: 'text',
-            description: 'Image alt text',
+            description: 'Image alt text'
         },
         imageSrc: {
             control: 'text',
-            description: 'Image source',
+            description: 'Image source'
         },
         size: {
             control: 'select',
             options: ['small', 'base', 'large'],
-            description: 'Sets the size of the card.',
+            description: 'Sets the size of the card.'
         },
         title: {
             control: 'text',
-            description: 'Title content',
+            description: 'Title content'
         },
         vertical: {
             control: 'boolean',
-            description: 'Set layout to vertical (true) or horizontal (false)',
+            description: 'Set layout to vertical (true) or horizontal (false)'
         }
     },
 
@@ -50,7 +50,7 @@ export default {
         imageSrc: 'https://picsum.photos/id/1000/500/300',
         size: 'base',
         title: 'Card Title',
-        vertical: false,
+        vertical: false
     },
 
     render: (args) => ({
