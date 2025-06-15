@@ -1,11 +1,15 @@
 <template>
     <div
-        class="border rounded-lg"
-        :class="sizeCss"
+        class="border rounded-lg overflow-hidden"
+        :class="[sizeCss, vertical ? 'block' : 'flex']"
     >
+        <!-- Image -->
         <div
             v-if="imageSrc"
-            class="w-full h-40 overflow-hidden rounded-t-lg"
+            :class="[
+                vertical ? 'w-full h-40' : 'w-1/3 h-auto',
+                'overflow-hidden'
+            ]"
         >
             <img
                 class="w-full h-full object-cover"
@@ -14,7 +18,7 @@
             />
         </div>
 
-        <div class="px-6 py-4">
+        <div class="px-6 py-4 flex flex-col justify-between">
             <h2
                 v-if="title"
                 class="font-bold text-xl mb-1"
@@ -27,12 +31,12 @@
             </div>
 
             <div
-                v-if="badges"
-                class="flex flex-wrap gap-2"
+                v-if="badges?.length"
+                class="flex flex-wrap gap-2 mt-auto"
             >
                 <Badge
                     v-for="badge in badges"
-                    :key="badge"
+                    :key="badge.text"
                     :type="badge.type || 'info'"
                 >
                     {{ badge.text || null }}
@@ -48,8 +52,8 @@ import Badge from '@Components/Badge.vue'
 
 const props = defineProps({
     badges: {
-        type: Array,
         default: () => [],
+        type: Array,
         validator: (value) => {
             return value.every(
                 (badge) =>
@@ -60,24 +64,26 @@ const props = defineProps({
         }
     },
     imageAlt: {
-        type: String,
-        default: null
+        default: null,
+        type: String
     },
     imageSrc: {
-        type: String,
-        default: null
-    },
-    size: {
-        type: String,
-        default: 'base',
-        validator: (value) => {
-            return ['small', 'base', 'large'].includes(value)
-        }
+        default: null,
+        type: String
     },
     title: {
+        default: null,
+        type: String
+    },
+    size: {
+        default: 'base',
         type: String,
-        default: null
-    }
+        validator: (value) => ['small', 'base', 'large'].includes(value)
+    },
+    vertical: {
+        default: false,
+        type: Boolean
+    },
 })
 
 const sizeCss = computed(() => {
@@ -88,4 +94,6 @@ const sizeCss = computed(() => {
     }
     return localLookup[props.size] ?? localLookup.base
 })
+
+const isVertical = computed(() => props.vertical)
 </script>
