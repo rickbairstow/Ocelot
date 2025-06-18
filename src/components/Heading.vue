@@ -41,7 +41,7 @@ const headingLookup = {
 }
 
 /**
- * Set which element shoudl render, ie h1-h6.
+ * Set which element should render, ie h1-h6.
  * @type {ComputedRef<string>}
  */
 const headingElement = computed(() => {
