@@ -1,6 +1,6 @@
 import Sidebar from '@Components/Sidebar.vue'
-import { ref, nextTick } from 'vue'
-import { userEvent, within, expect, waitFor } from 'storybook/test'
+import { ref } from 'vue'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 export default {
     title: 'Components/Sidebar',
