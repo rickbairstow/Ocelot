@@ -46,6 +46,7 @@
     "test-storybook": "test-storybook"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@rushstack/eslint-patch": "^1.11.0",
     "@tabler/icons": "^3.34.0",
     "@tabler/icons-vue": "^3.34.0",
