@@ -9,25 +9,16 @@ export default {
         default: {
             control: 'text',
             description: 'Slot content',
-            table: {
-                type: { summary: 'any' }
-            }
         },
 
         title: {
             control: 'text',
             description: 'Title slot content',
-            table: {
-                type: { summary: 'any' }
-            }
         },
 
         footer: {
             control: 'text',
             description: 'Footer slot content',
-            table: {
-                type: { summary: 'any' }
-            }
         },
 
         showScrim: {
@@ -41,30 +32,47 @@ export default {
             description: 'Sets what side the sidebar displays on.'
         }
     },
+
     args: {
         default: 'Sidebar content',
-        title: 'Sidebar title',
         footer: 'Sidebar footer',
         showScrim: true,
-        side: 'left'
+        side: 'left',
+        title: 'Sidebar title'
     },
 
     render: (args) => ({
         components: { Sidebar },
         setup() {
             const sidebar = ref(null)
+            const triggerRef = ref(null)
 
-            const openSidebar = () => {
+            const openSidebar = async () => {
                 sidebar.value.open()
             }
 
-            return { args, openSidebar, sidebar }
+            return {
+                args,
+                sidebar,
+                triggerRef,
+                openSidebar
+            }
         },
+
         template: `
-            <button @click="openSidebar">Click to open the Sidebar</button>
+            <button
+                ref="triggerRef"
+                type="button"
+                class="mb-4 border px-3 py-2 rounded bg-gray-100 hover:bg-gray-200"
+                @click="openSidebar"
+            >
+                Open Sidebar
+            </button>
+
             <Sidebar
                 ref="sidebar"
                 :side="args.side"
+                :show-scrim="args.showScrim"
             >
                 <template #title>{{ args.title }}</template>
                 <template #default>{{ args.default }}</template>
