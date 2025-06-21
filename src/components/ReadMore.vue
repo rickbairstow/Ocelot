@@ -88,10 +88,24 @@ let resizeObserver
 onMounted(() => {
     updateClamp()
 
-    resizeObserver = new ResizeObserver(updateClamp)
-    if (contentSlot.value) {
-        resizeObserver.observe(contentSlot.value)
+    const onResize = () => {
+        const el = contentSlot.value
+        if (!el) return
+
+        const hasOverflow = props.lines > 0 && el.scrollHeight > el.clientHeight
+
+        if (!hasOverflow && isVisible.value) {
+            isVisible.value = false
+        }
+
+        updateClamp()
     }
+
+    window.addEventListener('resize', onResize)
+
+    onBeforeUnmount(() => {
+        window.removeEventListener('resize', onResize)
+    })
 })
 
 onBeforeUnmount(() => {
@@ -104,6 +118,7 @@ onBeforeUnmount(() => {
  * Recalculate when slot content changes (after render).
  */
 watchPostEffect(() => {
+    // isVisible.value = false // reset expanded state
     updateClamp()
 })
 </script>
