@@ -1,11 +1,11 @@
 <template>
     <Teleport :to="portalTarget">
         <Transition>
-            <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
             <section
                 v-if="isOpen"
                 class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
-                role="complementary"
+                role="dialog"
+                :aria-label="ariaLabel"
                 @keydown.esc="close"
             >
                 <Scrim
@@ -15,12 +15,10 @@
 
                 <div
                     class="relative flex flex-col justify-between max-h-full h-full overflow-hidden text-black bg-white z-10 sm:h-auto sm:rounded-2xl"
-                    role="dialog"
-                    :aria-label="ariaLabel"
                     :class="sizeClass"
                 >
                     <div
-                        class="flex items-center justify-between border-gray-300 border-b"
+                        class="flex items-center justify-between border-b border-gray-100"
                     >
                         <div
                             id="dialogueTitle"
@@ -33,7 +31,7 @@
                         <Button
                             aria-label="Close dialog"
                             class="mr-2"
-                            type="none"
+                            type="tertiary"
                             @click="close"
                         >
                             <Icon icon="X" />
@@ -45,12 +43,12 @@
                         class="p-6 bg-white overflow-auto"
                         tabindex="0"
                     >
-                        <slot name="default" />
+                        <slot />
                     </div>
 
                     <div
                         v-if="slots?.footer"
-                        class="flex p-6 border-t border-gray-300"
+                        class="flex p-6 border-t border-gray-100"
                     >
                         <slot name="footer" />
                     </div>
@@ -70,102 +68,85 @@
 </template>
 
 <script setup>
-import { computed, ref, useSlots, watch } from 'vue'
+import { computed, nextTick, ref, useSlots } from 'vue'
 import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'
+import useFocusMemory from '@Composables/useFocusMemory.js'
 
+/**
+ * Provides access to slot presence like `footer`.
+ */
 const slots = useSlots()
-const dialogueContent = ref(null)
+
+/**
+ * Track the open state of the dialog.
+ * @type {import('vue').Ref<boolean>}
+ */
 const isOpen = ref(false)
 
+/**
+ * Ref to the scrollable content region of the dialog.
+ * @type {import('vue').Ref<HTMLElement|null>}
+ */
+const dialogueContent = ref(null)
+
+/**
+ * Props accepted by the dialog.
+ * - ariaLabel: Descriptive label for screen readers.
+ * - focusFrom: ID of the element to return focus to when dialog closes.
+ * - focusTo: ID of the element to focus when dialog opens.
+ * - portalTarget: Target for Teleport (e.g. #portal-target).
+ * - small: If true, renders a narrower dialog width.
+ */
 const props = defineProps({
-    ariaLabel: {
-        required: true,
-        type: String
-    },
-
-    focusFrom: {
-        default: null,
-        type: String // ID of element
-    },
-
-    focusTo: {
-        default: null,
-        type: String // ID of element
-    },
-
-    portalTarget: {
-        default: '#portal-target',
-        type: String
-    },
-
-    small: {
-        default: true,
-        type: Boolean
-    }
+    ariaLabel: { type: String, required: true },
+    focusFrom: { type: String, default: null },
+    focusTo: { type: String, default: null },
+    portalTarget: { type: String, default: '#portal-target' },
+    small: { type: Boolean, default: true }
 })
 
 /**
- * Closes the dialog.
- * @returns {boolean}
+ * Import focus tracking utilities.
+ * `focusTo` sets the initial focus; `returnFocus` restores it.
  */
-const close = () => (isOpen.value = false)
+const { focusTo: applyFocusTo, returnFocus } = useFocusMemory()
 
 /**
- * Check if an id resolves to a valid DOM element.
- * @param {string} id
- * @returns {HTMLElement|null}
- */
-const getEl = (id) => document.getElementById(id) ?? null
-
-/**
- * Opens the dialog.
- * @returns {boolean}
- */
-const open = () => (isOpen.value = true)
-
-/**
- * Triggers focus on a given element.
- * @param {HTMLElement} element
- * @returns {*}
- */
-const setFocus = (element) => element && element?.focus()
-
-/**
- * Calculate size constraints.
+ * Returns dialog width class based on `small` prop.
+ * @type {import('vue').ComputedRef<string>}
  */
 const sizeClass = computed(() => {
-    const { small } = props
-    return `${small ? 'w-80' : 'w-full'} max-w-full`
+    return props.small ? 'w-80 max-w-full' : 'w-full max-w-full'
 })
 
 /**
- * Handles focus events with 1ms timeout for teleport functionality.
+ * Opens the dialog and focuses on the target element.
+ * Falls back to the dialog title if `focusTo` is not set.
+ * @returns {Promise<void>}
  */
-watch(
-    () => isOpen.value,
-    (val) => {
-        const { focusTo, focusFrom } = props
+const open = async () => {
+    isOpen.value = true
+    await nextTick()
 
-        if (val && focusTo)
-            setTimeout(() => {
-                setFocus(getEl(focusTo))
-            }, 50)
+    const targetEl = props.focusTo
+        ? document.getElementById(props.focusTo)
+        : document.getElementById('dialogueTitle')
 
-        if (val === false && focusFrom)
-            setTimeout(() => {
-                setFocus(getEl(focusFrom))
-            }, 50)
-    }
-)
+    await applyFocusTo(targetEl)
+}
 
 /**
- * Expose functions and open state.
+ * Closes the dialog and restores focus to original trigger.
  */
-defineExpose({
-    close,
-    isOpen,
-    open
-})
+const close = () => {
+    isOpen.value = false
+    returnFocus()
+}
+
+/**
+ * Expose dialog methods to parent components via ref.
+ */
+defineExpose({ open, close, isOpen })
 </script>

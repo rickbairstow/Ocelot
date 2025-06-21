@@ -20,7 +20,7 @@
 
                 <Button
                     aria-label="Close sidebar"
-                    type="none"
+                    type="tertiary"
                     @click="close()"
                 >
                     <Icon icon="X" />
@@ -57,7 +57,7 @@
 
 <script setup>
 import { ref, useSlots, onMounted, onUnmounted } from 'vue'
-import { useFocusMemory } from '@Composables/useFocusMemory'
+import useFocusMemory from '@Composables/useFocusMemory'
 import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'

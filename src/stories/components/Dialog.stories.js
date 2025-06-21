@@ -6,45 +6,21 @@ export default {
     component: Dialog,
 
     argTypes: {
-        default: {
-            control: 'text',
-            description: 'Body slot content',
-            table: {
-                type: { summary: 'any' }
-            }
-        },
-        defaultFooter: {
-            control: 'text',
-            description: 'Footer slot content',
-            table: {
-                type: { summary: 'any' }
-            }
-        },
-        defaultTitle: {
-            control: 'text',
-            description: 'Title slot content',
-            table: {
-                type: { summary: 'any' }
-            }
-        },
-        ariaLabel: {
-            control: 'text',
-            description: 'Aria label for the dialog.'
-        },
+        default: { control: 'text', description: 'Body slot content' },
+        defaultFooter: { control: 'text', description: 'Footer slot content' },
+        defaultTitle: { control: 'text', description: 'Title slot content' },
+        ariaLabel: { control: 'text', description: 'Aria label for the dialog.' },
         focusFrom: {
             control: 'text',
-            description:
-                'The ID of the element that triggered the dialog. This allows the dialog to focus back to the element when closing.'
+            description: 'ID of the element to return focus to when dialog closes.'
         },
         focusTo: {
             control: 'text',
-            description:
-                'The ID of the element that should be focused when the dialog is open. This is handy for focusing on inputs when it opens, else by default this will focus on the dialog title.'
+            description: 'ID of the element to focus when dialog opens.'
         },
         small: {
             control: 'boolean',
-            description:
-                'Sets if the dialog should be smaller width for larger devices.'
+            description: 'Use small dialog width on larger screens.'
         }
     },
 
@@ -60,23 +36,22 @@ export default {
 
     render: (args) => ({
         components: { Dialog },
-
         setup() {
             const dialog = ref(null)
 
             const openDialog = () => {
-                dialog.value.open()
+                dialog.value?.open()
             }
 
             return { args, dialog, openDialog }
         },
-
         template: `
             <div id="portal-target"></div>
 
             <button
                 id="dialogueTrigger"
-                @click="openDialog()"
+                class="focus:outline-1 mb-4 px-3 py-2 bg-gray-100 rounded hover:bg-gray-200"
+                @click="openDialog"
             >
                 Click to open the Dialog
             </button>
@@ -89,15 +64,9 @@ export default {
                 :portal-target="args.portalTarget"
                 :small="args.small"
             >
-                <template #title>
-                    {{ args.defaultTitle }}
-                </template>
-
+                <template #title>{{ args.defaultTitle }}</template>
                 {{ args.default }}
-
-                <template #footer>
-                    {{ args.defaultFooter }}
-                </template>
+                <template #footer>{{ args.defaultFooter }}</template>
             </Dialog>
         `
     })

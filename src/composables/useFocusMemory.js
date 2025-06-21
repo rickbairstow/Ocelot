@@ -2,13 +2,13 @@ import { ref, nextTick } from 'vue'
 
 /**
  * Manage focus in/out of a popup-like component.
- * Records the element that had focus before opening, and provides a method to return focus.
+ * Records the element that had focus before opening and provides a method to return focus.
  */
-export function useFocusMemory() {
+const useFocusMemory = () => {
     const focusFrom = ref(null)
 
     /**
-     * Record current focus and move focus into target element.
+     * Record current focus and move focus into a target element.
      * @param {HTMLElement} targetEl - The element to move focus into.
      * @returns {Promise<void>}
      */
@@ -30,7 +30,7 @@ export function useFocusMemory() {
     }
 
     /**
-     * Return focus to previously active element.
+     * Return focus to a previously active element.
      * @returns {void}
      */
     const returnFocus = () => {
@@ -45,3 +45,5 @@ export function useFocusMemory() {
         focusFrom
     }
 }
+
+export default useFocusMemory
