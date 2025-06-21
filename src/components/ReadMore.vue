@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watchPostEffect } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Button from '@Components/Button.vue'
 
 const props = defineProps({
@@ -68,11 +68,11 @@ const buttonText = computed(() => {
 const isClamped = ref(false)
 
 /**
- * Reassess clamp state when layout changes.
+ * Reassess clamp state.
  */
 const updateClamp = () => {
     const el = contentSlot.value
-    if (!el || isVisible.value) return // don't recalculate if expanded
+    if (!el) return
     isClamped.value = props.lines > 0 && el.scrollHeight > el.clientHeight
 }
 
@@ -83,42 +83,28 @@ const toggleVisibility = () => {
     isVisible.value = !isVisible.value
 }
 
-let resizeObserver
+/**
+ * Handle window resize events.
+ */
+const onResize = () => {
+    const el = contentSlot.value
+    if (!el) return
+
+    const hasOverflow = props.lines > 0 && el.scrollHeight > el.clientHeight
+
+    if (!hasOverflow && isVisible.value) {
+        isVisible.value = false
+    }
+
+    updateClamp()
+}
 
 onMounted(() => {
     updateClamp()
-
-    const onResize = () => {
-        const el = contentSlot.value
-        if (!el) return
-
-        const hasOverflow = props.lines > 0 && el.scrollHeight > el.clientHeight
-
-        if (!hasOverflow && isVisible.value) {
-            isVisible.value = false
-        }
-
-        updateClamp()
-    }
-
     window.addEventListener('resize', onResize)
-
-    onBeforeUnmount(() => {
-        window.removeEventListener('resize', onResize)
-    })
 })
 
 onBeforeUnmount(() => {
-    if (resizeObserver && contentSlot.value) {
-        resizeObserver.unobserve(contentSlot.value)
-    }
-})
-
-/**
- * Recalculate when slot content changes (after render).
- */
-watchPostEffect(() => {
-    // isVisible.value = false // reset expanded state
-    updateClamp()
+    window.removeEventListener('resize', onResize)
 })
 </script>
