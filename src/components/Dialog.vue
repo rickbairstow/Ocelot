@@ -1,10 +1,12 @@
 <template>
     <Teleport :to="portalTarget">
         <Transition>
+            <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
             <section
                 v-if="isOpen"
                 class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="dialog"
+                tabindex="0"
                 :aria-label="ariaLabel"
                 @keydown.esc="close"
             >

@@ -7,7 +7,7 @@ export default {
     argTypes: {
         default: {
             control: 'text',
-            description: 'Label slot content',
+            description: 'Label slot content'
         }
     },
 

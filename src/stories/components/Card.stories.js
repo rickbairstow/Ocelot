@@ -8,7 +8,7 @@ export default {
     argTypes: {
         badges: {
             control: 'object',
-            description: 'Array of badge objects (text and type)',
+            description: 'Array of badge objects (text and type)'
         },
         default: {
             control: 'text',

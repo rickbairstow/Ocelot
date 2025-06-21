@@ -8,7 +8,7 @@ export default {
     argTypes: {
         default: {
             control: 'text',
-            description: 'Slot content',
+            description: 'Slot content'
         },
 
         size: {
