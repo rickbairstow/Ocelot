@@ -1,5 +1,6 @@
 import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
+import { faker } from '@faker-js/faker'
 
 export default {
     title: 'Components/Button',
@@ -33,7 +34,7 @@ export default {
     },
 
     args: {
-        default: 'My Button',
+        default: faker.lorem.word(),
         disabled: false,
         size: 'base',
         type: 'primary',
@@ -105,9 +106,7 @@ export const DisabledClick = {
 
 export const AsLink = {
     args: {
-        type: 'primary',
-        href: 'https://example.com',
-        default: 'Link Button'
+        href: 'https://example.com'
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
