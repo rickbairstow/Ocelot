@@ -11,6 +11,14 @@ export default {
             control: 'text',
             description: 'Alt text for the image (required)'
         },
+        height: {
+            control: 'String',
+            description: 'Height of the image with sizing qualifier, ie px or %'
+        },
+        sizes: {
+            control: 'text',
+            description: 'Optional image sizes attribute'
+        },
         src: {
             control: 'text',
             description: 'Source URL for the image (required)'
@@ -19,17 +27,9 @@ export default {
             control: 'text',
             description: 'Optional responsive image `srcset`'
         },
-        sizes: {
-            control: 'text',
-            description: 'Optional image sizes attribute'
-        },
         width: {
             control: 'number',
-            description: 'Width of the image (in pixels)'
-        },
-        height: {
-            control: 'number',
-            description: 'Height of the image (in pixels)'
+            description: 'Width of the image with sizing qualifier, ie px or %'
         }
     },
 
@@ -38,8 +38,8 @@ export default {
         src: faker.image.url({ width: 300, height: 200 }),
         srcset: '',
         sizes: '',
-        width: 300,
-        height: 200
+        width: '300px',
+        height: '200px'
     },
 
     render: (args) => ({

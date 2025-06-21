@@ -12,10 +12,8 @@
                 vertical ? 'w-full h-40' : 'w-[40%] min-w-[120px] max-w-[200px]'
             "
         >
-            <img
-                class="w-full h-full object-cover"
-                decoding="async"
-                loading="lazy"
+            <Image
+                class="w-full h-full object-cover flex-none"
                 :alt="imageAlt"
                 :src="imageSrc"
             />
@@ -53,6 +51,7 @@
 <script setup>
 import { computed } from 'vue'
 import Badge from '@Components/Badge.vue'
+import Image from '@Components/Image.vue'
 
 const props = defineProps({
     badges: {

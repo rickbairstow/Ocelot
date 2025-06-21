@@ -11,15 +11,15 @@
 
     <div
         v-else
-        class="flex items-center justify-center text-gray-300 bg-gray-100 p-8 rounded-lg"
+        class="flex items-center justify-center text-gray-300 bg-gray-100 rounded-lg"
         :class="{ 'animate-pulse': !isFailed }"
         :style="{
-            height: height ? `${height}px` : '150px',
-            width: width ? `${width}px` : '150px'
+            height: height ? `${height}` : '100%',
+            width: width ? `${width}` : '100%'
         }"
     >
         <Icon
-            class="w-full h-full"
+            class="w-1/2 h-1/2"
             :icon="isFailed ? 'PhotoOff' : 'Photo'"
         />
     </div>
@@ -40,8 +40,8 @@ const props = defineProps({
         required: true
     },
     height: {
-        type: Number,
-        default: 0
+        type: String,
+        default: null
     },
     sizes: {
         type: String,
@@ -56,27 +56,25 @@ const props = defineProps({
         default: ''
     },
     width: {
-        type: Number,
-        default: 0
+        type: String,
+        default: null
     }
 })
 
 /**
- * Tracks whether the image has successfully loaded or if it has failed to load.
+ * Tracks whether the image has successfully loaded or failed.
  */
 const isLoaded = ref(false)
 const isFailed = ref(false)
 
 /**
  * Loads the image manually using the native Image API.
- * Handles both load and error states to update visibility.
  */
 const loadImage = () => {
     isLoaded.value = isFailed.value = false
 
     const img = new Image()
     img.src = props.src
-
     if (props.srcset) img.srcset = props.srcset
     if (props.sizes) img.sizes = props.sizes
 
@@ -84,15 +82,6 @@ const loadImage = () => {
     img.onerror = () => (isLoaded.value = isFailed.value = true)
 }
 
-/**
- * Triggers image loading on mount.
- */
-onMounted(() => {
-    loadImage()
-})
-
-/**
- * Reloads the image if the `src` changes dynamically.
- */
+onMounted(loadImage)
 watch(() => props.src, loadImage)
 </script>
