@@ -12,6 +12,15 @@ export default {
                 type: { summary: 'any' }
             }
         },
+        disabled: {
+            control: 'boolean',
+            description:
+                'Marks the button as disabled and prevents interaction.'
+        },
+        href: {
+            control: 'text',
+            description: 'Sets the link href for anchor rendering.'
+        },
         size: {
             control: 'select',
             options: ['small', 'base', 'large'],
@@ -28,7 +37,8 @@ export default {
         default: 'My Button',
         disabled: false,
         size: 'base',
-        type: 'primary'
+        type: 'primary',
+        href: null
     },
 
     render: (args) => ({
@@ -44,6 +54,7 @@ export default {
                 :href="args.href"
                 :size="args.size"
                 :type="args.type"
+                @click="() => (console.log('Button clicked.'))"
             >
                 {{ args.default }}
             </Button>
@@ -53,7 +64,7 @@ export default {
 
 export const Primary = {
     args: {
-        type: 'primary'
+        type: 'primary',
     }
 }
 
@@ -78,5 +89,13 @@ export const Text = {
 export const None = {
     args: {
         type: 'none'
+    }
+}
+
+export const AsLink = {
+    args: {
+        type: 'primary',
+        href: 'https://example.com',
+        default: 'Link Button'
     }
 }
