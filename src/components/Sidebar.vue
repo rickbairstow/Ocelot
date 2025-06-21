@@ -8,7 +8,7 @@
             class="fixed inset-y-0 z-20 flex flex-col w-full sm:w-64 max-h-full max-w-full bg-white text-black"
             role="complementary"
             tabindex="-1"
-            :class="sideClasses"
+            :class="side === 'left' ? 'left-0' : 'right-0'"
         >
             <div
                 v-if="slots?.title"
@@ -56,19 +56,18 @@
 </template>
 
 <script setup>
-import { computed, ref, useSlots, onMounted, onUnmounted } from 'vue'
+import { ref, useSlots, onMounted, onUnmounted } from 'vue'
 import { useFocusMemory } from '@Composables/useFocusMemory'
 import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'
 
-const slots = useSlots()
+const { focusFrom, focusTo, returnFocus } = useFocusMemory()
 const isOpen = ref(false)
 const sidebarRef = ref(null)
+const slots = useSlots()
 
-const { focusFrom, focusTo, returnFocus } = useFocusMemory()
-
-const props = defineProps({
+defineProps({
     showScrim: {
         default: true,
         type: Boolean
@@ -93,7 +92,7 @@ const close = () => {
 }
 
 /**
- * Open the sidebar and move focus inside.
+ * Open the sidebar and move the focus inside.
  * @returns {Promise<boolean>}
  */
 const open = async () => {
@@ -119,14 +118,6 @@ onMounted(() => {
 
 onUnmounted(() => {
     window.removeEventListener('keydown', handleGlobalEscape)
-})
-
-/**
- * Sidebar side classes.
- * @type {import('vue').ComputedRef<string>}
- */
-const sideClasses = computed(() => {
-    return props.side === 'left' ? 'left-0 border-r' : 'right-0 border-l'
 })
 
 /**
