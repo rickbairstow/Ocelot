@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watchPostEffect } from 'vue'
 import Button from '@Components/Button.vue'
 
 const props = defineProps({
@@ -33,6 +33,9 @@ const props = defineProps({
 const contentSlot = ref(null)
 const isVisible = ref(false)
 
+/**
+ * Tailwind's line-clamp class selection.
+ */
 const clampLookup = [
     'line-clamp-none',
     'line-clamp-1',
@@ -43,23 +46,64 @@ const clampLookup = [
     'line-clamp-6'
 ]
 
+/**
+ * Applies clamping unless expanded.
+ */
 const clampClass = computed(() => {
     if (isVisible.value) return ''
-    const { lines } = props
-    const val = lines > 0 && lines <= 6 ? lines : 0
-    return clampLookup?.[val] ?? ''
+    const val = props.lines > 0 && props.lines <= 6 ? props.lines : 0
+    return clampLookup[val] ?? ''
 })
 
+/**
+ * Dynamic button text.
+ */
 const buttonText = computed(() => {
     return isVisible.value ? 'Show less' : 'Show more'
 })
 
-const isClamped = computed(
-    () =>
-        props.lines > 0 &&
-        contentSlot.value &&
-        contentSlot.value.scrollHeight > contentSlot.value.clientHeight
-)
+/**
+ * Reactive flag to determine whether content is clamped.
+ */
+const isClamped = ref(false)
 
-const toggleVisibility = () => (isVisible.value = !isVisible.value)
+/**
+ * Reassess clamp state when layout changes.
+ */
+const updateClamp = () => {
+    const el = contentSlot.value
+    if (!el || isVisible.value) return // don't recalculate if expanded
+    isClamped.value = props.lines > 0 && el.scrollHeight > el.clientHeight
+}
+
+/**
+ * Toggle expanded/collapsed state.
+ */
+const toggleVisibility = () => {
+    isVisible.value = !isVisible.value
+}
+
+let resizeObserver
+
+onMounted(() => {
+    updateClamp()
+
+    resizeObserver = new ResizeObserver(updateClamp)
+    if (contentSlot.value) {
+        resizeObserver.observe(contentSlot.value)
+    }
+})
+
+onBeforeUnmount(() => {
+    if (resizeObserver && contentSlot.value) {
+        resizeObserver.unobserve(contentSlot.value)
+    }
+})
+
+/**
+ * Recalculate when slot content changes (after render).
+ */
+watchPostEffect(() => {
+    updateClamp()
+})
 </script>

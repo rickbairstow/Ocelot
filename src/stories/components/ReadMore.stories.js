@@ -1,4 +1,6 @@
 import ReadMore from '@Components/ReadMore.vue'
+import { userEvent, within, expect } from 'storybook/test'
+import { faker } from '@faker-js/faker'
 
 export default {
     title: 'Components/ReadMore',
@@ -20,8 +22,7 @@ export default {
     },
 
     args: {
-        default:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ipsum erat, pretium sit amet bibendum sed, blandit a felis. Suspendisse ornare risus vitae imperdiet vehicula. Morbi non nibh tempus, cursus turpis vitae, semper lacus. Ut in lobortis dui. Duis vitae lacus non orci ultrices interdum. Nunc porttitor eget neque sit amet maximus. Nulla facilisi. Pellentesque venenatis ac urna eget blandit. Nunc cursus est ac eros gravida, in cursus leo tristique. In tristique tellus id mollis iaculis.',
+        default: faker.lorem.paragraphs(1, '\n\n'),
         lines: 4
     }
 }
@@ -29,18 +30,30 @@ export default {
 export const Default = {
     render: (args) => ({
         components: { ReadMore },
-
         setup() {
             return { args }
         },
-
         template: `
-            <ReadMore
-                class="w-96"
-                :lines="args.lines"
-            >
+            <ReadMore :lines="args.lines">
                 {{ args.default }}
             </ReadMore>
         `
-    })
+    }),
+
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        const button = await canvas.findByRole('button', { name: /show more/i })
+        await expect(button).toBeVisible()
+
+        // Click to expand
+        await userEvent.click(button)
+
+        // Button should now read "Show less"
+        await expect(button).toHaveTextContent(/show less/i)
+
+        // Click again to collapse
+        await userEvent.click(button)
+        await expect(button).toHaveTextContent(/show more/i)
+    }
 }
