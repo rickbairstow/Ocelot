@@ -13,7 +13,8 @@ export default {
         },
         disabled: {
             control: 'boolean',
-            description: 'Marks the button as disabled and prevents interaction.'
+            description:
+                'Marks the button as disabled and prevents interaction.'
         },
         href: {
             control: 'text',
@@ -98,7 +99,7 @@ export const DisabledClick = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         const button = await canvas.getByRole('button')
-        expect(button).toHaveAttribute('aria-disabled', 'true')
+        await expect(button).toHaveAttribute('aria-disabled', 'true')
     }
 }
 
@@ -110,12 +111,14 @@ export const AsLink = {
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
-        const button = await canvas.getByRole('button')
+        const link = await canvas.getByRole('link')
 
-        // Confirm href is correct, but do NOT follow it
-        expect(button).toHaveAttribute('href', 'https://example.com')
+        // Attach a one-time native listener to block navigation
+        link.addEventListener('click', (e) => e.preventDefault(), {
+            once: true
+        })
 
-        // Simulate a click but prevent navigation
-        await userEvent.click(button, { skipPointerEventsCheck: true })
+        await expect(link).toHaveAttribute('href', 'https://example.com')
+        await userEvent.click(link)
     }
 }
