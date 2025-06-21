@@ -1,5 +1,6 @@
 import Sidebar from '@Components/Sidebar.vue'
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
+import { userEvent, within, expect, waitFor } from 'storybook/test'
 
 export default {
     title: 'Components/Sidebar',
@@ -8,24 +9,20 @@ export default {
     argTypes: {
         default: {
             control: 'text',
-            description: 'Slot content',
+            description: 'Slot content'
         },
-
         title: {
             control: 'text',
-            description: 'Title slot content',
+            description: 'Title slot content'
         },
-
         footer: {
             control: 'text',
-            description: 'Footer slot content',
+            description: 'Footer slot content'
         },
-
         showScrim: {
             control: 'boolean',
             description: 'Sets if the scrim should show when the menu is open.'
         },
-
         side: {
             control: 'select',
             options: ['left', 'right'],
@@ -47,7 +44,7 @@ export default {
             const sidebar = ref(null)
             const triggerRef = ref(null)
 
-            const openSidebar = async () => {
+            const openSidebar = () => {
                 sidebar.value.open()
             }
 
@@ -82,14 +79,42 @@ export default {
     })
 }
 
+// ✅ Interaction test for focus behavior
 export const Left = {
-    args: {
-        side: 'left'
+    args: { side: 'left' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        const openButton = await canvas.getByRole('button', {
+            name: 'Open Sidebar'
+        })
+        await userEvent.click(openButton)
+
+        const closeButtons = await canvas.findAllByRole('button', {
+            name: 'Close sidebar'
+        })
+        const visibleCloseButton = closeButtons.find(
+            (btn) => btn.offsetParent !== null
+        )
+
+        await waitFor(() => {
+            expect(visibleCloseButton).toBeVisible()
+        })
+
+        visibleCloseButton.focus()
+        await expect(visibleCloseButton).toHaveFocus()
+
+        // Click the close button instead of Escape
+        await userEvent.click(visibleCloseButton)
+
+        // Assert focus returns to the original trigger
+        await waitFor(() => {
+            expect(openButton).toHaveFocus()
+        })
     }
 }
 
 export const Right = {
-    args: {
-        side: 'right'
-    }
+    args: { side: 'right' },
+    play: Left.play // same test logic
 }
