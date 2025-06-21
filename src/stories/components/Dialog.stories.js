@@ -1,5 +1,6 @@
 import Dialog from '@Components/Dialog.vue'
 import { ref } from 'vue'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 export default {
     title: 'Components/Dialog',
@@ -9,10 +10,14 @@ export default {
         default: { control: 'text', description: 'Body slot content' },
         defaultFooter: { control: 'text', description: 'Footer slot content' },
         defaultTitle: { control: 'text', description: 'Title slot content' },
-        ariaLabel: { control: 'text', description: 'Aria label for the dialog.' },
+        ariaLabel: {
+            control: 'text',
+            description: 'Aria label for the dialog.'
+        },
         focusFrom: {
             control: 'text',
-            description: 'ID of the element to return focus to when dialog closes.'
+            description:
+                'ID of the element to return focus to when dialog closes.'
         },
         focusTo: {
             control: 'text',
@@ -50,7 +55,7 @@ export default {
 
             <button
                 id="dialogueTrigger"
-                class="focus:outline-1 mb-4 px-3 py-2 bg-gray-100 rounded hover:bg-gray-200"
+                class="focus:outline-1"
                 @click="openDialog"
             >
                 Click to open the Dialog
@@ -72,4 +77,43 @@ export default {
     })
 }
 
-export const Default = {}
+export const Default = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        const openButton = await canvas.findByRole('button', {
+            name: /click to open the dialog/i
+        })
+
+        await userEvent.click(openButton)
+
+        const dialog = await canvas.findByRole('dialog', { name: /my dialog/i })
+
+        await waitFor(() => {
+            expect(dialog).toBeVisible()
+        })
+
+        const title = await canvas.findByText(/dialog title/i)
+        await expect(title).toHaveFocus()
+
+        // Get all close buttons
+        const closeButtons = await canvas.findAllByRole('button', {
+            name: /close dialog/i
+        })
+
+        // Choose the visible one (exclude sr-only and scrim)
+        const closeButton = closeButtons.find(
+            (btn) =>
+                getComputedStyle(btn).display !== 'none' &&
+                !btn.classList.contains('sr-only')
+        )
+
+        await userEvent.click(closeButton)
+
+        await waitFor(() => {
+            expect(dialog).not.toBeVisible()
+        })
+
+        await expect(openButton).toHaveFocus()
+    }
+}
