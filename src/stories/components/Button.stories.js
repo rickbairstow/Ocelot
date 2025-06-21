@@ -10,7 +10,6 @@ export default {
         default: {
             control: 'text',
             description: 'Slot content',
-            table: { type: { summary: 'any' } }
         },
         disabled: {
             control: 'boolean',

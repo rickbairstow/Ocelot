@@ -17,10 +17,7 @@ export default {
                 'paragraph',
                 'text'
             ],
-            description: 'Placeholder slot content',
-            table: {
-                type: { summary: 'any' }
-            }
+            description: 'Placeholder slot content'
         }
     },
 

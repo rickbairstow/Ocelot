@@ -8,9 +8,6 @@ export default {
         default: {
             control: 'text',
             description: 'Label slot content',
-            table: {
-                type: { summary: 'any' }
-            }
         }
     },
 

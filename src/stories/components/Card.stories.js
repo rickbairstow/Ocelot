@@ -9,9 +9,6 @@ export default {
         badges: {
             control: 'object',
             description: 'Array of badge objects (text and type)',
-            table: {
-                type: { summary: 'Array<{ text: string, type: string }>' }
-            }
         },
         default: {
             control: 'text',

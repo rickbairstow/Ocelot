@@ -8,9 +8,6 @@ export default {
         default: {
             control: 'text',
             description: 'Heading slot content',
-            table: {
-                type: { summary: 'any' }
-            }
         },
 
         level: {
