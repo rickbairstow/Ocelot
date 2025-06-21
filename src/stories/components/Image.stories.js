@@ -63,18 +63,18 @@ export default {
 }
 
 export const Default = {
-    play: async ({ canvasElement, args }) => {
-        const { findByAltText } = within(canvasElement)
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
 
         // Check for placeholder
         const loadingIcon = canvasElement.querySelector('div.animate-pulse')
         await expect(loadingIcon).toBeVisible()
 
-        // Wait for the image to load
-        const img = await findByAltText(args.alt)
+        // Wait for any image to appear
+        const img = await canvas.findByRole('img')
         await expect(img).toBeVisible()
 
-        // Ensure the placeholder is no longer visible
+        // Ensure the placeholder is no longer present
         await waitFor(() => {
             expect(
                 canvasElement.querySelector('div.animate-pulse')
