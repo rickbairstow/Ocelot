@@ -7,10 +7,7 @@ export default {
     argTypes: {
         default: {
             control: 'text',
-            description: 'Heading slot content',
-            table: {
-                type: { summary: 'any' }
-            }
+            description: 'Heading slot content'
         },
 
         level: {

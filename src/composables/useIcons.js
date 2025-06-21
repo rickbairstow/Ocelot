@@ -30,6 +30,7 @@ import {
     // P
     IconPhone as Phone,
     IconPhoto as Photo,
+    IconPhotoOff as PhotoOff,
     IconPlus as Plus,
 
     // S
@@ -77,6 +78,7 @@ const availableIcons = {
     // P
     Phone,
     Photo,
+    PhotoOff,
     Plus,
 
     // S

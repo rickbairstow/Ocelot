@@ -46,6 +46,7 @@
     "test-storybook": "test-storybook"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@rushstack/eslint-patch": "^1.11.0",
     "@tabler/icons": "^3.34.0",
     "@tabler/icons-vue": "^3.34.0",
@@ -54,7 +55,7 @@
     "vue": "^3.5.16"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "^9.0.10",
+    "@storybook/addon-a11y": "^9.0.12",
     "@storybook/addon-docs": "^9.0.12",
     "@storybook/addon-links": "^9.0.12",
     "@storybook/addon-themes": "^9.0.12",
@@ -69,20 +70,19 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-jsdoc": "^51.0.1",
     "eslint-plugin-prettier": "^5.4.1",
-    "eslint-plugin-storybook": "^9.0.10",
+    "eslint-plugin-storybook": "^9.0.12",
     "eslint-plugin-vue": "^9.32.0",
     "eslint-plugin-vuejs-accessibility": "^2.4.1",
     "postcss": "^8.5.5",
     "prettier": "^3.5.3",
     "sass-embedded": "^1.89.2",
-    "storybook": "^9.0.10",
+    "storybook": "^9.0.12",
     "stylelint": "^16.20.0",
     "stylelint-config-standard": "^38.0.0",
     "stylelint-config-standard-scss": "^15.0.1",
     "stylelint-prettier": "^5.0.3",
     "tailwindcss": "^4.1.10",
-    "vite": "^6.3.5",
-    "vite-plugin-vue-devtools": "^7.7.7"
+    "vite": "^6.3.5"
   },
   "overrides": {
     "storybook": "$storybook"

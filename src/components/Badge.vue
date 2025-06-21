@@ -1,6 +1,7 @@
 <template>
     <div
         class="inline-flex justify-center items-center gap-1 rounded-full px-2 font-medium break-all"
+        role="note"
         :class="badgeCss"
     >
         <slot />
@@ -14,14 +15,14 @@ const props = defineProps({
     size: {
         type: String,
         default: 'lg',
-        validate: (value) => ['sm', 'md', 'lg'].includes(value)
+        validator: (value) => ['sm', 'md', 'lg'].includes(value)
     },
 
     type: {
         type: String,
         default: 'default',
-        validate: (value) =>
-            ['default', 'error', 'info', 'success', 'warning'].include(value)
+        validator: (value) =>
+            ['default', 'error', 'info', 'success', 'warning'].includes(value)
     }
 })
 

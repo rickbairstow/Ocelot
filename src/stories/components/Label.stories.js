@@ -7,10 +7,7 @@ export default {
     argTypes: {
         default: {
             control: 'text',
-            description: 'Label slot content',
-            table: {
-                type: { summary: 'any' }
-            }
+            description: 'Label slot content'
         }
     },
 

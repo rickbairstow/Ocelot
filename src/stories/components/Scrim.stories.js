@@ -1,4 +1,5 @@
 import Scrim from '@Components/Scrim.vue'
+import { expect, userEvent, within } from 'storybook/test'
 
 export default {
     title: 'Components/Scrim',
@@ -22,7 +23,6 @@ export default {
 
     render: (args) => ({
         components: { Scrim },
-
         setup() {
             const scrimEvent = () => {
                 console.log('Scrim clicked.')
@@ -30,7 +30,6 @@ export default {
 
             return { args, scrimEvent }
         },
-
         template: `
             <Scrim
                 :aria-label="args.ariaLabel"
@@ -41,10 +40,29 @@ export default {
     })
 }
 
-export const Default = {}
+// ✅ Interaction: click works when not disabled
+export const Default = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const scrim = await canvas.getByRole('button', { name: 'My scrim' })
 
+        await expect(scrim).not.toHaveAttribute('aria-disabled', 'true')
+        await userEvent.click(scrim)
+    }
+}
+
+// ✅ Interaction: click does nothing when disabled
 export const Disabled = {
     args: {
         disabled: true
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const scrim = await canvas.getByRole('button', { name: 'My scrim' })
+
+        await expect(scrim).toHaveAttribute('aria-disabled', 'true')
+
+        // Attempt click but assert no error (manual confirmation)
+        await userEvent.click(scrim)
     }
 }

@@ -1,4 +1,5 @@
 import Badge from '@Components/Badge.vue'
+import { faker } from '@faker-js/faker'
 
 export default {
     title: 'Components/Badge',
@@ -7,10 +8,7 @@ export default {
     argTypes: {
         default: {
             control: 'text',
-            description: 'Slot content',
-            table: {
-                type: { summary: 'any' }
-            }
+            description: 'Slot content'
         },
 
         size: {
@@ -26,7 +24,7 @@ export default {
         }
     },
     args: {
-        default: 'Badge content',
+        default: faker.lorem.word(),
         size: 'lg',
         type: 'default'
     },
@@ -43,7 +41,7 @@ export default {
                 :size="args.size"
                 :type="args.type"
             >
-                <p>{{ args.default }}</p>
+                {{ args.default }}
             </Badge>
         `
     })

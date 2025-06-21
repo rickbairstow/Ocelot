@@ -1,24 +1,26 @@
 <template>
     <div
         class="border rounded-lg overflow-hidden shadow-lg border-gray-100"
-        :class="[sizeCss, vertical ? 'block' : 'flex']"
+        role="article"
+        :class="[sizeCss, vertical ? 'block' : 'flex flex-wrap']"
     >
         <!-- Image -->
-        <div
+        <figure
             v-if="imageSrc"
-            :class="[
-                vertical ? 'w-full h-40' : 'w-1/3 h-auto',
-                'overflow-hidden'
-            ]"
+            class="overflow-hidden"
+            :class="
+                vertical ? 'w-full h-40' : 'w-[40%] min-w-[120px] max-w-[200px]'
+            "
         >
-            <img
-                class="w-full h-full object-cover"
+            <Image
+                class="w-full h-full object-cover flex-none"
                 :alt="imageAlt"
                 :src="imageSrc"
             />
-        </div>
+        </figure>
 
-        <div class="px-6 py-4 flex flex-col justify-between">
+        <!-- Content -->
+        <div class="px-6 py-4 flex flex-col justify-between flex-1">
             <h2
                 v-if="title"
                 class="font-bold text-xl mb-1"
@@ -49,43 +51,46 @@
 <script setup>
 import { computed } from 'vue'
 import Badge from '@Components/Badge.vue'
+import Image from '@Components/Image.vue'
 
 const props = defineProps({
     badges: {
-        default: () => [],
         type: Array,
-        validator: (value) => {
-            return value.every(
+        default: () => [],
+        validator: (value) =>
+            value.every(
                 (badge) =>
                     typeof badge === 'object' &&
                     typeof badge.text === 'string' &&
                     typeof badge.type === 'string'
             )
-        }
     },
     imageAlt: {
-        default: null,
-        type: String
+        type: String,
+        default: ''
     },
     imageSrc: {
-        default: null,
-        type: String
+        type: String,
+        default: null
     },
     title: {
-        default: null,
-        type: String
+        type: String,
+        default: null
     },
     size: {
-        default: 'base',
         type: String,
+        default: 'base',
         validator: (value) => ['small', 'base', 'large'].includes(value)
     },
     vertical: {
-        default: false,
-        type: Boolean
+        type: Boolean,
+        default: false
     }
 })
 
+/**
+ * Computes the width class based on size.
+ */
 const sizeCss = computed(() => {
     const localLookup = {
         small: 'w-sm',

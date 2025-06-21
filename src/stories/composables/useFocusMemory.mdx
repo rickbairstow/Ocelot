@@ -1,0 +1,76 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Composables/useFocusMemory" />
+
+# useFocusMemory
+
+A simple composable to manage focus transitions in popup components like modals, drawers, or sidebars.
+
+It handles:
+
+- Recording the element that had focus before the popup opened (`focusFrom`)
+- Moving focus to the popup or container when opened (`focusTo`)
+- Returning focus to the original element when closed (`returnFocus`)
+
+---
+
+## ✨ Features
+
+- ✅ `focusTo(targetEl)` moves focus into your popup
+- ✅ `returnFocus()` restores focus to what was focused before
+- ✅ Lightweight and reusable across all components
+- ✅ No side effects, no global listeners, no trapping
+
+---
+
+## 🔧 Usage
+
+```js
+import { ref } from 'vue'
+import { useFocusMemory } from '@Composables/useFocusMemory'
+
+const popupRef = ref(null)
+const isOpen = ref(false)
+
+const { focusFrom, focusTo, returnFocus } = useFocusMemory()
+
+const openPopup = async () => {
+  isOpen.value = true
+  await focusTo(popupRef.value)
+}
+
+const closePopup = () => {
+  isOpen.value = false
+  returnFocus()
+}
+```
+
+---
+
+## 🧠 What `focusTo()` does
+
+- Stores `document.activeElement` in `focusFrom`
+- Focuses the first focusable child inside the container
+- If none found, focuses the container itself
+
+The container should have `tabindex="-1"` if it’s not naturally focusable.
+
+---
+
+## ✅ Example HTML structure
+
+```html
+<button @click="openPopup">Open Sidebar</button>
+
+<div v-if="isOpen" ref="popupRef" tabindex="-1">
+  <button @click="closePopup">Close</button>
+</div>
+```
+
+---
+
+## ⚠️ Notes
+
+- This composable is **not** a full focus trap
+- It works well for modals, drawers, popovers — anything popup-like
+- Works best when paired with `@after-enter` for animated components

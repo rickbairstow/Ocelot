@@ -1,4 +1,5 @@
 import Card from '@Components/Card.vue'
+import { faker } from '@faker-js/faker'
 
 export default {
     title: 'Components/Card',
@@ -7,10 +8,7 @@ export default {
     argTypes: {
         badges: {
             control: 'object',
-            description: 'Array of badge objects (text and type)',
-            table: {
-                type: { summary: 'Array<{ text: string, type: string }>' }
-            }
+            description: 'Array of badge objects (text and type)'
         },
         default: {
             control: 'text',
@@ -41,15 +39,15 @@ export default {
 
     args: {
         badges: [
-            { text: '#foo', type: 'info' },
-            { text: '#bar', type: 'success' },
-            { text: '#baz', type: 'default' }
+            { text: faker.lorem.word(), type: 'info' },
+            { text: faker.lorem.word(), type: 'success' },
+            { text: faker.lorem.word(), type: 'default' }
         ],
-        default: 'Card content goes here.',
-        imageAlt: 'Card image',
-        imageSrc: 'https://picsum.photos/id/1000/500/300',
+        default: faker.lorem.paragraph(2),
+        imageAlt: faker.commerce.productName(),
+        imageSrc: faker.image.url({ width: 400, height: 300 }), // controlled size
         size: 'base',
-        title: 'Card Title',
+        title: faker.commerce.productName(),
         vertical: false
     },
 
@@ -80,8 +78,10 @@ export const Horizontal = {
         vertical: false
     }
 }
+
 export const Vertical = {
     args: {
-        vertical: true
+        vertical: true,
+        imageSrc: faker.image.url({ width: 600, height: 240 })
     }
 }
