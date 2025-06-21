@@ -11,10 +11,6 @@ export default {
             control: 'text',
             description: 'Slot content'
         },
-        title: {
-            control: 'text',
-            description: 'Title slot content'
-        },
         footer: {
             control: 'text',
             description: 'Footer slot content'
@@ -27,6 +23,10 @@ export default {
             control: 'select',
             options: ['left', 'right'],
             description: 'Sets what side the sidebar displays on.'
+        },
+        title: {
+            control: 'text',
+            description: 'Title slot content'
         }
     },
 
