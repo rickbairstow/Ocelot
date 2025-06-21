@@ -1,4 +1,5 @@
 import Image from '@Components/Image.vue'
+import { expect, waitFor, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
 export default {
@@ -61,7 +62,26 @@ export default {
     })
 }
 
-export const Default = {}
+export const Default = {
+    play: async ({ canvasElement, args }) => {
+        const { findByAltText } = within(canvasElement)
+
+        // Check for placeholder
+        const loadingIcon = canvasElement.querySelector('div.animate-pulse')
+        await expect(loadingIcon).toBeVisible()
+
+        // Wait for the image to load
+        const img = await findByAltText(args.alt)
+        await expect(img).toBeVisible()
+
+        // Ensure the placeholder is no longer visible
+        await waitFor(() => {
+            expect(
+                canvasElement.querySelector('div.animate-pulse')
+            ).not.toBeInTheDocument()
+        })
+    }
+}
 
 export const WithSrcset = {
     args: {
