@@ -9,7 +9,7 @@
         >
             <div
                 v-if="slots?.title"
-                class="flex-none flex items-center justify-between gap-4 border-b py-2 bg-gray-100"
+                class="flex-none flex items-center justify-between gap-4 py-2 bg-gray-50"
             >
                 <div class="px-4">
                     <slot name="title" />
@@ -30,7 +30,7 @@
 
             <div
                 v-if="slots?.footer"
-                class="flex-none border-t p-4 bg-gray-100"
+                class="flex-none p-4 bg-gray-50"
             >
                 <slot name="footer" />
             </div>
