@@ -6,19 +6,25 @@ export default {
     component: Scrim,
 
     argTypes: {
+        absolute: {
+            control: 'boolean',
+            description: 'If true, scrim is positioned absolutely.'
+        },
         ariaLabel: {
             control: 'text',
             description: 'Aria label to apply to the scrim.'
         },
-        disabled: {
+        clickable: {
             control: 'boolean',
-            description: 'Sets if the scrim should be clickable.'
+            description:
+                'If true, scrim is interactive and emits a click event.'
         }
     },
 
     args: {
+        absolute: false,
         ariaLabel: 'My scrim',
-        disabled: false
+        clickable: true
     },
 
     render: (args) => ({
@@ -27,21 +33,23 @@ export default {
             const scrimEvent = () => {
                 console.log('Scrim clicked.')
             }
-
             return { args, scrimEvent }
         },
         template: `
             <Scrim
                 :aria-label="args.ariaLabel"
-                :disabled="args.disabled"
+                :clickable="args.clickable"
                 @click="scrimEvent"
             />
         `
     })
 }
 
-// ✅ Interaction: click works when not disabled
-export const Default = {
+// ✅ Test: scrim emits click when clickable
+export const Clickable = {
+    args: {
+        clickable: true
+    },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         const scrim = await canvas.getByRole('button', { name: 'My scrim' })
@@ -51,18 +59,20 @@ export const Default = {
     }
 }
 
-// ✅ Interaction: click does nothing when disabled
-export const Disabled = {
+// ✅ Test: scrim does not emit click when not clickable
+export const NonClickable = {
     args: {
-        disabled: true
+        clickable: false
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
-        const scrim = await canvas.getByRole('button', { name: 'My scrim' })
+        const scrim = await canvas.getByLabelText('My scrim')
 
+        // Element should not be a button if not clickable
+        await expect(scrim.tagName.toLowerCase()).not.toBe('button')
         await expect(scrim).toHaveAttribute('aria-disabled', 'true')
 
-        // Attempt click but assert no error (manual confirmation)
+        // Click is attempted but should have no effect
         await userEvent.click(scrim)
     }
 }

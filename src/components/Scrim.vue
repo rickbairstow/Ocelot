@@ -1,35 +1,43 @@
 <template>
-    <button
-        class="fixed inset-0 opacity-90 bg-gray-500"
-        :aria-disabled="disabled ? 'true' : undefined"
+    <component
+        :is="clickable ? 'button' : 'div'"
+        class="inset-0 bg-gray-500 opacity-90 z-0"
+        :aria-disabled="!clickable ? 'true' : undefined"
         :aria-label="ariaLabel"
-        :class="disabled ? 'cursor-default' : 'cursor-pointer'"
-        @click="handleClick"
+        :class="[
+            clickable ? 'cursor-pointer' : 'cursor-default',
+            absolute ? 'absolute' : 'fixed'
+        ]"
+        @click="clickable ? handleClick : undefined"
     />
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineEmits, defineProps } from 'vue'
 
 const props = defineProps({
-    ariaLabel: {
-        type: String,
-        required: true
-    },
-    disabled: {
+    absolute: {
+        default: false,
         type: Boolean,
-        default: false
+    },
+    ariaLabel: {
+        default: null,
+        type: String,
+    },
+    clickable: {
+        type: Boolean,
+        default: true
     }
 })
 
 const emit = defineEmits(['click'])
 
 /**
- * Handles click interaction when not disabled.
+ * Emits click only if the scrim is clickable.
  * @param {MouseEvent} e
  */
 const handleClick = (e) => {
-    if (props.disabled) {
+    if (!props.clickable) {
         e.preventDefault()
         e.stopImmediatePropagation?.()
         e.stopPropagation()

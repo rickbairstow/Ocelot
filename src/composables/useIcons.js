@@ -20,7 +20,9 @@ import {
     IconChevronsRight as ChevronsRight,
 
     // L
-    IconLoader2 as Loader,
+    IconLoader as Loader,
+    IconLoader2 as Loader2,
+    IconLoader3 as Loader3,
 
     // M
     IconMail as Mail,
@@ -69,6 +71,8 @@ const availableIcons = {
 
     // L
     Loader,
+    Loader2,
+    Loader3,
 
     // M
     Mail,
