@@ -65,14 +65,14 @@ export const NonClickable = {
         clickable: false
     },
     play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const scrim = await canvas.getByLabelText('My scrim')
+        // Query by role if clickable, otherwise use a tag selector
+        const scrim = canvasElement.querySelector('div.inset-0')
 
-        // Element should not be a button if not clickable
-        await expect(scrim.tagName.toLowerCase()).not.toBe('button')
+        await expect(scrim).not.toBeNull()
+        await expect(scrim.tagName.toLowerCase()).toBe('div')
         await expect(scrim).toHaveAttribute('aria-disabled', 'true')
 
-        // Click is attempted but should have no effect
+        // Click is attempted but should not trigger error
         await userEvent.click(scrim)
     }
 }

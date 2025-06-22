@@ -8,7 +8,7 @@
             clickable ? 'cursor-pointer' : 'cursor-default',
             absolute ? 'absolute' : 'fixed'
         ]"
-        @click="clickable ? handleClick : undefined"
+        @click="handleClick"
     />
 </template>
 
@@ -18,11 +18,11 @@ import { defineEmits, defineProps } from 'vue'
 const props = defineProps({
     absolute: {
         default: false,
-        type: Boolean,
+        type: Boolean
     },
     ariaLabel: {
         default: null,
-        type: String,
+        type: String
     },
     clickable: {
         type: Boolean,
@@ -39,7 +39,6 @@ const emit = defineEmits(['click'])
 const handleClick = (e) => {
     if (!props.clickable) {
         e.preventDefault()
-        e.stopImmediatePropagation?.()
         e.stopPropagation()
         return
     }
