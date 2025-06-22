@@ -64,31 +64,26 @@ export default {
 
 export const Default = {
     play: async ({ canvasElement, args }) => {
+        // 🛠️ Intercept Image loading in test
+        window.Image = class {
+            set src(_) {
+                setTimeout(() => {
+                    const evt = new Event('load')
+                    this.onload?.(evt)
+                }, 50)
+            }
+        }
+
         const canvas = within(canvasElement)
 
-        // Check placeholder is visible
         const loadingIcon = canvasElement.querySelector('div.animate-pulse')
         await expect(loadingIcon).toBeVisible()
 
-        // Wait for the image OR the error fallback icon to appear
-        const img = await waitFor(() => {
-            const found = canvas.queryByAltText(args.alt)
-            const fallbackIcon = canvasElement.querySelector(
-                'svg[data-icon="PhotoOff"]'
-            )
-            if (!found && !fallbackIcon)
-                throw new Error('Waiting for image or fallback')
-            return found
-        })
+        const img = await canvas.findByAltText(args.alt)
+        await expect(img).toBeVisible()
 
-        // If img was found, ensure it's visible
-        if (img) await expect(img).toBeVisible()
-
-        // Ensure placeholder disappears
         await waitFor(() => {
-            expect(
-                canvasElement.querySelector('div.animate-pulse')
-            ).not.toBeInTheDocument()
+            expect(canvasElement.querySelector('div.animate-pulse')).not.toBeInTheDocument()
         })
     }
 }
