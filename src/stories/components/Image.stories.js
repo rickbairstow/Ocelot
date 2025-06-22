@@ -64,21 +64,26 @@ export default {
 
 export const Default = {
     play: async ({ canvasElement, args }) => {
+        // 🛠️ Intercept Image loading in test
+        window.Image = class {
+            set src(_) {
+                setTimeout(() => {
+                    const evt = new Event('load')
+                    this.onload?.(evt)
+                }, 50)
+            }
+        }
+
         const canvas = within(canvasElement)
 
-        // Check for placeholder
         const loadingIcon = canvasElement.querySelector('div.animate-pulse')
         await expect(loadingIcon).toBeVisible()
 
-        // Wait for image with matching alt text to appear
         const img = await canvas.findByAltText(args.alt)
         await expect(img).toBeVisible()
 
-        // Ensure the placeholder is no longer present
         await waitFor(() => {
-            expect(
-                canvasElement.querySelector('div.animate-pulse')
-            ).not.toBeInTheDocument()
+            expect(canvasElement.querySelector('div.animate-pulse')).not.toBeInTheDocument()
         })
     }
 }
@@ -92,7 +97,7 @@ export const WithSrcset = {
             ${faker.image.url({ width: 900, height: 600 })} 900w
         `,
         sizes: '(max-width: 600px) 300px, (max-width: 900px) 600px, 900px',
-        width: 900,
-        height: 600
+        width: '900px',
+        height: '600px'
     }
 }
