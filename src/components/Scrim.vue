@@ -1,9 +1,9 @@
 <template>
     <component
         :is="clickable ? 'button' : 'div'"
-        class="inset-0 bg-gray-500 opacity-90 z-0"
+        class="inset-0 bg-slate-600 opacity-90 z-0"
         :aria-disabled="!clickable ? 'true' : undefined"
-        :aria-label="ariaLabel"
+        :aria-label="clickable && ariaLabel ? ariaLabel : undefined"
         :class="[
             clickable ? 'cursor-pointer' : 'cursor-default',
             absolute ? 'absolute' : 'fixed'
