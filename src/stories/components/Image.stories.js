@@ -92,7 +92,7 @@ export const WithSrcset = {
             ${faker.image.url({ width: 900, height: 600 })} 900w
         `,
         sizes: '(max-width: 600px) 300px, (max-width: 900px) 600px, 900px',
-        width: 900,
-        height: 600
+        width: '900px',
+        height: '600px'
     }
 }
