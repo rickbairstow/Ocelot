@@ -64,33 +64,38 @@ export default {
 
 export const Default = {
     play: async ({ canvasElement }) => {
+        // Fake image load — ensure onload fires
         window.Image = class {
-            set src(_) {
+            constructor() {
                 setTimeout(() => {
-                    const evt = new Event('load')
-                    this.onload?.(evt)
-                }, 50)
+                    this.onload?.(new Event('load'))
+                }, 20)
             }
+            set src(_) {}
+            set srcset(_) {}
+            set sizes(_) {}
         }
 
         const canvas = within(canvasElement)
 
-        // Assert loading placeholder is visible
+        // Confirm initial state (loading)
         const loadingIcon = canvasElement.querySelector('div.animate-pulse')
         await expect(loadingIcon).toBeVisible()
 
-        // Wait for <img> tag to be injected after isLoaded = true
-        let img
-        await waitFor(() => {
-            img = canvasElement.querySelector('img')
-            expect(img).toBeTruthy()
+        // Wait until the <img> appears in the DOM and is visible
+        await waitFor(async () => {
+            const img = canvasElement.querySelector('img')
+            if (!img) throw new Error('Image not yet in DOM')
+
+            // Wait for Vue to render it visibly
+            await new Promise(requestAnimationFrame)
+            expect(img).toBeVisible()
         })
 
-        await expect(img).toBeVisible()
-
-        // Assert that placeholder is removed
+        // Wait until loading spinner is removed
         await waitFor(() => {
-            expect(canvasElement.querySelector('div.animate-pulse')).not.toBeInTheDocument()
+            const placeholder = canvasElement.querySelector('div.animate-pulse')
+            expect(placeholder).not.toBeInTheDocument()
         })
     }
 }
