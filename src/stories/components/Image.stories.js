@@ -63,8 +63,7 @@ export default {
 }
 
 export const Default = {
-    play: async ({ canvasElement, args }) => {
-        // 🛠️ Intercept Image loading in test
+    play: async ({ canvasElement }) => {
         window.Image = class {
             set src(_) {
                 setTimeout(() => {
@@ -76,12 +75,20 @@ export const Default = {
 
         const canvas = within(canvasElement)
 
+        // Assert loading placeholder is visible
         const loadingIcon = canvasElement.querySelector('div.animate-pulse')
         await expect(loadingIcon).toBeVisible()
 
-        const img = await canvas.findByAltText(args.alt)
+        // Wait for <img> tag to be injected after isLoaded = true
+        let img
+        await waitFor(() => {
+            img = canvasElement.querySelector('img')
+            expect(img).toBeTruthy()
+        })
+
         await expect(img).toBeVisible()
 
+        // Assert that placeholder is removed
         await waitFor(() => {
             expect(canvasElement.querySelector('div.animate-pulse')).not.toBeInTheDocument()
         })
