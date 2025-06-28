@@ -1,6 +1,7 @@
 <template>
     <div v-if="dataUrl">
         <img
+            class="rounded-xl"
             decoding="async"
             loading="lazy"
             :alt="altText"
