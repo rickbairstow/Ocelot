@@ -6,7 +6,7 @@ const config = {
         '@storybook/addon-a11y',
         '@storybook/addon-themes',
         '@storybook/addon-docs',
-        "@storybook/addon-vitest"
+        '@storybook/addon-vitest'
     ],
     framework: {
         name: '@storybook/vue3-vite',
