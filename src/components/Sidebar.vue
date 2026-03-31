@@ -55,7 +55,7 @@
     </transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, useSlots, onMounted, onUnmounted } from 'vue'
 import useFocusMemory from '@Composables/useFocusMemory'
 import Button from '@Components/Button.vue'
@@ -64,28 +64,23 @@ import Scrim from '@Components/Scrim.vue'
 
 const { focusFrom, focusTo, returnFocus } = useFocusMemory()
 const isOpen = ref(false)
-const sidebarRef = ref(null)
+const sidebarRef = ref<HTMLElement | null>(null)
 const slots = useSlots()
 
-defineProps({
-    showScrim: {
-        default: true,
-        type: Boolean
-    },
-    side: {
-        default: 'left',
-        type: String,
-        validator(value) {
-            return ['left', 'right'].includes(value)
-        }
-    }
+interface Props {
+    showScrim?: boolean
+    side?: 'left' | 'right'
+}
+
+withDefaults(defineProps<Props>(), {
+    showScrim: true,
+    side: 'left'
 })
 
 /**
  * Close the sidebar and return focus.
- * @returns {boolean}
  */
-const close = () => {
+const close = (): boolean => {
     isOpen.value = false
     returnFocus()
     return false
@@ -93,9 +88,8 @@ const close = () => {
 
 /**
  * Open the sidebar and move the focus inside.
- * @returns {Promise<boolean>}
  */
-const open = async () => {
+const open = async (): Promise<boolean> => {
     isOpen.value = true
     await focusTo(sidebarRef.value)
     return true
@@ -103,10 +97,8 @@ const open = async () => {
 
 /**
  * Global Escape key listener.
- * @param {KeyboardEvent} e
- * @returns {void}
  */
-const handleGlobalEscape = (e) => {
+const handleGlobalEscape = (e: KeyboardEvent): void => {
     if (e.key === 'Escape' && isOpen.value) {
         close()
     }

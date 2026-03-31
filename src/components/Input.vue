@@ -33,8 +33,8 @@
                     :readonly="readonly"
                     :type="type"
                     :value="modelValue"
-                    @change="emitIntercept($event.target.value, 'change')"
-                    @input="emitIntercept($event.target.value, 'input')"
+                    @change="emitIntercept(($event.target as HTMLInputElement).value, 'change')"
+                    @input="emitIntercept(($event.target as HTMLInputElement).value, 'input')"
                 />
 
                 <div
@@ -48,82 +48,51 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, useSlots } from 'vue'
 import Label from '@Components/Label.vue'
-import { generateUuid } from '@Utils/uuid.js'
+import { generateUuid } from '@Utils/uuid'
 
 const slots = useSlots()
 const uuid = generateUuid('input')
 
-const props = defineProps({
-    autoComplete: {
-        type: Boolean,
-        default: true
-    },
+interface Props {
+    autoComplete?: boolean
+    disabled?: boolean
+    label: string
+    maxlength?: number
+    minlength?: number | null
+    modelValue: string | number | boolean | string[] | null
+    name: string
+    pattern?: string | null
+    placeholder?: string | null
+    readonly?: boolean
+    required?: boolean
+    type?: string
+}
 
-    disabled: {
-        type: Boolean,
-        default: false
-    },
-
-    label: {
-        required: true,
-        type: String
-    },
-
-    maxlength: {
-        type: Number,
-        default: 255
-    },
-
-    minlength: {
-        type: Number,
-        default: null
-    },
-
-    modelValue: {
-        required: true,
-        type: [Array, Boolean, Number, String, null]
-    },
-
-    name: {
-        type: String,
-        required: true
-    },
-
-    pattern: {
-        type: String,
-        default: null
-    },
-
-    placeholder: {
-        type: String,
-        default: null
-    },
-
-    readonly: {
-        type: Boolean,
-        default: false
-    },
-
-    required: {
-        type: Boolean,
-        default: false
-    },
-
-    type: {
-        type: String,
-        default: 'text'
-    }
+const props = withDefaults(defineProps<Props>(), {
+    autoComplete: true,
+    disabled: false,
+    maxlength: 255,
+    minlength: null,
+    pattern: null,
+    placeholder: null,
+    readonly: false,
+    required: false,
+    type: 'text'
 })
 
-const emit = defineEmits(['update:modelValue', 'input', 'change'])
+const emit = defineEmits<{
+    'update:modelValue': [value: string]
+    input: [value: string]
+    change: [value: string]
+}>()
 
 /**
  * Lookup object for styling.
  */
-const typeLookup = {
+const typeLookup: Record<string, { types: string[]; style: { default: string; disabled: string; placeholder: string } }> = {
     text: {
         types: ['email', 'number', 'password', 'tel', 'text', 'url'],
         style: {
@@ -136,10 +105,8 @@ const typeLookup = {
 
 /**
  * Find the group for the current type.
- * @param {String} type
- * @returns {*|null}
  */
-const findTypeGroup = (type) =>
+const findTypeGroup = (type: string) =>
     Object.entries(typeLookup).find(([, group]) =>
         group.types.includes(type)
     )?.[1] || null
@@ -147,7 +114,7 @@ const findTypeGroup = (type) =>
 /**
  * Calculate the input style.
  */
-const inputClasses = computed(() => {
+const inputClasses = computed((): string => {
     const { type, disabled } = props
     const typeGroup = findTypeGroup(type)
 
@@ -157,10 +124,10 @@ const inputClasses = computed(() => {
 
 /**
  * Emit both the model update and the specific event type.
- * @param {String|Number} value - The value from the input.
- * @param {String} eventType - The type of event (input or change).
+ * @param value - The value from the input.
+ * @param eventType - The type of event (input or change).
  */
-const emitIntercept = (value, eventType) => {
+const emitIntercept = (value: string, eventType: 'input' | 'change') => {
     // Emit `update:modelValue` for v-model compatibility
     emit('update:modelValue', value)
 

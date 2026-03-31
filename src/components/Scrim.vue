@@ -12,31 +12,27 @@
     />
 </template>
 
-<script setup>
-import { defineEmits, defineProps } from 'vue'
+<script setup lang="ts">
+interface Props {
+    absolute?: boolean
+    ariaLabel?: string | null
+    clickable?: boolean
+}
 
-const props = defineProps({
-    absolute: {
-        default: false,
-        type: Boolean
-    },
-    ariaLabel: {
-        default: null,
-        type: String
-    },
-    clickable: {
-        type: Boolean,
-        default: true
-    }
+const props = withDefaults(defineProps<Props>(), {
+    absolute: false,
+    ariaLabel: null,
+    clickable: true
 })
 
-const emit = defineEmits(['click'])
+const emit = defineEmits<{
+    click: [e: MouseEvent]
+}>()
 
 /**
  * Emits click only if the scrim is clickable.
- * @param {MouseEvent} e
  */
-const handleClick = (e) => {
+const handleClick = (e: MouseEvent) => {
     if (!props.clickable) {
         e.preventDefault()
         e.stopPropagation()

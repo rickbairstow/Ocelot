@@ -30,12 +30,12 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import Icon from './Icon.vue'
 import Scrim from './Scrim.vue'
 
-const animationLookup = {
+const animationLookup: Record<string, string> = {
     bounce: 'animate-bounce',
     none: 'animate-none',
     ping: 'animate-ping',
@@ -43,43 +43,33 @@ const animationLookup = {
     spin: 'animate-spin'
 }
 
-const props = defineProps({
-    animation: {
-        type: String,
-        default: 'spin',
-        validator: (value) =>
-            ['bounce', 'none', 'ping', 'pulse', 'spin'].includes(value)
-    },
-    icon: {
-        type: String,
-        default: 'Loader2'
-    },
-    text: {
-        type: String,
-        default: null
-    },
-    variant: {
-        type: String,
-        default: 'inline',
-        validator: (value) => ['absolute', 'fixed', 'inline'].includes(value)
-    },
-    vertical: {
-        type: Boolean,
-        default: false
-    }
+interface Props {
+    animation?: 'bounce' | 'none' | 'ping' | 'pulse' | 'spin'
+    icon?: string
+    text?: string | null
+    variant?: 'absolute' | 'fixed' | 'inline'
+    vertical?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    animation: 'spin',
+    icon: 'Loader2',
+    text: null,
+    variant: 'inline',
+    vertical: false
 })
 
 /**
  * Whether to show a scrim background.
  */
-const showScrim = computed(() => {
+const showScrim = computed((): boolean => {
     return ['absolute', 'fixed'].includes(props.variant)
 })
 
 /**
  * Container layout based on variant.
  */
-const variantCss = computed(() => {
+const variantCss = computed((): string => {
     switch (props.variant) {
         case 'absolute':
             return 'absolute inset-0 flex items-center justify-center text-white'

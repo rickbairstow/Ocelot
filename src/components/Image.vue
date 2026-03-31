@@ -25,40 +25,29 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import Icon from '@/components/Icon.vue'
+
+interface Props {
+    alt: string
+    height?: string | null
+    sizes?: string
+    src: string
+    srcset?: string
+    width?: string | null
+}
 
 /**
  * Props for the image component.
  * - `src` and `alt` are required.
  * - `srcset`, `sizes`, `width`, and `height` are optional for responsive/fixed rendering.
  */
-const props = defineProps({
-    alt: {
-        type: String,
-        required: true
-    },
-    height: {
-        type: String,
-        default: null
-    },
-    sizes: {
-        type: String,
-        default: ''
-    },
-    src: {
-        type: String,
-        required: true
-    },
-    srcset: {
-        type: String,
-        default: ''
-    },
-    width: {
-        type: String,
-        default: null
-    }
+const props = withDefaults(defineProps<Props>(), {
+    height: null,
+    sizes: '',
+    srcset: '',
+    width: null
 })
 
 /**

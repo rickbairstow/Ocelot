@@ -1,0 +1,114 @@
+import type { Component } from 'vue'
+import {
+    // A
+    IconArrowDown as ArrowDown,
+    IconArrowLeft as ArrowLeft,
+    IconArrowRight as ArrowRight,
+    IconArrowUp as ArrowUp,
+
+    // B
+    IconBell as Bell,
+
+    // C
+    IconChevronDown as ChevronDown,
+    IconChevronLeft as ChevronLeft,
+    IconChevronRight as ChevronRight,
+    IconChevronUp as ChevronUp,
+    IconChevronsLeft as ChevronsLeft,
+    IconChevronsRight as ChevronsRight,
+
+    // L
+    IconLoader as Loader,
+    IconLoader2 as Loader2,
+    IconLoader3 as Loader3,
+
+    // M
+    IconMail as Mail,
+    IconMailOpened as MailOpened,
+    IconMenu2 as Menu,
+
+    // P
+    IconPhone as Phone,
+    IconPhoto as Photo,
+    IconPhotoOff as PhotoOff,
+    IconPlus as Plus,
+
+    // S
+    IconSearch as Search,
+
+    // T
+    IconTrash as Trash,
+
+    // U
+    IconUser as User,
+
+    // X
+    IconX as X
+} from '@tabler/icons-vue'
+
+const availableIcons: Record<string, Component> = {
+    // A
+    ArrowDown,
+    ArrowLeft,
+    ArrowRight,
+    ArrowUp,
+
+    // B
+    Bell,
+
+    // C
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronUp,
+    ChevronsLeft,
+    ChevronsRight,
+
+    // L
+    Loader,
+    Loader2,
+    Loader3,
+
+    // M
+    Mail,
+    MailOpened,
+    Menu,
+
+    // P
+    Phone,
+    Photo,
+    PhotoOff,
+    Plus,
+
+    // S
+    Search,
+
+    // T
+    Trash,
+
+    // U
+    User,
+
+    // X
+    X
+}
+
+const availableSizes: Record<string, number> = {
+    xs: 12,
+    sm: 14,
+    base: 16,
+    lg: 18,
+    xl: 20,
+    '2xl': 24,
+    '3xl': 30,
+    '4xl': 36,
+    '5xl': 48,
+    '6xl': 60,
+    '7xl': 72,
+    '8xl': 96,
+    '9xl': 120
+}
+
+export type IconName = keyof typeof availableIcons
+export type IconSize = keyof typeof availableSizes
+export { availableIcons, availableSizes }

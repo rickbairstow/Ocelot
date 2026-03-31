@@ -12,9 +12,18 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import QRCode from 'qrcode'
+
+interface Props {
+    value: string
+    size?: number
+    margin?: number
+    errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H'
+    background?: string
+    foreground?: string
+}
 
 /**
  * Props:
@@ -24,17 +33,12 @@ import QRCode from 'qrcode'
  * - errorCorrectionLevel: L, M, Q, H (higher = more error tolerance)
  * - background / foreground: Colors
  */
-const props = defineProps({
-    value: { type: String, required: true },
-    size: { type: Number, default: 256 },
-    margin: { type: Number, default: 4 },
-    errorCorrectionLevel: {
-        type: String,
-        default: 'M',
-        validator: (v) => ['L', 'M', 'Q', 'H'].includes(v)
-    },
-    background: { type: String, default: '#ffffff' },
-    foreground: { type: String, default: '#000000' }
+const props = withDefaults(defineProps<Props>(), {
+    size: 256,
+    margin: 4,
+    errorCorrectionLevel: 'M',
+    background: '#ffffff',
+    foreground: '#000000'
 })
 
 const dataUrl = ref('')
@@ -42,7 +46,7 @@ const dataUrl = ref('')
 /**
  * Compute a descriptive alt tag for screen readers
  */
-const altText = computed(() =>
+const altText = computed((): string =>
     props.value.startsWith('http')
         ? `QR code linking to ${props.value}`
         : `QR code containing: ${props.value}`
@@ -50,9 +54,9 @@ const altText = computed(() =>
 
 /**
  * Generate QR code as a data URL
- * @param {string} text - Text to encode
+ * @param text - Text to encode
  */
-const generateQrCode = async (text) => {
+const generateQrCode = async (text: string): Promise<void> => {
     try {
         dataUrl.value = await QRCode.toDataURL(text, {
             color: {
