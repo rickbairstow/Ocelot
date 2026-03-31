@@ -5,7 +5,8 @@
       "Bash(ncu)",
       "Bash(ncu -u)",
       "Bash(npm install:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(npm run:*)"
     ]
   }
 }
