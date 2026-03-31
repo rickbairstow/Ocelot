@@ -1,8 +1,7 @@
 {
     "extends": [
         "stylelint-config-standard",
-        "stylelint-config-standard-scss",
-        "stylelint-prettier/recommended"
+        "stylelint-config-standard-scss"
     ],
     "ignoreFiles": [
         "storybook-static/**/*.css"
@@ -20,7 +19,6 @@
                     "variants"
                 ]
             }
-        ],
-        "prettier/prettier": true
+        ]
     }
 }

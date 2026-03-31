@@ -1,5 +1,5 @@
 import ReadMore from '@Components/ReadMore.vue'
-import { userEvent, within, expect } from 'storybook/test'
+import { userEvent, within, expect, waitFor } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
 export default {
@@ -48,9 +48,9 @@ export const Default = {
         await expect(button).toBeVisible()
 
         await userEvent.click(button)
-        await expect(button).toHaveTextContent(/show less/i)
+        await waitFor(() => expect(button).toHaveTextContent(/show less/i))
 
         await userEvent.click(button)
-        await expect(button).toHaveTextContent(/show more/i)
+        await waitFor(() => expect(button).toHaveTextContent(/show more/i))
     }
 }

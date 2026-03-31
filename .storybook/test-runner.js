@@ -1,4 +1,4 @@
-const { injectAxe, checkA11y } = require('axe-playwright')
+import { injectAxe, checkA11y } from 'axe-playwright'
 
 let isAxeRunning = false
 
@@ -6,7 +6,7 @@ let isAxeRunning = false
  * See https://storybook.js.org/docs/writing-tests/test-runner#test-hook-api
  * to learn more about the test-runner hooks API.
  */
-module.exports = {
+export default {
     async preVisit(page) {
         await injectAxe(page)
     },
