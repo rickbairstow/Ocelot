@@ -1,5 +1,5 @@
 import Image from '@Components/Image.vue'
-import { expect, waitFor, within } from 'storybook/test'
+import { waitFor } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
 export default {
