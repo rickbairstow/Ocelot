@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
+import { playwright } from '@vitest/browser-playwright'
 
 // https://vitejs.dev/config/
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
@@ -63,14 +64,14 @@ export default defineConfig({
                     browser: {
                         enabled: true,
                         headless: true,
-                        provider: 'playwright',
+                        provider: playwright(),
                         instances: [
                             {
                                 browser: 'chromium'
                             }
                         ]
                     },
-                    setupFiles: ['.storybook/vitest.setup.js']
+                    setupFiles: []
                 }
             }
         ]

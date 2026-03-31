@@ -49,7 +49,7 @@ export default {
         setup() {
             return { args }
         },
-        template: `<QrCode v-bind="args" />`
+        template: '<QrCode v-bind="args" />'
     })
 }
 

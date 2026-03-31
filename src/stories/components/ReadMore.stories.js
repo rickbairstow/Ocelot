@@ -51,6 +51,6 @@ export const Default = {
         await expect(button).toHaveTextContent(/show less/i)
 
         await userEvent.click(button)
-        await expect(button).toHaveTextContent(/show more/i)
+        await canvas.findByRole('button', { name: /show more/i })
     }
 }
