@@ -1,5 +1,4 @@
 # .github/workflows/storybook-tests.yml
-# Intentionally uses Yarn as there's a bug with npm that causes caching issues for this workflow.
 
 name: 'Storybook Tests'
 
@@ -16,7 +15,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  test-storybook:
+  test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -27,35 +26,32 @@ jobs:
           node-version-file: '.nvmrc'
 
       - name: Cache Node Modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: |
-            ~/.cache/yarn
-            node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-npm-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
-      - name: Cache Playwright Dependencies
+      - name: Cache Playwright browsers
         id: cache-playwright
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
-      - name: Install Playwright
-        run: npx playwright install --with-deps
+      - name: Install Playwright browsers
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
 
-      - name: Build Storybook
-        run: yarn build-storybook --quiet
+      - name: Install Playwright system deps (cached browsers)
+        if: steps.cache-playwright.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
-      - name: Serve Storybook and run tests
-        run: |
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx http-server storybook-static --port 6006 --silent" \
-            "npx wait-on tcp:6006 && yarn test-storybook"
+      - name: Run tests
+        run: npm run test:run

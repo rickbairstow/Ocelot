@@ -42,6 +42,8 @@
     "stylelint:fix": "stylelint **/*.css **/*.scss --fix",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "test": "vitest",
+    "test:run": "vitest run",
     "test-storybook": "test-storybook"
   },
   "dependencies": {
