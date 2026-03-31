@@ -6,7 +6,12 @@
       "Bash(ncu -u)",
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(node -e \"import\\(''eslint-plugin-vuejs-accessibility''\\).then\\(m => console.log\\(Object.keys\\(m.default\\)\\)\\).catch\\(e => console.error\\(e.message\\)\\)\")",
+      "Bash(node -e \"import\\(''eslint-plugin-vuejs-accessibility''\\).then\\(m => console.log\\(Object.keys\\(m.default.configs\\)\\)\\).catch\\(e => console.error\\(e.message\\)\\)\")",
+      "Bash(node -e \"import\\(''@vitest/browser''\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\).catch\\(e => console.error\\(e.message\\)\\)\")",
+      "Bash(npm info:*)",
+      "Bash(node -e \"import\\(''@faker-js/faker''\\).then\\(m => { const faker = m.faker; console.log\\(faker.image.url\\({ width: 300, height: 200 }\\)\\) }\\).catch\\(e => console.error\\(e.message\\)\\)\")"
     ]
   }
 }
