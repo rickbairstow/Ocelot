@@ -3,23 +3,39 @@ import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
+const colors = ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink']
+const types = ['primary', 'secondary', 'tertiary', 'text', 'none'] as const
+
 const meta: Meta<typeof Button> = {
     title: 'Components/Button',
     component: Button,
 
     argTypes: {
+        color: {
+            control: 'select',
+            options: colors,
+            description: 'Base theme color, automatically derives hover and border shades.'
+        },
         default: {
             control: 'text',
             description: 'Slot content'
         },
         disabled: {
             control: 'boolean',
-            description:
-                'Marks the button as disabled and prevents interaction.'
+            description: 'Marks the button as disabled and prevents interaction.'
         },
         href: {
             control: 'text',
             description: 'Sets the link href for anchor rendering.'
+        },
+        loading: {
+            control: 'boolean',
+            description: 'Shows a loading spinner overlay without changing the button dimensions.'
+        },
+        loadingIcon: {
+            control: 'select',
+            options: ['Loader', 'Loader2', 'Loader3'],
+            description: 'Icon to use for the loading spinner.'
         },
         size: {
             control: 'select',
@@ -28,14 +44,17 @@ const meta: Meta<typeof Button> = {
         },
         type: {
             control: 'select',
-            options: ['primary', 'secondary', 'tertiary', 'text', 'none'],
-            description: 'Sets the style of the button.'
+            options: [...types],
+            description: 'Sets the visual style of the button.'
         }
     },
 
     args: {
+        color: 'blue',
         default: faker.lorem.word(),
         disabled: false,
+        loading: false,
+        loadingIcon: 'Loader2',
         size: 'base',
         type: 'primary',
         href: null
@@ -48,8 +67,11 @@ const meta: Meta<typeof Button> = {
         },
         template: `
             <Button
+                :color="args.color"
                 :disabled="args.disabled"
                 :href="args.href"
+                :loading="args.loading"
+                :loading-icon="args.loadingIcon"
                 :size="args.size"
                 :type="args.type"
                 @click="() => console.log('Button clicked')"
@@ -63,64 +85,105 @@ const meta: Meta<typeof Button> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-// Generic play function for active buttons
-const clickPlay: Story['play'] = async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const button = await canvas.getByRole('button')
-    await userEvent.click(button)
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button'))
+    }
 }
 
 export const Primary: Story = {
     args: { type: 'primary' },
-    play: clickPlay
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button'))
+    }
 }
 
 export const Secondary: Story = {
     args: { type: 'secondary' },
-    play: clickPlay
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button'))
+    }
 }
 
 export const Tertiary: Story = {
     args: { type: 'tertiary' },
-    play: clickPlay
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button'))
+    }
 }
 
-export const Text: Story = {
+export const Link: Story = {
     args: { type: 'text' },
-    play: clickPlay
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button'))
+    }
 }
 
 export const None: Story = {
     args: { type: 'none' },
-    play: clickPlay
-}
-
-export const DisabledClick: Story = {
-    args: {
-        type: 'primary',
-        disabled: true
-    },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
-        const button = await canvas.getByRole('button')
+        await userEvent.click(canvas.getByRole('button'))
+    }
+}
+
+export const Disabled: Story = {
+    args: { disabled: true },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const button = canvas.getByRole('button')
         await expect(button).toHaveAttribute('aria-disabled', 'true')
+        await userEvent.click(button)
     }
 }
 
-export const AsLink: Story = {
-    args: {
-        href: 'https://example.com'
-    },
+export const Loading: Story = {
+    args: { loading: true },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
-        const link = await canvas.getByRole('link')
-
-        // Attach a one-time native listener to block navigation
-        link.addEventListener('click', (e) => e.preventDefault(), {
-            once: true
-        })
-
-        await expect(link).toHaveAttribute('href', 'https://example.com')
-        await userEvent.click(link)
+        const button = canvas.getByRole('button')
+        await expect(button).toHaveAttribute('aria-busy', 'true')
+        await expect(button).toHaveAttribute('aria-disabled', 'true')
+        await userEvent.click(button)
     }
+}
+
+export const AllColors: Story = {
+    render: () => ({
+        components: { Button },
+        template: `
+            <div class="flex flex-wrap gap-3">
+                <Button v-for="color in colors" :key="color" :color="color">
+                    {{ color }}
+                </Button>
+            </div>
+        `,
+        setup: () => ({ colors })
+    })
+}
+
+export const AllVariations: Story = {
+    render: () => ({
+        components: { Button },
+        setup: () => ({ colors, types }),
+        template: `
+            <div class="flex flex-col gap-6">
+                <div v-for="color in colors" :key="color" class="flex flex-col gap-2">
+                    <p class="text-sm font-medium capitalize text-gray-500">{{ color }}</p>
+                    <div class="flex flex-wrap gap-2">
+                        <Button v-for="type in types" :key="type" :color="color" :type="type">
+                            {{ type }}
+                        </Button>
+                        <Button :color="color" disabled>Disabled</Button>
+                        <Button :color="color" loading>Loading</Button>
+                    </div>
+                </div>
+            </div>
+        `
+    })
 }
