@@ -10,3 +10,15 @@ Head to [OcelotUI on Netlify](https://ocelotui.netlify.app) for the Storybook si
 ### Netlify Integration
 
 OcelotUi's Storybook has been integrated into Netlify, you can access it at https://ocelotui.netlify.app. PRs will automatically be pushed to Netlify when they are merged to the main branch.
+
+### Publishing to npm
+
+Publishing is handled automatically via GitHub Actions whenever a new version tag is pushed.
+
+To publish a new version:
+
+1. Ensure you are on `main` and up to date
+2. Run `npm run publish:npm`
+3. Select a bump type when prompted: `patch`, `minor`, or `major`
+4. The script will bump the version in `package.json`, commit, tag, and push
+5. GitHub Actions will detect the new tag and publish to npm automatically
