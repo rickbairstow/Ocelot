@@ -1,5 +1,5 @@
-import React from 'react';
-import { formatHex, oklch } from 'culori';
+import React from 'react'
+import { formatHex, oklch } from 'culori'
 
 // Tailwind no longer provides resolveConfig, so we need to get a list of colours manually.
 // Grab the list of colours from https://tailwindcss.com/docs/colors#default-color-palette-reference
@@ -248,61 +248,63 @@ const cssVariables = `
   --color-stone-950: oklch(0.147 0.004 49.25);
   --color-black: #000;
   --color-white: #fff;
-`;
+`
 
-// Convert oklch to hex and return in a format that matches the ColorPalette component.
-function convertOklchToHexStructure(cssVariables) {
-    const regex = /--color-([\w-]+)-(\d+):\s*oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\);/g;
-    const colors = {};
+type ColorMap = Record<string, Record<string, string>>
 
-    let match;
-    while ((match = regex.exec(cssVariables)) !== null) {
-        const [_, colorName, shade, l, c, h] = match;
+function convertOklchToHexStructure(css: string): ColorMap {
+    const regex = /--color-([\w-]+)-(\d+):\s*oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\);/g
+    const colors: ColorMap = {}
 
-        // Convert OKLCH to HEX using `culori`
-        const hexValue = formatHex(oklch({ l: parseFloat(l), c: parseFloat(c), h: parseFloat(h) }));
-
-        if (!colors[colorName]) {
-            colors[colorName] = {};
-        }
-        colors[colorName][shade] = hexValue;
+    let match
+    while ((match = regex.exec(css)) !== null) {
+        const [, colorName, shade, l, c, h] = match
+        const hexValue = formatHex(oklch({ l: parseFloat(l), c: parseFloat(c), h: parseFloat(h) }))
+        if (!colors[colorName]) colors[colorName] = {}
+        colors[colorName][shade] = hexValue as string
     }
 
-    return colors;
+    return colors
 }
 
-const colors = convertOklchToHexStructure(cssVariables);
+const colors = convertOklchToHexStructure(cssVariables)
 
-const ColorPalette = () => (
-    <div>
-        {Object.entries(colors).map(([colorName, colorValues]) =>
-            typeof colorValues === 'object' ? (
-                <div key={colorName} style={{ marginBottom: '2rem' }}>
-                    <h2 style={{ textTransform: 'capitalize' }}>{colorName}</h2>
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        {Object.entries(colorValues).map(([weight, hex]) => (
-                            <div
-                                key={`${colorName}-${weight}`}
-                                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-                            >
-                                <div
-                                    style={{
-                                        height: '40px',
-                                        width: '40px',
-                                        borderRadius: '4px',
-                                        backgroundColor: hex,
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    }}
-                                />
-                                <div style={{ fontSize: '12px', color: '#0f172a' }}>{weight}</div>
-                                <div style={{ fontSize: '10px', fontFamily: 'monospace', color: '#64748b' }}>{hex}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            ) : null
-        )}
-    </div>
-);
+function ColorPalette(): React.ReactElement {
+    return React.createElement(
+        'div',
+        null,
+        ...Object.entries(colors).map(([colorName, colorValues]) =>
+            React.createElement(
+                'div',
+                { key: colorName, style: { marginBottom: '2rem' } },
+                React.createElement('h2', { style: { textTransform: 'capitalize' } }, colorName),
+                React.createElement(
+                    'div',
+                    { style: { display: 'flex', gap: '1rem', flexWrap: 'wrap' } },
+                    ...Object.entries(colorValues).map(([weight, hex]) =>
+                        React.createElement(
+                            'div',
+                            {
+                                key: `${colorName}-${weight}`,
+                                style: { display: 'flex', flexDirection: 'column', alignItems: 'center' }
+                            },
+                            React.createElement('div', {
+                                style: {
+                                    height: '40px',
+                                    width: '40px',
+                                    borderRadius: '4px',
+                                    backgroundColor: hex,
+                                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                                }
+                            }),
+                            React.createElement('div', { style: { fontSize: '12px', color: '#0f172a' } }, weight),
+                            React.createElement('div', { style: { fontSize: '10px', fontFamily: 'monospace', color: '#64748b' } }, hex)
+                        )
+                    )
+                )
+            )
+        )
+    )
+}
 
-export default ColorPalette;
+export default ColorPalette
