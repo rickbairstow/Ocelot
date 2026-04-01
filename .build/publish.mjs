@@ -51,5 +51,8 @@ rl.question('\nBump type? [patch / minor / major]: ', (bumpType) => {
     run('git push')
     run(`git push origin v${newVersion}`)
 
-    console.log(`\nTag v${newVersion} pushed — GitHub Actions will handle the npm publish.`)
+    console.log('\nPublishing to npm...')
+    run('npm publish --access public')
+
+    console.log(`\nDone! Published ${PACKAGE_NAME}@${newVersion}`)
 })

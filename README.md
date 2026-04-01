@@ -13,12 +13,9 @@ OcelotUi's Storybook has been integrated into Netlify, you can access it at http
 
 ### Publishing to npm
 
-Publishing is handled automatically via GitHub Actions whenever a new version tag is pushed.
-
 To publish a new version:
 
 1. Ensure you are on `main` and up to date
 2. Run `npm run publish:npm`
 3. Select a bump type when prompted: `patch`, `minor`, or `major`
-4. The script will bump the version in `package.json`, commit, tag, and push
-5. GitHub Actions will detect the new tag and publish to npm automatically
+4. The script will bump the version, build the library, commit, tag, push to GitHub, and publish to npm
