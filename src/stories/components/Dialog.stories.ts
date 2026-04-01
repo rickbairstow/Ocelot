@@ -43,7 +43,7 @@ const meta: Meta<typeof Dialog> = {
     render: (args) => ({
         components: { Dialog },
         setup() {
-            const dialog = ref<any>(null)
+            const dialog = ref<{ open(): void } | null>(null)
 
             const openDialog = () => {
                 dialog.value?.open()

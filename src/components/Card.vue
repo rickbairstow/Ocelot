@@ -53,13 +53,13 @@ import { computed } from 'vue'
 import Badge from '@Components/Badge.vue'
 import Image from '@Components/Image.vue'
 
-interface Badge {
+interface BadgeItem {
     text: string
     type: string
 }
 
 interface Props {
-    badges?: Badge[]
+    badges?: BadgeItem[]
     imageAlt?: string
     imageSrc?: string | null
     title?: string | null

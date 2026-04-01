@@ -30,8 +30,7 @@ export default {
 
         // Enable use of updateArgs
         (story, context) => {
-            // eslint-disable-next-line no-unused-vars
-            const [_, updateArgs] = useArgs()
+            const [_args, updateArgs] = useArgs()
             return story({ ...context, updateArgs })
         }
     ]

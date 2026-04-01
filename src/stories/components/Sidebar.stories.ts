@@ -42,7 +42,7 @@ const meta: Meta<typeof Sidebar> = {
     render: (args) => ({
         components: { Sidebar },
         setup() {
-            const sidebar = ref<any>(null)
+            const sidebar = ref<{ open(): void } | null>(null)
             const triggerRef = ref<HTMLElement | null>(null)
 
             const openSidebar = () => {
