@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import { availableIcons, availableSizes } from '@Composables/useIcons'
 import Icon from '@Components/Icon.vue'
 
-export default {
+const meta: Meta<typeof Icon> = {
     title: 'Components/Icon',
     component: Icon,
 
@@ -41,4 +42,7 @@ export default {
     })
 }
 
-export const Default = {}
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {}

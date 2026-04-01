@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Card from '@Components/Card.vue'
 import { faker } from '@faker-js/faker'
 
-export default {
+const meta: Meta<typeof Card> = {
     title: 'Components/Card',
     component: Card,
 
@@ -45,7 +46,7 @@ export default {
         ],
         default: faker.lorem.paragraph(2),
         imageAlt: faker.commerce.productName(),
-        imageSrc: faker.image.url({ width: 400, height: 300 }), // controlled size
+        imageSrc: faker.image.url({ width: 400, height: 300 }),
         size: 'base',
         title: faker.commerce.productName(),
         vertical: false
@@ -73,13 +74,16 @@ export default {
     })
 }
 
-export const Horizontal = {
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Horizontal: Story = {
     args: {
         vertical: false
     }
 }
 
-export const Vertical = {
+export const Vertical: Story = {
     args: {
         vertical: true,
         imageSrc: faker.image.url({ width: 600, height: 240 })

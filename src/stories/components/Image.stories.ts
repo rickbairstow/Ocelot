@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Image from '@Components/Image.vue'
 import { waitFor } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
-export default {
+const meta: Meta<typeof Image> = {
     title: 'Components/Image',
     component: Image,
 
@@ -62,7 +63,10 @@ export default {
     })
 }
 
-export const Default = {
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
     play: async ({ canvasElement }) => {
         // The component calls loadImage() in onMounted before the play function runs,
         // so we just wait for it to resolve (load or error) rather than mocking Image.
@@ -78,7 +82,7 @@ export const Default = {
     }
 }
 
-export const WithSrcset = {
+export const WithSrcset: Story = {
     args: {
         src: faker.image.url({ width: 900, height: 600 }),
         srcset: `

@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Sidebar from '@Components/Sidebar.vue'
 import { ref } from 'vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
-export default {
+const meta: Meta<typeof Sidebar> = {
     title: 'Components/Sidebar',
     component: Sidebar,
 
@@ -41,8 +42,8 @@ export default {
     render: (args) => ({
         components: { Sidebar },
         setup() {
-            const sidebar = ref(null)
-            const triggerRef = ref(null)
+            const sidebar = ref<any>(null)
+            const triggerRef = ref<HTMLElement | null>(null)
 
             const openSidebar = () => {
                 sidebar.value.open()
@@ -79,8 +80,11 @@ export default {
     })
 }
 
+export default meta
+type Story = StoryObj<typeof meta>
+
 // ✅ Interaction test for focus behavior
-export const Left = {
+export const Left: Story = {
     args: { side: 'left' },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -95,7 +99,7 @@ export const Left = {
         })
         const visibleCloseButton = closeButtons.find(
             (btn) => btn.offsetParent !== null
-        )
+        )!
 
         await waitFor(() => {
             expect(visibleCloseButton).toBeVisible()
@@ -114,7 +118,7 @@ export const Left = {
     }
 }
 
-export const Right = {
+export const Right: Story = {
     args: { side: 'right' },
     play: Left.play // same test logic
 }

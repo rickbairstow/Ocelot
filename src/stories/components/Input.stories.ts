@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import Input from '@Components/Input.vue'
 
-export default {
+const meta: Meta<typeof Input> = {
     title: 'Components/Input',
     component: Input,
 
@@ -103,11 +104,7 @@ export default {
         setup() {
             const modelValue = ref(args.modelValue)
 
-            /**
-             * Special function that updates the args when the modelValue emit event runs.
-             * @param newValue
-             */
-            const handleEvent = (newValue) => {
+            const handleEvent = (newValue: string) => {
                 updateArgs({ ...args, modelValue: newValue || null })
             }
 
@@ -126,4 +123,7 @@ export default {
     })
 }
 
-export const TextInput = {}
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const TextInput: Story = {}

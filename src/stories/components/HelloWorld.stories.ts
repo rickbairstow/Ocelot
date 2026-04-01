@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import HelloWorld from '@Components/HelloWorld.vue'
 
-export default {
+const meta: Meta<typeof HelloWorld> = {
     title: 'Components/HelloWorld',
     component: HelloWorld,
 
@@ -22,4 +23,7 @@ export default {
     })
 }
 
-export const Default = {}
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {}

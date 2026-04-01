@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import ReadMore from '@Components/ReadMore.vue'
 import { userEvent, within, expect, waitFor } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
-export default {
+const meta: Meta<typeof ReadMore> = {
     title: 'Components/ReadMore',
     component: ReadMore,
 
@@ -40,7 +41,10 @@ export default {
     })
 }
 
-export const Default = {
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
 
