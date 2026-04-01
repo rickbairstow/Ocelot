@@ -1,7 +1,7 @@
 <template>
     <div
-        :class="wrapperCss"
         role="separator"
+        :class="wrapperCss"
     >
         <span :class="lineCss" />
         <span
