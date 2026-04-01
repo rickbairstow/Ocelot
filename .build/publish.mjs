@@ -12,6 +12,29 @@ const pkg = JSON.parse(readFileSync(packageJson, 'utf8'))
 const PACKAGE_NAME = pkg.name
 const LOCAL_VERSION = pkg.version
 
+// Ensure we're on main
+const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { stdio: 'pipe' }).toString().trim()
+if (currentBranch !== 'main') {
+    console.error(`Must be on main branch (currently on '${currentBranch}'). Aborting.`)
+    process.exit(1)
+}
+
+// Ensure local is up to date with remote
+execSync('git fetch origin main', { stdio: 'pipe' })
+const localHash = execSync('git rev-parse HEAD', { stdio: 'pipe' }).toString().trim()
+const remoteHash = execSync('git rev-parse origin/main', { stdio: 'pipe' }).toString().trim()
+if (localHash !== remoteHash) {
+    console.error('Local branch is not up to date with origin/main. Run `git pull` first. Aborting.')
+    process.exit(1)
+}
+
+// Ensure no uncommitted changes
+const dirty = execSync('git status --porcelain', { stdio: 'pipe' }).toString().trim()
+if (dirty) {
+    console.error('You have uncommitted changes. Commit or stash them first. Aborting.')
+    process.exit(1)
+}
+
 console.log(`Local version:  ${LOCAL_VERSION}`)
 
 let npmVersion
