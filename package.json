@@ -1,7 +1,6 @@
 {
   "name": "ocelot-ui",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.2",
   "license": "MIT",
   "author": "Rick Bairstow <rick@rxdesign.co.uk> (https://www.rxdesign.co.uk)",
   "homepage": "https://github.com/rickbairstow/Ocelot",
@@ -44,7 +43,8 @@
     "build-storybook": "storybook build",
     "test": "vitest",
     "test:run": "vitest run",
-    "test-storybook": "test-storybook"
+    "test-storybook": "test-storybook",
+    "publish:npm": "node .build/publish.mjs"
   },
   "dependencies": {
     "@faker-js/faker": "^10.4.0",
