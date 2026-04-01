@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
+import { Comment, computed, useSlots } from 'vue'
 
 interface Props {
     orientation?: 'horizontal' | 'vertical'
@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const slots = useSlots()
 
-const hasText = computed(() => !!slots.default)
+const hasText = computed(() => !!slots.default?.().some(vnode => vnode.type !== Comment))
 
 const colorMap = {
     default: { border: 'border-gray-200', text: 'text-gray-500' },
