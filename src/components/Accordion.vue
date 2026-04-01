@@ -26,25 +26,23 @@
     </details>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { generateUuid } from '@Utils/uuid.js'
+import { generateUuid } from '@Utils/uuid'
 import Icon from '@/components/Icon.vue'
 
 const uuid = generateUuid('accordion-')
 
-const props = defineProps({
-    startOpen: {
-        type: Boolean,
-        default: false
-    },
-    title: {
-        type: String,
-        required: true
-    }
+interface Props {
+    startOpen?: boolean
+    title: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    startOpen: false
 })
 
-const details = ref(null)
+const details = ref<HTMLDetailsElement | null>(null)
 const isOpen = ref(false)
 
 const handleToggle = () => {
@@ -52,7 +50,7 @@ const handleToggle = () => {
 }
 
 onMounted(() => {
-    if (props.startOpen) details.value.open = true
+    if (props.startOpen) details.value!.open = true
     isOpen.value = details.value?.open ?? false
 })
 </script>

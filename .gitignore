@@ -33,3 +33,6 @@ coverage
 storybook-static/
 *storybook.log
 .nyc_output/
+
+# AI
+.claude*

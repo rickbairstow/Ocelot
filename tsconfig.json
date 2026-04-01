@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "strict": true,
+        "jsx": "preserve",
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "lib": ["ESNext", "DOM"],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@Components/*": ["./src/components/*"],
+            "@Composables/*": ["./src/composables/*"],
+            "@Css/*": ["./src/css/*"],
+            "@Utils/*": ["./src/utilities/*"]
+        }
+    },
+    "include": [
+        "env.d.ts",
+        "src/**/*.ts",
+        "src/**/*.vue",
+        ".build/**/*.ts",
+        "vite.config.ts",
+        "vitest.config.ts"
+    ]
+}

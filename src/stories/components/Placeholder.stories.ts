@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Placeholder from '@Components/Placeholder.vue'
 
-export default {
+const meta: Meta<typeof Placeholder> = {
     title: 'Components/Placeholder',
     component: Placeholder,
 
@@ -38,4 +39,7 @@ export default {
     })
 }
 
-export const Default = {}
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {}

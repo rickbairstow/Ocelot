@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Label from '@Components/Label.vue'
 
-export default {
+const meta: Meta<typeof Label> = {
     title: 'Components/Label',
     component: Label,
 
@@ -30,4 +31,7 @@ export default {
     })
 }
 
-export const Default = {}
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {}

@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Loader from '@Components/Loader.vue'
 import { faker } from '@faker-js/faker'
 
-export default {
+const meta: Meta<typeof Loader> = {
     title: 'Components/Loader',
     component: Loader,
 
@@ -60,27 +61,30 @@ export default {
     })
 }
 
-export const Default = {}
+export default meta
+type Story = StoryObj<typeof meta>
 
-export const Absolute = {
+export const Default: Story = {}
+
+export const Absolute: Story = {
     args: {
         variant: 'absolute'
     }
 }
 
-export const Fixed = {
+export const Fixed: Story = {
     args: {
         variant: 'fixed'
     }
 }
 
-export const Inline = {
+export const Inline: Story = {
     args: {
         variant: 'inline'
     }
 }
 
-export const WithAlternateIcon = {
+export const WithAlternateIcon: Story = {
     args: {
         icon: 'Photo'
     }

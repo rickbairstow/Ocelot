@@ -48,50 +48,38 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import Badge from '@Components/Badge.vue'
 import Image from '@Components/Image.vue'
 
-const props = defineProps({
-    badges: {
-        type: Array,
-        default: () => [],
-        validator: (value) =>
-            value.every(
-                (badge) =>
-                    typeof badge === 'object' &&
-                    typeof badge.text === 'string' &&
-                    typeof badge.type === 'string'
-            )
-    },
-    imageAlt: {
-        type: String,
-        default: ''
-    },
-    imageSrc: {
-        type: String,
-        default: null
-    },
-    title: {
-        type: String,
-        default: null
-    },
-    size: {
-        type: String,
-        default: 'base',
-        validator: (value) => ['small', 'base', 'large'].includes(value)
-    },
-    vertical: {
-        type: Boolean,
-        default: false
-    }
+interface BadgeItem {
+    text: string
+    type: string
+}
+
+interface Props {
+    badges?: BadgeItem[]
+    imageAlt?: string
+    imageSrc?: string | null
+    title?: string | null
+    size?: 'small' | 'base' | 'large'
+    vertical?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    badges: () => [],
+    imageAlt: '',
+    imageSrc: null,
+    title: null,
+    size: 'base',
+    vertical: false
 })
 
 /**
  * Computes the width class based on size.
  */
-const sizeCss = computed(() => {
+const sizeCss = computed((): string => {
     const localLookup = {
         small: 'w-sm',
         base: 'w-xl',

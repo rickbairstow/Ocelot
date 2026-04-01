@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Scrim from '@Components/Scrim.vue'
 import { expect, userEvent, within } from 'storybook/test'
 
-export default {
+const meta: Meta<typeof Scrim> = {
     title: 'Components/Scrim',
     component: Scrim,
 
@@ -45,8 +46,11 @@ export default {
     })
 }
 
+export default meta
+type Story = StoryObj<typeof meta>
+
 // ✅ Test: scrim emits click when clickable
-export const Clickable = {
+export const Clickable: Story = {
     args: {
         clickable: true
     },
@@ -60,13 +64,13 @@ export const Clickable = {
 }
 
 // ✅ Test: scrim does not emit click when not clickable
-export const NonClickable = {
+export const NonClickable: Story = {
     args: {
         clickable: false
     },
     play: async ({ canvasElement }) => {
         // Query by role if clickable, otherwise use a tag selector
-        const scrim = canvasElement.querySelector('div.inset-0')
+        const scrim = canvasElement.querySelector('div.inset-0') as HTMLElement
 
         await expect(scrim).not.toBeNull()
         await expect(scrim.tagName.toLowerCase()).toBe('div')

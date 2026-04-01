@@ -28,7 +28,7 @@ export default defineConfig({
     // Library build mode to package distribution files.
     build: {
         lib: {
-            entry: path.resolve(dirname, '.build/index.js'),
+            entry: path.resolve(dirname, '.build/index.ts'),
             name: 'ocelot-ui',
             fileName: (format) => `ocelot-ui.${format}.js`
         },

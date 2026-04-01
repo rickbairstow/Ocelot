@@ -7,30 +7,20 @@
     </component>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps({
-    level: {
-        default: 1,
-        type: [Number, String],
-        validator(value) {
-            const level = parseInt(value)
-            return level >= 1 && level <= 6
-        }
-    },
+interface Props {
+    level?: number | string
+    styleLevel?: number | string | null
+}
 
-    styleLevel: {
-        default: null,
-        type: [Number, String],
-        validator(value) {
-            const level = parseInt(value)
-            return level >= 1 && level <= 6
-        }
-    }
+const props = withDefaults(defineProps<Props>(), {
+    level: 1,
+    styleLevel: null
 })
 
-const headingLookup = {
+const headingLookup: Record<string, string> = {
     base: 'text-black ',
     1: 'text-4xl font-medium leading-10', // 36px
     2: 'text-3xl font-medium leading-9', // 30px
@@ -42,21 +32,19 @@ const headingLookup = {
 
 /**
  * Set which element should render, ie h1-h6.
- * @type {ComputedRef<string>}
  */
-const headingElement = computed(() => {
+const headingElement = computed((): string => {
     const { level } = props
     return `h${level}`
 })
 
 /**
  * Calculate heading classes from the lookup.
- * @type {ComputedRef<string>}
  */
-const headingClass = computed(() => {
+const headingClass = computed((): string => {
     const { level, styleLevel } = props
     const selectedLevel = styleLevel ?? level
 
-    return `${headingLookup.base} ${headingLookup?.[selectedLevel]}`
+    return `${headingLookup.base} ${headingLookup?.[String(selectedLevel)]}`
 })
 </script>

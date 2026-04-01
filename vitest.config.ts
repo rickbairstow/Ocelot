@@ -4,7 +4,7 @@ import { playwright } from '@vitest/browser-playwright'
 import path from 'path'
 import { fileURLToPath } from 'node:url'
 
-import viteConfig from './vite.config.js'
+import viteConfig from './vite.config'
 
 const dirname =
     typeof __dirname !== 'undefined'

@@ -4,9 +4,11 @@ import pluginStorybook from "eslint-plugin-storybook";
 import stylistic from "@stylistic/eslint-plugin";
 import js from "@eslint/js";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default [
     js.configs.recommended,
+    ...tseslint.configs.recommended,
     ...pluginVue.configs["flat/recommended"],
     ...pluginVueA11y.configs["flat/recommended"],
     ...pluginStorybook.configs["flat/recommended"],
@@ -27,12 +29,22 @@ export default [
             },
 
             ecmaVersion: "latest",
+            parser: pluginVue.parser,
+            parserOptions: {
+                parser: tseslint.parser,
+                extraFileExtensions: [".vue"],
+            },
         },
 
         rules: {
             eqeqeq: ["error", "always"],
             "vue/eqeqeq": ["error", "always"],
-            "no-unused-vars": "warn",
+            "no-unused-vars": "off",
+            "@typescript-eslint/no-unused-vars": ["warn", {
+                varsIgnorePattern: "^_",
+                argsIgnorePattern: "^_",
+                destructuredArrayIgnorePattern: "^_",
+            }],
             "vue/no-unused-vars": "warn",
 
             "vue/attributes-order": ["warn", {
@@ -89,6 +101,7 @@ export default [
 
             "no-useless-assignment": "off", // False positives in <script setup> — template usage is invisible to ESLint
             "vuejs-accessibility/label-has-for": "off", // Doesn't seem to like binded for's.
+            "storybook/no-renderer-packages": "off", // Meta/StoryObj must be imported from @storybook/vue3 (the renderer) — this is the documented pattern.
         },
     },
 ];

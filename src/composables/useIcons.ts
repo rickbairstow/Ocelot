@@ -1,6 +1,4 @@
-/**
- * Import icons.
- */
+import type { Component } from 'vue'
 import {
     // A
     IconArrowDown as ArrowDown,
@@ -48,10 +46,7 @@ import {
     IconX as X
 } from '@tabler/icons-vue'
 
-/**
- * Register icons.
- */
-const availableIcons = {
+const availableIcons: Record<string, Component> = {
     // A
     ArrowDown,
     ArrowLeft,
@@ -98,10 +93,7 @@ const availableIcons = {
     X
 }
 
-/**
- * List of icon sizes for use.
- */
-const availableSizes = {
+const availableSizes: Record<string, number> = {
     xs: 12,
     sm: 14,
     base: 16,
@@ -117,4 +109,6 @@ const availableSizes = {
     '9xl': 120
 }
 
+export type IconName = keyof typeof availableIcons
+export type IconSize = keyof typeof availableSizes
 export { availableIcons, availableSizes }

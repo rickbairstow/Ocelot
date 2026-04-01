@@ -19,18 +19,19 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Button from '@Components/Button.vue'
 
-const props = defineProps({
-    lines: {
-        type: Number,
-        default: 4
-    }
+interface Props {
+    lines?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    lines: 4
 })
 
-const contentSlot = ref(null)
+const contentSlot = ref<HTMLDivElement | null>(null)
 const isVisible = ref(false)
 
 /**
@@ -49,7 +50,7 @@ const clampLookup = [
 /**
  * Applies clamping unless expanded.
  */
-const clampClass = computed(() => {
+const clampClass = computed((): string => {
     if (isVisible.value) return ''
     const val = props.lines > 0 && props.lines <= 6 ? props.lines : 0
     return clampLookup[val] ?? ''
@@ -58,7 +59,7 @@ const clampClass = computed(() => {
 /**
  * Dynamic button text.
  */
-const buttonText = computed(() => {
+const buttonText = computed((): string => {
     return isVisible.value ? 'Show less' : 'Show more'
 })
 

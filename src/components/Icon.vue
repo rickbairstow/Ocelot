@@ -1,48 +1,42 @@
 <template>
     <component
-        :is="iconName"
-        v-if="iconName"
+        :is="iconComponent"
+        v-if="iconComponent"
         :height="iconSize.height"
         :width="iconSize.width"
     />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
+import type { Component } from 'vue'
 import { availableIcons, availableSizes } from '@Composables/useIcons'
 
-const props = defineProps({
-    icon: {
-        default: '',
-        type: String
-    },
-    size: {
-        default: '2xl',
-        type: String,
-        validator: (value) => {
-            // Check that values match the available font sizes
-            return [...Object.keys(availableSizes)].includes(value)
-        }
-    }
+interface Props {
+    icon?: string
+    size?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    icon: '',
+    size: '2xl'
 })
 
 /**
- * Check that the icon component is imported for use.
- * @type {ComputedRef<String|string>}
+ * Check that the icon component is imported for use and return the component object.
  */
-const iconName = computed(() => {
+const iconComponent = computed((): Component | null => {
     const { icon } = props
-    if (icon in availableIcons) return icon
+    if (icon in availableIcons) return availableIcons[icon]
 
     console.error(`${icon} not found`)
-    return ''
+    return null
 })
 
 /**
  * Set icon sizes based on the size prop.
- * @type {ComputedRef<{width: *|number, height: *|number}>}
  */
-const iconSize = computed(() => {
+const iconSize = computed((): { width: number; height: number } => {
     const { size } = props
     const calcSize = availableSizes?.[size] || 24
     return {
@@ -50,13 +44,4 @@ const iconSize = computed(() => {
         width: calcSize
     }
 })
-</script>
-
-<script>
-// Dynamic imports - this requires Options API.
-import { availableIcons as components } from '@Composables/useIcons'
-
-export default {
-    components
-}
 </script>

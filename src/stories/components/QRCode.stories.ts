@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import QrCode from '@Components/QrCode.vue'
 import { faker } from '@faker-js/faker'
 import { expect, within } from 'storybook/test'
 
-export default {
+const meta: Meta<typeof QrCode> = {
     title: 'Components/QrCode',
     component: QrCode,
 
@@ -53,7 +54,10 @@ export default {
     })
 }
 
-export const Default = {
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
     play: async ({ canvasElement, args }) => {
         const canvas = within(canvasElement)
 
@@ -61,10 +65,10 @@ export const Default = {
         expect(img).toBeVisible()
 
         // Check base64 QR output
-        expect(img.src).toMatch(/^data:image\/png;base64,/)
+        expect((img as HTMLImageElement).src).toMatch(/^data:image\/png;base64,/)
 
         // Check alt text reflects the value
-        if (args.value.startsWith('http')) {
+        if ((args.value as string).startsWith('http')) {
             expect(img.alt).toBe(`QR code linking to ${args.value}`)
         } else {
             expect(img.alt).toBe(`QR code containing: ${args.value}`)
@@ -72,7 +76,7 @@ export const Default = {
     }
 }
 
-export const CustomColoursAndSize = {
+export const CustomColoursAndSize: Story = {
     args: {
         background: '#dfe3ff',
         errorCorrectionLevel: 'H',
@@ -81,7 +85,7 @@ export const CustomColoursAndSize = {
     }
 }
 
-export const WithTextValue = {
+export const WithTextValue: Story = {
     args: {
         size: 200,
         value: faker.lorem.sentence()

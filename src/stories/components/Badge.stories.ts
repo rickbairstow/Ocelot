@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Badge from '@Components/Badge.vue'
 import { faker } from '@faker-js/faker'
 
-export default {
+const meta: Meta<typeof Badge> = {
     title: 'Components/Badge',
     component: Badge,
 
@@ -47,27 +48,30 @@ export default {
     })
 }
 
-export const Default = {
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
     args: {
         type: 'default'
     }
 }
-export const Error = {
+export const Error: Story = {
     args: {
         type: 'error'
     }
 }
-export const Info = {
+export const Info: Story = {
     args: {
         type: 'info'
     }
 }
-export const Success = {
+export const Success: Story = {
     args: {
         type: 'success'
     }
 }
-export const Warning = {
+export const Warning: Story = {
     args: {
         type: 'warning'
     }

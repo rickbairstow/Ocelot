@@ -79,13 +79,14 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Icon from './Icon.vue'
 
-defineProps({
-    variant: {
-        type: String,
-        default: 'card'
-    }
+interface Props {
+    variant?: string
+}
+
+withDefaults(defineProps<Props>(), {
+    variant: 'card'
 })
 </script>

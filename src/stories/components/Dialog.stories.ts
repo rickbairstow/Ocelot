@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Dialog from '@Components/Dialog.vue'
 import { ref } from 'vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
-export default {
+const meta: Meta<typeof Dialog> = {
     title: 'Components/Dialog',
     component: Dialog,
 
@@ -42,7 +43,7 @@ export default {
     render: (args) => ({
         components: { Dialog },
         setup() {
-            const dialog = ref(null)
+            const dialog = ref<{ open(): void } | null>(null)
 
             const openDialog = () => {
                 dialog.value?.open()
@@ -77,7 +78,10 @@ export default {
     })
 }
 
-export const Default = {
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
 
@@ -108,7 +112,7 @@ export const Default = {
                 !btn.classList.contains('sr-only')
         )
 
-        await userEvent.click(closeButton)
+        await userEvent.click(closeButton!)
 
         await waitFor(() => {
             expect(dialog).not.toBeVisible()

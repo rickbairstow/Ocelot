@@ -13,45 +13,36 @@
     </component>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps({
-    disabled: {
-        type: Boolean,
-        default: false
-    },
-    href: {
-        type: String,
-        default: null
-    },
-    size: {
-        type: String,
-        default: 'base',
-        validator: (val) => ['small', 'base', 'large'].includes(val)
-    },
-    type: {
-        type: String,
-        default: 'primary',
-        validator: (val) =>
-            ['primary', 'secondary', 'tertiary', 'text', 'none'].includes(val)
-    }
+interface Props {
+    disabled?: boolean
+    href?: string | null
+    size?: 'small' | 'base' | 'large'
+    type?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'none'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    disabled: false,
+    href: null,
+    size: 'base',
+    type: 'primary'
 })
 
 /**
  * Handles both click and keyboard activation (Enter/Space).
  * Prevents action if aria-disabled.
- * @param {MouseEvent | KeyboardEvent} e
  */
-const handleInteraction = (e) => {
+const handleInteraction = (e: MouseEvent | KeyboardEvent) => {
     if (props.disabled) {
         e.preventDefault()
-        e.stopImmediatePropagation?.()
+        ;(e as MouseEvent).stopImmediatePropagation?.()
         e.stopPropagation()
     }
 }
 
-const element = computed(() => (props.href ? 'a' : 'button'))
+const element = computed((): string => (props.href ? 'a' : 'button'))
 
 const styles = {
     padding: {
@@ -84,9 +75,8 @@ const styles = {
 
 /**
  * Computed button classes based on props.
- * @type {import('vue').ComputedRef<string>}
  */
-const componentStyle = computed(() => {
+const componentStyle = computed((): string => {
     const { size, type, disabled } = props
     const interactive = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
     const visual = styles[type]?.[disabled ? 'disabled' : 'base'] || ''

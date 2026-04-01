@@ -8,22 +8,17 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps({
-    size: {
-        type: String,
-        default: 'lg',
-        validator: (value) => ['sm', 'md', 'lg'].includes(value)
-    },
+interface Props {
+    size?: 'sm' | 'md' | 'lg'
+    type?: 'default' | 'error' | 'info' | 'success' | 'warning'
+}
 
-    type: {
-        type: String,
-        default: 'default',
-        validator: (value) =>
-            ['default', 'error', 'info', 'success', 'warning'].includes(value)
-    }
+const props = withDefaults(defineProps<Props>(), {
+    size: 'lg',
+    type: 'default'
 })
 
 /**
@@ -46,9 +41,8 @@ const classLookup = {
 
 /**
  * Calculate CSS styles CSS based on size and type.
- * @returns {string}
  */
-const badgeCss = computed(() => {
+const badgeCss = computed((): string => {
     const { size, type } = props
     const sizeCss = classLookup.size?.[size] ?? classLookup.size.lg
     const typeCss = classLookup.style?.[type] ?? classLookup.style?.default

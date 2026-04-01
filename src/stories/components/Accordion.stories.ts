@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Accordion from '@Components/Accordion.vue'
 import { faker } from '@faker-js/faker'
 import { userEvent, expect, within } from 'storybook/test'
 
-export default {
+const meta: Meta<typeof Accordion> = {
     title: 'Components/Accordion',
     component: Accordion,
 
@@ -43,11 +44,14 @@ export default {
     })
 }
 
-export const Default = {
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
     async play({ canvasElement, args }) {
         const canvas = within(canvasElement)
 
-        const summary = canvas.getByText(args.title, {
+        const summary = canvas.getByText(args.title as string, {
             selector: 'summary span'
         })
         const content = canvasElement.querySelector('.content')
@@ -83,7 +87,7 @@ export const Default = {
     }
 }
 
-export const StartsOpen = {
+export const StartsOpen: Story = {
     args: {
         startOpen: true
     }

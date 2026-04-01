@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
 import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
-export default {
+const meta: Meta<typeof Button> = {
     title: 'Components/Button',
     component: Button,
 
@@ -59,39 +60,42 @@ export default {
     })
 }
 
+export default meta
+type Story = StoryObj<typeof meta>
+
 // Generic play function for active buttons
-const clickPlay = async ({ canvasElement }) => {
+const clickPlay: Story['play'] = async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const button = await canvas.getByRole('button')
     await userEvent.click(button)
 }
 
-export const Primary = {
+export const Primary: Story = {
     args: { type: 'primary' },
     play: clickPlay
 }
 
-export const Secondary = {
+export const Secondary: Story = {
     args: { type: 'secondary' },
     play: clickPlay
 }
 
-export const Tertiary = {
+export const Tertiary: Story = {
     args: { type: 'tertiary' },
     play: clickPlay
 }
 
-export const Text = {
+export const Text: Story = {
     args: { type: 'text' },
     play: clickPlay
 }
 
-export const None = {
+export const None: Story = {
     args: { type: 'none' },
     play: clickPlay
 }
 
-export const DisabledClick = {
+export const DisabledClick: Story = {
     args: {
         type: 'primary',
         disabled: true
@@ -103,7 +107,7 @@ export const DisabledClick = {
     }
 }
 
-export const AsLink = {
+export const AsLink: Story = {
     args: {
         href: 'https://example.com'
     },

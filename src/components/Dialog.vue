@@ -69,12 +69,12 @@
     </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, nextTick, ref, useSlots } from 'vue'
 import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'
-import useFocusMemory from '@Composables/useFocusMemory.js'
+import useFocusMemory from '@Composables/useFocusMemory'
 
 /**
  * Provides access to slot presence like `footer`.
@@ -83,15 +83,21 @@ const slots = useSlots()
 
 /**
  * Track the open state of the dialog.
- * @type {import('vue').Ref<boolean>}
  */
 const isOpen = ref(false)
 
 /**
  * Ref to the scrollable content region of the dialog.
- * @type {import('vue').Ref<HTMLElement|null>}
  */
-const dialogueContent = ref(null)
+const dialogueContent = ref<HTMLDivElement | null>(null)
+
+interface Props {
+    ariaLabel: string
+    focusFrom?: string | null
+    focusTo?: string | null
+    portalTarget?: string
+    small?: boolean
+}
 
 /**
  * Props accepted by the dialog.
@@ -101,12 +107,11 @@ const dialogueContent = ref(null)
  * - portalTarget: Target for Teleport (e.g. #portal-target).
  * - small: If true, renders a narrower dialog width.
  */
-const props = defineProps({
-    ariaLabel: { type: String, required: true },
-    focusFrom: { type: String, default: null },
-    focusTo: { type: String, default: null },
-    portalTarget: { type: String, default: '#portal-target' },
-    small: { type: Boolean, default: true }
+const props = withDefaults(defineProps<Props>(), {
+    focusFrom: null,
+    focusTo: null,
+    portalTarget: '#portal-target',
+    small: true
 })
 
 /**
@@ -117,18 +122,16 @@ const { focusTo: applyFocusTo, returnFocus } = useFocusMemory()
 
 /**
  * Returns dialog width class based on `small` prop.
- * @type {import('vue').ComputedRef<string>}
  */
-const sizeClass = computed(() => {
+const sizeClass = computed((): string => {
     return props.small ? 'w-80 max-w-full' : 'w-full max-w-full'
 })
 
 /**
  * Opens the dialog and focuses on the target element.
  * Falls back to the dialog title if `focusTo` is not set.
- * @returns {Promise<void>}
  */
-const open = async () => {
+const open = async (): Promise<void> => {
     isOpen.value = true
     await nextTick()
 
@@ -142,7 +145,7 @@ const open = async () => {
 /**
  * Closes the dialog and restores focus to original trigger.
  */
-const close = () => {
+const close = (): void => {
     isOpen.value = false
     returnFocus()
 }
