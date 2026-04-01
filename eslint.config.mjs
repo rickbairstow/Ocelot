@@ -13,7 +13,7 @@ export default [
     ...pluginVueA11y.configs["flat/recommended"],
     ...pluginStorybook.configs["flat/recommended"],
     {
-        files: ["**/*.vue", "**/*.js", "**/*.ts", "**/*.tsx"],
+        files: ["**/*.vue", "**/*.js", "**/*.mjs", "**/*.ts", "**/*.tsx"],
 
         ignores: ["**/node_modules/", ".git/", ".github/", "public/", "docs/"],
 
