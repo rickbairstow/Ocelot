@@ -12,6 +12,7 @@
             @keydown.enter.prevent="handleTriggerClick"
             @mouseenter="handleTriggerMouseEnter"
             @mouseleave="handleTriggerMouseLeave"
+            @pointerdown="handleTriggerPointerDown"
         >
             <slot name="trigger" />
         </div>
@@ -110,6 +111,7 @@ const x = ref(0)
 const y = ref(0)
 
 let darkObserver: MutationObserver | null = null
+let pointerFocusPending = false
 
 const POSITION_STRATEGY = 'fixed' as const
 
@@ -255,8 +257,16 @@ const setHoverState = (hoverRef: { value: boolean }, hovering: boolean): void =>
 
 const handleFocusIn = (): void => {
     if (props.disabled || props.interaction === 'click') return
+    if (pointerFocusPending) {
+        pointerFocusPending = false
+        return
+    }
     clearCloseTimeout()
     open()
+}
+
+const handleTriggerPointerDown = (): void => {
+    pointerFocusPending = true
 }
 
 const handleFocusOut = (event: FocusEvent): void => {

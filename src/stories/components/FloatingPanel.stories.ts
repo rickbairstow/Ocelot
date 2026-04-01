@@ -302,16 +302,15 @@ export const Menu: Story = {
         const trigger = canvas.getByRole('button', { name: /open menu/i })
 
         // Before open: aria-expanded should be false
-        const triggerWrapper = trigger.parentElement!
-        expect(triggerWrapper.getAttribute('aria-expanded')).toBe('false')
-        expect(triggerWrapper.getAttribute('aria-haspopup')).toBe('menu')
+        expect(trigger.getAttribute('aria-expanded')).toBe('false')
+        expect(trigger.getAttribute('aria-haspopup')).toBe('menu')
 
         // Click opens the menu
         await userEvent.click(trigger)
         const menu = await canvas.findByRole('menu')
         await waitFor(() => {
             expect(menu).toBeVisible()
-            expect(triggerWrapper.getAttribute('aria-expanded')).toBe('true')
+            expect(trigger.getAttribute('aria-expanded')).toBe('true')
         })
 
         // Menu items are present
