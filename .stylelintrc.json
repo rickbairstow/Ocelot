@@ -4,6 +4,7 @@
         "stylelint-config-standard-scss"
     ],
     "ignoreFiles": [
+        "dist/**/*.css",
         "storybook-static/**/*.css"
     ],
     "rules": {

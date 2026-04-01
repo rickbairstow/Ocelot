@@ -7,6 +7,9 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default [
+    {
+        ignores: ["**/node_modules/**", ".git/**", ".github/**", "public/**", "docs/**", "dist/**", "storybook-static/**", "eslint.config.mjs"],
+    },
     js.configs.recommended,
     ...tseslint.configs.recommended,
     ...pluginVue.configs["flat/recommended"],
@@ -14,8 +17,6 @@ export default [
     ...pluginStorybook.configs["flat/recommended"],
     {
         files: ["**/*.vue", "**/*.js", "**/*.mjs", "**/*.ts", "**/*.tsx"],
-
-        ignores: ["**/node_modules/", ".git/", ".github/", "public/", "docs/"],
 
         plugins: {
             "@stylistic": stylistic,
