@@ -3,10 +3,7 @@
         :class="wrapperCss"
         role="separator"
     >
-        <span
-            v-if="hasText"
-            :class="lineCss"
-        />
+        <span :class="lineCss" />
         <span
             v-if="hasText"
             class="px-3 text-sm font-medium whitespace-nowrap shrink-0"
@@ -14,10 +11,7 @@
         >
             <slot />
         </span>
-        <span
-            v-if="hasText"
-            :class="lineCss"
-        />
+        <span :class="lineCss" />
     </div>
 </template>
 
@@ -61,11 +55,7 @@ const wrapperCss = computed((): string => {
         return `inline-block self-stretch border-l ${variantCss} ${border}`
     }
 
-    if (hasText.value) {
-        return 'flex items-center w-full'
-    }
-
-    return `block w-full border-t ${variantCss} ${border}`
+    return 'flex items-center w-full'
 })
 
 const lineCss = computed((): string => {
