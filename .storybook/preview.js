@@ -5,6 +5,11 @@ import { useArgs } from 'storybook/preview-api'
 
 export default {
     parameters: {
+        options: {
+            storySort: {
+                order: ['Getting Started', ['Introduction', 'Installation'], '*']
+            }
+        },
         controls: {
             matchers: {
                 color: /(background|color)$/i,
