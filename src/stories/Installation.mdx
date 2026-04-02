@@ -7,6 +7,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
 ## Prerequisites
 
 - Vue 3.5+
+- Tailwind CSS v4
 - Node.js 18+
 
 ## Install
@@ -15,9 +16,35 @@ import { Meta } from '@storybook/addon-docs/blocks'
 npm install ocelot-ui
 ```
 
-## Registering components
+## Setup
 
-### Global registration
+### 1. Configure Tailwind to scan the library
+
+Ocelot UI components use Tailwind utility classes. Add the compiled library to your Tailwind CSS source scanning so the utilities are included in your build. Also add the dark mode variant so `.dark` class toggling works:
+
+```css
+/* your main CSS file */
+@source "../node_modules/ocelot-ui/dist/ocelot-ui.es.js";
+@custom-variant dark (&:where(.dark, .dark *));
+@import "tailwindcss";
+```
+
+### 2. Import the library stylesheet
+
+The library ships a small additional stylesheet for dark mode variant configuration and Vue transitions. Import it once in your app entry point or root CSS file:
+
+```js
+// main.js / main.ts
+import 'ocelot-ui/style.css'
+```
+
+Or in your root CSS:
+
+```css
+@import 'ocelot-ui/style.css';
+```
+
+### 3. Register components
 
 ```js
 // main.js / main.ts
@@ -29,32 +56,12 @@ import App from './App.vue'
 createApp(App).use(OcelotUI).mount('#app')
 ```
 
-### Individual imports
+Or import individually:
 
 ```js
 import OcelotUI from 'ocelot-ui'
 const { Button, Input, Dialog } = OcelotUI
 ```
-
----
-
-## CSS
-
-Import the stylesheet once in your app entry point:
-
-```js
-import 'ocelot-ui/style.css'
-```
-
-Or in your root CSS/SCSS file:
-
-```css
-@import 'ocelot-ui/style.css';
-```
-
-All component styles are compiled into this single file with classes prefixed `oui_` to prevent collisions with your project's own styles. **Tailwind CSS is not required** in the consuming project — the stylesheet is fully standalone.
-
-If your project uses Tailwind, you can still import `ocelot-ui/style.css` alongside it; the `oui_` namespace ensures there are no conflicts.
 
 ---
 

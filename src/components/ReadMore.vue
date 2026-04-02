@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Button from '@Components/Button.vue'
 
 interface Props {
@@ -101,7 +101,7 @@ const onResize = () => {
 }
 
 onMounted(() => {
-    updateClamp()
+    nextTick(() => updateClamp())
     window.addEventListener('resize', onResize)
 })
 

@@ -1,3 +1,4 @@
+import '@Css/storybook.scss'
 import '@Css/core.scss'
 import { withThemeByClassName } from '@storybook/addon-themes'
 import { useArgs } from 'storybook/preview-api'
