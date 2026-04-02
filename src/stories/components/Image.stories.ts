@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Image from '@Components/Image.vue'
-import { waitFor } from 'storybook/test'
+import { waitFor, expect } from 'storybook/test'
 import { faker } from '@faker-js/faker'
+
+// Smallest valid 1×1 GIF — used as a placeholder data URI in tests
+const PLACEHOLDER_URI = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+
+// Immediately-invalid data URI: browser rejects it with no network request,
+// so the error state test fires onerror synchronously rather than timing out.
+const BROKEN_URI = 'data:image/png;base64,'
 
 const meta: Meta<typeof Image> = {
     title: 'Components/Image',
@@ -10,7 +17,7 @@ const meta: Meta<typeof Image> = {
     argTypes: {
         alt: {
             control: 'text',
-            description: 'Alt text for the image (required for accessibility)'
+            description: 'Alt text — required for accessibility'
         },
         aspectRatio: {
             control: 'text',
@@ -182,9 +189,63 @@ export const EagerHighPriority: Story = {
     play: waitForImage
 }
 
+// Covers the toCssSize branch where the value is a CSS unit string (not a bare
+// number), e.g. "50%" and "20rem" pass through unchanged rather than getting "px" appended.
+export const CssUnitDimensions: Story = {
+    args: {
+        src: faker.image.url({ width: 400, height: 300 }),
+        width: '50%',
+        height: '20rem'
+    },
+    render: (args) => ({
+        components: { Image },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div style="width: 400px; height: 400px">
+                <Image
+                    :alt="args.alt"
+                    :height="args.height"
+                    :src="args.src"
+                    :width="args.width"
+                />
+            </div>
+        `
+    }),
+    play: waitForImage
+}
+
+// Covers the placeholder <img> conditional and its blur-up class bindings.
+// Uses a data URI so the placeholder is available instantly without any network request.
+export const WithPlaceholder: Story = {
+    args: {
+        src: faker.image.url({ width: 400, height: 300 }),
+        placeholder: PLACEHOLDER_URI,
+        width: '400',
+        height: '300'
+    },
+    play: async ({ canvasElement }) => {
+        // Placeholder img renders immediately (data URI — no network needed)
+        await waitFor(() => {
+            const placeholder = canvasElement.querySelector('img[aria-hidden="true"]')
+            if (!placeholder) throw new Error('Placeholder image not rendered')
+        }, { timeout: 2000 })
+
+        // Main image should also eventually resolve
+        await waitForImage({ canvasElement })
+
+        // After load the placeholder should still be in the DOM (just faded out via opacity)
+        const placeholder = canvasElement.querySelector('img[aria-hidden="true"]')
+        await expect(placeholder).not.toBeNull()
+    }
+}
+
+// Uses a malformed data URI so the browser fires onerror immediately —
+// no DNS lookup or network timeout involved.
 export const ErrorState: Story = {
     args: {
-        src: 'https://example.invalid/broken-image.jpg',
+        src: BROKEN_URI,
         width: '400',
         height: '300'
     },
@@ -194,7 +255,11 @@ export const ErrorState: Story = {
                 const error = canvasElement.querySelector('[role="img"]')
                 if (!error) throw new Error('Error state not shown')
             },
-            { timeout: 10000 }
+            { timeout: 3000 }
         )
+
+        // Main img is removed from the DOM in error state (v-if="state !== 'error'")
+        const mainImg = canvasElement.querySelector('img:not([aria-hidden])')
+        await expect(mainImg).toBeNull()
     }
 }
