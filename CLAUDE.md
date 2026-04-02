@@ -10,10 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Development
-npm run dev                    # Start Vite dev server
-npm run build                  # Build library (Vite + standalone CSS, outputs to dist/)
-npm run build:css-standalone   # Build only the standalone CSS (dist/style-standalone.css)
-npm run preview                # Preview built library
+npm run dev              # Start Vite dev server
+npm run build            # Build library (outputs to dist/)
+npm run preview          # Preview built library
 
 # Linting
 npm run lint             # Run ESLint + Stylelint
@@ -27,11 +26,9 @@ npm run storybook        # Start Storybook dev server on port 6006
 npm run build-storybook  # Build static Storybook
 npm run test-storybook   # Run Vitest + Playwright tests via Storybook
 
-# CI test workflow (mirrors GitHub Actions)
-yarn build-storybook && yarn test-storybook
+# CI test workflow
+npm run build-storybook && npm run test-storybook
 ```
-
-**Note:** GitHub Actions uses Yarn for Storybook tests (npm has a caching bug in CI). Use npm locally.
 
 ## Architecture
 
@@ -40,10 +37,10 @@ yarn build-storybook && yarn test-storybook
 - Build outputs:
   - `dist/ocelot-ui.umd.js` — UMD bundle (CommonJS consumers)
   - `dist/ocelot-ui.es.js` — ES module bundle
-  - `dist/style.css` — Compiled additional CSS; CSS is a requirement of this project, is this CSS.
+  - `dist/style.css` — Vue transition styles only. Tailwind CSS is a peer dependency; consumers configure their own Tailwind build to scan the library's compiled JS for used utility classes.
 
 ### Path Aliases
-Defined in `vite.config.js` and `jsconfig.json`:
+Defined in `vite.config.ts` and `jsconfig.json`:
 - `@` → `src/`
 - `@Components` → `src/components/`
 - `@Composables` → `src/composables/`
@@ -55,11 +52,12 @@ Defined in `vite.config.js` and `jsconfig.json`:
 - **`useIcons.js`** — Tabler icon registry and size constants (xs=12px through 9xl=120px).
 
 ### Styling
-- Tailwind CSS v4 via `@tailwindcss/vite` plugin (dev server + library build).
-- All Tailwind utility classes in components are prefixed `oui_` — e.g. `oui_flex`, `dark:oui_bg-gray-900`. This matches the `prefix: 'oui_'` in `tailwind.config.js`.
-- No scoped CSS in components — purely Tailwind utility classes (all prefixed).
-- Dark mode uses `.dark` class.
-- `src/css/core.scss` — full Tailwind (`@use 'tailwindcss'`) + Vue transitions, with `@config` pointing to `tailwind.config.js` for the `oui_` prefix. Output as `dist/style.css`.
+- Tailwind CSS v4 is a **peer dependency** — consumers must have it configured in their own project.
+- Components use standard Tailwind utility classes (no prefix).
+- Dark mode uses `.dark` class. Consumers must add `@custom-variant dark (&:where(.dark, .dark *))` to their own Tailwind CSS.
+- `src/css/core.scss` — Vue transition styles only. Imported by `.build/index.ts`, output as `dist/style.css`.
+- `src/css/storybook.scss` — Tailwind + dark variant import for Storybook only. Not included in the library build.
+- `@tailwindcss/vite` plugin in `vite.config.ts` drives Tailwind during the dev server and Storybook.
 
 ### Key Component Patterns
 - All components use `<script setup>` (Composition API).
@@ -71,7 +69,7 @@ Defined in `vite.config.js` and `jsconfig.json`:
 ### Testing
 - Tests run through Storybook stories — each story can have a `play()` function for interaction testing.
 - Accessibility tested automatically via `axe-playwright` in `.storybook/test-runner.js` — violations at minor/moderate/serious/critical impact levels fail the test run.
-- Vitest runs in-browser with Playwright/Chromium (configured in `vite.config.js`).
+- Vitest runs in-browser with Playwright/Chromium (configured in `vite.config.ts`).
 
 ## Code Style
 - 4-space indentation (JS, Vue, CSS, SCSS)
