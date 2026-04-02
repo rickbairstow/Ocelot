@@ -3,7 +3,7 @@
 /**
  * CSS Imports
  */
-import '@Css/core.css'
+import '@Css/core.scss'
 
 /**
  * Component Imports
