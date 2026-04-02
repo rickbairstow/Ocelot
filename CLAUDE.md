@@ -40,9 +40,7 @@ yarn build-storybook && yarn test-storybook
 - Build outputs:
   - `dist/ocelot-ui.umd.js` — UMD bundle (CommonJS consumers)
   - `dist/ocelot-ui.es.js` — ES module bundle
-  - `dist/style.css` — Compiled standalone CSS; all classes are prefixed `oui_` (e.g. `oui_flex`, `oui_text-red-500`) so the library never conflicts with the consuming project's styles. Tailwind is NOT required in the consumer's project.
-- Vue is a peer dependency (external, not bundled).
-- The `oui_` prefix is configured via `tailwind.config.js` (project root) and applied using Tailwind's `prefix` option, referenced from `src/css/core.scss` via `@config "../../tailwind.config.js"`.
+  - `dist/style.css` — Compiled additional CSS; CSS is a requirement of this project, is this CSS.
 
 ### Path Aliases
 Defined in `vite.config.js` and `jsconfig.json`:
