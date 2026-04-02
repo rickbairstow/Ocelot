@@ -10,9 +10,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Development
-npm run dev              # Start Vite dev server
-npm run build            # Build library (outputs UMD + ES module to dist/)
-npm run preview          # Preview built library
+npm run dev                    # Start Vite dev server
+npm run build                  # Build library (Vite + standalone CSS, outputs to dist/)
+npm run build:css-standalone   # Build only the standalone CSS (dist/style-standalone.css)
+npm run preview                # Preview built library
 
 # Linting
 npm run lint             # Run ESLint + Stylelint
@@ -35,9 +36,13 @@ yarn build-storybook && yarn test-storybook
 ## Architecture
 
 ### Library Build
-- Entry point: `.build/index.js` — dynamically imports all `.vue` files from `src/components/`, extracts component names from filenames, and exports them as a default object.
-- Build outputs: `dist/ocelot-ui.umd.js`, `dist/ocelot-ui.es.js`, `dist/style.css`
+- Entry point: `.build/index.ts` — dynamically imports all `.vue` files from `src/components/`, extracts component names from filenames, and exports them as a default object.
+- Build outputs:
+  - `dist/ocelot-ui.umd.js` — UMD bundle (CommonJS consumers)
+  - `dist/ocelot-ui.es.js` — ES module bundle
+  - `dist/style.css` — Compiled standalone CSS; all classes are prefixed `oui_` (e.g. `oui_flex`, `oui_text-red-500`) so the library never conflicts with the consuming project's styles. Tailwind is NOT required in the consumer's project.
 - Vue is a peer dependency (external, not bundled).
+- The `oui_` prefix is configured via `tailwind.config.js` (project root) and applied using Tailwind's `prefix` option, referenced from `src/css/core.scss` via `@config "../../tailwind.config.js"`.
 
 ### Path Aliases
 Defined in `vite.config.js` and `jsconfig.json`:
@@ -52,10 +57,11 @@ Defined in `vite.config.js` and `jsconfig.json`:
 - **`useIcons.js`** — Tabler icon registry and size constants (xs=12px through 9xl=120px).
 
 ### Styling
-- Tailwind CSS v4 via `@tailwindcss/postcss` in PostCSS config.
-- No scoped CSS in components — purely Tailwind utility classes.
+- Tailwind CSS v4 via `@tailwindcss/vite` plugin (dev server + library build).
+- All Tailwind utility classes in components are prefixed `oui_` — e.g. `oui_flex`, `dark:oui_bg-gray-900`. This matches the `prefix: 'oui_'` in `tailwind.config.js`.
+- No scoped CSS in components — purely Tailwind utility classes (all prefixed).
 - Dark mode uses `.dark` class.
-- Global styles and Vue transitions in `src/css/core.scss`.
+- `src/css/core.scss` — full Tailwind (`@use 'tailwindcss'`) + Vue transitions, with `@config` pointing to `tailwind.config.js` for the `oui_` prefix. Output as `dist/style.css`.
 
 ### Key Component Patterns
 - All components use `<script setup>` (Composition API).

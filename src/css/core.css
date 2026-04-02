@@ -1,4 +1,5 @@
-@use 'tailwindcss';
+@config "../../tailwind.config.js";
+@import "tailwindcss";
 
 /* stylelint-disable */
 @custom-variant dark (&:where(.dark, .dark *));

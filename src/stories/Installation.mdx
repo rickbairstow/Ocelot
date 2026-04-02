@@ -1,0 +1,81 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Getting Started/Installation" />
+
+# Installation
+
+## Prerequisites
+
+- Vue 3.5+
+- Node.js 18+
+
+## Install
+
+```bash
+npm install ocelot-ui
+```
+
+## Registering components
+
+### Global registration
+
+```js
+// main.js / main.ts
+import { createApp } from 'vue'
+import OcelotUI from 'ocelot-ui'
+import 'ocelot-ui/style.css'
+import App from './App.vue'
+
+createApp(App).use(OcelotUI).mount('#app')
+```
+
+### Individual imports
+
+```js
+import OcelotUI from 'ocelot-ui'
+const { Button, Input, Dialog } = OcelotUI
+```
+
+---
+
+## CSS
+
+Import the stylesheet once in your app entry point:
+
+```js
+import 'ocelot-ui/style.css'
+```
+
+Or in your root CSS/SCSS file:
+
+```css
+@import 'ocelot-ui/style.css';
+```
+
+All component styles are compiled into this single file with classes prefixed `oui_` to prevent collisions with your project's own styles. **Tailwind CSS is not required** in the consuming project — the stylesheet is fully standalone.
+
+If your project uses Tailwind, you can still import `ocelot-ui/style.css` alongside it; the `oui_` namespace ensures there are no conflicts.
+
+---
+
+## Dark mode
+
+Dark mode is toggled via the `.dark` class on a parent element (typically `<html>`):
+
+```html
+<html class="dark">
+  ...
+</html>
+```
+
+---
+
+## Dialog portal target
+
+The `Dialog` component uses Vue's `<Teleport>` to render outside the component tree.
+Add a `#portal-target` element to your `index.html`:
+
+```html
+<div id="app"></div>
+<div id="portal-target"></div>
+```
