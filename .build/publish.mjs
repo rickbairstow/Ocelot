@@ -39,6 +39,14 @@ if (dirty) {
     process.exit(1)
 }
 
+// Ensure logged in to npm
+try {
+    runQuiet('npm whoami')
+} catch {
+    console.log('Not logged in to npm. Please log in...')
+    run('npm login')
+}
+
 console.log(`Local version:  ${LOCAL_VERSION}`)
 
 let npmVersion
@@ -78,6 +86,15 @@ rl.question('\nBump type? [patch / minor / major]: ', (bumpType) => {
     const newVersion = runQuiet(`npm version ${bumpType} --no-git-tag-version`).replace(/^v/, '')
     console.log(`\nBumped to ${newVersion}`)
 
+    console.log('\nPublishing to npm...')
+    try {
+        run('npm publish --access public')
+    } catch (err) {
+        console.error('\nPublish failed. Reverting version bump...')
+        run(`npm version ${LOCAL_VERSION} --no-git-tag-version --allow-same-version`)
+        process.exit(1)
+    }
+
     console.log('\nCommitting version bump...')
     const filesToAdd = ['package.json']
     if (existsSync(packageLockJson)) filesToAdd.push('package-lock.json')
@@ -88,9 +105,6 @@ rl.question('\nBump type? [patch / minor / major]: ', (bumpType) => {
     console.log('\nPushing commit and tag...')
     run('git push')
     run(`git push origin v${newVersion}`)
-
-    console.log('\nPublishing to npm...')
-    run('npm publish --access public')
 
     console.log(`\nDone! Published ${PACKAGE_NAME}@${newVersion}`)
 })
