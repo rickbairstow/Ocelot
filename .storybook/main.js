@@ -11,6 +11,9 @@ const config = {
     framework: {
         name: '@storybook/vue3-vite',
         options: {}
+    },
+    core: {
+        disableTelemetry: true
     }
 }
 
