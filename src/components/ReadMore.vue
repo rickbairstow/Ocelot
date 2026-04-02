@@ -3,10 +3,11 @@
         <div
             ref="contentSlot"
             class="break-words"
-            :class="clampClass"
+            :style="contentStyle"
         >
             <slot />
         </div>
+
         <Button
             v-if="isClamped"
             class="mt-1"
@@ -20,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Button from '@Components/Button.vue'
 
 interface Props {
@@ -33,79 +34,100 @@ const props = withDefaults(defineProps<Props>(), {
 
 const contentSlot = ref<HTMLDivElement | null>(null)
 const isVisible = ref(false)
+const isClamped = ref(false)
+const collapsedHeight = ref<number | null>(null)
 
-/**
- * Tailwind's line-clamp class selection.
- */
-const clampLookup = [
-    'line-clamp-none',
-    'line-clamp-1',
-    'line-clamp-2',
-    'line-clamp-3',
-    'line-clamp-4',
-    'line-clamp-5',
-    'line-clamp-6'
-]
+let resizeObserver: ResizeObserver | null = null
 
-/**
- * Applies clamping unless expanded.
- */
-const clampClass = computed((): string => {
-    if (isVisible.value) return ''
-    const val = props.lines > 0 && props.lines <= 6 ? props.lines : 0
-    return clampLookup[val] ?? ''
-})
-
-/**
- * Dynamic button text.
- */
 const buttonText = computed((): string => {
     return isVisible.value ? 'Show less' : 'Show more'
 })
 
-/**
- * Reactive flag to determine whether content is clamped.
- */
-const isClamped = ref(false)
+const contentStyle = computed(() => {
+    if (isVisible.value || !isClamped.value || !collapsedHeight.value) {
+        return {}
+    }
 
-/**
- * Reassess clamp state.
- */
-const updateClamp = () => {
-    const el = contentSlot.value
-    if (!el) return
-    isClamped.value = props.lines > 0 && el.scrollHeight > el.clientHeight
+    return {
+        maxHeight: `${collapsedHeight.value}px`,
+        overflow: 'hidden'
+    }
+})
+
+const getLineHeight = (el: HTMLElement): number => {
+    const styles = window.getComputedStyle(el)
+    const lineHeight = styles.lineHeight
+    const fontSize = parseFloat(styles.fontSize || '16')
+
+    if (lineHeight === 'normal') {
+        return fontSize * 1.2
+    }
+
+    const parsed = parseFloat(lineHeight)
+    return Number.isNaN(parsed) ? fontSize * 1.2 : parsed
 }
 
-/**
- * Toggle expanded/collapsed state.
- */
+const updateClamp = async () => {
+    const el = contentSlot.value
+
+    if (!el || props.lines <= 0) {
+        isClamped.value = false
+        collapsedHeight.value = null
+        return
+    }
+
+    const wasVisible = isVisible.value
+
+    if (wasVisible) {
+        isVisible.value = false
+        await nextTick()
+    }
+
+    const lineHeight = getLineHeight(el)
+    const nextCollapsedHeight = Math.ceil(lineHeight * props.lines)
+
+    collapsedHeight.value = nextCollapsedHeight
+
+    const fullHeight = el.scrollHeight
+    isClamped.value = fullHeight > nextCollapsedHeight + 1
+
+    if (!isClamped.value && isVisible.value) {
+        isVisible.value = false
+    }
+
+    if (wasVisible) {
+        isVisible.value = true
+        await nextTick()
+    }
+}
+
 const toggleVisibility = () => {
     isVisible.value = !isVisible.value
 }
 
-/**
- * Handle window resize events.
- */
-const onResize = () => {
+onMounted(async () => {
+    await nextTick()
+
     const el = contentSlot.value
     if (!el) return
 
-    const hasOverflow = props.lines > 0 && el.scrollHeight > el.clientHeight
+    resizeObserver = new ResizeObserver(() => {
+        void updateClamp()
+    })
 
-    if (!hasOverflow && isVisible.value) {
-        isVisible.value = false
-    }
+    resizeObserver.observe(el)
 
-    updateClamp()
-}
-
-onMounted(() => {
-    updateClamp()
-    window.addEventListener('resize', onResize)
+    void updateClamp()
 })
 
+watch(
+    () => props.lines,
+    () => {
+        void updateClamp()
+    }
+)
+
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', onResize)
+    resizeObserver?.disconnect()
 })
 </script>
