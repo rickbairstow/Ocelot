@@ -86,7 +86,7 @@
     "eslint-plugin-vue": "^10.8.0",
     "eslint-plugin-vuejs-accessibility": "^2.5.0",
     "globals": "^17.4.0",
-    "playwright": "^1.58.2",
+    "playwright": "^1.59.1",
     "postcss": "^8.5.8",
     "sass-embedded": "^1.98.0",
     "storybook": "^10.3.4",
