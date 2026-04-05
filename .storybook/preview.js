@@ -1,9 +1,15 @@
+import '@Css/storybook.css'
 import '@Css/core.scss'
 import { withThemeByClassName } from '@storybook/addon-themes'
 import { useArgs } from 'storybook/preview-api'
 
 export default {
     parameters: {
+        options: {
+            storySort: {
+                order: ['Getting Started', ['Introduction', 'Installation'], '*']
+            }
+        },
         controls: {
             matchers: {
                 color: /(background|color)$/i,
