@@ -31,6 +31,7 @@ import {
     IconPhone as Phone,
     IconPhoto as Photo,
     IconPhotoOff as PhotoOff,
+    IconPlayerPlay as PlayerPlay,
     IconPlus as Plus,
 
     // S
@@ -38,6 +39,9 @@ import {
 
     // T
     IconTrash as Trash,
+
+    // V
+    IconVideoOff as VideoOff,
 
     // U
     IconUser as User,
@@ -78,6 +82,7 @@ const availableIcons: Record<string, Component> = {
     Phone,
     Photo,
     PhotoOff,
+    PlayerPlay,
     Plus,
 
     // S
@@ -85,6 +90,9 @@ const availableIcons: Record<string, Component> = {
 
     // T
     Trash,
+
+    // V
+    VideoOff,
 
     // U
     User,
