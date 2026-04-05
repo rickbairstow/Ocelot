@@ -5,6 +5,15 @@ const meta: Meta<typeof Video> = {
     title: 'Components/Video',
     component: Video,
 
+    parameters: {
+        docs: {
+            description: {
+                component:
+                    'A video player component powered by [Plyr](https://plyr.io). Supports YouTube, Vimeo, and native HTML5 video (MP4, WebM, HLS, DASH) — the provider is detected automatically from the `src` URL. Accessible by default with full keyboard navigation and ARIA support.'
+            }
+        }
+    },
+
     argTypes: {
         autoplay: {
             control: 'boolean',
