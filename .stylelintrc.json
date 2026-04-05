@@ -13,9 +13,11 @@
             {
                 "ignoreAtRules": [
                     "apply",
+                    "custom-variant",
                     "layer",
                     "responsive",
                     "screen",
+                    "source",
                     "tailwind",
                     "variants"
                 ]

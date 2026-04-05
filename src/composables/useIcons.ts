@@ -47,7 +47,10 @@ import {
     IconUser as User,
 
     // X
-    IconX as X
+    IconX as X,
+
+    // Z
+    IconZoomIn as ZoomIn
 } from '@tabler/icons-vue'
 
 const availableIcons: Record<string, Component> = {
@@ -98,7 +101,10 @@ const availableIcons: Record<string, Component> = {
     User,
 
     // X
-    X
+    X,
+
+    // Z
+    ZoomIn
 }
 
 const availableSizes: Record<string, number> = {

@@ -1,0 +1,81 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Composables/useLightboxRegistry" />
+
+# useLightboxRegistry
+
+A module-level singleton that manages the [PhotoSwipe](https://photoswipe.com) lightbox instance and groups of registered images. Used internally by `LightboxImage` — you do not need to call this directly when using that component.
+
+---
+
+## Exports
+
+### Interfaces
+
+```ts
+interface LightboxSlide {
+    src: string
+    alt: string
+    width?: number
+    height?: number
+    caption?: string
+}
+
+interface LightboxEntry {
+    getSlide: () => LightboxSlide
+}
+```
+
+`getSlide` is a factory function so that the registry always reads the current prop values at the moment the lightbox opens, rather than capturing stale values at registration time.
+
+### Functions
+
+| Function | Description |
+|---|---|
+| `registerInGroup(group, entry)` | Register a `LightboxEntry` under a named group. Creates the group if it does not exist. |
+| `unregisterFromGroup(group, entry)` | Remove an entry from its group. Deletes the group when empty. |
+| `openGroup(group, clickedEntry)` | Open the lightbox for a named group, starting at the clicked entry. |
+| `openSingle(slide)` | Open the lightbox for a single slide with no gallery navigation. |
+
+---
+
+## How LightboxImage uses it
+
+```ts
+// On mount — register this image in its group
+const entry: LightboxEntry = { getSlide }
+registerInGroup(props.lightboxGroup, entry)
+
+// On unmount — clean up so stale entries don't appear in the gallery
+unregisterFromGroup(props.lightboxGroup, entry)
+
+// On click
+openGroup(props.lightboxGroup, entry)  // gallery mode
+openSingle(getSlide())                 // single image mode
+```
+
+---
+
+## Gallery features
+
+When a group contains more than one image, the lightbox automatically adds:
+
+- **Arrow navigation** — previous/next buttons and left/right keyboard nav
+- **Thumbnail strip** — scrollable row of thumbnails at the bottom; active image is highlighted at full opacity, others dimmed
+- **Caption bar** — solid dark bar with white text sitting above the thumbnail strip, shown only when the current slide has a `caption`
+
+For single images the thumbnail strip is omitted and the caption bar sits at the bottom of the viewport.
+
+---
+
+## Image sizing
+
+Natural image dimensions are read from the already-loaded `<img>` element in the DOM at click time (`naturalWidth` / `naturalHeight`). This ensures PhotoSwipe displays images at their true size — scaling down only when larger than the viewport, and never stretching images that are smaller.
+
+---
+
+## Notes
+
+- The PhotoSwipe instance is created lazily on first open and reused for the lifetime of the page. It is shared across all `LightboxImage` components.
+- Groups are keyed by the `lightbox-group` prop string. Components with different group values maintain independent galleries.
+- This composable has no Vue reactivity — it uses plain module-level `Map` and object references. This is intentional: the registry needs to persist across component unmount/remount cycles within the same page.

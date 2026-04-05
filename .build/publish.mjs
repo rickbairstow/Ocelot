@@ -90,7 +90,7 @@ rl.question('\nBump type? [patch / minor / major]: ', (bumpType) => {
     try {
         run('npm publish --access public')
     } catch (err) {
-        console.error('\nPublish failed. Reverting version bump...')
+        console.error('\nPublish failed. Reverting version bump...', err)
         run(`npm version ${LOCAL_VERSION} --no-git-tag-version --allow-same-version`)
         process.exit(1)
     }

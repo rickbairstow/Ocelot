@@ -2,4 +2,73 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 <Meta title="Composables/useIcons" />
 
-TODO
+# useIcons
+
+A registry that maps short icon names to their [Tabler Icons](https://tabler.io/icons) Vue components, and maps size names to pixel values. Used internally by the `Icon` component but exported so consumers can validate names or enumerate the available set.
+
+---
+
+## Exports
+
+| Export | Type | Description |
+|---|---|---|
+| `availableIcons` | `Record<string, Component>` | Map of icon name → Tabler icon component |
+| `availableSizes` | `Record<string, number>` | Map of size name → pixel value |
+| `IconName` | `type` | Union of all valid icon name strings |
+| `IconSize` | `type` | Union of all valid size name strings |
+
+---
+
+## Available icons
+
+`ArrowDown` `ArrowLeft` `ArrowRight` `ArrowUp` `Bell` `ChevronDown` `ChevronLeft` `ChevronRight` `ChevronUp` `ChevronsLeft` `ChevronsRight` `Loader` `Loader2` `Loader3` `Mail` `MailOpened` `Menu` `Phone` `Photo` `PhotoOff` `PlayerPlay` `Plus` `Search` `Trash` `User` `VideoOff` `X` `ZoomIn`
+
+---
+
+## Available sizes
+
+| Name | Pixels |
+|---|---|
+| `xs` | 12 |
+| `sm` | 14 |
+| `base` | 16 |
+| `lg` | 18 |
+| `xl` | 20 |
+| `2xl` | 24 |
+| `3xl` | 30 |
+| `4xl` | 36 |
+| `5xl` | 48 |
+| `6xl` | 60 |
+| `7xl` | 72 |
+| `8xl` | 96 |
+| `9xl` | 120 |
+
+---
+
+## Usage
+
+The `Icon` component handles lookup automatically — pass the name as a string prop:
+
+```vue
+<Icon icon="ArrowDown" size="lg" />
+```
+
+If you need to validate an icon name or list available icons in your own code:
+
+```ts
+import { availableIcons, availableSizes } from '@Composables/useIcons'
+import type { IconName, IconSize } from '@Composables/useIcons'
+
+// Check a name is valid before passing to Icon
+const isValidIcon = (name: string): name is IconName => name in availableIcons
+
+// Resolve a size to pixels
+const px = availableSizes['2xl'] // 24
+```
+
+---
+
+## Notes
+
+- All icons are sourced from `@tabler/icons-vue`. Only icons listed above are registered — adding more requires updating `useIcons.ts`.
+- Size names align with Tailwind's font-size scale for predictable pairing.
