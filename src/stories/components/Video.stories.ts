@@ -115,14 +115,14 @@ export const Vimeo: Story = {
 export const NativeVideo: Story = {
     name: 'Native MP4',
     args: {
-        src: '/sample.mp4',
+        src: '/media/sample.mp4',
         title: 'Sample video'
     }
 }
 
 export const WithPoster: Story = {
     args: {
-        src: '/sample.mp4',
+        src: '/media/sample.mp4',
         title: 'Sample video with poster',
         poster: '/favicon.ico'
     }
@@ -131,7 +131,7 @@ export const WithPoster: Story = {
 // autoplay implies muted — typical ambient/hero video pattern.
 export const MutedAutoplay: Story = {
     args: {
-        src: '/sample.mp4',
+        src: '/media/sample.mp4',
         title: 'Sample video — autoplay',
         autoplay: true,
         loop: true
