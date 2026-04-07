@@ -2,6 +2,7 @@
     <Teleport to="#portal-target">
         <div
             aria-label="Notifications"
+            role="region"
             :class="containerClass"
         >
             <!-- sr-only live regions for screen reader announcements -->
