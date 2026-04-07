@@ -1,0 +1,193 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Composables/useToast" />
+
+# useToast
+
+A singleton composable that manages a global toast notification queue. State lives at the module level, so every call to `useToast()` in your app shares the same list of toasts — no providers, no plugins, no context needed.
+
+It handles:
+
+- Queuing and dismissing toast notifications
+- Auto-dismiss timers with hover pause/resume
+- Permanent (non-dismissing) toasts
+- Screen reader announcements via `aria-live`
+
+---
+
+## ✨ Features
+
+- ✅ Singleton state — call `useToast()` anywhere and it just works
+- ✅ Five toast types: `default`, `success`, `error`, `warning`, `info`
+- ✅ Auto-dismiss with configurable duration (default 4s)
+- ✅ Permanent toasts that stay until manually dismissed
+- ✅ Hover pauses the auto-dismiss timer; mouse-leave restarts it
+- ✅ Programmatic dismiss by id, or clear all at once
+- ✅ Screen reader announcements (polite for most types, assertive for errors)
+
+---
+
+## 🚀 App Setup
+
+Place `<Toast />` once at the root of your application, alongside your `#portal-target` element:
+
+```html
+<!-- App.vue -->
+<template>
+    <main>
+        <!-- your app -->
+    </main>
+
+    <Toast placement="top-right" />
+    <div id="portal-target"></div>
+</template>
+
+<script setup>
+import Toast from 'ocelot-ui/Toast'
+</script>
+```
+
+The `<Toast />` component uses Vue's `<Teleport>` to render into `#portal-target`, keeping it out of your layout flow regardless of where you place it in the template.
+
+---
+
+## 🔧 Usage
+
+### Basic
+
+```js
+import { useToast } from 'ocelot-ui'
+
+const { add } = useToast()
+
+add('Your changes have been saved.')
+```
+
+### With type
+
+```js
+const { add } = useToast()
+
+add('File uploaded successfully.', { type: 'success' })
+add('Something went wrong.', { type: 'error' })
+add('Your session expires soon.', { type: 'warning' })
+add('Three new messages.', { type: 'info' })
+```
+
+### Custom duration
+
+```js
+// Dismiss after 8 seconds
+add('Processing complete.', { type: 'success', duration: 8000 })
+```
+
+### Permanent toast
+
+A permanent toast will never auto-dismiss. The user must click the dismiss button.
+
+```js
+add('You have unsaved changes.', { permanent: true })
+```
+
+### Dismiss by id
+
+`add()` returns the toast's id, which can be used to programmatically remove it later:
+
+```js
+const { add, remove } = useToast()
+
+const id = add('Uploading...', { permanent: true })
+
+// later, when upload completes
+remove(id)
+add('Upload complete.', { type: 'success' })
+```
+
+### Clear all
+
+```js
+const { clear } = useToast()
+
+clear()
+```
+
+---
+
+## 📋 API Reference
+
+### `add(message, options?)`
+
+Adds a new toast to the queue and returns its id.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `message` | `string` | The notification text to display. |
+| `options` | `ToastOptions` | Optional configuration (see below). |
+
+**Returns:** `string` — the toast id.
+
+---
+
+### `remove(id)`
+
+Dismisses a specific toast by its id. Clears any running auto-dismiss timer.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | `string` | The id returned by `add()`. |
+
+---
+
+### `clear()`
+
+Dismisses all toasts immediately and clears all running timers.
+
+---
+
+## 🗂️ Types
+
+### `ToastOptions`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `type` | `ToastType` | `'default'` | Visual style and icon variant. |
+| `duration` | `number` | `4000` | Auto-dismiss delay in milliseconds. |
+| `permanent` | `boolean` | `false` | If `true`, the toast never auto-dismisses. |
+
+### `ToastType`
+
+```ts
+type ToastType = 'default' | 'success' | 'error' | 'warning' | 'info'
+```
+
+### `ToastItem`
+
+The shape of each toast in the reactive queue:
+
+```ts
+interface ToastItem {
+    id: string
+    message: string
+    type: ToastType
+    duration: number
+    permanent: boolean
+}
+```
+
+---
+
+## `<Toast />` Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `placement` | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'` | Corner where the toast stack appears. |
+
+---
+
+## ⚠️ Notes
+
+- **Singleton state** — the reactive `toasts` array and `timers` Map live at module scope. All calls to `useToast()` in the same app instance share the same state. This is intentional and requires no setup.
+- **Hover pause** is handled by the `<Toast />` component internally — `pauseTimer` and `resumeTimer` are called on `mouseenter`/`mouseleave`. When the mouse leaves, the timer restarts from the full configured duration (not from where it paused).
+- **Stack overflow** — when more than 5 toasts are queued, a pill indicator appears showing how many are hidden. Clicking "Show all" expands the full list; "Dismiss all" clears the queue entirely.
+- **Error announcements** use `aria-live="assertive"` so screen readers interrupt immediately. All other types use `aria-live="polite"` to announce at the next available moment.
+- Place `<Toast />` once only. Multiple instances will each render their own container against the same reactive state, producing duplicate toasts on screen.
