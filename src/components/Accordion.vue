@@ -7,7 +7,7 @@
         <summary
             class="border-0 flex justify-between gap-4 cursor-pointer p-4 hover:bg-gray-100 font-medium focus:outline-none"
             :aria-controls="uuid"
-            :aria-expanded="isOpen.toString()"
+            :aria-expanded="isOpen"
             :class="isOpen ? 'bg-gray-100 text-black' : 'text-gray-700'"
         >
             <span>{{ title }}</span>
@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const details = ref<HTMLDetailsElement | null>(null)
-const isOpen = ref(false)
+const isOpen = ref<boolean>(false)
 
 const handleToggle = () => {
     isOpen.value = details.value?.open ?? false
