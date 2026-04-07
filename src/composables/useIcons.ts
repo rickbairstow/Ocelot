@@ -1,6 +1,7 @@
 import type { Component } from 'vue'
 import {
     // A
+    IconAlertTriangle as AlertTriangle,
     IconArrowDown as ArrowDown,
     IconArrowLeft as ArrowLeft,
     IconArrowRight as ArrowRight,
@@ -16,6 +17,11 @@ import {
     IconChevronUp as ChevronUp,
     IconChevronsLeft as ChevronsLeft,
     IconChevronsRight as ChevronsRight,
+    IconCircleCheck as CircleCheck,
+    IconCircleX as CircleX,
+
+    // I
+    IconInfoCircle as InfoCircle,
 
     // L
     IconLoader as Loader,
@@ -55,6 +61,7 @@ import {
 
 const availableIcons: Record<string, Component> = {
     // A
+    AlertTriangle,
     ArrowDown,
     ArrowLeft,
     ArrowRight,
@@ -70,6 +77,11 @@ const availableIcons: Record<string, Component> = {
     ChevronUp,
     ChevronsLeft,
     ChevronsRight,
+    CircleCheck,
+    CircleX,
+
+    // I
+    InfoCircle,
 
     // L
     Loader,
