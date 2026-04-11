@@ -59,7 +59,7 @@
                         <Button
                             aria-label="Dismiss notification"
                             class="shrink-0"
-                            type="tertiary"
+                            variant="tertiary"
                             @click="remove(toast.id)"
                         >
                             <Icon
@@ -85,7 +85,7 @@
                     <div class="flex">
                         <Button
                             size="small"
-                            type="text"
+                            variant="text"
                             @click="isExpanded = true"
                         >
                             Show all
@@ -93,7 +93,7 @@
 
                         <Button
                             size="small"
-                            type="text"
+                            variant="text"
                             @click="clear()"
                         >
                             Dismiss all
@@ -105,7 +105,7 @@
                     <Button
                         class="ml-auto"
                         size="small"
-                        type="text"
+                        variant="text"
                         @click="isExpanded = false"
                     >
                         Show less

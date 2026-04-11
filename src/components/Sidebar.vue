@@ -20,7 +20,7 @@
 
                 <Button
                     aria-label="Close sidebar"
-                    type="tertiary"
+                    variant="tertiary"
                     @click="close()"
                 >
                     <Icon icon="X" />

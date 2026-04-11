@@ -33,7 +33,7 @@
                         <Button
                             aria-label="Close dialog"
                             class="mr-2"
-                            type="tertiary"
+                            variant="tertiary"
                             @click="close"
                         >
                             <Icon icon="X" />
@@ -57,8 +57,8 @@
 
                     <Button
                         aria-label="Close dialog"
-                        button-type="tertiary"
                         class="sr-only"
+                        variant="tertiary"
                         @click="close"
                     >
                         Close {{ ariaLabel }}

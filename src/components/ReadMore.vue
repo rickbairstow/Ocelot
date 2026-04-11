@@ -11,7 +11,7 @@
         <Button
             v-if="isClamped"
             class="mt-1"
-            type="text"
+            variant="text"
             :aria-label="buttonText"
             @click="toggleVisibility"
         >

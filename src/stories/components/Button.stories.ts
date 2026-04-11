@@ -42,7 +42,7 @@ const meta: Meta<typeof Button> = {
             options: ['small', 'base', 'large'],
             description: 'Sets the size of the button.'
         },
-        type: {
+        variant: {
             control: 'select',
             options: [...types],
             description: 'Sets the visual style of the button.'
@@ -56,7 +56,7 @@ const meta: Meta<typeof Button> = {
         loading: false,
         loadingIcon: 'Loader2',
         size: 'base',
-        type: 'primary',
+        variant: 'primary',
         href: null
     },
 
@@ -73,7 +73,7 @@ const meta: Meta<typeof Button> = {
                 :loading="args.loading"
                 :loading-icon="args.loadingIcon"
                 :size="args.size"
-                :type="args.type"
+                :variant="args.variant"
                 @click="() => console.log('Button clicked')"
             >
                 {{ args.default }}
@@ -93,7 +93,7 @@ export const Default: Story = {
 }
 
 export const Primary: Story = {
-    args: { type: 'primary' },
+    args: { variant: 'primary' },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button'))
@@ -101,7 +101,7 @@ export const Primary: Story = {
 }
 
 export const Secondary: Story = {
-    args: { type: 'secondary' },
+    args: { variant: 'secondary' },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button'))
@@ -109,7 +109,7 @@ export const Secondary: Story = {
 }
 
 export const Tertiary: Story = {
-    args: { type: 'tertiary' },
+    args: { variant: 'tertiary' },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button'))
@@ -117,7 +117,7 @@ export const Tertiary: Story = {
 }
 
 export const Link: Story = {
-    args: { type: 'text' },
+    args: { variant: 'text' },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button'))
@@ -125,7 +125,7 @@ export const Link: Story = {
 }
 
 export const None: Story = {
-    args: { type: 'none' },
+    args: { variant: 'none' },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button'))
@@ -176,7 +176,7 @@ export const AllVariations: Story = {
                 <div v-for="color in colors" :key="color" class="flex flex-col gap-2">
                     <p class="text-sm font-medium capitalize text-gray-500">{{ color }}</p>
                     <div class="flex flex-wrap gap-2">
-                        <Button v-for="type in types" :key="type" :color="color" :type="type">
+                        <Button v-for="type in types" :key="type" :color="color" :variant="type">
                             {{ type }}
                         </Button>
                         <Button :color="color" disabled>Disabled</Button>

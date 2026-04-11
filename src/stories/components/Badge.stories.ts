@@ -27,7 +27,7 @@ const meta: Meta<typeof Badge> = {
             description: 'Sets the size of the badge.'
         },
 
-        type: {
+        variant: {
             control: 'select',
             options: ['primary', 'secondary'],
             description: 'Sets the visual style of the badge.'
@@ -38,7 +38,7 @@ const meta: Meta<typeof Badge> = {
         color: 'blue',
         default: faker.lorem.word(),
         size: 'lg',
-        type: 'primary'
+        variant: 'primary'
     },
 
     render: (args) => ({
@@ -50,7 +50,7 @@ const meta: Meta<typeof Badge> = {
             <Badge
                 :color="args.color"
                 :size="args.size"
-                :type="args.type"
+                :variant="args.variant"
             >
                 {{ args.default }}
             </Badge>
@@ -64,11 +64,11 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 export const Primary: Story = {
-    args: { type: 'primary' }
+    args: { variant: 'primary' }
 }
 
 export const Secondary: Story = {
-    args: { type: 'secondary' }
+    args: { variant: 'secondary' }
 }
 
 export const AllColors: Story = {
@@ -94,7 +94,7 @@ export const AllVariations: Story = {
                 <div v-for="color in colors" :key="color" class="flex flex-col gap-2">
                     <p class="text-sm font-medium capitalize text-gray-500">{{ color }}</p>
                     <div v-for="type in types" :key="type" class="flex flex-wrap items-end gap-2">
-                        <Badge v-for="size in sizes" :key="size" :color="color" :type="type" :size="size">
+                        <Badge v-for="size in sizes" :key="size" :color="color" :variant="type" :size="size">
                             {{ type }}
                         </Badge>
                     </div>

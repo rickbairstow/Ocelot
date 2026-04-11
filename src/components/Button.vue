@@ -40,7 +40,7 @@ interface Props {
     loading?: boolean
     loadingIcon?: string
     size?: 'small' | 'base' | 'large'
-    type?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'none'
+    variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'none'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
     loading: false,
     loadingIcon: 'Loader2',
     size: 'base',
-    type: 'primary'
+    variant: 'primary'
 })
 
 /**
@@ -118,9 +118,9 @@ const styles = {
  * Loading state uses normal (non-disabled) visuals — only `disabled` prop affects appearance.
  */
 const componentStyle = computed((): string => {
-    const { size, type, disabled } = props
+    const { size, variant, disabled } = props
     const interactive = isDisabled.value ? 'cursor-not-allowed' : 'cursor-pointer'
-    const visual = styles[type]?.[disabled ? 'disabled' : 'base'] || ''
+    const visual = styles[variant]?.[disabled ? 'disabled' : 'base'] || ''
     return `${styles.common} ${styles.padding[size]} ${visual} ${interactive}`
 })
 

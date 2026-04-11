@@ -13,13 +13,13 @@ import { computed } from 'vue'
 interface Props {
     color?: string
     size?: 'sm' | 'md' | 'lg'
-    type?: 'primary' | 'secondary'
+    variant?: 'primary' | 'secondary'
 }
 
 const props = withDefaults(defineProps<Props>(), {
     color: 'blue',
     size: 'lg',
-    type: 'primary'
+    variant: 'primary'
 })
 
 const sizeClasses: Record<string, string> = {
@@ -64,8 +64,8 @@ const colorClasses: Record<string, Record<string, string>> = {
 }
 
 const badgeCss = computed((): string => {
-    const { color, size, type } = props
-    const colorTypeCss = colorClasses[color]?.[type] ?? colorClasses.blue.primary
+    const { color, size, variant } = props
+    const colorTypeCss = colorClasses[color]?.[variant] ?? colorClasses.blue.primary
     return [
         'inline-flex items-center justify-center rounded-full font-medium ring-1 ring-inset',
         sizeClasses[size] ?? sizeClasses.lg,
