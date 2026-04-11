@@ -96,6 +96,7 @@ const availableIcons: Record<string, Component> = {
     Bulb,
 
     // C
+    ChartBar,
     Checklist,
     ChevronDown,
     ChevronLeft,
