@@ -1,5 +1,7 @@
 # Ocelot UI
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/cb306552-9864-4937-8051-80c1cb4177a9/deploy-status)](https://app.netlify.com/projects/ocelotui/deploys)
+
 **Ocelot UI (OUI)**, a UI framework built with Vue 3 and Tailwind CSS, is designed to be highly performant, optimized, and accessible. It strikes a balance by providing essential features without being overly opinionated, allowing for flexibility in your projects.
 
 Head to [OcelotUI on Netlify](https://ocelotui.netlify.app) for the Storybook site — this auto-publishes on every PR merge.
