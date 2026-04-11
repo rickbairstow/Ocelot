@@ -20,6 +20,7 @@
 
                 <Button
                     aria-label="Close sidebar"
+                    color="gray"
                     variant="tertiary"
                     @click="close()"
                 >

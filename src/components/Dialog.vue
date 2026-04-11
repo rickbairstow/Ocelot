@@ -33,6 +33,7 @@
                         <Button
                             aria-label="Close dialog"
                             class="mr-2"
+                            color="gray"
                             variant="tertiary"
                             @click="close"
                         >
@@ -58,6 +59,7 @@
                     <Button
                         aria-label="Close dialog"
                         class="sr-only"
+                        color="gray"
                         variant="tertiary"
                         @click="close"
                     >

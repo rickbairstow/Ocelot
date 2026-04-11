@@ -127,6 +127,7 @@ const colorClasses: Record<string, Record<string, string>> = {
     },
     tertiary: {
         blue:   'text-blue-600   bg-transparent border-transparent hover:bg-blue-50   focus-visible:outline-blue-600   dark:text-blue-400   dark:hover:bg-blue-950',
+        gray:   'text-gray-400   bg-transparent border-transparent hover:text-gray-600 focus-visible:outline-gray-400   dark:hover:text-gray-200',
         green:  'text-green-600  bg-transparent border-transparent hover:bg-green-50  focus-visible:outline-green-600  dark:text-green-400  dark:hover:bg-green-950',
         red:    'text-red-600    bg-transparent border-transparent hover:bg-red-50    focus-visible:outline-red-600    dark:text-red-400    dark:hover:bg-red-950',
         orange: 'text-orange-600 bg-transparent border-transparent hover:bg-orange-50 focus-visible:outline-orange-600 dark:text-orange-400 dark:hover:bg-orange-950',
