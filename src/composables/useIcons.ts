@@ -60,6 +60,7 @@ import {
     // S
     IconSchool as School,
     IconSearch as Search,
+    IconSettings as Settings,
     IconStars as Stars,
 
     // T
@@ -139,6 +140,7 @@ const availableIcons: Record<string, Component> = {
     // S
     School,
     Search,
+    Settings,
     Stars,
 
     // T
