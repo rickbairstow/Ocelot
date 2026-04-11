@@ -27,21 +27,24 @@ Add the compiled library to your Tailwind CSS source scanning so component utili
 @import "tailwindcss";
 ```
 
-### 2. Register components and import the stylesheet
+### 2. Import the stylesheet
 
 ```js
 // main.js / main.ts
-import { createApp } from 'vue'
-import OcelotUI from 'ocelot-ui'
 import 'ocelot-ui/style.css'
-import App from './App.vue'
-
-createApp(App).use(OcelotUI).mount('#app')
 ```
 
 The stylesheet (`ocelot-ui/style.css`) contains Vue transition styles. Tailwind utilities come from your own Tailwind build scanning the library.
 
-### 3. Add a portal target for Dialog
+### 3. Import components
+
+Use named imports directly in your components:
+
+```js
+import { Button, Dialog, Sidebar } from 'ocelot-ui'
+```
+
+### 4. Add a portal target for Dialog
 
 ```html
 <!-- index.html -->
