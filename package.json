@@ -1,6 +1,6 @@
 {
   "name": "ocelot-ui",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "MIT",
   "author": "Rick Bairstow <rick@rxdesign.co.uk> (https://www.rxdesign.co.uk)",
   "description": "Ocelot UI (OUI), a UI framework built with Vue 3 and Tailwind CSS, is designed to be highly performant, optimized, and accessible. It strikes a balance by providing essential features without being overly opinionated, allowing for flexibility in your projects.",
