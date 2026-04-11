@@ -5,7 +5,7 @@
             v-if="isOpen"
             ref="sidebarRef"
             aria-label="Sidebar"
-            class="fixed inset-y-0 z-40 flex flex-col w-full sm:w-64 max-h-full max-w-full bg-white text-black dark:bg-gray-900 dark:text-white"
+            class="fixed inset-y-0 z-40 flex flex-col w-full sm:w-80 max-h-full max-w-full bg-white text-black dark:bg-gray-900 dark:text-white"
             role="complementary"
             tabindex="-1"
             :class="side === 'left' ? 'left-0' : 'right-0'"
