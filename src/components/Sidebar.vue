@@ -5,7 +5,7 @@
             v-if="isOpen"
             ref="sidebarRef"
             aria-label="Sidebar"
-            class="fixed inset-y-0 z-20 flex flex-col w-full sm:w-64 max-h-full max-w-full bg-white text-black"
+            class="fixed inset-y-0 z-40 flex flex-col w-full sm:w-64 max-h-full max-w-full bg-white text-black"
             role="complementary"
             tabindex="-1"
             :class="side === 'left' ? 'left-0' : 'right-0'"
@@ -49,7 +49,7 @@
         <Scrim
             v-if="isOpen && showScrim"
             aria-label="Close sidebar"
-            class="z-0"
+            class="z-30"
             @click="close()"
         />
     </transition>
