@@ -112,7 +112,6 @@ const y = ref(0)
 
 let darkObserver: MutationObserver | null = null
 let pointerFocusPending = false
-let wasOpenAtPointerDown = false
 
 const POSITION_STRATEGY = 'fixed' as const
 
@@ -268,7 +267,6 @@ const handleFocusIn = (): void => {
 
 const handleTriggerPointerDown = (): void => {
     pointerFocusPending = true
-    wasOpenAtPointerDown = isOpen.value
 }
 
 const handleFocusOut = (event: FocusEvent): void => {
@@ -279,7 +277,7 @@ const handleFocusOut = (event: FocusEvent): void => {
 
 const handleTriggerClick = (): void => {
     if (props.disabled || props.interaction === 'hover') return
-    if (wasOpenAtPointerDown) {
+    if (isOpen.value) {
         close()
     } else {
         open()

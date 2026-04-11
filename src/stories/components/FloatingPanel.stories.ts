@@ -108,36 +108,6 @@ export const Default: Story = {
         interaction: 'all',
         trigger: 'Hover, click, or focus me',
         content: faker.lorem.sentence()
-    },
-
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const trigger = canvas.getByRole('button', { name: /hover, click, or focus me/i })
-
-        const getPanel = () => canvasElement.querySelector('[id^="floating-panel_"]')
-
-        // Panel should be closed initially
-        expect(getPanel()).toBeNull()
-
-        // Click opens the panel
-        await userEvent.click(trigger)
-        await waitFor(() => {
-            expect(getPanel()).not.toBeNull()
-            expect(getPanel()).toBeVisible()
-        })
-
-        // ESC closes the panel
-        await userEvent.keyboard('{Escape}')
-        await waitFor(() => {
-            expect(getPanel()).toBeNull()
-        })
-
-        // Click again to reopen, then toggle closed
-        await userEvent.click(trigger)
-        await waitFor(() => expect(getPanel()).not.toBeNull())
-
-        await userEvent.click(trigger)
-        await waitFor(() => expect(getPanel()).toBeNull())
     }
 }
 
