@@ -16,15 +16,15 @@ npm install ocelot-ui
 
 **Prerequisites:** Vue 3.5+, Tailwind CSS v4, Node.js 24+
 
-### 1. Configure Tailwind to scan the library
+### 1. Configure Tailwind
 
-Add the compiled library to your Tailwind CSS source scanning so component utility classes are included in your build. Also add the dark mode variant for `.dark` class toggling:
+Import the OUI Tailwind plugin alongside your Tailwind import. This tells Tailwind to scan OUI components so their utility classes are included in your build:
 
 ```css
 /* your main CSS file */
-@source "../node_modules/ocelot-ui/dist/ocelot-ui.es.js";
-@custom-variant dark (&:where(.dark, .dark *));
 @import "tailwindcss";
+@import "ocelot-ui/tailwind.css";
+@custom-variant dark (&:where(.dark, .dark *));
 ```
 
 ### 2. Import the stylesheet
@@ -34,7 +34,7 @@ Add the compiled library to your Tailwind CSS source scanning so component utili
 import 'ocelot-ui/style.css'
 ```
 
-The stylesheet (`ocelot-ui/style.css`) contains Vue transition styles. Tailwind utilities come from your own Tailwind build scanning the library.
+The stylesheet (`ocelot-ui/style.css`) contains Vue transition styles.
 
 ### 3. Import components
 

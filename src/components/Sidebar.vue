@@ -5,14 +5,14 @@
             v-if="isOpen"
             ref="sidebarRef"
             aria-label="Sidebar"
-            class="fixed inset-y-0 z-40 flex flex-col w-full sm:w-64 max-h-full max-w-full bg-white text-black"
+            class="fixed inset-y-0 z-40 flex flex-col w-full sm:w-64 max-h-full max-w-full bg-white text-black dark:bg-gray-900 dark:text-white"
             role="complementary"
             tabindex="-1"
             :class="side === 'left' ? 'left-0' : 'right-0'"
         >
             <div
                 v-if="slots?.title"
-                class="flex-none flex items-center justify-between gap-4 py-2 bg-gray-50"
+                class="flex-none flex items-center justify-between gap-4 py-2 bg-gray-50 dark:bg-gray-800"
             >
                 <div class="px-4">
                     <slot name="title" />
@@ -33,7 +33,7 @@
 
             <div
                 v-if="slots?.footer"
-                class="flex-none p-4 bg-gray-50"
+                class="flex-none p-4 bg-gray-50 dark:bg-gray-800"
             >
                 <slot name="footer" />
             </div>

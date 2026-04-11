@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const headingLookup: Record<string, string> = {
-    base: 'text-black ',
+    base: 'text-black dark:text-white ',
     1: 'text-4xl font-medium leading-10', // 36px
     2: 'text-3xl font-medium leading-9', // 30px
     3: 'text-2xl font-medium leading-7', // 24px

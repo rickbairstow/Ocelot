@@ -35,9 +35,9 @@ const slots = useSlots()
 const hasText = computed(() => !!slots.default?.().some(vnode => vnode.type !== Comment))
 
 const colorMap = {
-    default: { border: 'border-gray-200', text: 'text-gray-500' },
-    subtle:  { border: 'border-gray-100', text: 'text-gray-400' },
-    strong:  { border: 'border-gray-400', text: 'text-gray-700' }
+    default: { border: 'border-gray-200 dark:border-gray-700', text: 'text-gray-500 dark:text-gray-400' },
+    subtle:  { border: 'border-gray-100 dark:border-gray-800', text: 'text-gray-400 dark:text-gray-500' },
+    strong:  { border: 'border-gray-400 dark:border-gray-500', text: 'text-gray-700 dark:text-gray-300' }
 }
 
 const variantMap: Record<string, string> = {

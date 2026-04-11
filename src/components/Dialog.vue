@@ -16,11 +16,11 @@
                 />
 
                 <div
-                    class="relative flex flex-col justify-between max-h-full h-full overflow-hidden text-black bg-white z-10 sm:h-auto sm:rounded-2xl"
+                    class="relative flex flex-col justify-between max-h-full h-full overflow-hidden text-black bg-white dark:text-white dark:bg-gray-900 z-10 sm:h-auto sm:rounded-2xl"
                     :class="sizeClass"
                 >
                     <div
-                        class="flex items-center justify-between border-b border-gray-100"
+                        class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700"
                     >
                         <div
                             id="dialogueTitle"
@@ -42,7 +42,7 @@
 
                     <div
                         ref="dialogueContent"
-                        class="p-6 bg-white overflow-auto"
+                        class="p-6 bg-white dark:bg-gray-900 overflow-auto"
                         tabindex="0"
                     >
                         <slot />
@@ -50,7 +50,7 @@
 
                     <div
                         v-if="slots?.footer"
-                        class="flex p-6 border-t border-gray-100"
+                        class="flex p-6 border-t border-gray-100 dark:border-gray-700"
                     >
                         <slot name="footer" />
                     </div>

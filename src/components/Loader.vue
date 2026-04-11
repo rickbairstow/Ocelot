@@ -76,7 +76,7 @@ const variantCss = computed((): string => {
         case 'fixed':
             return 'fixed inset-0 flex items-center justify-center text-white'
         default:
-            return 'flex items-center justify-center text-black'
+            return 'flex items-center justify-center text-black dark:text-white'
     }
 })
 </script>

@@ -1,14 +1,14 @@
 <template>
     <details
         ref="details"
-        class="w-full border border-gray-100 rounded-xl overflow-hidden shadow focus-within:outline-1 focus-within:outline-blue-200"
+        class="w-full border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden shadow focus-within:outline-1 focus-within:outline-blue-200 dark:focus-within:outline-blue-700"
         @toggle="handleToggle"
     >
         <summary
-            class="border-0 flex justify-between gap-4 cursor-pointer p-4 hover:bg-gray-100 font-medium focus:outline-none"
+            class="border-0 flex justify-between gap-4 cursor-pointer p-4 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium focus:outline-none"
             :aria-controls="uuid"
             :aria-expanded="isOpen"
-            :class="isOpen ? 'bg-gray-100 text-black' : 'text-gray-700'"
+            :class="isOpen ? 'bg-gray-100 text-black dark:bg-gray-700 dark:text-white' : 'text-gray-700 dark:text-gray-300'"
         >
             <span>{{ title }}</span>
             <Icon

@@ -93,23 +93,23 @@ const styles = {
     common: 'relative inline-flex items-center justify-center border rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--btn-accent)]',
     primary: {
         base: 'text-white bg-[var(--btn-bg)] border-[var(--btn-border)] hover:bg-[var(--btn-bg-hover)]',
-        disabled: 'text-white bg-gray-400 border-gray-400 opacity-50'
+        disabled: 'text-white bg-gray-400 border-gray-400 dark:bg-gray-600 dark:border-gray-600 opacity-50'
     },
     secondary: {
-        base: 'text-[var(--btn-accent)] bg-white border-[var(--btn-border)] hover:bg-[var(--btn-bg-subtle)]',
-        disabled: 'text-gray-400 bg-white border-gray-200 opacity-50'
+        base: 'text-[var(--btn-accent)] bg-white border-[var(--btn-border)] hover:bg-[var(--btn-bg-subtle)] dark:bg-gray-900',
+        disabled: 'text-gray-400 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-500 opacity-50'
     },
     tertiary: {
         base: 'text-[var(--btn-accent)] bg-transparent border-transparent hover:bg-[var(--btn-bg-subtle)]',
-        disabled: 'text-gray-400 bg-transparent border-transparent opacity-50'
+        disabled: 'text-gray-400 dark:text-gray-600 bg-transparent border-transparent opacity-50'
     },
     text: {
         base: 'text-[var(--btn-accent)] bg-transparent border-transparent hover:text-[var(--btn-accent-hover)] hover:underline',
-        disabled: 'text-gray-400 bg-transparent border-transparent opacity-50'
+        disabled: 'text-gray-400 dark:text-gray-600 bg-transparent border-transparent opacity-50'
     },
     none: {
-        base: 'text-black bg-transparent border-transparent',
-        disabled: 'text-gray-400 bg-transparent border-transparent opacity-50'
+        base: 'text-black dark:text-white bg-transparent border-transparent',
+        disabled: 'text-gray-400 dark:text-gray-600 bg-transparent border-transparent opacity-50'
     }
 }
 

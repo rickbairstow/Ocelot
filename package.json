@@ -19,7 +19,8 @@
   },
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "tailwind.css"
   ],
   "main": "./dist/ocelot-ui.umd.js",
   "module": "./dist/ocelot-ui.es.js",
@@ -28,7 +29,8 @@
       "import": "./dist/ocelot-ui.es.js",
       "require": "./dist/ocelot-ui.umd.js"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./tailwind.css": "./tailwind.css"
   },
   "scripts": {
     "dev": "vite",

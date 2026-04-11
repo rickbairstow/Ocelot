@@ -1,6 +1,6 @@
 <template>
     <div
-        class="border rounded-lg overflow-hidden shadow-lg border-gray-100"
+        class="border rounded-lg overflow-hidden shadow-lg border-gray-100 bg-white dark:bg-gray-900 dark:border-gray-700"
         role="article"
         :class="[sizeCss, vertical ? 'block' : 'flex flex-wrap']"
     >
