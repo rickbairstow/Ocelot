@@ -17,6 +17,7 @@ import {
     IconBulb as Bulb,
 
     // C
+    IconChartBar as ChartBar,
     IconChecklist as Checklist,
     IconChevronDown as ChevronDown,
     IconChevronLeft as ChevronLeft,
