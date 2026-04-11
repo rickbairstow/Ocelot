@@ -1,5 +1,8 @@
 import type { Component } from 'vue'
 import {
+    // #
+    Icon123,
+
     // A
     IconAlertTriangle as AlertTriangle,
     IconArrowDown as ArrowDown,
@@ -9,8 +12,12 @@ import {
 
     // B
     IconBell as Bell,
+    IconBook as Book,
+    IconBrandYoutube as BrandYoutube,
+    IconBulb as Bulb,
 
     // C
+    IconChecklist as Checklist,
     IconChevronDown as ChevronDown,
     IconChevronLeft as ChevronLeft,
     IconChevronRight as ChevronRight,
@@ -20,10 +27,19 @@ import {
     IconCircleCheck as CircleCheck,
     IconCircleX as CircleX,
 
+    // H
+    IconHeartCheck as HeartCheck,
+    IconHelpCircle as HelpCircle,
+    IconHome as Home,
+
     // I
     IconInfoCircle as InfoCircle,
 
+    // K
+    IconKarate as Karate,
+
     // L
+    IconLanguage as Language,
     IconLoader as Loader,
     IconLoader2 as Loader2,
     IconLoader3 as Loader3,
@@ -41,7 +57,9 @@ import {
     IconPlus as Plus,
 
     // S
+    IconSchool as School,
     IconSearch as Search,
+    IconStars as Stars,
 
     // T
     IconTrash as Trash,
@@ -60,6 +78,9 @@ import {
 } from '@tabler/icons-vue'
 
 const availableIcons: Record<string, Component> = {
+    // #
+    '123': Icon123,
+
     // A
     AlertTriangle,
     ArrowDown,
@@ -69,8 +90,12 @@ const availableIcons: Record<string, Component> = {
 
     // B
     Bell,
+    Book,
+    BrandYoutube,
+    Bulb,
 
     // C
+    Checklist,
     ChevronDown,
     ChevronLeft,
     ChevronRight,
@@ -80,10 +105,19 @@ const availableIcons: Record<string, Component> = {
     CircleCheck,
     CircleX,
 
+    // H
+    HeartCheck,
+    HelpCircle,
+    Home,
+
     // I
     InfoCircle,
 
+    // K
+    Karate,
+
     // L
+    Language,
     Loader,
     Loader2,
     Loader3,
@@ -101,7 +135,9 @@ const availableIcons: Record<string, Component> = {
     Plus,
 
     // S
+    School,
     Search,
+    Stars,
 
     // T
     Trash,
