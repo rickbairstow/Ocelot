@@ -2,3 +2,9 @@
 @import "tailwindcss/utilities";
 @source "../";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Docs page story previews have their own white background from Storybook's
+   styles — override it here when dark mode is active. */
+.dark .docs-story {
+    background-color: #030712;
+}

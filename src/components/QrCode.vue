@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import QRCode from 'qrcode'
 
 interface Props {
@@ -31,7 +31,7 @@ interface Props {
  * - size: Width/height in px (square)
  * - margin: Padding around the QR code
  * - errorCorrectionLevel: L, M, Q, H (higher = more error tolerance)
- * - background / foreground: Colors
+ * - background / foreground: Colors — when left at defaults, dark mode is respected automatically
  */
 const props = withDefaults(defineProps<Props>(), {
     size: 256,
@@ -42,6 +42,21 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const dataUrl = ref('')
+const isDark = ref(false)
+
+/**
+ * When using default colors, flip them for dark mode.
+ * Explicit prop values are always respected as-is.
+ */
+const effectiveBackground = computed((): string => {
+    if (props.background !== '#ffffff') return props.background
+    return isDark.value ? '#111827' : '#ffffff'
+})
+
+const effectiveForeground = computed((): string => {
+    if (props.foreground !== '#000000') return props.foreground
+    return isDark.value ? '#f9fafb' : '#000000'
+})
 
 /**
  * Compute a descriptive alt tag for screen readers
@@ -54,14 +69,13 @@ const altText = computed((): string =>
 
 /**
  * Generate QR code as a data URL
- * @param text - Text to encode
  */
 const generateQrCode = async (text: string): Promise<void> => {
     try {
         dataUrl.value = await QRCode.toDataURL(text, {
             color: {
-                light: props.background,
-                dark: props.foreground
+                light: effectiveBackground.value,
+                dark: effectiveForeground.value
             },
             errorCorrectionLevel: props.errorCorrectionLevel,
             margin: props.margin,
@@ -72,15 +86,28 @@ const generateQrCode = async (text: string): Promise<void> => {
     }
 }
 
+let observer: MutationObserver
+
 onMounted(() => {
+    isDark.value = document.documentElement.classList.contains('dark')
+
+    observer = new MutationObserver(() => {
+        isDark.value = document.documentElement.classList.contains('dark')
+    })
+    observer.observe(document.documentElement, { attributeFilter: ['class'] })
+
     generateQrCode(props.value)
+})
+
+onUnmounted(() => {
+    observer?.disconnect()
 })
 
 watch(
     () => [
-        props.background,
+        effectiveBackground.value,
+        effectiveForeground.value,
         props.errorCorrectionLevel,
-        props.foreground,
         props.margin,
         props.size,
         props.value

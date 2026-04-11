@@ -1,7 +1,7 @@
 <template>
     <details
         ref="details"
-        class="w-full border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden shadow focus-within:outline-1 focus-within:outline-blue-200 dark:focus-within:outline-blue-700"
+        class="w-full border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden shadow bg-white dark:bg-gray-800 focus-within:outline-1 focus-within:outline-blue-200 dark:focus-within:outline-blue-700"
         @toggle="handleToggle"
     >
         <summary
@@ -11,6 +11,7 @@
             :class="isOpen ? 'bg-gray-100 text-black dark:bg-gray-700 dark:text-white' : 'text-gray-700 dark:text-gray-300'"
         >
             <span>{{ title }}</span>
+
             <Icon
                 aria-hidden="true"
                 :icon="isOpen ? 'ChevronUp' : 'ChevronDown'"
@@ -19,7 +20,7 @@
 
         <div
             :id="uuid"
-            class="content p-4 transition-all duration-[1000] ease-in-out"
+            class="content p-4 transition-all duration-[1000] ease-in-out text-gray-700 dark:text-gray-200"
         >
             <slot />
         </div>

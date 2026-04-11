@@ -45,6 +45,7 @@
             />
         </div>
     </Transition>
+
     <transition>
         <Scrim
             v-if="isOpen && showScrim"

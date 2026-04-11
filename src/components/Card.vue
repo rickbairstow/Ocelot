@@ -23,12 +23,12 @@
         <div class="px-6 py-4 flex flex-col justify-between flex-1">
             <h2
                 v-if="title"
-                class="font-bold text-xl mb-1"
+                class="font-bold text-xl mb-1 text-gray-900 dark:text-white"
             >
                 {{ title }}
             </h2>
 
-            <div class="text-base mb-4">
+            <div class="text-base mb-4 text-gray-700 dark:text-gray-200">
                 <slot />
             </div>
 
