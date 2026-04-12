@@ -30,6 +30,9 @@ import {
     IconCircleCheck as CircleCheck,
     IconCircleX as CircleX,
 
+    // D
+    IconDownload as Download,
+
     // H
     IconHeartCheck as HeartCheck,
     IconHelpCircle as HelpCircle,
@@ -111,6 +114,9 @@ const availableIcons: Record<string, Component> = {
     Circle,
     CircleCheck,
     CircleX,
+
+    // D
+    Download,
 
     // H
     HeartCheck,
