@@ -18,6 +18,7 @@ import {
 
     // C
     IconChartBar as ChartBar,
+    IconCheck as Check,
     IconChecklist as Checklist,
     IconChevronDown as ChevronDown,
     IconChevronLeft as ChevronLeft,
@@ -25,6 +26,7 @@ import {
     IconChevronUp as ChevronUp,
     IconChevronsLeft as ChevronsLeft,
     IconChevronsRight as ChevronsRight,
+    IconCircle as Circle,
     IconCircleCheck as CircleCheck,
     IconCircleX as CircleX,
 
@@ -98,6 +100,7 @@ const availableIcons: Record<string, Component> = {
 
     // C
     ChartBar,
+    Check,
     Checklist,
     ChevronDown,
     ChevronLeft,
@@ -105,6 +108,7 @@ const availableIcons: Record<string, Component> = {
     ChevronUp,
     ChevronsLeft,
     ChevronsRight,
+    Circle,
     CircleCheck,
     CircleX,
 
