@@ -5,6 +5,32 @@
 
 ---
 
+## Session Log
+
+### Session 1 — April 2026
+
+**Planning:** Full roadmap written (this document + HTML version).
+
+**Bug fixes shipped (discovered during plan review — 82/82 tests passing):**
+
+| Component | Fix | Type |
+|---|---|---|
+| `Input.vue` | `:required`, `:minlength`, `:pattern` props were declared but never bound to the native `<input>` — HTML5 validation was silently broken | Bug |
+| `Dialog.vue` | Hardcoded `id="dialogueTitle"` caused DOM ID collisions when multiple dialogs exist simultaneously | Bug |
+| `Dialog.vue` | Missing `aria-modal="true"` — screen readers in browse mode could navigate outside the modal | A11y |
+| `Dialog.vue` | `tabindex="0"` on outer `<section>` put the container in the tab order incorrectly | A11y |
+| `Dialog.vue` | Title div `tabindex="0"` → `tabindex="-1"` — programmatic focus target should not be in sequential tab order | A11y |
+| `Dialog.vue` | `aria-labelledby` now used (linked to unique UUID title ID) when `#title` slot is present; falls back to `aria-label` prop | A11y / Plan |
+| `Accordion.vue` | `aria-expanded`/`aria-controls` on `<summary>` caused double-announcement — native `<details>` handles these already | A11y / Plan |
+| `Accordion.vue` | `duration-[1000]` is invalid CSS (no unit) — `transition-duration: 1000` is ignored by all browsers | Bug |
+| `Button.vue` | `@keydown.enter.prevent` unconditionally called `preventDefault()` — silently broke Enter-key navigation on `<a>` link buttons when not disabled | Bug |
+| `Scrim.vue` | `aria-disabled="true"` on a non-interactive `<div>` is invalid — replaced with `aria-hidden="true"` | A11y |
+| `ReadMore.vue` | "Show more"/"Show less" were hardcoded English strings — added `expandLabel`/`collapseLabel` props (backwards-compatible) | Plan |
+| `Dialog.stories.ts` | Test queried by `aria-label` ("My dialog") — updated to query by visible title text ("Dialog title") after `aria-labelledby` fix | Test |
+| `Scrim.stories.ts` | Test asserted `aria-disabled="true"` — updated to assert `aria-hidden="true"` after fix | Test |
+
+---
+
 ## Table of Contents
 
 1. [Current State Assessment](#1-current-state-assessment)
@@ -377,15 +403,113 @@ Existing components should be migrated to these patterns opportunistically (not 
 
 **Recommended improvements:**
 
-1. **`prefixIcon` and `suffixIcon` props** — accept `IconProp` (string or Component, matching the new hybrid icon API). Render with correct spacing between icon and label. When both `prefixIcon` and `suffixIcon` are used with no label slot, warn in dev that `aria-label` is required.
-2. **`iconOnly` prop** — switches to square aspect ratio, ensures adequate touch target via padding, enforces `aria-label` requirement in dev mode.
-3. **`ButtonGroup` component** — a wrapper that:
+1. ✅ **Keyboard navigation bug on `<a>` elements (bug fix)** — `@keydown.enter.prevent` unconditionally called `event.preventDefault()`, silently breaking Enter-key navigation on link buttons (`href` set) when not disabled. Fixed: replaced with a `handleKeyInteraction` method that only prevents default when disabled, and handles Space correctly (prevent scroll + trigger click) without interfering with native Enter behaviour.
+2. **`icon` prop with `iconPosition`** — full icon support for Button. See detailed spec below.
+3. **`iconOnly` prop** — switches to square aspect ratio, ensures adequate touch target via padding, enforces `aria-label` requirement in dev mode.
+4. **`ButtonGroup` component** — a wrapper that:
    - Removes border radius on interior children (`[&:not(:first-child):not(:last-child)]:rounded-none`)
    - Collapses margins between buttons
    - Accepts `orientation` (horizontal/vertical)
    - Accepts `size` and `variant` to pass down to all children (avoiding repeated props)
-4. **Touch target audit** — the `small` variant's click area must be ≥ 44×44px. Add invisible padding or use `min-h-[44px] min-w-[44px]` on the outer element.
-5. **Story additions:** icon-only (all colours), icon + label (prefix and suffix), ButtonGroup horizontal, ButtonGroup vertical, all size × variant matrix.
+5. **Touch target audit** — the `small` variant's click area must be ≥ 44×44px. Add invisible padding or use `min-h-[44px] min-w-[44px]` on the outer element.
+6. **Story additions:** icon-only (all colours), icon + label (start and end), ButtonGroup horizontal, ButtonGroup vertical, all size × variant matrix.
+
+#### Button icon spec
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `icon` | `IconProp \| undefined` | `undefined` | Icon to render alongside the button label. Accepts a string (registry lookup) or a Vue component (direct render). |
+| `iconPosition` | `'start' \| 'end'` | `'start'` | Whether the icon appears before or after the label. Follows document direction — `start` = inline-start (left in LTR, right in RTL), `end` = inline-end. |
+
+**Behaviour:**
+
+- **Registry validation** — When `icon` is a string, check it exists in the icon registry before rendering. If not found: do not render any icon element, and in development mode (`import.meta.env.DEV`) emit `console.warn('[OuiButton] Icon "X" not found in registry. Register it with registerIcons() or pass the component directly.')`. No error is thrown — the button remains fully functional without the icon.
+- **Component passthrough** — When `icon` is a Vue component, render it directly without any registry lookup. No warning is emitted.
+- **Size mapping** — Icon size is derived from the button `size` prop and must never exceed the button's line-height. Use the icon size constants from `useIcons`:
+
+  | Button size | Icon size | Rationale |
+  |---|---|---|
+  | `sm` | `xs` (12px) | Matches the sm button's 14px text; icons feel proportionate at 12px |
+  | `md` (default) | `sm` (16px) | Matches the md button's 16px text |
+  | `lg` | `md` (20px) | Matches the lg button's 18–20px text; 20px icon anchors well |
+
+- **Layout** — The button's inner element becomes `flex flex-row items-center` with a gap between icon and label. Using `flex-row` (not `flex-row-reverse`) means swapping `iconPosition` between `'start'` and `'end'` is achieved by rendering the icon component either before or after the label slot in the template — no `direction`-specific CSS overrides needed. RTL support is automatic because flexbox follows the document's writing direction.
+- **Icon-only** — When `icon` is set and there is no label slot content (or `iconOnly` prop is true), switch to square padding and enforce that `aria-label` is provided. In dev mode, warn if `aria-label` is absent.
+- **No icon duplication** — If the consumer is already using the prefix/suffix slot to render an icon manually, that is fine — the `icon` prop does not interact with the slots.
+
+**Implementation sketch:**
+
+```vue
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useIcons } from '@Composables/useIcons'
+
+const { registry, sizes } = useIcons()
+
+const props = withDefaults(defineProps<{
+    icon?: IconProp
+    iconPosition?: 'start' | 'end'
+    size?: 'sm' | 'md' | 'lg'
+    // ... other existing props
+}>(), {
+    iconPosition: 'start',
+    size: 'md',
+})
+
+const iconSizeMap: Record<string, string> = {
+    sm: 'xs',
+    md: 'sm',
+    lg: 'md',
+}
+
+const resolvedIcon = computed(() => {
+    if (!props.icon) return null
+    if (typeof props.icon !== 'string') return props.icon
+
+    const found = registry[props.icon]
+    if (!found && import.meta.env.DEV) {
+        console.warn(`[OuiButton] Icon "${props.icon}" not found in registry. Register it with registerIcons() or pass the component directly.`)
+    }
+    return found ?? null
+})
+
+const iconSize = computed(() => iconSizeMap[props.size ?? 'md'])
+</script>
+
+<template>
+    <!-- inside the button element: -->
+    <span class="flex flex-row items-center gap-1.5">
+        <component
+            :is="resolvedIcon"
+            v-if="resolvedIcon && iconPosition === 'start'"
+            :size="sizes[iconSize]"
+            aria-hidden="true"
+        />
+        <slot />
+        <component
+            :is="resolvedIcon"
+            v-if="resolvedIcon && iconPosition === 'end'"
+            :size="sizes[iconSize]"
+            aria-hidden="true"
+        />
+    </span>
+</template>
+```
+
+Note: the icon element always has `aria-hidden="true"` — it is purely decorative. The button's accessible name comes from its label text or `aria-label` prop.
+
+**Storybook stories to add:**
+
+- `IconStart` — string icon, `iconPosition: 'start'`, all button sizes
+- `IconEnd` — string icon, `iconPosition: 'end'`
+- `IconComponent` — Vue component passed directly (no registry lookup)
+- `IconNotFound` — string that does not exist in registry (check console for warning, button renders without icon)
+- `IconOnly` — `iconOnly: true` with `aria-label`, no label slot (play function asserts `aria-label` is present)
+- `IconOnlyMissingLabel` — dev warning test: `iconOnly: true`, no `aria-label` (play function checks console warning)
+- `IconAllVariants` — matrix story: icon × all `variant` × all `color` values
+- `IconRtl` — wraps story in a `dir="rtl"` container; asserts icon visually switches sides
 
 ### Badge
 
@@ -418,7 +542,7 @@ The current flat-prop API becomes limiting quickly. A slot-based approach is the
 2. **`variant` prop on `Accordion`:** `default` (bordered individual panel), `flush` (no outer border, dividers only — common in sidebars), `contained` (box with background — common in cards).
 3. **`id` prop** — allow consumers to control the item's identity for use with `AccordionGroup`'s `defaultOpen`.
 4. **`expandIcon` slot** — override the default chevron with any content.
-5. **ARIA improvement** — the native `<details>/<summary>` element is used currently, which has inconsistent cross-browser ARIA support. Consider switching to a manually managed `<button>` with `aria-expanded` and `aria-controls` for guaranteed screen reader behaviour.
+5. ✅ **ARIA improvement (partial)** — ~~the native `<details>/<summary>` element is used currently, which has inconsistent cross-browser ARIA support.~~ Fixed: removed redundant `aria-expanded` and `aria-controls` from `<summary>` which caused double-announcement (native `<details>` handles these in the accessibility tree already). Also fixed: invalid `duration-[1000]` CSS class. Full migration to `<button aria-expanded>` pattern remains a future task.
 6. **Story additions:** AccordionGroup exclusive mode, AccordionGroup with defaultOpen, all variants, with custom expand icon, with rich content (forms, images, nested lists).
 
 ### Divider
@@ -433,7 +557,7 @@ The current flat-prop API becomes limiting quickly. A slot-based approach is the
 
 **Recommended improvements:**
 
-1. **`title` slot + automatic `aria-labelledby`** — currently `ariaLabel` is a prop that sets `aria-label` on the dialog element. Best practice (WCAG 2.4.6) is to have a visible title linked via `aria-labelledby`. The Dialog should render a visually styled title bar and auto-bind `aria-labelledby` to it. Keep `ariaLabel` as a fallback for dialogs without visible titles.
+1. ✅ **`title` slot + automatic `aria-labelledby`** — ~~currently `ariaLabel` is a prop that sets `aria-label` on the dialog element.~~ Fixed: dialog now uses `aria-labelledby` pointing to a UUID-keyed title element when the `#title` slot is present, falling back to `aria-label` for dialogs without a visible title. Also fixed: duplicate hardcoded `id="dialogueTitle"`, missing `aria-modal="true"`, and incorrect `tabindex` on container/title elements.
 2. **`size` prop:** `sm` (400px), `md` (560px, current), `lg` (768px), `xl` (1024px), `fullscreen`. Applied as `max-w-*` on the inner panel.
 3. **`description` slot** — auto-linked via `aria-describedby` to the dialog root.
 4. **`ConfirmDialog` sub-component** — a convenience wrapper pre-composed with title, body text, and confirm/cancel buttons. Exposes a Promise-based API:
@@ -513,12 +637,13 @@ The only existing form component. Currently supports text, email, number, passwo
 
 **Recommended improvements:**
 
-1. **Validation state prop** — `state`: `'idle' \| 'valid' \| 'invalid' \| 'warning'`. Applies the appropriate border/icon colour. This must be implemented before other form components are built so there is a consistent model to follow.
-2. **`helperText` prop / `#helper` slot** — descriptive text shown beneath the input (always visible, not conditional on state).
-3. **`errorMessage` prop / `#error` slot** — error text shown beneath the input only when `state === 'invalid'`. Both `helperText` and `errorMessage` must be linked to the input via `aria-describedby`.
-4. **`clearable` prop** — shows a clear (×) button inside the suffix when the input has a value. Emits `update:modelValue` with `''`. Useful for search inputs.
-5. **`size` prop** — `'sm' \| 'md' \| 'lg'` to match Button and other components. Currently has no size control.
-6. **Story additions:** all validation states, clearable input, size variants, input with helper text, input with error message (play function tests typing + error display), input with prefix icon.
+1. ✅ **Missing attribute bindings (bug fix)** — `:required`, `:minlength`, and `:pattern` were all declared as props but never bound to the native `<input>` element, silently breaking HTML5 form validation. Fixed.
+2. **Validation state prop** — `state`: `'idle' \| 'valid' \| 'invalid' \| 'warning'`. Applies the appropriate border/icon colour. This must be implemented before other form components are built so there is a consistent model to follow.
+3. **`helperText` prop / `#helper` slot** — descriptive text shown beneath the input (always visible, not conditional on state).
+4. **`errorMessage` prop / `#error` slot** — error text shown beneath the input only when `state === 'invalid'`. Both `helperText` and `errorMessage` must be linked to the input via `aria-describedby`.
+5. **`clearable` prop** — shows a clear (×) button inside the suffix when the input has a value. Emits `update:modelValue` with `''`. Useful for search inputs.
+6. **`size` prop** — `'sm' \| 'md' \| 'lg'` to match Button and other components. Currently has no size control.
+7. **Story additions:** all validation states, clearable input, size variants, input with helper text, input with error message (play function tests typing + error display), input with prefix icon.
 
 ### Label
 
@@ -543,7 +668,7 @@ Already strong (LQIP, blur-up, srcset, lazy loading). Minor improvements:
 
 **Recommended improvement:**
 
-1. **`expandLabel` and `collapseLabel` props** — currently hardcoded as "Read more" / "Read less". These must be internationalisation-friendly.
+1. ✅ **`expandLabel` and `collapseLabel` props** — ~~currently hardcoded as "Show more" / "Show less".~~ Fixed: props added with the original strings as defaults. Fully backwards-compatible.
 2. **`#trigger` slot** — allow consumers to replace the text button with a custom expand trigger entirely.
 3. **Story additions:** custom labels, with custom trigger slot, in a Card, with very short content (should not render the trigger at all).
 
@@ -551,8 +676,9 @@ Already strong (LQIP, blur-up, srcset, lazy loading). Minor improvements:
 
 **Recommended improvement:**
 
-1. **`zIndex` prop** — consumers using multiple overlapping overlay components (Dialog + Sidebar both using Scrim) need to control stacking order. A `zIndex` prop (or named z-index levels: `'overlay' \| 'modal' \| 'top'`) prevents z-index conflicts.
-2. **Story additions:** scrim behind Dialog, scrim behind Sidebar, named z-index levels.
+1. ✅ **`aria-disabled` on non-interactive element (bug fix)** — when `clickable` is false the scrim renders as a `<div>`, but `aria-disabled="true"` was applied to it. `aria-disabled` is only valid on interactive roles. Fixed: replaced with `aria-hidden="true"` (a non-clickable scrim is purely decorative).
+2. **`zIndex` prop** — consumers using multiple overlapping overlay components (Dialog + Sidebar both using Scrim) need to control stacking order. A `zIndex` prop (or named z-index levels: `'overlay' \| 'modal' \| 'top'`) prevents z-index conflicts.
+3. **Story additions:** scrim behind Dialog, scrim behind Sidebar, named z-index levels.
 
 ### Video
 
@@ -836,30 +962,184 @@ A fully ARIA-compliant menu component. Distinct from FloatingPanel: FloatingPane
 
 ---
 
-#### Table
+#### Table (DataTable via TanStack Table)
 
-Semantic table sub-components for displaying structured data.
+> **Updated decision:** OUI Table will use **TanStack Table v8** (`@tanstack/vue-table`) as its headless engine. This provides sorting, filtering, pagination, selection, column visibility, resizing, and pinning for free — with full TypeScript generics and server-side support. OUI provides the Vue template layer and styles on top.
 
-**Components:** `Table` (root), `TableHead`, `TableBody`, `TableFoot`, `TableRow`, `TableHeader` (th), `TableCell` (td)
+**Architecture:**
 
-**`Table` props:**
+```
+Consumer provides:              OUI provides:
+  data: T[]               →    <OuiTable> renders the full table UI
+  columns: ColumnDef<T>[]      including header, body, footer, pagination,
+                               toolbar (search, density, column visibility)
+```
+
+The component creates and manages the TanStack table instance internally, but exposes it via `defineExpose({ table })` so consumers who need direct access (e.g. for imperative row selection) can get it.
+
+**Installation note:** `@tanstack/vue-table` must be listed as a peer dependency (optional) — only consumers using `OuiTable` need to install it.
+
+---
+
+**`OuiTable` props:**
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
+| `data` | `T[]` | required | Row data array |
+| `columns` | `ColumnDef<T>[]` | required | TanStack column definitions |
+| `caption` | `string` | — | Accessible `<caption>` (sr-only by default) |
+| `captionVisible` | `boolean` | `false` | Renders caption visibly above the table |
 | `striped` | `boolean` | `false` | Alternating row backgrounds |
 | `hoverable` | `boolean` | `true` | Row highlight on hover |
 | `bordered` | `boolean` | `false` | Cell borders |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Cell padding scale |
-| `stickyHeader` | `boolean` | `false` | Header fixed during scroll |
-| `caption` | `string` | — | Accessible table caption (sr-only by default, `captionVisible` prop to show) |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Cell padding density |
+| `stickyHeader` | `boolean` | `false` | Header fixed during vertical scroll |
+| `stickyFirstColumn` | `boolean` | `false` | First column fixed during horizontal scroll |
+| `loading` | `boolean` | `false` | Shows skeleton rows in place of data |
+| `loadingRows` | `number` | `5` | Number of skeleton rows to show |
+| `manualSorting` | `boolean` | `false` | Disable client-side sort — consumer handles via `@sort-change` |
+| `manualPagination` | `boolean` | `false` | Disable client-side pagination — consumer handles via `@page-change` |
+| `manualFiltering` | `boolean` | `false` | Disable client-side filtering |
+| `pageCount` | `number` | — | Required when `manualPagination` is true |
+| `rowCount` | `number` | — | Total row count for server-side pagination display |
+| `pagination` | `boolean` | `true` | Show built-in pagination bar |
+| `pageSize` | `number` | `10` | Default rows per page |
+| `pageSizeOptions` | `number[]` | `[10, 25, 50, 100]` | Per-page selector options |
+| `globalFilter` | `boolean` | `false` | Show global search input in the toolbar |
+| `columnVisibility` | `boolean` | `false` | Show column visibility toggle in the toolbar |
+| `rowSelection` | `'none' \| 'single' \| 'multi'` | `'none'` | Enables row checkboxes |
+| `getRowId` | `(row: T) => string` | `row index` | Stable row identifier for selection |
 
-**`TableHeader` props:** `sortable` (bool), `sortDirection` (`'asc' \| 'desc' \| null`) — emits `sort` with column key. ARIA: `aria-sort="ascending|descending|none"`.
+**Emits:**
 
-**Slots on `Table`:** `#empty` (shown when no rows — integrate with EmptyState component), `#loading` (shown when data is fetching — integrate with Placeholder table skeleton)
+| Event | Payload | When |
+|---|---|---|
+| `sort-change` | `{ id: string, desc: boolean }[]` | User clicks a sortable column header |
+| `page-change` | `{ pageIndex: number, pageSize: number }` | Page or page size changes |
+| `filter-change` | `string` | Global filter input changes |
+| `row-selection-change` | `Record<string, boolean>` | Selected rows change |
+| `row-click` | `{ row: Row<T>, event: MouseEvent }` | User clicks a row |
 
-**Note:** This is a semantic table, not a DataTable with built-in filtering/pagination. Those features are consumer-responsibility; this component provides the accessible structure.
+**Slots:**
 
-**Stories:** Basic, striped, bordered, sortable columns (play function clicks header to sort), empty state slot, loading skeleton slot, sticky header (scroll demo), responsive horizontal scroll.
+| Slot | Props | Purpose |
+|---|---|---|
+| `#toolbar` | — | Replaces the entire toolbar area above the table |
+| `#toolbar-start` | — | Prepend to the toolbar (before the search input) |
+| `#toolbar-end` | — | Append to the toolbar (after column visibility toggle) |
+| `#empty` | — | Shown when no rows match (integrates with EmptyState component) |
+| `#loading` | — | Shown when `loading` is true (integrates with Placeholder skeleton) |
+| `#cell-[columnId]` | `{ row, cell, getValue }` | Custom cell renderer per column |
+| `#header-[columnId]` | `{ column }` | Custom header renderer per column |
+| `#row-actions` | `{ row }` | Action buttons rendered in the last column |
+
+**Defines expose:** `table` — the raw TanStack `Table<T>` instance for advanced consumer use.
+
+---
+
+**Feature details:**
+
+**Sorting:**
+- Click column header to sort ascending; click again for descending; click again to clear.
+- `aria-sort="ascending|descending|none"` on `<th>` elements.
+- Multi-column sort via Shift+Click.
+- Sort icons (up/down/neutral) rendered using OUI Icon component.
+
+**Filtering (global search):**
+- Opt-in via `globalFilter` prop. Renders a search Input in the toolbar.
+- 300ms debounce before filtering fires to avoid re-rendering on every keypress.
+- For server-side: emit `filter-change` and pass `manualFiltering`.
+
+**Pagination:**
+- Renders OUI Pagination component below the table.
+- Shows "Showing X–Y of Z rows" alongside the pagination controls.
+- Per-page selector using native `<select>` (styled).
+
+**Row selection:**
+- `single`: radio-style (only one row at a time, no checkboxes column).
+- `multi`: checkbox column injected as first column automatically. Header checkbox selects/deselects all visible rows. Indeterminate state when partially selected.
+- Selected rows highlighted with a distinct background.
+
+**Column features (via TanStack):**
+- **Visibility toggle:** a popover in the toolbar listing all column names as checkboxes.
+- **Resizing:** drag handles on column headers to resize. Uses TanStack's `columnResizeMode: 'onChange'`.
+- **Pinning:** first and/or last column can be sticky (horizontal scroll). Controlled via `stickyFirstColumn` prop; full column pinning available via the exposed `table` instance.
+
+**Loading state:**
+- Replaces all data rows with Placeholder skeleton rows (using the existing Placeholder component).
+- Header columns remain visible during loading.
+
+**Row actions:**
+- Use the `#row-actions` slot to inject Buttons (or a DropdownMenu) per row.
+- OUI automatically appends a fixed-width "Actions" column when this slot is used.
+
+---
+
+**Responsive behaviour:**
+
+Two strategies, both supported:
+
+1. **Horizontal scroll** (default) — wrap the `<table>` in an `overflow-x-auto` container. The sticky header and sticky first column work within this. A subtle scroll shadow (`gradient` mask on the right edge) hints that there is more content. This is the pattern used by TailwindUI.
+
+2. **Card layout on mobile** (opt-in via `responsiveMode="card"` prop) — at `< md` breakpoints, each row collapses into a card. Column headers become inline labels beside each value. Uses CSS grid inside each card. This is the pattern used by Mantine's DataTable.
+
+The default is horizontal scroll as it preserves the table's semantic structure (`<table>`, `<tr>`, `<td>`) at all breakpoints, which is better for accessibility and screen readers.
+
+---
+
+**UX considerations:**
+
+- **Fitts's Law:** Sort click targets cover the full column header width, not just the icon.
+- **Hick's Law:** Column visibility and density controls are hidden behind toolbar toggles — not always visible. Don't overwhelm with controls.
+- **Von Restorff Effect:** Selected rows must be clearly distinct from hovered rows. Use a persistent background colour, not just a hover effect.
+- **Law of Proximity:** Row actions are right-aligned within the row — spatially associated with the row, not the table header.
+- **Aesthetic-Usability Effect:** Loading skeletons must match the column structure exactly (same widths). A skeleton that doesn't align to columns feels broken, not loading.
+- Sortable column headers should show a sort icon even in the unsorted state (subtle neutral icon) so users know the column is sortable before clicking.
+- Zero-data state should use the EmptyState component with a contextual message — not just an empty table body.
+
+---
+
+**TanStack column definition pattern for consumers:**
+
+```ts
+import { createColumnHelper } from '@tanstack/vue-table'
+
+const columnHelper = createColumnHelper<User>()
+
+const columns = [
+    columnHelper.accessor('name', {
+        header: 'Name',
+        cell: (info) => info.getValue(),
+        enableSorting: true,
+    }),
+    columnHelper.accessor('email', {
+        header: 'Email',
+        enableSorting: false,
+    }),
+    columnHelper.accessor('role', {
+        header: 'Role',
+        filterFn: 'equals',
+    }),
+]
+```
+
+---
+
+**Stories:**
+- Default (basic data, no features)
+- Sortable columns (play function clicks header, asserts aria-sort)
+- With pagination (play function navigates pages)
+- With global filter (play function types in search, asserts filtered row count)
+- With row selection — multi (play function selects rows, asserts count)
+- With row actions (DropdownMenu per row)
+- Loading state (skeleton rows)
+- Empty state (EmptyState slot)
+- Server-side mode (manualSorting + manualPagination — mock API)
+- Sticky header (scroll demo)
+- Responsive horizontal scroll (mobile viewport)
+- Responsive card layout (mobile viewport, `responsiveMode="card"`)
+- Column visibility toggle (play function hides a column)
+- Dense / comfortable / spacious density toggle
 
 ---
 
@@ -1364,26 +1644,30 @@ Once Tier 1 components are complete:
 
 ### Phase 4 — Polish, power features, and 1.0 prep
 
-| Item | Notes |
-|---|---|
-| CSS custom property theming | `--oui-radius`, `--oui-shadow`, `--oui-transition-duration` |
-| `AccordionGroup` exclusive mode | Update to existing component |
-| Card slot-based sub-components | Refactor (backwards-compatible) |
-| Dialog — title slot + sizes + ConfirmDialog | Multiple improvements |
-| Sidebar nav sub-components | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` |
-| Toast action buttons | Update |
-| Badge — dot, removable, outline | Update |
-| `prefers-reduced-motion` audit | All animated components |
-| SSR/Nuxt audit | Guard browser API usage |
-| Bundle size limit in CI | `size-limit` or `bundlesize` |
-| Visual regression baseline | Playwright snapshot baseline |
-| Design System Storybook section | Typography, Spacing, Motion docs |
-| CommandPalette | Complex but high-impact |
-| Chip / Tag | Filter UIs |
-| Callout | Editorial content |
-| SkipLink | WCAG 2.4.1 utility |
-| `CHANGELOG.md` + `MIGRATION.md` | Pre-1.0 documentation |
-| **1.0 release** | Stable API contract |
+| Item | Status | Notes |
+|---|---|---|
+| **Bug fixes — Session 1** | ✅ Done | Input missing attrs, Dialog ARIA/ID/tabindex/aria-modal, Accordion ARIA + CSS, Button `<a>` keyboard, Scrim invalid aria-disabled |
+| **ReadMore i18n labels** | ✅ Done | `expandLabel`/`collapseLabel` props added |
+| **Dialog — title slot + `aria-labelledby` + `aria-modal`** | ✅ Done (partial) | Sizes and ConfirmDialog still outstanding |
+| **Accordion — ARIA cleanup** | ✅ Done (partial) | Redundant attrs removed; full `<button>` migration still outstanding |
+| CSS custom property theming | — | `--oui-radius`, `--oui-shadow`, `--oui-transition-duration` |
+| `AccordionGroup` exclusive mode | — | Update to existing component |
+| Card slot-based sub-components | — | Refactor (backwards-compatible) |
+| Dialog — `size` prop + `ConfirmDialog` | — | Remaining from above |
+| Sidebar nav sub-components | — | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` |
+| Toast action buttons | — | Update |
+| Badge — dot, removable, outline | — | Update |
+| `prefers-reduced-motion` audit | — | All animated components |
+| SSR/Nuxt audit | — | Guard browser API usage |
+| Bundle size limit in CI | — | `size-limit` or `bundlesize` |
+| Visual regression baseline | — | Playwright snapshot baseline |
+| Design System Storybook section | — | Typography, Spacing, Motion docs |
+| CommandPalette | — | Complex but high-impact |
+| Chip / Tag | — | Filter UIs |
+| Callout | — | Editorial content |
+| SkipLink | — | WCAG 2.4.1 utility |
+| `CHANGELOG.md` + `MIGRATION.md` | — | Pre-1.0 documentation |
+| **1.0 release** | — | Stable API contract |
 
 ---
 

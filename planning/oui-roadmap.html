@@ -570,6 +570,11 @@
   </div>
 
   <div class="sidenav-section">
+    <div class="sidenav-section-label">Session Log</div>
+    <a href="#session-log">✓ Session 1 — Apr 2026</a>
+  </div>
+
+  <div class="sidenav-section">
     <div class="sidenav-section-label">Standards</div>
     <a href="#s8">8. Technical Concerns</a>
     <a href="#s9">9. UX Laws</a>
@@ -598,6 +603,41 @@
       <span class="meta-pill">53 registered icons</span>
     </div>
   </header>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SESSION LOG -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="session-log">
+    <h2><span class="section-number" style="background:var(--green-soft);color:var(--green);">✓</span> Session Log</h2>
+    <div class="section-desc">Work completed in Session 1 — April 2026. All 82 tests passing.</div>
+
+    <div class="callout callout-success">
+      <span class="callout-icon">✓</span>
+      <div><strong>82/82 Storybook tests passing</strong> after the fixes below. No regressions.</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Fix</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td><code>Input.vue</code></td><td><code>:required</code>, <code>:minlength</code>, <code>:pattern</code> declared as props but never bound to the native <code>&lt;input&gt;</code> — HTML5 validation silently broken</td><td><span class="badge badge-tier1">Bug</span></td></tr>
+          <tr><td><code>Dialog.vue</code></td><td>Hardcoded <code>id="dialogueTitle"</code> caused DOM ID collisions when multiple dialogs exist simultaneously</td><td><span class="badge badge-tier1">Bug</span></td></tr>
+          <tr><td><code>Dialog.vue</code></td><td>Missing <code>aria-modal="true"</code> — screen readers in browse mode could navigate outside the modal</td><td><span class="badge badge-update">A11y</span></td></tr>
+          <tr><td><code>Dialog.vue</code></td><td><code>tabindex="0"</code> on outer <code>&lt;section&gt;</code> incorrectly placed container in tab order</td><td><span class="badge badge-update">A11y</span></td></tr>
+          <tr><td><code>Dialog.vue</code></td><td>Title div <code>tabindex="0"</code> → <code>tabindex="-1"</code> — programmatic focus target should not be in sequential tab order</td><td><span class="badge badge-update">A11y</span></td></tr>
+          <tr><td><code>Dialog.vue</code></td><td><code>aria-labelledby</code> now links to UUID title when <code>#title</code> slot present; falls back to <code>aria-label</code></td><td><span class="badge badge-update">A11y</span></td></tr>
+          <tr><td><code>Accordion.vue</code></td><td><code>aria-expanded</code>/<code>aria-controls</code> on <code>&lt;summary&gt;</code> caused double-announcement — native <code>&lt;details&gt;</code> handles these</td><td><span class="badge badge-update">A11y</span></td></tr>
+          <tr><td><code>Accordion.vue</code></td><td><code>duration-[1000]</code> is invalid CSS (missing unit) — <code>transition-duration: 1000</code> ignored by browsers</td><td><span class="badge badge-tier1">Bug</span></td></tr>
+          <tr><td><code>Button.vue</code></td><td><code>@keydown.enter.prevent</code> unconditionally blocked <code>preventDefault()</code> — broke Enter-key navigation on <code>&lt;a&gt;</code> link buttons</td><td><span class="badge badge-tier1">Bug</span></td></tr>
+          <tr><td><code>Scrim.vue</code></td><td><code>aria-disabled="true"</code> on a non-interactive <code>&lt;div&gt;</code> is invalid — replaced with <code>aria-hidden="true"</code></td><td><span class="badge badge-update">A11y</span></td></tr>
+          <tr><td><code>ReadMore.vue</code></td><td>"Show more"/"Show less" were hardcoded English strings — added <code>expandLabel</code>/<code>collapseLabel</code> props (backwards-compatible)</td><td><span class="badge badge-new">Plan</span></td></tr>
+          <tr><td><code>Dialog.stories.ts</code></td><td>Test queried by <code>aria-label</code> ("My dialog") — updated to visible title text ("Dialog title") after <code>aria-labelledby</code> fix</td><td><span class="badge badge-story">Test</span></td></tr>
+          <tr><td><code>Scrim.stories.ts</code></td><td>Test asserted <code>aria-disabled="true"</code> — updated to <code>aria-hidden="true"</code> after fix</td><td><span class="badge badge-story">Test</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
 
   <!-- ══════════════════════════════════════════ -->
@@ -840,17 +880,37 @@
     <div class="comp-spec">
       <div class="comp-spec-header">
         <span class="comp-spec-name">Button</span>
-        <div class="comp-spec-badges"><span class="badge badge-update">Update</span><span class="badge badge-new">+ ButtonGroup</span></div>
+        <div class="comp-spec-badges"><span class="badge badge-update">Update</span><span class="badge badge-new">+ ButtonGroup</span><span class="badge badge-new">+ Icon support</span></div>
       </div>
       <div class="comp-spec-body">
         <p>No icon support is the biggest gap — every major framework treats icon+label as first-class. The <code>small</code> variant may violate the 44×44px minimum touch target (Fitts's Law).</p>
         <ul>
-          <li>Add <code>prefixIcon</code> and <code>suffixIcon</code> props — accept <code>IconProp</code> (string or Component).</li>
+          <li><span style="color:var(--green)">✅</span> <strong>Keyboard navigation bug on <code>&lt;a&gt;</code> elements (fixed)</strong> — <code>@keydown.enter.prevent</code> unconditionally blocked <code>event.preventDefault()</code>. Fixed: separate <code>handleKeyInteraction</code> only prevents default when disabled; Space prevents scroll + triggers click; Enter is left to the browser.</li>
+          <li><strong>Icon support</strong> — <code>icon</code> prop + <code>iconPosition</code> prop. See spec below.</li>
           <li>Add <code>iconOnly</code> prop — square aspect ratio, enforced <code>aria-label</code>.</li>
           <li>Add <code>ButtonGroup</code> component — removes interior border radii, collapses margins, cascades <code>size</code> and <code>variant</code> to children.</li>
           <li>Audit <code>small</code> variant touch target — must be ≥ 44×44px (invisible padding if needed).</li>
         </ul>
-        <p><span class="badge badge-story">Story</span> Icon-only buttons, icon+label (prefix+suffix), ButtonGroup (horizontal+vertical), full size × variant matrix.</p>
+
+        <h4 style="margin-top:16px;margin-bottom:8px;font-size:13px;color:var(--text)">Button icon spec</h4>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>icon</code></td><td><code>IconProp | undefined</code></td><td><code>undefined</code></td><td>String (registry lookup) or Vue component (direct render)</td></tr>
+              <tr><td><code>iconPosition</code></td><td><code>'start' | 'end'</code></td><td><code>'start'</code></td><td>Before or after label — follows document direction (RTL-safe)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li><strong>Registry validation</strong> — if <code>icon</code> is a string not in the registry, do not render the icon element and emit <code>console.warn('[OuiButton] Icon "X" not found…')</code> in dev only. Button remains fully functional.</li>
+          <li><strong>Size mapping</strong> — icon size derived from button <code>size</code> prop, never larger than button text: <code>sm → xs (12px)</code>, <code>md → sm (16px)</code>, <code>lg → md (20px)</code>.</li>
+          <li><strong>Layout</strong> — inner element is <code>flex flex-row items-center gap-1.5</code>. Icon rendered before or after the label slot in the template — no <code>direction</code>-specific CSS needed. RTL support is automatic.</li>
+          <li><strong>ARIA</strong> — icon always has <code>aria-hidden="true"</code>. Accessible name comes from label text or <code>aria-label</code>.</li>
+          <li><strong>Icon-only</strong> — when <code>iconOnly</code> is true or there is no label slot content, switch to square padding and warn in dev if <code>aria-label</code> is absent.</li>
+        </ul>
+
+        <p><span class="badge badge-story">Story</span> <code>IconStart</code>, <code>IconEnd</code>, <code>IconComponent</code> (component prop), <code>IconNotFound</code> (console warning check), <code>IconOnly</code>, <code>IconAllVariants</code> matrix, <code>IconRtl</code> (dir="rtl" wrapper). ButtonGroup horizontal+vertical. Full size × variant matrix.</p>
       </div>
     </div>
 
@@ -897,7 +957,8 @@
           <li>Add <code>AccordionGroup</code> — enforces exclusive-open (only one item open at a time) via <code>provide/inject</code>.</li>
           <li>Add <code>variant</code> prop: <code>default</code> (bordered), <code>flush</code> (dividers only), <code>contained</code> (boxed background).</li>
           <li>Add <code>#expandIcon</code> slot to override the default chevron.</li>
-          <li>Consider switching from native <code>&lt;details&gt;</code> to manual <code>aria-expanded</code>/<code>aria-controls</code> for consistent screen reader behaviour.</li>
+          <li><span style="color:var(--green)">✅</span> <strong>ARIA improvement (fixed)</strong> — removed redundant <code>aria-expanded</code>/<code>aria-controls</code> from <code>&lt;summary&gt;</code> (native <code>&lt;details&gt;</code> handles these — explicit attributes caused double-announcement). Also fixed: invalid <code>duration-[1000]</code> CSS class (missing unit).</li>
+          <li>Full migration to <code>&lt;button aria-expanded&gt;</code> pattern remains a future task for cross-browser consistency.</li>
         </ul>
         <p><span class="badge badge-story">Story</span> AccordionGroup exclusive mode, all variants, with custom expand icon, with rich content.</p>
       </div>
@@ -910,7 +971,7 @@
       </div>
       <div class="comp-spec-body">
         <ul>
-          <li>Add <code>#title</code> slot with automatic <code>aria-labelledby</code> binding (visible title is preferred over <code>aria-label</code> — WCAG 2.4.6).</li>
+          <li><span style="color:var(--green)">✅</span> <strong><code>#title</code> slot + automatic <code>aria-labelledby</code> (fixed)</strong> — dialog now uses <code>aria-labelledby</code> pointing to a UUID title element when the <code>#title</code> slot is present, falling back to <code>aria-label</code>. Also fixed: duplicate hardcoded <code>id="dialogueTitle"</code>, missing <code>aria-modal="true"</code>, incorrect <code>tabindex</code> on container and title elements.</li>
           <li>Add <code>size</code> prop: <code>sm</code> (400px), <code>md</code> (560px), <code>lg</code> (768px), <code>xl</code> (1024px), <code>fullscreen</code>.</li>
           <li>Add <code>#description</code> slot linked via <code>aria-describedby</code>.</li>
           <li>Add <code>ConfirmDialog</code> sub-component with Promise-based API: <code>await confirmRef.value.open({ title, description, confirmLabel, confirmColor })</code>.</li>
@@ -967,7 +1028,7 @@
       </div>
     </div>
 
-    <p style="color: var(--text-dim); font-size: 12px; margin-top: 8px;">Additional improvements: Loader size+colour props, Placeholder more variants + animated prop, Divider with label prop, Heading truncate+srOnly props. See the full markdown document for details.</p>
+    <p style="color: var(--text-dim); font-size: 12px; margin-top: 8px;">Additional improvements: <span style="color:var(--green)">✅</span> <strong>Input:</strong> <code>:required</code>, <code>:minlength</code>, <code>:pattern</code> props now correctly bound to the native <code>&lt;input&gt;</code> (bug fix — HTML5 validation was silently broken). <span style="color:var(--green)">✅</span> <strong>ReadMore:</strong> <code>expandLabel</code>/<code>collapseLabel</code> props added. Still to do: Loader size+colour props, Placeholder more variants + animated prop, Divider with label prop, Heading truncate+srOnly props. See the full markdown document for details.</p>
   </section>
 
 
@@ -1103,16 +1164,68 @@
 
     <div class="comp-spec">
       <div class="comp-spec-header">
-        <span class="comp-spec-name">Table</span>
+        <span class="comp-spec-name">DataTable (powered by TanStack Table v8)</span>
         <div class="comp-spec-badges"><span class="badge badge-tier2">Tier 2</span><span class="badge badge-new">New</span></div>
       </div>
       <div class="comp-spec-body">
-        <p>Semantic sub-components — not a DataTable with built-in filtering. That complexity stays with the consumer; OUI provides the accessible structure.</p>
-        <p><strong>Sub-components:</strong> <code>Table</code>, <code>TableHead</code>, <code>TableBody</code>, <code>TableFoot</code>, <code>TableRow</code>, <code>TableHeader</code> (th), <code>TableCell</code> (td)<br>
-        <strong>Table props:</strong> <code>striped</code>, <code>hoverable</code>, <code>bordered</code>, <code>size</code>, <code>stickyHeader</code>, <code>caption</code><br>
-        <strong>TableHeader:</strong> <code>sortable</code>, <code>sortDirection</code>, emits <code>sort</code>. ARIA: <code>aria-sort</code>.<br>
-        <strong>Slots:</strong> <code>#empty</code> (integrate with EmptyState), <code>#loading</code> (integrate with Placeholder skeleton).</p>
-        <p><span class="badge badge-story">Story</span> Basic, striped, sortable columns (play function), empty state slot, loading skeleton slot, sticky header, responsive horizontal scroll.</p>
+        <p>A fully-featured data table built on <code>@tanstack/vue-table</code> v8. OUI owns the rendering and UX; TanStack owns the headless state logic. Not a simple semantic table — this is a <code>OuiDataTable</code> component for real product data.</p>
+
+        <h4 style="margin-top:12px;margin-bottom:6px;font-size:13px;color:var(--text)">Core props</h4>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Prop</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>data</code></td><td><code>T[]</code></td><td>Row data — reactive</td></tr>
+              <tr><td><code>columns</code></td><td><code>ColumnDef&lt;T&gt;[]</code></td><td>TanStack column definitions (created with <code>createColumnHelper&lt;T&gt;()</code>)</td></tr>
+              <tr><td><code>sorting</code> / <code>manualSorting</code></td><td><code>boolean</code></td><td>Client-side or server-side sort</td></tr>
+              <tr><td><code>filtering</code> / <code>manualFiltering</code></td><td><code>boolean</code></td><td>Global filter input or server-driven</td></tr>
+              <tr><td><code>pagination</code> / <code>manualPagination</code></td><td><code>boolean</code></td><td>Built-in pagination or server-driven (requires <code>rowCount</code>)</td></tr>
+              <tr><td><code>pageSize</code></td><td><code>number</code></td><td>Default 20. Options: 10/20/50/100</td></tr>
+              <tr><td><code>selection</code></td><td><code>'none' | 'single' | 'multi'</code></td><td>Row selection mode</td></tr>
+              <tr><td><code>columnVisibility</code></td><td><code>boolean</code></td><td>Show column visibility toggle UI</td></tr>
+              <tr><td><code>columnResizing</code></td><td><code>boolean</code></td><td>Draggable column resize handles</td></tr>
+              <tr><td><code>columnPinning</code></td><td><code>boolean</code></td><td>Pin columns left/right</td></tr>
+              <tr><td><code>loading</code></td><td><code>boolean</code></td><td>Show skeleton overlay</td></tr>
+              <tr><td><code>striped</code> / <code>hoverable</code></td><td><code>boolean</code></td><td>Visual row styles</td></tr>
+              <tr><td><code>stickyHeader</code></td><td><code>boolean</code></td><td>Freeze header on scroll</td></tr>
+              <tr><td><code>caption</code></td><td><code>string</code></td><td>Accessible table caption</td></tr>
+              <tr><td><code>responsiveMode</code></td><td><code>'scroll' | 'card'</code></td><td>Horizontal scroll (default) or card layout on small screens</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 style="margin-top:12px;margin-bottom:6px;font-size:13px;color:var(--text)">Emits</h4>
+        <ul>
+          <li><code>sort-change</code> — <code>{ columnId, direction }</code></li>
+          <li><code>page-change</code> — <code>{ page, pageSize }</code></li>
+          <li><code>filter-change</code> — <code>{ value }</code></li>
+          <li><code>row-selection-change</code> — <code>selectedRows[]</code></li>
+          <li><code>row-click</code> — <code>row</code></li>
+        </ul>
+
+        <h4 style="margin-top:12px;margin-bottom:6px;font-size:13px;color:var(--text)">Slots</h4>
+        <ul>
+          <li><code>#toolbar</code>, <code>#toolbar-start</code>, <code>#toolbar-end</code> — custom toolbar content</li>
+          <li><code>#cell-[columnId]</code> — custom cell renderer (scoped: <code>{ value, row }</code>)</li>
+          <li><code>#header-[columnId]</code> — custom header renderer</li>
+          <li><code>#row-actions</code> — scoped to <code>{ row }</code>, typically a DropdownMenu</li>
+          <li><code>#empty</code> — no-data state (integrates with EmptyState)</li>
+          <li><code>#loading</code> — loading state (integrates with Placeholder skeleton)</li>
+        </ul>
+
+        <h4 style="margin-top:12px;margin-bottom:6px;font-size:13px;color:var(--text)">UX details</h4>
+        <ul>
+          <li>Toolbar: global filter input (left) + column visibility toggle + density toggle (right). Filters clear button appears when filter is active.</li>
+          <li>Sortable headers: <code>aria-sort</code>, cycle none → asc → desc → none. Sort icons animate direction.</li>
+          <li>Row selection: header checkbox selects/deselects all on current page. Selection count shown in toolbar. Bulk actions slot revealed when rows are selected.</li>
+          <li>Pagination: integrated Pagination component. Shows "Showing X–Y of Z" label. Server-side mode passes <code>rowCount</code> for accurate total.</li>
+          <li>Empty state: centred EmptyState slot. Separate messages for "no data" vs "no results after filter".</li>
+          <li>Responsive scroll: <code>overflow-x-auto</code> wrapper. Min column widths ensure content is legible before scroll activates.</li>
+          <li>Responsive card (<code>responsiveMode="card"</code>): below <code>md</code> breakpoint, each row renders as a card with label: value pairs. <code>column.meta.label</code> provides the mobile label.</li>
+          <li><code>defineExpose({ table })</code> gives consumers direct access to the TanStack table instance for advanced use cases.</li>
+        </ul>
+
+        <p><span class="badge badge-story">Story</span> Basic, sortable (client), server-driven sort+pagination, multi-select with bulk actions, column visibility toggle, column resizing, card responsive layout (mobile viewport), empty state, loading skeleton, with custom cell slot (status badge), with row actions (DropdownMenu).</p>
       </div>
     </div>
 
