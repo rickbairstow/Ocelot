@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ocelot UI — Component Library Roadmap</title>
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:          #0f0f11;
+    --bg-card:     #18181b;
+    --bg-card-alt: #1c1c20;
+    --border:      #2a2a32;
+    --border-soft: #222228;
+    --text:        #e4e4e8;
+    --text-muted:  #8b8b9a;
+    --text-dim:    #5a5a6a;
+    --accent:      #f97316;
+    --accent-soft: rgba(249,115,22,0.12);
+    --accent-glow: rgba(249,115,22,0.06);
+    --blue:        #60a5fa;
+    --blue-soft:   rgba(96,165,250,0.12);
+    --green:       #4ade80;
+    --green-soft:  rgba(74,222,128,0.12);
+    --amber:       #fbbf24;
+    --amber-soft:  rgba(251,191,36,0.12);
+    --red:         #f87171;
+    --red-soft:    rgba(248,113,113,0.12);
+    --purple:      #c084fc;
+    --purple-soft: rgba(192,132,252,0.12);
+    --radius:      10px;
+    --radius-sm:   6px;
+    --radius-lg:   16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+    scroll-behavior: smooth;
+  }
+
+  /* ── Layout ── */
+  body { min-height: 100vh; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+    gap: 0;
+  }
+
+  /* ── Sidebar nav ── */
+  .sidenav {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    padding: 28px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .sidenav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 16px;
+  }
+
+  .sidenav-brand-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .sidenav-brand-text { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .sidenav-brand-sub  { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+  .sidenav-section { margin-bottom: 4px; }
+  .sidenav-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 12px 20px 4px;
+  }
+
+  .sidenav a {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 6px 20px;
+    border-radius: 0;
+    transition: color 0.15s, background 0.15s;
+  }
+  .sidenav a:hover { color: var(--text); background: var(--accent-glow); }
+  .sidenav a.active { color: var(--accent); background: var(--accent-soft); font-weight: 500; }
+
+  /* ── Main content ── */
+  main {
+    padding: 48px 60px 80px;
+    max-width: 960px;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .page-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .meta-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* ── Section headings ── */
+  .section { margin-bottom: 56px; }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: 6px;
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    padding-left: 38px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 10px;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 20px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  p { color: var(--text-muted); margin-bottom: 12px; font-size: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card p { font-size: 13px; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .card-grid .card { margin-bottom: 0; }
+
+  /* ── Tables ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead { background: var(--bg-card-alt); }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--accent-glow); }
+
+  td code, th code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--text);
+  }
+
+  td strong { color: var(--text); font-weight: 600; }
+
+  /* ── Code blocks ── */
+  pre {
+    background: #0d0d10;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 12px 0 16px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #a8b3c8;
+  }
+
+  pre .kw  { color: #c792ea; }
+  pre .str { color: #c3e88d; }
+  pre .fn  { color: #82aaff; }
+  pre .cm  { color: #546e7a; font-style: italic; }
+  pre .id  { color: #ffcb6b; }
+  pre .op  { color: #89ddff; }
+
+  /* ── Badges / pills ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 20px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .badge-tier1  { background: var(--red-soft);    color: var(--red);    }
+  .badge-tier2  { background: var(--amber-soft);  color: var(--amber);  }
+  .badge-tier3  { background: var(--text-dim);    color: var(--bg);     background: rgba(255,255,255,0.08); color: var(--text-muted); }
+  .badge-new    { background: var(--green-soft);  color: var(--green);  }
+  .badge-update { background: var(--blue-soft);   color: var(--blue);   }
+  .badge-story  { background: var(--purple-soft); color: var(--purple); }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin: 16px 0;
+    font-size: 13px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .callout-info    { background: var(--blue-soft);   border: 1px solid rgba(96,165,250,0.2); color: #93c5fd; }
+  .callout-warning { background: var(--amber-soft);  border: 1px solid rgba(251,191,36,0.2); color: #fcd34d; }
+  .callout-success { background: var(--green-soft);  border: 1px solid rgba(74,222,128,0.2); color: #86efac; }
+  .callout-tip     { background: var(--purple-soft); border: 1px solid rgba(192,132,252,0.2); color: #d8b4fe; }
+
+  /* ── Tag list ── */
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
+  .tag {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── Phase roadmap ── */
+  .phase {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .phase-number {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .phase-1 .phase-number { background: var(--accent);              color: #fff; }
+  .phase-2 .phase-number { background: var(--blue-soft);           color: var(--blue); }
+  .phase-3 .phase-number { background: var(--purple-soft);         color: var(--purple); }
+  .phase-4 .phase-number { background: rgba(255,255,255,0.08);     color: var(--text-muted); }
+
+  .phase-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .phase-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+  .phase-items { padding: 6px 0; }
+  .phase-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 18px;
+  }
+
+  .phase-item:hover { background: var(--accent-glow); }
+
+  .phase-item-label { font-size: 13px; color: var(--text-muted); flex: 1; }
+  .phase-item-label strong { color: var(--text); font-weight: 500; }
+  .phase-item-note { font-size: 12px; color: var(--text-dim); flex: 1; }
+
+  /* ── UX Laws grid ── */
+  .law-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .law-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .law-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .law-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── Divider ── */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+
+  /* ── Component spec block ── */
+  .comp-spec {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .comp-spec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card-alt);
+  }
+
+  .comp-spec-name { font-size: 14px; font-weight: 700; color: #fff; }
+  .comp-spec-badges { display: flex; gap: 6px; }
+
+  .comp-spec-body { padding: 14px 16px; }
+  .comp-spec-body p { font-size: 13px; margin-bottom: 10px; }
+  .comp-spec-body h4 { margin-top: 12px; }
+
+  /* ── Lists ── */
+  ul, ol {
+    padding-left: 20px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  li { margin-bottom: 4px; line-height: 1.6; }
+  li::marker { color: var(--accent); }
+
+  ol li::marker { color: var(--text-dim); }
+
+  li code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--text);
+  }
+
+  /* ── Keyboard key ── */
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0 1px;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  /* ── Back to top ── */
+  .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-top: 32px;
+    transition: color 0.15s;
+  }
+  .back-to-top:hover { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidenav { display: none; }
+    main { padding: 32px 24px 60px; }
+    .law-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ═══ SIDEBAR NAV ═══ -->
+<nav class="sidenav" aria-label="Page navigation">
+  <div class="sidenav-brand">
+    <div class="sidenav-brand-icon">🐆</div>
+    <div>
+      <div class="sidenav-brand-text">Ocelot UI</div>
+      <div class="sidenav-brand-sub">Component Roadmap</div>
+    </div>
+  </div>
+
+  <div class="sidenav-section">
+    <div class="sidenav-section-label">Overview</div>
+    <a href="#s1">1. Current State</a>
+    <a href="#s2">2. Competitive Landscape</a>
+  </div>
+
+  <div class="sidenav-section">
+    <div class="sidenav-section-label">Icons & Theming</div>
+    <a href="#s3">3. Icon Library</a>
+    <a href="#s4">4. Design Tokens</a>
+  </div>
+
+  <div class="sidenav-section">
+    <div class="sidenav-section-label">Components</div>
+    <a href="#s5">5. Existing Improvements</a>
+    <a href="#s6">6. Missing Components</a>
+    <a href="#s7">7. Forms & Inputs</a>
+  </div>
+
+  <div class="sidenav-section">
+    <div class="sidenav-section-label">Standards</div>
+    <a href="#s8">8. Technical Concerns</a>
+    <a href="#s9">9. UX Laws</a>
+    <a href="#s10">10. Developer Experience</a>
+    <a href="#s11">11. Storybook</a>
+  </div>
+
+  <div class="sidenav-section">
+    <div class="sidenav-section-label">Plan</div>
+    <a href="#s12">12. Roadmap</a>
+  </div>
+</nav>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main id="top">
+
+  <!-- ── Page header ── -->
+  <header class="page-header">
+    <div class="page-header-eyebrow">Planning Document</div>
+    <h1>Ocelot UI Roadmap</h1>
+    <p>A full assessment of what the library needs to become production-ready, compared against the top Vue and React UI frameworks, grounded in UX law, and mapped to a phased delivery plan.</p>
+    <div class="page-meta">
+      <span class="meta-pill"><span class="dot"></span> April 2026</span>
+      <span class="meta-pill">v0.0.21</span>
+      <span class="meta-pill">23 components today</span>
+      <span class="meta-pill">53 registered icons</span>
+    </div>
+  </header>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §1 — CURRENT STATE -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s1">
+    <h2><span class="section-number">1</span> Current State Assessment</h2>
+    <div class="section-desc">What exists, what's strong, and what's missing.</div>
+
+    <h3>What exists — 23 components</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Category</th><th>Components</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Core UI</strong></td><td>Accordion, Badge, Button, Card, Dialog, Divider, Heading, Icon, Label, Loader, Placeholder</td></tr>
+          <tr><td><strong>Forms</strong></td><td>Input <em>(only one)</em></td></tr>
+          <tr><td><strong>Media</strong></td><td>Image, LightboxImage, QrCode, Video</td></tr>
+          <tr><td><strong>Overlay</strong></td><td>FloatingPanel, Scrim, Sidebar, Toast</td></tr>
+          <tr><td><strong>Content</strong></td><td>ReadMore</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Genuine strengths</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">Accessibility-first</div>
+        <p>Axe runs on every Storybook story. Live regions on Toast, focus management via <code>useFocusMemory</code>, semantic HTML throughout. This is ahead of most open-source libraries.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Tailwind v4 peer dep</div>
+        <p>Consumers own their CSS. Zero style leakage. OUI classes tree-shake naturally. The <code>@source</code> pattern in <code>tailwind.css</code> is correct and forward-looking.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Advanced media</div>
+        <p>LQIP blur-up on Image, multi-format video (HTML5/YouTube/Vimeo), PhotoSwipe lightbox, and QR code generation are well above the average component library.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">FloatingPanel</div>
+        <p>Full Floating UI integration — flip, shift, arrow, all 12 placements. Click/hover/all interaction modes. Most libraries charge for a panel this capable.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Composable architecture</div>
+        <p><code>useToast</code>, <code>useLightboxRegistry</code>, <code>useFocusMemory</code> are independently usable. Good separation of concerns.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Testing infrastructure</div>
+        <p>Vitest + Playwright + Axe. The test-runner hook that injects Axe before every story is a particularly strong pattern worth preserving.</p>
+      </div>
+    </div>
+
+    <h3>Critical gaps</h3>
+    <ul>
+      <li>No navigation patterns — Tabs, Breadcrumb, Pagination, Steps are all missing.</li>
+      <li>Only one form component. No Select, Checkbox, Radio, Switch, or Textarea.</li>
+      <li>No inline feedback (Alert/Banner). Toast is not a substitute.</li>
+      <li>No data display — Table, Avatar, Timeline, Stats card, Progress.</li>
+      <li>Icon system is hard-coded to 53 icons. No consumer extensibility. No component-as-prop support.</li>
+      <li>Button has no icon support — treated as first-class by every major framework.</li>
+      <li>Card uses a flat prop API where composable slots are expected.</li>
+      <li>No documented theming or design token story.</li>
+    </ul>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §2 — COMPETITIVE LANDSCAPE -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s2">
+    <h2><span class="section-number">2</span> Competitive Landscape</h2>
+    <div class="section-desc">What the best libraries do — and what OUI should adopt from each.</div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">TailwindUI</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Design bar</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>The gold standard for visual design and component composition. Every pattern ships with dark mode and responsive breakpoints. Named slots are used consistently across all patterns — <code>#header</code>, <code>#footer</code>, <code>#actions</code>.</p>
+        <p><strong>Key lesson:</strong> Components must look finished out of the box. Named slot conventions should be consistent across the entire library.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Headless UI (Tailwind Labs)</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">A11y reference</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Fully headless, behaviour-only. The definitive reference for keyboard navigation and ARIA correctness — especially on Listbox, Combobox, Menu, and Dialog.</p>
+        <p><strong>Key lesson:</strong> Complex interactive components need a complete keyboard spec before implementation begins, not after.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Radix UI / shadcn</span>
+        <div class="comp-spec-badges"><span class="badge badge-new">Icon pattern</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Icons are never bundled — consumers pass components as props. Sub-component APIs (<code>Dialog.Root</code>, <code>Dialog.Trigger</code>, etc.) make ARIA relationships automatic and reduce the surface area of the root component.</p>
+        <p><strong>Key lesson:</strong> Icon-as-prop is correct for a library. Sub-component APIs are cleaner than monolithic components with many props.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Mantine</span>
+        <div class="comp-spec-badges"><span class="badge badge-story">Slots model</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Uses <code>leftSection</code>/<code>rightSection</code> slot names consistently across all input components. Form integration via <code>useForm</code> composable propagates error states via context. CSS custom property theming at the colour level.</p>
+        <p><strong>Key lesson:</strong> Consistent compositional slot naming creates a predictable API. <code>provide/inject</code> for form context is the correct Vue pattern.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Nuxt UI v3 / PrimeVue</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">Vue-native</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Nuxt UI v3 is Tailwind v4 based — the closest direct competitor. PrimeVue ships CSS custom property theming with a UI builder. Both show that consumers expect some customisation path, even if limited.</p>
+        <p><strong>Key lesson:</strong> Document at minimum a `:class` override pattern and a small set of CSS custom properties (radius, shadow, transition).</p>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">✦</span>
+      <div><strong>Patterns OUI should adopt:</strong> Icon-as-prop. Consistent slot naming (<code>#prefix</code>, <code>#suffix</code>, <code>#header</code>, <code>#footer</code>, <code>#actions</code>, <code>#empty</code>, <code>#icon</code>). Sub-component APIs for complex components. Dark mode required everywhere. Full keyboard specs before implementation.</div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §3 — ICON LIBRARY -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s3">
+    <h2><span class="section-number">3</span> Icon Library — The Critical Problem</h2>
+    <div class="section-desc">The current registry of 53 hand-registered icons does not scale. Here is the full solution.</div>
+
+    <div class="callout callout-warning">
+      <span class="callout-icon">⚠</span>
+      <div><strong>The problem:</strong> Adding icons requires editing library source + rebuilding + publishing. Consumers cannot add their own icons. Importing all 5,000+ Tabler icons would add ~2MB to the bundle. The current model cannot continue.</div>
+    </div>
+
+    <h3>Solution: Hybrid icon prop</h3>
+    <p>Change the <code>icon</code> prop on <code>Icon.vue</code> to accept either a string (resolved against the registry) or a Vue component (rendered directly). This is backwards-compatible — all existing string usage continues to work.</p>
+
+    <pre><span class="cm">// String — current API, backwards-compatible</span>
+<span class="op">&lt;</span>OuiIcon icon=<span class="str">"Check"</span> size=<span class="str">"lg"</span> <span class="op">/&gt;</span>
+
+<span class="cm">// Component — new, consumer controls their own bundle</span>
+<span class="kw">import</span> { <span class="id">IconBrandGithub</span> } <span class="kw">from</span> <span class="str">'@tabler/icons-vue'</span>
+<span class="op">&lt;</span>OuiIcon <span class="op">:</span>icon=<span class="str">"IconBrandGithub"</span> size=<span class="str">"lg"</span> <span class="op">/&gt;</span></pre>
+
+    <p>The <code>Icon.vue</code> implementation uses <code>typeof icon === 'string'</code> to decide between registry lookup and <code>&lt;component :is="icon" /&gt;</code>.</p>
+
+    <h3>Consumer extensibility — <code>registerIcons()</code></h3>
+    <p>Export a function that augments the registry at app initialisation. Consumers use string names throughout their app without importing the component at every usage site.</p>
+
+    <pre><span class="cm">// consumer's main.js</span>
+<span class="kw">import</span> { <span class="id">registerIcons</span> } <span class="kw">from</span> <span class="str">'ocelot-ui'</span>
+<span class="kw">import</span> { <span class="id">IconBrandGithub</span>, <span class="id">IconWorld</span> } <span class="kw">from</span> <span class="str">'@tabler/icons-vue'</span>
+
+<span class="fn">registerIcons</span>({ <span class="id">BrandGithub</span>: <span class="id">IconBrandGithub</span>, <span class="id">World</span>: <span class="id">IconWorld</span> })</pre>
+
+    <h3>TypeScript</h3>
+    <ul>
+      <li>Export <code>IconName</code> as a union of all built-in registry keys.</li>
+      <li>Export <code>IconProp = IconName | Component</code> — the type for any prop that accepts an icon.</li>
+      <li>Document module augmentation for consumers to extend <code>IconName</code> with their registered icons and get autocomplete.</li>
+    </ul>
+
+    <h3>Expand the built-in registry: 53 → ~120</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Category</th><th>Icons to add</th></tr></thead>
+        <tbody>
+          <tr><td><strong>UI actions</strong></td><td>MoreHorizontal, MoreVertical, GripVertical, Refresh, Expand, Collapse, Copy, ClipboardCheck</td></tr>
+          <tr><td><strong>Status</strong></td><td>Clock, CircleDashed, CircleMinus, AlertCircle, Ban, Shield, ShieldCheck</td></tr>
+          <tr><td><strong>Form</strong></td><td>Eye, EyeOff, Calendar, CalendarEvent, Lock, LockOpen, Upload, Paperclip, At, Hash</td></tr>
+          <tr><td><strong>Communication</strong></td><td>MessageCircle, Send, Share, Rss</td></tr>
+          <tr><td><strong>Data</strong></td><td>SortAscending, SortDescending, Filter, LayoutGrid, LayoutList, Table</td></tr>
+          <tr><td><strong>File</strong></td><td>File, FileText, FilePdf, Folder, FolderOpen</td></tr>
+          <tr><td><strong>Navigation</strong></td><td>ExternalLink, Link, Unlink, ChevronUpDown</td></tr>
+          <tr><td><strong>Misc</strong></td><td>Sun, Moon, Globe, Terminal, Fingerprint, Palette</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-success">
+      <span class="callout-icon">✓</span>
+      <div><strong>Storybook:</strong> Update <code>useIcons.mdx</code> with both usage patterns and the <code>registerIcons()</code> pattern. Add an Icon Grid story (all icons × all 9 sizes). Add a Custom Icon story demonstrating the component-as-prop approach.</div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §4 — THEMING -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s4">
+    <h2><span class="section-number">4</span> Theming & Design Tokens</h2>
+    <div class="section-desc">Consumers currently have no documented way to customise OUI's visual appearance.</div>
+
+    <p>OUI uses Tailwind utility classes directly. A consumer who wants a different border radius or transition speed must guess which classes to override — and an OUI upgrade may silently break them. A small, documented set of CSS custom properties fixes this.</p>
+
+    <h3>Recommended: CSS custom properties for structural values</h3>
+    <pre><span class="cm">/* additions to tailwind.css (the file consumers already import) */</span>
+:root {
+  <span class="id">--oui-radius</span>:          0.375rem;
+  <span class="id">--oui-radius-sm</span>:       0.25rem;
+  <span class="id">--oui-radius-lg</span>:       0.5rem;
+  <span class="id">--oui-radius-full</span>:     9999px;
+  <span class="id">--oui-shadow</span>:          0 1px 3px 0 rgb(0 0 0 / 0.1);
+  <span class="id">--oui-shadow-md</span>:       0 4px 6px -1px rgb(0 0 0 / 0.1);
+  <span class="id">--oui-ring-width</span>:      2px;
+  <span class="id">--oui-ring-offset</span>:     2px;
+  <span class="id">--oui-transition</span>:      150ms;
+  <span class="id">--oui-font-sans</span>:       inherit;
+}</pre>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ</span>
+      <div><strong>What NOT to expose:</strong> Do not create <code>--oui-primary-*</code> colour tokens. Consumers configure Tailwind colours themselves — OUI should use their palette, not override it. Focus the token layer on structural values (radius, shadow, timing) not colour.</div>
+    </div>
+
+    <h3>Storybook: Design System section</h3>
+    <p>Add a new top-level Storybook section with MDX pages covering: Colour Palette (expand existing), Typography scale, Spacing &amp; Sizing, Border Radius &amp; Shadows (with override examples), and Motion &amp; Transitions.</p>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §5 — EXISTING IMPROVEMENTS -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s5">
+    <h2><span class="section-number">5</span> Existing Component Improvements</h2>
+    <div class="section-desc">What to add or fix in the 23 components that already exist.</div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Button</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">Update</span><span class="badge badge-new">+ ButtonGroup</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>No icon support is the biggest gap — every major framework treats icon+label as first-class. The <code>small</code> variant may violate the 44×44px minimum touch target (Fitts's Law).</p>
+        <ul>
+          <li>Add <code>prefixIcon</code> and <code>suffixIcon</code> props — accept <code>IconProp</code> (string or Component).</li>
+          <li>Add <code>iconOnly</code> prop — square aspect ratio, enforced <code>aria-label</code>.</li>
+          <li>Add <code>ButtonGroup</code> component — removes interior border radii, collapses margins, cascades <code>size</code> and <code>variant</code> to children.</li>
+          <li>Audit <code>small</code> variant touch target — must be ≥ 44×44px (invisible padding if needed).</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> Icon-only buttons, icon+label (prefix+suffix), ButtonGroup (horizontal+vertical), full size × variant matrix.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Badge</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">Update</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <ul>
+          <li>Add <code>dot</code> variant — coloured circle, no label. Sizes: sm/md/lg (6/8/10px).</li>
+          <li>Add <code>removable</code> prop — appends a close <code>&lt;button&gt;</code>, emits <code>@remove</code>. Button must have <code>aria-label="Remove [label]"</code> (WCAG 2.5.3).</li>
+          <li>Add <code>outline</code> variant — border only, transparent background.</li>
+          <li>Add <code>truncate</code> prop — for dynamically generated labels.</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> Dot (all colours, all sizes), removable (play function tests @remove event), outline, truncated label, badge in context inside Card and Avatar.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Card</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">Refactor (backwards-compatible)</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>The flat-prop API becomes limiting quickly. TailwindUI, Mantine, and Nuxt UI all use slot-based card sub-components.</p>
+        <ul>
+          <li>Add named slots: <code>#media</code>, <code>#header</code>, <code>#content</code>, <code>#footer</code>, <code>#actions</code>. Keep existing props as convenience wrappers that populate these slots.</li>
+          <li>Add <code>clickable</code> prop — makes entire card interactive with hover/focus states.</li>
+          <li>Add <code>selected</code> prop — visual selected state (ring + tick) for selection UIs.</li>
+          <li>Add <code>variant</code> prop: <code>default</code>, <code>bordered</code> (no shadow), <code>flat</code> (no shadow, no border).</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> All slot combinations, clickable, selectable (play function toggles), card grid layouts (3-up, 4-up).</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Accordion</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">Update</span><span class="badge badge-new">+ AccordionGroup</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <ul>
+          <li>Add <code>AccordionGroup</code> — enforces exclusive-open (only one item open at a time) via <code>provide/inject</code>.</li>
+          <li>Add <code>variant</code> prop: <code>default</code> (bordered), <code>flush</code> (dividers only), <code>contained</code> (boxed background).</li>
+          <li>Add <code>#expandIcon</code> slot to override the default chevron.</li>
+          <li>Consider switching from native <code>&lt;details&gt;</code> to manual <code>aria-expanded</code>/<code>aria-controls</code> for consistent screen reader behaviour.</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> AccordionGroup exclusive mode, all variants, with custom expand icon, with rich content.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Dialog</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">Update</span><span class="badge badge-new">+ ConfirmDialog</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <ul>
+          <li>Add <code>#title</code> slot with automatic <code>aria-labelledby</code> binding (visible title is preferred over <code>aria-label</code> — WCAG 2.4.6).</li>
+          <li>Add <code>size</code> prop: <code>sm</code> (400px), <code>md</code> (560px), <code>lg</code> (768px), <code>xl</code> (1024px), <code>fullscreen</code>.</li>
+          <li>Add <code>#description</code> slot linked via <code>aria-describedby</code>.</li>
+          <li>Add <code>ConfirmDialog</code> sub-component with Promise-based API: <code>await confirmRef.value.open({ title, description, confirmLabel, confirmColor })</code>.</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> With title slot, all sizes, with scrolling content, with form (focus trap test), ConfirmDialog (play function confirms and cancels).</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">FloatingPanel → Tooltip + Popover</span>
+        <div class="comp-spec-badges"><span class="badge badge-new">Named exports</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>FloatingPanel is capable but consumers expect conventional names. The ARIA semantics differ enough to warrant distinct exports.</p>
+        <ul>
+          <li><code>OuiTooltip</code> — preset: hover, <code>role="tooltip"</code>, 300ms delay, max-width. Props: <code>content</code>, <code>placement</code>, <code>delay</code>, <code>disabled</code>.</li>
+          <li><code>OuiPopover</code> — preset: click, <code>role="dialog"</code>, no focus trap. Has close button in header. Slot-based content.</li>
+          <li>Add <code>delay</code> prop to base FloatingPanel for hover interactions.</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> Separate Tooltip story (on icon button, on disabled wrapper, multiline). Separate Popover story (with form content, with actions).</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Toast</span>
+        <div class="comp-spec-badges"><span class="badge badge-update">Update</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <ul>
+          <li>Add <code>action</code> option to <code>useToast().add()</code>: <code>{ label: string, onClick: () => void }</code>. Renders an inline text button ("Undo", "View", "Retry").</li>
+          <li>Add <code>icon</code> override option — pass custom <code>IconProp</code> per toast.</li>
+          <li>Add <code>onClose</code> callback option.</li>
+          <li><strong>Export <code>useToast</code> from the library root</strong> — it currently requires importing from an internal path.</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> Toast with action (play function clicks action), all types with custom icon, persistent toast, rapid stacking test.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Sidebar</span>
+        <div class="comp-spec-badges"><span class="badge badge-new">+ Nav sub-components</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <ul>
+          <li>Add <code>SidebarNav</code> — <code>&lt;nav aria-label="..."&gt;</code> wrapper with consistent spacing.</li>
+          <li>Add <code>SidebarNavGroup</code> — labelled group of nav items with optional collapsible header.</li>
+          <li>Add <code>SidebarNavItem</code> — <code>href</code>, <code>active</code> (applies <code>aria-current="page"</code>), <code>icon</code> (IconProp), <code>badge</code> count, <code>disabled</code>.</li>
+          <li>Add <code>width</code> prop to Sidebar.</li>
+        </ul>
+        <p><span class="badge badge-story">Story</span> Full nav structure with groups, active state, badge count, mobile pattern (scrim + slide), programmatic open/close.</p>
+      </div>
+    </div>
+
+    <p style="color: var(--text-dim); font-size: 12px; margin-top: 8px;">Additional improvements: Loader size+colour props, Placeholder more variants + animated prop, Divider with label prop, Heading truncate+srOnly props. See the full markdown document for details.</p>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §6 — MISSING COMPONENTS -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s6">
+    <h2><span class="section-number">6</span> Missing Components</h2>
+    <div class="section-desc">Grouped by priority tier. Tier 1 is essential for a usable library.</div>
+
+    <h3>Tier 1 — Essential</h3>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Alert / Banner</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Tier 1</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Inline, embedded feedback — distinct from Toast. Alert is persistent and in-layout (form errors, system notices). Toast is ephemeral and floating.</p>
+        <p><strong>Props:</strong> <code>type</code> (info/success/warning/error), <code>title</code>, <code>dismissible</code>, <code>variant</code> (solid/subtle/outline)<br>
+        <strong>Slots:</strong> <code>#icon</code>, <code>#title</code>, default (description), <code>#actions</code><br>
+        <strong>ARIA:</strong> <code>role="alert"</code> for error/warning (assertive); <code>role="status"</code> for info/success (polite); no role for static alerts.</p>
+        <p><span class="badge badge-story">Story</span> All 4 types × 3 variants, dismissible (play function), with action button, inside form layout.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Avatar / AvatarGroup</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Tier 1</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Used in nearly every product — profile headers, comment threads, team lists, user tables.</p>
+        <p><strong>Fallback priority:</strong> image → initials → generic User icon<br>
+        <strong>Props:</strong> <code>src</code>, <code>alt</code>, <code>initials</code> (1–2 chars), <code>size</code> (xs–2xl), <code>color</code> (for initials bg), <code>shape</code> (circle/square)<br>
+        <strong>AvatarGroup:</strong> <code>max</code> (visible count), <code>size</code> — shows +N overflow badge, overlapping layout.</p>
+        <p><span class="badge badge-story">Story</span> With image, initials (all colours), icon fallback, all sizes, square, AvatarGroup with overflow, AvatarGroup with tooltip names.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Tabs / TabPanels</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Tier 1</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>One of the most fundamental navigation primitives. Must follow ARIA APG exactly — deviating from the expected keyboard model will cause complaints immediately.</p>
+        <p><strong>Sub-components:</strong> <code>Tabs</code> (root), <code>TabList</code>, <code>Tab</code>, <code>TabPanel</code><br>
+        <strong>Props:</strong> <code>v-model</code> (active tab ID), <code>orientation</code> (horizontal/vertical), <code>variant</code> (underline/pill/bordered/lifted), <code>activation</code> (auto/manual), <code>lazy</code></p>
+        <div class="table-wrap" style="margin: 10px 0;">
+          <table>
+            <thead><tr><th>Key</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><kbd>→</kbd> / <kbd>↓</kbd></td><td>Move focus to next tab</td></tr>
+              <tr><td><kbd>←</kbd> / <kbd>↑</kbd></td><td>Move focus to previous tab</td></tr>
+              <tr><td><kbd>Home</kbd></td><td>Move focus to first tab</td></tr>
+              <tr><td><kbd>End</kbd></td><td>Move focus to last tab</td></tr>
+              <tr><td><kbd>Enter</kbd> / <kbd>Space</kbd></td><td>Activate focused tab (manual mode)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span class="badge badge-story">Story</span> All 4 variants, vertical, tab with icon+badge, disabled tab, controlled (v-model), lazy mounting, keyboard navigation play function.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Progress (Bar + Circle)</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Tier 1</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p><strong>ProgressBar props:</strong> <code>value</code> (0–max), <code>max</code> (default 100), <code>size</code> (sm/md/lg), <code>color</code>, <code>animated</code> (indeterminate state), <code>label</code>, <code>showValue</code><br>
+        <strong>ProgressCircle props:</strong> same value/max/color/size + <code>strokeWidth</code>, <code>showValue</code> (centred in ring)<br>
+        <strong>ARIA:</strong> <code>role="progressbar"</code>, <code>aria-valuenow</code>, <code>aria-valuemin</code>, <code>aria-valuemax</code>. Omit <code>aria-valuenow</code> for indeterminate.</p>
+        <p><span class="badge badge-story">Story</span> Determinate (all colours, sizes), indeterminate (animated), with label, ProgressCircle.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Breadcrumb</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Tier 1</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p><strong>Props:</strong> <code>items[]</code> ({label, href?}), <code>separator</code> (string or Component), <code>maxItems</code> (collapse middle items)<br>
+        <strong>Semantic:</strong> <code>&lt;nav aria-label="Breadcrumb"&gt;&lt;ol&gt;</code> with <code>aria-current="page"</code> on last item.</p>
+        <p><span class="badge badge-story">Story</span> Basic 3-level, custom icon separator, collapsed long path (5+ levels), expand collapsed play function.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Pagination</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Tier 1</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p><strong>Props:</strong> <code>v-model</code> (current page), <code>total</code>, <code>siblings</code>, <code>boundaries</code>, <code>size</code>, <code>compact</code> (prev/next only)<br>
+        <strong>ARIA:</strong> <code>&lt;nav aria-label="Pagination"&gt;</code>, <code>aria-current="page"</code>, descriptive <code>aria-label</code> on each button.<br>
+        <strong>Miller's Law:</strong> Show maximum 7 page numbers; collapse the rest with an ellipsis.</p>
+        <p><span class="badge badge-story">Story</span> Basic, compact, large dataset (100+ pages), size variants, click navigation play function.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Steps / Stepper</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier1">Tier 1</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>For multi-step forms, wizards, and checkout flows.<br>
+        <strong>Sub-components:</strong> <code>Stepper</code> (root), <code>Step</code><br>
+        <strong>Step props:</strong> <code>label</code>, <code>description</code>, <code>status</code> (complete/active/pending/error), <code>icon</code><br>
+        <strong>ARIA:</strong> <code>role="list"</code> on Stepper, <code>aria-current="step"</code> on active step.</p>
+        <p><span class="badge badge-story">Story</span> Horizontal (all statuses), vertical, linear navigation play function, error state, with description.</p>
+      </div>
+    </div>
+
+    <h3>Tier 2 — Important</h3>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Dropdown Menu</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Tier 2</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Distinct from FloatingPanel — a fully ARIA-compliant <code>menu</code> pattern with exhaustive keyboard navigation. This is one of the most complex components to implement correctly.</p>
+        <p><strong>Sub-components:</strong> <code>DropdownMenu</code>, <code>DropdownMenuTrigger</code>, <code>DropdownMenuContent</code>, <code>DropdownMenuItem</code>, <code>DropdownMenuCheckboxItem</code>, <code>DropdownMenuSeparator</code>, <code>DropdownMenuLabel</code>, <code>DropdownMenuSub</code></p>
+        <p><strong>MenuItem props:</strong> <code>label</code>, <code>icon</code> (IconProp), <code>shortcut</code> (display string), <code>disabled</code>, <code>destructive</code> (red), <code>href</code><br>
+        <strong>Keyboard:</strong> Arrow Up/Down navigate items, Home/End jump to boundaries, A–Z character search, Arrow Right/Left for sub-menus, Escape closes and returns focus to trigger.</p>
+        <p><span class="badge badge-story">Story</span> Basic, with icons+shortcuts, with checkbox items, with destructive item, with nested sub-menu, keyboard navigation play function.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Table</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Tier 2</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Semantic sub-components — not a DataTable with built-in filtering. That complexity stays with the consumer; OUI provides the accessible structure.</p>
+        <p><strong>Sub-components:</strong> <code>Table</code>, <code>TableHead</code>, <code>TableBody</code>, <code>TableFoot</code>, <code>TableRow</code>, <code>TableHeader</code> (th), <code>TableCell</code> (td)<br>
+        <strong>Table props:</strong> <code>striped</code>, <code>hoverable</code>, <code>bordered</code>, <code>size</code>, <code>stickyHeader</code>, <code>caption</code><br>
+        <strong>TableHeader:</strong> <code>sortable</code>, <code>sortDirection</code>, emits <code>sort</code>. ARIA: <code>aria-sort</code>.<br>
+        <strong>Slots:</strong> <code>#empty</code> (integrate with EmptyState), <code>#loading</code> (integrate with Placeholder skeleton).</p>
+        <p><span class="badge badge-story">Story</span> Basic, striped, sortable columns (play function), empty state slot, loading skeleton slot, sticky header, responsive horizontal scroll.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Stats / Metric Card</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Tier 2</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Essential for dashboards. The value must be visually dominant; delta is subordinate (Aesthetic-Usability Effect).</p>
+        <p><strong>Props:</strong> <code>label</code>, <code>value</code>, <code>delta</code> (positive=green, negative=red), <code>deltaLabel</code>, <code>icon</code> (IconProp), <code>variant</code> (card/bordered/inline), <code>loading</code></p>
+        <p><span class="badge badge-story">Story</span> Positive/negative/neutral delta, with icon, loading state, 4-up grid layout, all variants.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Empty State</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Tier 2</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>A polished empty state prevents pages from feeling broken (Aesthetic-Usability Effect).<br>
+        <strong>Props:</strong> <code>title</code>, <code>description</code>, <code>variant</code> (page/inline/compact)<br>
+        <strong>Slots:</strong> <code>#icon</code>, <code>#title</code>, <code>#description</code>, <code>#actions</code></p>
+        <p><span class="badge badge-story">Story</span> Page empty (with icon + action), table empty (inline), search result empty, compact.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Timeline · Code Block</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Tier 2</span><span class="badge badge-new">New</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p><strong>Timeline:</strong> <code>Timeline</code> + <code>TimelineItem</code>. Props: <code>label</code>, <code>date</code>, <code>description</code>, <code>icon</code>, <code>status</code>. Semantic: <code>&lt;ol&gt;</code> list. Connector line is <code>aria-hidden</code>.</p>
+        <p><strong>Code Block:</strong> Provides the chrome (copy button, filename header, line numbers, scroll container). Does not bundle a syntax highlighter — consumers pass pre-highlighted HTML via <code>#highlighted</code> slot (Shiki/Prism compatible).</p>
+      </div>
+    </div>
+
+    <h3>Tier 3 — Nice to Have</h3>
+    <div class="tag-list">
+      <span class="tag">CommandPalette (⌘K)</span>
+      <span class="tag">Chip / Tag (interactive badges)</span>
+      <span class="tag">Callout (editorial)</span>
+      <span class="tag">SkipLink (WCAG 2.4.1)</span>
+    </div>
+    <p>See the full markdown document for complete specifications on each.</p>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §7 — FORMS -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s7">
+    <h2><span class="section-number">7</span> Forms & Inputs (Brief)</h2>
+    <div class="section-desc">Forms are a larger workstream. Key gaps and architectural principles are noted here.</div>
+
+    <h3>Missing form primitives</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Priority</th><th>Key notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Textarea</strong></td><td><span class="badge badge-tier1">Tier 1</span></td><td>Auto-resize variant (ResizeObserver); min/max rows</td></tr>
+          <tr><td><strong>Select (native)</strong></td><td><span class="badge badge-tier1">Tier 1</span></td><td>Native <code>&lt;select&gt;</code> first — native semantics, low complexity</td></tr>
+          <tr><td><strong>Checkbox + CheckboxGroup</strong></td><td><span class="badge badge-tier1">Tier 1</span></td><td>With indeterminate state; fieldset/legend group</td></tr>
+          <tr><td><strong>Radio + RadioGroup</strong></td><td><span class="badge badge-tier1">Tier 1</span></td><td>Horizontal and vertical layouts; fieldset/legend</td></tr>
+          <tr><td><strong>Switch / Toggle</strong></td><td><span class="badge badge-tier1">Tier 1</span></td><td><code>role="switch"</code>, <code>aria-checked</code></td></tr>
+          <tr><td><strong>NumberInput</strong></td><td><span class="badge badge-tier2">Tier 2</span></td><td>With increment/decrement stepper buttons</td></tr>
+          <tr><td><strong>Combobox</strong></td><td><span class="badge badge-tier2">Tier 2</span></td><td>Searchable select using Floating UI (already a dependency)</td></tr>
+          <tr><td><strong>File Upload</strong></td><td><span class="badge badge-tier2">Tier 2</span></td><td>Drag-and-drop, file list, progress integration</td></tr>
+          <tr><td><strong>Range / Slider</strong></td><td><span class="badge badge-tier2">Tier 2</span></td><td>Single and dual-handle</td></tr>
+          <tr><td><strong>DatePicker</strong></td><td><span class="badge badge-tier3">Tier 3</span></td><td>Evaluate a composable dependency rather than building from scratch</td></tr>
+          <tr><td><strong>ColorPicker</strong></td><td><span class="badge badge-tier3">Tier 3</span></td><td><code>culori</code> is already a dependency — leverageable</td></tr>
+          <tr><td><strong>OTP / Pin Input</strong></td><td><span class="badge badge-tier3">Tier 3</span></td><td>Multi-cell code entry for 2FA screens</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Form context architecture (provide/inject)</h3>
+    <p>A <code>Form</code> wrapper propagates validation state to all child form components. <code>FormField</code> is the key composition unit:</p>
+    <pre>Form  <span class="cm">(provide: validationState, registerField, submit)</span>
+  └── FormField  <span class="cm">(inject validationState, provides ARIA links)</span>
+        ├── Label          <span class="cm">(for="[input-id]")</span>
+        ├── Input          <span class="cm">(id, aria-describedby)</span>
+        ├── HelperText     <span class="cm">(always visible)</span>
+        └── ErrorMessage   <span class="cm">(only visible in invalid state)</span></pre>
+
+    <h3>Validation states</h3>
+    <p>All form components must support four states consistently: <code>idle</code> → <code>valid</code> (green) → <code>invalid</code> (red) → <code>warning</code> (amber). States propagate from <code>Form</code> via <code>provide</code> or can be set directly via prop.</p>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">✦</span>
+      <div><strong>Tesler's Law in action:</strong> Form complexity cannot be reduced, only shifted. <code>FormField</code> absorbs the ARIA linking (<code>for</code>/<code>id</code>, <code>aria-describedby</code> pointing to helper + error) so consumers write clean, simple template code.</div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §8 — TECHNICAL CONCERNS -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s8">
+    <h2><span class="section-number">8</span> Cross-Cutting Technical Concerns</h2>
+    <div class="section-desc">Things that affect every component, not just one.</div>
+
+    <h3>SSR / Nuxt compatibility</h3>
+    <p>Many consumers will use OUI with Nuxt. Current risks:</p>
+    <ul>
+      <li><strong>Browser API access</strong> — FloatingPanel, Sidebar, Dialog, Toast use <code>document</code>/<code>window</code>. All must be guarded with <code>onMounted()</code> or <code>typeof window !== 'undefined'</code>. Audit all current components.</li>
+      <li><strong>Teleport</strong> — Dialog's <code>&lt;Teleport&gt;</code> requires <code>#portal-target</code> to exist in the DOM. In SSR, this may not be available during hydration. Use <code>defer</code> on Teleport or document the <code>ClientOnly</code> wrapping requirement.</li>
+      <li><strong>QrCode, Video, LightboxImage</strong> — all require client-side initialisation. Must be explicitly documented.</li>
+    </ul>
+
+    <h3>prefers-reduced-motion</h3>
+    <p>Every animated component must respect the user's motion preference using Tailwind's <code>motion-reduce:</code> variants:</p>
+    <pre><span class="cm">/* applied to all transitions */</span>
+transition-all duration-300 <span class="id">motion-reduce</span>:duration-0 <span class="id">motion-reduce</span>:transition-none</pre>
+    <p><strong>Components affected:</strong> Dialog, Sidebar, Toast, Image (blur-up), FloatingPanel, Loader (spin/bounce/pulse), Placeholder (shimmer), all Vue <code>&lt;Transition&gt;</code> instances. This should be applied consistently across all components new and old.</p>
+
+    <h3>Right-to-Left (RTL)</h3>
+    <p>Not in scope now but decisions made today determine how hard it is later. Adopt Tailwind logical properties from the start on all new components:</p>
+    <ul>
+      <li>Use <code>ms-*</code>/<code>me-*</code> instead of <code>ml-*</code>/<code>mr-*</code></li>
+      <li>Use <code>start-0</code>/<code>end-0</code> instead of <code>left-0</code>/<code>right-0</code> for positioned elements</li>
+      <li>FloatingPanel <code>start</code>/<code>end</code> placements instead of <code>left</code>/<code>right</code></li>
+    </ul>
+
+    <h3>Bundle size tracking</h3>
+    <p>Add <code>size-limit</code> or <code>bundlesize</code> as a dev dependency. Set a budget: ESM bundle ≤ 100KB pre-gzip, ≤ 40KB post-gzip. Run in CI so size regressions are caught before merge.</p>
+
+    <h3>Versioning strategy</h3>
+    <p>Currently pre-1.0 (v0.0.x). Before 1.0, breaking changes are acceptable with minor bumps. After 1.0: strict semver, breaking changes require a major bump and migration guide.</p>
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ</span>
+      <div><strong>Recommendation:</strong> Target 1.0 after Phase 2 (Tier 1 components) is complete. Stabilise the icon API, Form context pattern, and slot naming conventions before 1.0 — these are the most disruptive things to change later.</div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §9 — UX LAWS -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s9">
+    <h2><span class="section-number">9</span> UX Laws Applied</h2>
+    <div class="section-desc">The specific application of each law to OUI — not abstract definitions, but concrete decisions.</div>
+
+    <div class="law-grid">
+      <div class="law-card">
+        <div class="law-name">Fitts's Law</div>
+        <div class="law-desc">All interactive elements ≥ 44×44px touch target. Button <code>small</code> variant must be audited. Pagination page buttons and Sidebar nav items must be adequately sized for thumb targets on mobile.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Hick's Law</div>
+        <div class="law-desc">Limit prop variants — use sensible defaults. Dropdown menus capped at ~7 visible items; separators and labels for longer lists. Storybook stories show the most common use first.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Jakob's Law</div>
+        <div class="law-desc">Use conventional names: <code>Tooltip</code> not <code>FloatingPanel[role=tooltip]</code>. Tabs keyboard behaviour must match ARIA APG exactly — that is what developers expect from prior framework experience.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Miller's Law</div>
+        <div class="law-desc">Pagination shows ≤ 7 page numbers at once. Sidebar navigation groups should not exceed 7 items without a visual separator. Accordion groups: max 7 items per section.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Law of Proximity</div>
+        <div class="law-desc">Card slots (<code>#header</code>, <code>#content</code>, <code>#footer</code>) make spatial relationships explicit. FormField composition (label above, helper below, error below helper) encodes proximity into the component structure.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Law of Common Region</div>
+        <div class="law-desc">Card, Dialog, Sidebar, Alert, Toast, and Popover all use a distinct visual region (background, border, shadow) to signal "this content belongs together." Shared region → shared context.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Aesthetic-Usability Effect</div>
+        <div class="law-desc">Stats cards, Code blocks, Empty states, and Timeline must be polished. Users perceive visually refined components as more reliable. Ugly skeletons undermine trust in the data they represent.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Zeigarnik Effect</div>
+        <div class="law-desc">Progress and Stepper keep users engaged by making completion feel achievable. Toast action buttons ("Undo") allow users to resolve interrupted operations. Completion states must feel satisfying.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Von Restorff Effect</div>
+        <div class="law-desc">Error and warning states must be visually distinct via colour <em>and</em> icon — never colour alone. Colour-blind users cannot distinguish red from green. Use <code>aria-live</code> for dynamically appearing alerts.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Tesler's Law</div>
+        <div class="law-desc">OUI absorbs ARIA complexity of Dialog, Tabs, Menu, and Combobox. FormField absorbs ID-linking boilerplate. <code>registerIcons()</code> absorbs icon management. Consumers write simple code; OUI does the hard parts.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Goal Gradient Effect</div>
+        <div class="law-desc">Stepper and Progress must show both what is done and how close the end is. The visual treatment of "complete" steps should feel rewarding (filled icon, stronger colour). Active step clearly differentiated from pending.</div>
+      </div>
+      <div class="law-card">
+        <div class="law-name">Serial Position Effect</div>
+        <div class="law-desc">In Sidebar navigation, place the most important items first. In Toast, the most recent notification should be visually prominent. In Pagination, boundary pages (first/last) are always shown regardless of the collapsed range.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §10 — DEVELOPER EXPERIENCE -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s10">
+    <h2><span class="section-number">10</span> Developer Experience</h2>
+    <div class="section-desc">A component library is a developer-facing product. DX is as important as the components themselves.</div>
+
+    <h3>TypeScript coverage</h3>
+    <ul>
+      <li>All component props must have TypeScript types — no <code>any</code>.</li>
+      <li>All emitted events typed with <code>defineEmits&lt;{ (e: 'name', payload: Type): void }&gt;</code>.</li>
+      <li>All exposed methods (Dialog's <code>open()</code>, <code>close()</code>, <code>isOpen</code>) typed with <code>defineExpose</code>.</li>
+      <li>Export all prop type interfaces: <code>import type { ButtonProps } from 'ocelot-ui'</code>.</li>
+      <li>Export <code>IconProp = IconName | Component</code> for use in consumer code.</li>
+    </ul>
+
+    <h3>IDE integration</h3>
+    <ul>
+      <li>JSDoc on props for VS Code / WebStorm IntelliSense descriptions.</li>
+      <li>Generate a <code>components.d.ts</code> at build time (via <code>unplugin-vue-components</code>) for auto-complete on <code>&lt;OuiButton&gt;</code> in consumer templates without explicit imports.</li>
+    </ul>
+
+    <h3>Development warnings</h3>
+    <p>Components should <code>console.warn</code> in development (stripped in production) for:</p>
+    <ul>
+      <li><strong>Dialog:</strong> missing <code>ariaLabel</code> prop and no title slot content</li>
+      <li><strong>Button iconOnly:</strong> missing <code>aria-label</code></li>
+      <li><strong>Image / LightboxImage:</strong> missing <code>alt</code> prop</li>
+      <li><strong>Avatar:</strong> <code>src</code> provided but <code>alt</code> is empty on a non-decorative avatar</li>
+      <li><strong>Icon:</strong> unrecognised string icon name (not in registry)</li>
+    </ul>
+
+    <h3>Documentation standards (per Storybook doc page)</h3>
+    <ol>
+      <li><strong>When to use / When not to use</strong> — which pattern to pick, not just how to use a given component</li>
+      <li><strong>Props table</strong> — auto-generated + manually edited descriptions</li>
+      <li><strong>Slots table</strong> — name, expected content, relationship to props</li>
+      <li><strong>Events table</strong> — event name, payload type, when it fires</li>
+      <li><strong>Keyboard interaction table</strong> — every key, what it does (required for interactive components)</li>
+      <li><strong>ARIA roles and attributes</strong> — what the component applies and why</li>
+      <li><strong>Related components</strong> — links to commonly used companions</li>
+      <li><strong>Accessibility notes</strong> — manual checks beyond automated Axe</li>
+    </ol>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §11 — STORYBOOK -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s11">
+    <h2><span class="section-number">11</span> Storybook Requirements</h2>
+    <div class="section-desc">Every component must meet these standards — new or updated.</div>
+
+    <h3>Story file structure (required, in order)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Story</th><th>What it covers</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Default</strong></td><td>Production-realistic defaults — not all props at once</td></tr>
+          <tr><td>2</td><td><strong>All variants</strong></td><td>One story per significant visual variant (colour, size, type)</td></tr>
+          <tr><td>3</td><td><strong>States</strong></td><td>Disabled, loading, empty, error where applicable</td></tr>
+          <tr><td>4</td><td><strong>Dark mode</strong></td><td>Explicitly using the theme decorator dark state</td></tr>
+          <tr><td>5</td><td><strong>Edge cases</strong></td><td>Very long text, missing optional content, maximum items</td></tr>
+          <tr><td>6</td><td><strong>Interactive</strong></td><td><code>play()</code> functions for components with user interaction</td></tr>
+          <tr><td>7</td><td><strong>Composition</strong></td><td>Component used inside other components (Card in a grid, Alert in a form)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Play function requirements</h3>
+    <ul>
+      <li><strong>Happy path</strong> — primary user interaction (click, type, select, hover)</li>
+      <li><strong>Keyboard path</strong> — same flow via keyboard only (Tab, Enter, Arrow keys)</li>
+      <li><strong>Focus management</strong> — where is focus before, during, and after the interaction?</li>
+      <li><strong>State assertions</strong> — <code>expect(el).toBeVisible()</code>, <code>expect(el).toHaveAttribute('aria-expanded', 'true')</code></li>
+    </ul>
+
+    <h3>Visual regression baseline</h3>
+    <p>After Tier 1 components are complete: run <code>test-storybook</code> to establish a Playwright screenshot baseline. Commit snapshots to the repo. Visual diffs fail CI until intentionally updated. Catches Tailwind v4 upgrade regressions and dark mode drift.</p>
+
+    <h3>Naming conventions</h3>
+    <pre>Getting Started / Introduction, Installation
+Design System / Colour Palette, Typography, Spacing, Motion
+Composables / useIcons, useToast, useFocusMemory, useLightboxRegistry
+Components / [Name] / Default, [Variant], [State], Interactive</pre>
+    <p>Story names use sentence case and describe what the story shows: <em>"With prefix icon"</em>, <em>"Disabled state"</em>, <em>"Keyboard navigation"</em> — not <em>"Story1"</em>.</p>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §12 — ROADMAP -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s12">
+    <h2><span class="section-number">12</span> Prioritised Roadmap</h2>
+    <div class="section-desc">Four phases from foundational fixes to 1.0 stability.</div>
+
+    <div class="phase phase-1">
+      <div class="phase-header">
+        <div class="phase-number">1</div>
+        <div>
+          <div class="phase-title">Phase 1 — Foundation</div>
+          <div class="phase-subtitle">Prerequisite for everything else. Do these first.</div>
+        </div>
+      </div>
+      <div class="phase-items">
+        <div class="phase-item">
+          <span class="badge badge-update">Update</span>
+          <span class="phase-item-label"><strong>Icon hybrid prop</strong> (string + component)</span>
+          <span class="phase-item-note">Unblocks icon usage on Button, Badge, Alert, Avatar, Tabs, and all new components</span>
+        </div>
+        <div class="phase-item">
+          <span class="badge badge-new">New</span>
+          <span class="phase-item-label"><strong>registerIcons()</strong> composable + root export</span>
+          <span class="phase-item-note">Consumer extensibility without library rebuilds</span>
+        </div>
+        <div class="phase-item">
+          <span class="badge badge-update">Update</span>
+          <span class="phase-item-label"><strong>Icon registry</strong> expansion 53 → ~120 icons</span>
+          <span class="phase-item-note">Many new components need icons that aren't currently registered</span>
+        </div>
+        <div class="phase-item">
+          <span class="badge badge-update">Update</span>
+          <span class="phase-item-label"><strong>Button</strong> — prefixIcon, suffixIcon, iconOnly</span>
+          <span class="phase-item-note">First-class icon support expected by every consumer</span>
+        </div>
+        <div class="phase-item">
+          <span class="badge badge-new">New</span>
+          <span class="phase-item-label"><strong>ButtonGroup</strong> component</span>
+          <span class="phase-item-note">Used in toolbars, segmented controls, dialog footers</span>
+        </div>
+        <div class="phase-item">
+          <span class="badge badge-new">New</span>
+          <span class="phase-item-label"><strong>Tooltip</strong> named export</span>
+          <span class="phase-item-note">Highest-frequency missing primitive — needed on nearly every interactive component</span>
+        </div>
+        <div class="phase-item">
+          <span class="badge badge-new">New</span>
+          <span class="phase-item-label"><strong>FormField</strong> wrapper</span>
+          <span class="phase-item-note">Required foundation before any new form component is added</span>
+        </div>
+        <div class="phase-item">
+          <span class="badge badge-update">Update</span>
+          <span class="phase-item-label"><strong>useToast</strong> export from library root</span>
+          <span class="phase-item-note">DX improvement — currently requires internal path import</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase phase-2">
+      <div class="phase-header">
+        <div class="phase-number">2</div>
+        <div>
+          <div class="phase-title">Phase 2 — Core missing components</div>
+          <div class="phase-subtitle">All Tier 1 components. Target 1.0 release after this phase.</div>
+        </div>
+      </div>
+      <div class="phase-items">
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Alert / Banner</strong></span><span class="phase-item-note">Needed immediately for form error display and system notices</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Avatar / AvatarGroup</strong></span><span class="phase-item-note">High-frequency in almost every product</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Tabs / TabPanels</strong></span><span class="phase-item-note">Fundamental navigation primitive</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Progress (bar + circle)</strong></span><span class="phase-item-note">Needed for file upload, loading states, onboarding flows</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Breadcrumb</strong></span><span class="phase-item-note">Navigation staple</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Pagination</strong></span><span class="phase-item-note">Required alongside Table</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Steps / Stepper</strong></span><span class="phase-item-note">Multi-step forms and wizards</span></div>
+        <div class="phase-item"><span class="badge badge-new">Form</span><span class="phase-item-label"><strong>Textarea, Checkbox, Radio, Switch</strong></span><span class="phase-item-note">Core form primitives — highest-priority form gaps</span></div>
+      </div>
+    </div>
+
+    <div class="phase phase-3">
+      <div class="phase-header">
+        <div class="phase-number">3</div>
+        <div>
+          <div class="phase-title">Phase 3 — Richer components + form depth</div>
+          <div class="phase-subtitle">Tier 2 components and more complex form patterns.</div>
+        </div>
+      </div>
+      <div class="phase-items">
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Dropdown Menu</strong></span><span class="phase-item-note">Complex ARIA — needs careful implementation before starting</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Table</strong> (semantic sub-components)</span><span class="phase-item-note">Structure only — not a DataTable</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Stats / Metric Card</strong></span><span class="phase-item-note">Dashboard staple</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Empty State</strong></span><span class="phase-item-note">Needed alongside Table and list components</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Code Block</strong></span><span class="phase-item-note">Docs-adjacent products — highlighter-agnostic</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Timeline</strong></span><span class="phase-item-note">Activity feeds and history views</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Popover</strong> named export</span><span class="phase-item-note">Quick win from FloatingPanel</span></div>
+        <div class="phase-item"><span class="badge badge-new">Form</span><span class="phase-item-label"><strong>Select, NumberInput, File Upload, Combobox</strong></span><span class="phase-item-note">Progressively complex form components</span></div>
+      </div>
+    </div>
+
+    <div class="phase phase-4">
+      <div class="phase-header">
+        <div class="phase-number">4</div>
+        <div>
+          <div class="phase-title">Phase 4 — Polish, power features, and 1.0 prep</div>
+          <div class="phase-subtitle">Existing component improvements, technical debt, and stability work.</div>
+        </div>
+      </div>
+      <div class="phase-items">
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>CSS custom property theming</strong></span><span class="phase-item-note">--oui-radius, --oui-shadow, --oui-transition-duration</span></div>
+        <div class="phase-item"><span class="badge badge-update">Update</span><span class="phase-item-label"><strong>AccordionGroup, Card slots, Dialog improvements, Sidebar nav</strong></span><span class="phase-item-note">Backwards-compatible refactors</span></div>
+        <div class="phase-item"><span class="badge badge-update">Update</span><span class="phase-item-label"><strong>Toast action buttons, Badge dot/removable/outline</strong></span><span class="phase-item-note">Enhancement pass</span></div>
+        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>prefers-reduced-motion</strong> across all animated components</span><span class="phase-item-note">motion-reduce: Tailwind variants throughout</span></div>
+        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>SSR / Nuxt</strong> browser API guard pass</span><span class="phase-item-note">All onMounted guards, document Teleport requirement</span></div>
+        <div class="phase-item"><span class="badge badge-new">CI</span><span class="phase-item-label"><strong>Bundle size tracking</strong> in CI</span><span class="phase-item-note">size-limit: ESM ≤ 100KB pre-gzip</span></div>
+        <div class="phase-item"><span class="badge badge-story">Storybook</span><span class="phase-item-label"><strong>Visual regression baseline</strong></span><span class="phase-item-note">Playwright snapshots committed to repo</span></div>
+        <div class="phase-item"><span class="badge badge-story">Docs</span><span class="phase-item-label"><strong>Design System Storybook section</strong></span><span class="phase-item-note">Typography, Spacing, Motion docs</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>CommandPalette, Chip/Tag, Callout, SkipLink</strong></span><span class="phase-item-note">Tier 3 components</span></div>
+        <div class="phase-item"><span class="badge badge-new">Docs</span><span class="phase-item-label"><strong>CHANGELOG.md + MIGRATION.md</strong></span><span class="phase-item-note">Required before 1.0</span></div>
+        <div class="phase-item" style="background: var(--accent-soft); border-radius: 0;">
+          <span class="badge" style="background: var(--accent); color: #fff;">🚀</span>
+          <span class="phase-item-label" style="color: var(--text);"><strong>1.0 release</strong> — stable API contract</span>
+          <span class="phase-item-note">Strict semver begins. Breaking changes require major bump + migration guide.</span>
+        </div>
+      </div>
+    </div>
+
+    <a href="#top" class="back-to-top">↑ Back to top</a>
+  </section>
+
+</main>
+</div>
+
+</body>
+</html>
