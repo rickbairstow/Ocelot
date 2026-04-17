@@ -4,10 +4,11 @@
             <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
             <section
                 v-if="isOpen"
+                aria-modal="true"
                 class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="dialog"
-                tabindex="0"
-                :aria-label="ariaLabel"
+                :aria-label="slots?.title ? undefined : ariaLabel"
+                :aria-labelledby="slots?.title ? titleId : undefined"
                 @keydown.esc="close"
             >
                 <Scrim
@@ -23,9 +24,9 @@
                         class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700"
                     >
                         <div
-                            id="dialogueTitle"
+                            :id="titleId"
                             class="flex p-6"
-                            tabindex="0"
+                            tabindex="-1"
                         >
                             <slot name="title" />
                         </div>
@@ -77,11 +78,18 @@ import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'
 import useFocusMemory from '@Composables/useFocusMemory'
+import { generateUuid } from '@Utils/uuid'
 
 /**
- * Provides access to slot presence like `footer`.
+ * Provides access to slot presence like `footer` and `title`.
  */
 const slots = useSlots()
+
+/**
+ * Unique ID for the title element — prevents ID collisions when multiple
+ * dialogs exist in the DOM simultaneously.
+ */
+const titleId = generateUuid('dialog-title')
 
 /**
  * Track the open state of the dialog.
@@ -139,7 +147,7 @@ const open = async (): Promise<void> => {
 
     const targetEl = props.focusTo
         ? document.getElementById(props.focusTo)
-        : document.getElementById('dialogueTitle')
+        : document.getElementById(titleId)
 
     await applyFocusTo(targetEl)
 }

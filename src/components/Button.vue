@@ -7,8 +7,8 @@
         :href="href"
         :role="href ? 'link' : 'button'"
         @click="handleInteraction"
-        @keydown.enter.prevent="handleInteraction"
-        @keydown.space.prevent="handleInteraction"
+        @keydown.enter="handleKeyInteraction"
+        @keydown.space="handleKeyInteraction"
     >
         <span :class="loading ? 'opacity-0' : 'contents'">
             <slot />
@@ -58,15 +58,39 @@ const props = withDefaults(defineProps<Props>(), {
 const isDisabled = computed((): boolean => props.disabled || props.loading)
 
 /**
- * Handles both click and keyboard activation (Enter/Space).
+ * Handles click events.
  * Prevents action if aria-disabled or loading.
  */
-const handleInteraction = (e: MouseEvent | KeyboardEvent) => {
+const handleInteraction = (e: MouseEvent) => {
     if (isDisabled.value) {
-        e.preventDefault();
-        (e as MouseEvent).stopImmediatePropagation?.()
+        e.preventDefault()
+        e.stopImmediatePropagation()
         e.stopPropagation()
     }
+}
+
+/**
+ * Handles keyboard activation (Enter / Space).
+ *
+ * - Space: always prevents page scroll; triggers click when enabled.
+ * - Enter on <button>: browser fires click natively — only block when disabled.
+ * - Enter on <a>: browser fires click natively — only block when disabled.
+ *   Previously using `.prevent` here blocked navigation on enabled link buttons.
+ */
+const handleKeyInteraction = (e: KeyboardEvent) => {
+    if (isDisabled.value) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+    }
+
+    if (e.key === ' ') {
+        // Prevent page scroll on Space; trigger the equivalent of a click.
+        e.preventDefault()
+        ;(e.currentTarget as HTMLElement).click()
+    }
+    // Enter: let the browser's native behaviour handle it (navigation for <a>,
+    // click for <button>). No intervention needed when not disabled.
 }
 
 const element = computed((): string => (props.href ? 'a' : 'button'))

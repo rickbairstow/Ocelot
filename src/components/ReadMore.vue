@@ -25,10 +25,14 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Button from '@Components/Button.vue'
 
 interface Props {
+    collapseLabel?: string
+    expandLabel?: string
     lines?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    collapseLabel: 'Show less',
+    expandLabel: 'Show more',
     lines: 4
 })
 
@@ -40,7 +44,7 @@ const collapsedHeight = ref<number | null>(null)
 let resizeObserver: ResizeObserver | null = null
 
 const buttonText = computed((): string => {
-    return isVisible.value ? 'Show less' : 'Show more'
+    return isVisible.value ? props.collapseLabel : props.expandLabel
 })
 
 const contentStyle = computed(() => {

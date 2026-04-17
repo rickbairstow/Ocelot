@@ -6,8 +6,6 @@
     >
         <summary
             class="border-0 flex justify-between gap-4 cursor-pointer p-4 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium focus:outline-none"
-            :aria-controls="uuid"
-            :aria-expanded="isOpen"
             :class="isOpen ? 'bg-gray-100 text-black dark:bg-gray-700 dark:text-white' : 'text-gray-700 dark:text-gray-300'"
         >
             <span>{{ title }}</span>
@@ -20,7 +18,7 @@
 
         <div
             :id="uuid"
-            class="content p-4 transition-all duration-[1000] ease-in-out text-gray-700 dark:text-gray-200"
+            class="content p-4 text-gray-700 dark:text-gray-200"
         >
             <slot />
         </div>

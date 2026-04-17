@@ -2,7 +2,7 @@
     <component
         :is="clickable ? 'button' : 'div'"
         class="inset-0 bg-slate-600 dark:bg-slate-900 opacity-90 z-0"
-        :aria-disabled="!clickable ? 'true' : undefined"
+        :aria-hidden="!clickable ? 'true' : undefined"
         :aria-label="clickable && ariaLabel ? ariaLabel : undefined"
         :class="[
             clickable ? 'cursor-pointer' : 'cursor-default',
