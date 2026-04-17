@@ -74,7 +74,7 @@ export const NonClickable: Story = {
 
         await expect(scrim).not.toBeNull()
         await expect(scrim.tagName.toLowerCase()).toBe('div')
-        await expect(scrim).toHaveAttribute('aria-disabled', 'true')
+        await expect(scrim).toHaveAttribute('aria-hidden', 'true')
 
         // Click is attempted but should not trigger error
         await userEvent.click(scrim)

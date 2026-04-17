@@ -91,7 +91,7 @@ export const Default: Story = {
 
         await userEvent.click(openButton)
 
-        const dialog = await canvas.findByRole('dialog', { name: /my dialog/i })
+        const dialog = await canvas.findByRole('dialog', { name: /dialog title/i })
 
         await waitFor(() => {
             expect(dialog).toBeVisible()
