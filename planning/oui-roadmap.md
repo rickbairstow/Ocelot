@@ -45,6 +45,7 @@
 10. [Developer Experience](#10-developer-experience)
 11. [Storybook Requirements](#11-storybook-requirements)
 12. [Prioritised Roadmap](#12-prioritised-roadmap)
+13. [Patterns & Compositions](#13-patterns--compositions)
 
 ---
 
@@ -1668,6 +1669,247 @@ Once Tier 1 components are complete:
 | SkipLink | — | WCAG 2.4.1 utility |
 | `CHANGELOG.md` + `MIGRATION.md` | — | Pre-1.0 documentation |
 | **1.0 release** | — | Stable API contract |
+
+---
+
+## 13. Patterns & Compositions
+
+Patterns are distinct from components. A **component** is a reusable primitive with encapsulated state and behaviour. A **pattern** is a composition of components that solves a specific, recurring product need.
+
+### When a pattern should be a Storybook story vs a component
+
+| Deliver as a story when… | Deliver as a component when… |
+|---|---|
+| The value is showing how components combine | There is non-trivial state to manage (responsive toggle, keyboard listener, open/close coordination) |
+| Consumers will heavily customise the layout | Consumers would mostly use it as-is |
+| It is primarily a CSS/layout concern | It requires complex accessibility beyond its parts (landmark roles, `provide/inject` context, focus management) |
+| It would be a thin wrapper with no logic | It is used across projects frequently enough that repeating the boilerplate is costly |
+
+The default bias should be **story first**. Promote to a component only when multiple projects are copy-pasting the pattern and it clearly has shared logic worth encapsulating.
+
+### Components that warrant being actual components
+
+Three patterns are complex enough that they should be built as library components:
+
+#### Navbar (Top Navigation Bar)
+
+Every app needs a top navigation bar, but the responsive behaviour (desktop horizontal links → mobile hamburger menu) is non-trivial to implement correctly, repeatedly. Worth encapsulating.
+
+**Props:**
+
+| Prop | Type | Description |
+|---|---|---|
+| `sticky` | `boolean` | Fixes bar to top of viewport (`position: sticky`) |
+| `bordered` | `boolean` | Adds a bottom border (alternative to shadow) |
+| `mobileBreakpoint` | `'sm' \| 'md' \| 'lg'` | Below which the nav collapses to hamburger (default: `'md'`) |
+
+**Slots:**
+
+| Slot | Purpose |
+|---|---|
+| `#logo` | Brand logo / wordmark (left side) |
+| `#links` | Desktop navigation links (`<a>` or router-link items) |
+| `#actions` | Right side: search button, notifications, user avatar menu |
+| `#mobile-menu` | Content shown in the mobile drawer (typically mirrors `#links`) |
+
+**State:** `mobileOpen` is managed internally. Expose `open()`, `close()`, `toggle()` via `defineExpose` for programmatic control (e.g. close on route change).
+
+**ARIA:** `<header role="banner">` wraps the bar. The hamburger button is `aria-expanded`/`aria-controls` linked to the mobile menu container. The mobile menu uses `aria-label="Mobile navigation"`.
+
+**UX detail:** The mobile menu should slide in from the top or use a Sidebar on mobile, with a Scrim underneath. On desktop, the `#mobile-menu` slot and hamburger are hidden.
+
+**Stories:** Default (desktop), mobile viewport (hamburger visible), with user avatar + dropdown, with notification badge on icon, sticky behaviour (scroll play function), programmatic open/close.
+
+---
+
+#### AppShell (Application Layout Wrapper)
+
+A pre-wired layout that composes a `Navbar` + `Sidebar` + main content area + optional footer. Its value is the CSS grid/flex layout, the landmark roles, and the `provide/inject` context that coordinates sidebar open state between the Navbar's hamburger and the Sidebar component.
+
+**Props:**
+
+| Prop | Type | Description |
+|---|---|---|
+| `hasSidebar` | `boolean` | Whether a sidebar is included (default: `true`) |
+| `sidebarPosition` | `'left' \| 'right'` | Default: `'left'` |
+| `fixedHeader` | `boolean` | Whether the Navbar stays fixed at top |
+
+**Slots:**
+
+| Slot | Purpose |
+|---|---|
+| `#header` | Receives the `Navbar` component |
+| `#sidebar` | Receives the `Sidebar` + `SidebarNav` components |
+| `#default` | Main page content |
+| `#footer` | Optional site footer |
+
+**State/context:** Provides `{ sidebarOpen, toggleSidebar }` via `provide` so that a hamburger button inside `#header` can control the `#sidebar` slot without prop-drilling. The Sidebar component should `inject` this context.
+
+**ARIA:** `<body>` analogue is `<div class="app-shell">`. Semantic landmarks: `<header>` for the nav, `<aside>` for the sidebar, `<main>` for content, `<footer>` for the footer slot.
+
+**Stories:** With sidebar (desktop + mobile viewport), without sidebar (full-width content), right sidebar, fixed header with scroll content.
+
+---
+
+#### CommandPalette (Cmd+K Search)
+
+The most complex pattern on this list — warrants a component because of: global keyboard shortcut listener, modal focus trap, fuzzy search state, keyboard navigation within results, and the accessibility requirements for a `combobox`-like interface.
+
+**Props:**
+
+| Prop | Type | Description |
+|---|---|---|
+| `placeholder` | `string` | Search input placeholder |
+| `shortcut` | `string[]` | Key combination to open (default: `['Meta+k', 'Ctrl+k']`) |
+| `items` | `CommandItem[]` | Static items. For async search, use the `search` emit instead. |
+| `groups` | `CommandGroup[]` | Grouped item structure |
+| `loading` | `boolean` | Shows a spinner while async results load |
+| `empty` | `string` | Message shown when no results match |
+
+**`CommandItem` type:** `{ id, label, description?, icon?, shortcut?, action: () => void, keywords?: string[] }`
+
+**`CommandGroup` type:** `{ label: string, items: CommandItem[] }`
+
+**Emits:** `open`, `close`, `search` (debounced input value — consumer fetches and updates `items`), `select` (selected item)
+
+**Keyboard:** `↑`/`↓` navigate items; `Enter` executes selected item's `action`; `Escape` closes; `Tab` wraps within results.
+
+**ARIA:** `role="dialog"` on the palette container, `aria-modal="true"`, `role="combobox"` on the search input, `aria-expanded`, `role="listbox"` on results, `role="option"` + `aria-selected` on each result.
+
+**Stories:** Static items, grouped items, async search (debounced, play function types and waits), with keyboard shortcut trigger, no results state, loading state.
+
+---
+
+### Storybook story patterns (no new component)
+
+These are delivered as `Patterns/` stories in Storybook. They demonstrate how OUI components combine in realistic product scenarios. Each story is a full-page composition with a `play()` function that tests the primary user flow.
+
+The `Patterns/` category sits alongside `Components/` and `Composables/` in Storybook's sidebar:
+
+```
+Patterns/
+  Auth/
+  Navigation/
+  Forms/
+  Page Layouts/
+  Data Display/
+  Feedback/
+  Marketing/
+```
+
+---
+
+#### Auth patterns
+
+These are story-only. The components are already in the library (Input, Button, Checkbox, Link, Card); the pattern is their assembly.
+
+| Story | Key components | Play function |
+|---|---|---|
+| `Sign In` | Card, Heading, Input (email), Input (password), Checkbox (remember me), Button, Link | Type email + password, submit, assert button clicked |
+| `Register` | Same + confirm password Input, terms Checkbox | Fill all fields, submit |
+| `Forgot Password` | Card, Heading, Input (email), Button, Alert (success) | Submit email, assert success alert appears |
+| `Magic Link Sent` | Card, Heading, descriptive text, Button (resend) | Assert resend button is focusable |
+| `Two-Factor (OTP)` | Card, Heading, 6 × Input fields (or `OtpInput` component if built) | Type 6 digits, assert auto-focus advances |
+| `Password Reset` | Card, Input (new password), Input (confirm), Button | Fill and submit |
+
+**Note on OtpInput:** If the Two-Factor pattern gets frequent reuse, an `OtpInput` component (auto-focus advancing, paste-to-fill, backspace-to-previous) is worth building. Deliver as a story first.
+
+---
+
+#### Navigation patterns
+
+| Story | Key components | Play function |
+|---|---|---|
+| `Application Header` | Navbar (component above), Icon buttons, Avatar | Click hamburger, assert mobile menu opens |
+| `Sidebar Navigation` | AppShell + Sidebar + SidebarNav + SidebarNavItem | Click active item, assert `aria-current="page"` |
+| `Tabbed Page Navigation` | Tabs | Keyboard navigate tabs, assert panel switches |
+| `Breadcrumb in Page Header` | Breadcrumb, Heading, Button (actions) | Click breadcrumb link, assert navigation |
+| `Bottom Tab Bar (mobile)` | Tabs (vertical=false, pill variant) | 375px viewport, click tabs |
+| `Mega Menu` | Navbar + FloatingPanel for mega panel | Hover/click nav item, assert panel opens |
+
+---
+
+#### Form patterns
+
+| Story | Key components | Play function |
+|---|---|---|
+| `Contact Form` | Heading, Input (name/email), Textarea, Button, Alert (success) | Fill and submit, assert success |
+| `Profile Settings` | Tabs (General/Security/Notifications), Input, Switch, Button | Switch tabs, update field, save |
+| `Payment / Checkout` | Heading, Input (card number/expiry/CVV), Select (country), Button | Fill card details, submit |
+| `Search with Filters` | Input (search), Badge (active filters, removable), Select (sort), Button | Type query, apply filter, assert badge appears, click remove |
+| `Multi-Step Wizard` | Stepper, varied form content per step, Button (next/back) | Step through all steps, assert stepper advances |
+| `Inline Validation` | Input with `state="invalid"` + `errorMessage`, Button | Submit empty form, assert error messages appear |
+
+---
+
+#### Page layout patterns
+
+These patterns double as visual regression anchors — if they break, something significant changed in the component layer.
+
+| Story | Key components | Notes |
+|---|---|---|
+| `Dashboard` | AppShell, Navbar, Stats cards, DataTable, Alert | Realistic data, 1280px viewport |
+| `Settings Page` | AppShell, Sidebar nav, Tabs, Input, Switch, Button | Two-level navigation |
+| `Data List Page` | Navbar, Pagination, DataTable, EmptyState, Filter badges | Test pagination play function |
+| `Detail / Profile Page` | AppShell, Tabs, Avatar, Badge, Card, Timeline | Content-heavy, test tab switching |
+| `Two-Column Content` | Basic CSS grid, Card, ReadMore | No new components needed |
+| `Empty / Onboarding State` | AppShell, EmptyState, Button | First-run experience |
+
+---
+
+#### Feedback & error patterns
+
+| Story | Key components | Notes |
+|---|---|---|
+| `404 Not Found` | Heading, descriptive text, Button (go home) | Standalone page, no AppShell |
+| `500 Server Error` | Heading, descriptive text, Button (retry/reload) | Same |
+| `Permission Denied` | Heading, descriptive text, Button | Same |
+| `Success Confirmation` | Card, Icon (large check), Heading, text, Button | Post-form submission success |
+| `Loading / Skeleton Page` | AppShell, Placeholder (paragraph, avatar, table) | Tests skeleton composition |
+
+---
+
+#### Marketing / editorial patterns
+
+These are lower priority but useful for teams using OUI for public-facing sites as well as apps.
+
+| Story | Key components | Notes |
+|---|---|---|
+| `Pricing Table` | Card, Badge, Heading, Button, Divider | 3-column at desktop, stacked at mobile |
+| `Feature Grid` | Card (icon + title + text), Heading | 3-up or 4-up grid |
+| `Hero CTA` | Heading, text, Button (primary + secondary), Badge | Centred layout |
+| `Testimonials` | Card, Avatar, Quote text, Star rating | Carousel optional |
+| `Stats / Metrics Bar` | Stats component (or Card), Divider | Horizontal at desktop |
+
+---
+
+### Design system from Storybook
+
+The user's goal of using Claude Code to build a design system from Storybook stories maps directly to two features:
+
+1. **Storybook Pages stories** — the `Patterns/` stories above are full-page compositions. They can be exported to static HTML via `build-storybook` and published as a visual design reference alongside the component docs. Each pattern story includes the exact code needed to reproduce it, making them a natural source of truth for a design system.
+
+2. **Living design system** — the `Getting Started/Design System/` Storybook section (planned in §4) documents tokens, colour scales, and type scales. Combined with the `Patterns/` stories, this gives any team (or AI assistant) everything needed to reproduce OUI-compliant UIs without guessing component combinations.
+
+**Suggested workflow when using Claude Code to extend patterns:**
+- Each `Patterns/` story file is self-contained (no external dependencies beyond OUI and Vue)
+- A new pattern can be requested with: "using these OUI components, create a Storybook story that matches the attached screenshot" — Claude Code reads the component API from the story files and existing component sources, then generates a new pattern story
+- The pattern story gets added to `src/stories/patterns/<category>/<PatternName>.stories.ts`
+- It passes `npm run test-storybook` before it is considered done (Axe + play functions)
+
+---
+
+### Patterns roadmap placement
+
+Pattern stories are not gated on Phase 1 or 2 completing — they can begin as soon as the core components they depend on exist. A suggested ordering:
+
+| Phase | Patterns to add |
+|---|---|
+| After Phase 2 | Auth patterns (Sign In, Register, Forgot Password), Contact Form, 404/500 pages |
+| After Phase 3 | Dashboard, Settings Page, Data List, Navbar + AppShell components |
+| After Phase 4 | Full pattern suite, CommandPalette, Marketing patterns |
+
+Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the relevant phase).
 
 ---
 

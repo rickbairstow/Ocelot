@@ -585,6 +585,7 @@
   <div class="sidenav-section">
     <div class="sidenav-section-label">Plan</div>
     <a href="#s12">12. Roadmap</a>
+    <a href="#s13">13. Patterns</a>
   </div>
 </nav>
 
@@ -1637,6 +1638,158 @@ Components / [Name] / Default, [Variant], [State], Interactive</pre>
           <span class="phase-item-note">Strict semver begins. Breaking changes require major bump + migration guide.</span>
         </div>
       </div>
+    </div>
+
+    <a href="#top" class="back-to-top">↑ Back to top</a>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §13 — PATTERNS & COMPOSITIONS -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s13">
+    <h2><span class="section-number">13</span> Patterns &amp; Compositions</h2>
+    <div class="section-desc">Higher-level assemblies of OUI components for recurring product needs. Covers what to build as real components vs Storybook stories, and how this feeds into a living design system.</div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">ℹ</span>
+      <div><strong>Patterns vs Components:</strong> A <em>component</em> encapsulates reusable state and behaviour. A <em>pattern</em> is a composition of components for a specific use case. Default to a Storybook story; promote to a component only when there is non-trivial shared state, complex accessibility requirements, or the boilerplate would be repeated across multiple projects.</div>
+    </div>
+
+    <h3>Decision guide — story or component?</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Deliver as a story when…</th><th>Deliver as a component when…</th></tr></thead>
+        <tbody>
+          <tr><td>The value is showing how components combine</td><td>There is non-trivial state (responsive toggle, keyboard listener, open/close coordination)</td></tr>
+          <tr><td>Consumers will heavily customise the layout</td><td>The pattern has complex accessibility beyond its constituent parts</td></tr>
+          <tr><td>It is primarily a CSS/layout concern</td><td>It is used across projects frequently; the boilerplate is repetitive</td></tr>
+          <tr><td>It would be a thin wrapper with no logic</td><td>It requires <code>provide/inject</code> context to wire sub-components together</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Three patterns that warrant real components</h3>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">Navbar (Top Navigation Bar)</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Phase 3+</span><span class="badge badge-new">New component</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Every app needs a top navigation bar. The responsive behaviour (desktop links → mobile hamburger + menu) is stateful and non-trivial to implement repeatedly. Encapsulating it saves significant boilerplate.</p>
+        <p><strong>Props:</strong> <code>sticky</code>, <code>bordered</code>, <code>mobileBreakpoint</code> (<code>'sm' | 'md' | 'lg'</code>)<br>
+        <strong>Slots:</strong> <code>#logo</code>, <code>#links</code> (desktop nav), <code>#actions</code> (right side — search, notifications, user avatar), <code>#mobile-menu</code> (drawer content)<br>
+        <strong>State:</strong> <code>mobileOpen</code> managed internally. Expose <code>open()</code> / <code>close()</code> / <code>toggle()</code> via <code>defineExpose</code> for programmatic control (e.g. close on route change).<br>
+        <strong>ARIA:</strong> <code>&lt;header role="banner"&gt;</code>. Hamburger is <code>aria-expanded</code>/<code>aria-controls</code>. Mobile menu is <code>aria-label="Mobile navigation"</code>.</p>
+        <p><span class="badge badge-story">Story</span> Default (desktop), mobile viewport (hamburger visible), with avatar + dropdown, with notification badge, sticky on scroll.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">AppShell (Application Layout Wrapper)</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Phase 3+</span><span class="badge badge-new">New component</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>Pre-wired composition of Navbar + Sidebar + main content. Its real value is the CSS grid layout, semantic landmark roles, and the <code>provide/inject</code> context that coordinates sidebar open state between the hamburger in the Navbar and the Sidebar component — eliminating prop-drilling.</p>
+        <p><strong>Props:</strong> <code>hasSidebar</code>, <code>sidebarPosition</code> (<code>'left' | 'right'</code>), <code>fixedHeader</code><br>
+        <strong>Slots:</strong> <code>#header</code>, <code>#sidebar</code>, <code>#default</code> (main content), <code>#footer</code><br>
+        <strong>Context:</strong> Provides <code>{ sidebarOpen, toggleSidebar }</code> via <code>provide</code> — the Sidebar component injects this to open/close without props.<br>
+        <strong>ARIA:</strong> <code>&lt;header&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code> landmarks are applied automatically.</p>
+        <p><span class="badge badge-story">Story</span> With sidebar (desktop + mobile), without sidebar (full-width), right sidebar, fixed header with scrolling content.</p>
+      </div>
+    </div>
+
+    <div class="comp-spec">
+      <div class="comp-spec-header">
+        <span class="comp-spec-name">CommandPalette (Cmd+K)</span>
+        <div class="comp-spec-badges"><span class="badge badge-tier2">Phase 4</span><span class="badge badge-new">New component</span></div>
+      </div>
+      <div class="comp-spec-body">
+        <p>The most complex pattern here. Warrants a component because of: global keyboard shortcut listener, modal focus trap, fuzzy search state, keyboard navigation within results, and <code>combobox</code>-pattern ARIA.</p>
+        <p><strong>Props:</strong> <code>placeholder</code>, <code>shortcut</code> (default: <code>['Meta+k', 'Ctrl+k']</code>), <code>items</code> / <code>groups</code> (static), <code>loading</code>, <code>empty</code><br>
+        <strong>Item shape:</strong> <code>{ id, label, description?, icon?, shortcut?, action: () =&gt; void, keywords? }</code><br>
+        <strong>Emits:</strong> <code>open</code>, <code>close</code>, <code>search</code> (debounced — consumer handles async results), <code>select</code><br>
+        <strong>Keyboard:</strong> ↑/↓ navigate, Enter executes, Escape closes, A–Z character search.<br>
+        <strong>ARIA:</strong> <code>role="dialog" aria-modal="true"</code> on container, <code>role="combobox"</code> on input, <code>role="listbox"</code> / <code>role="option"</code> on results.</p>
+        <p><span class="badge badge-story">Story</span> Static items, grouped items, async search (play function types + waits), keyboard shortcut trigger, no results, loading.</p>
+      </div>
+    </div>
+
+    <h3>Storybook pattern stories</h3>
+    <p>All other patterns are delivered as <code>Patterns/</code> stories — full-page compositions showing realistic product UIs. They live at <code>src/stories/patterns/&lt;category&gt;/&lt;PatternName&gt;.stories.ts</code>.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Category</th><th>Pattern Stories</th><th>Primary OUI Components</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Auth</strong></td>
+            <td>Sign In, Register, Forgot Password, Magic Link Sent, Two-Factor OTP, Password Reset</td>
+            <td>Card, Heading, Input, Button, Checkbox, Alert, Link</td>
+          </tr>
+          <tr>
+            <td><strong>Navigation</strong></td>
+            <td>Application Header, Sidebar Navigation, Tabbed Page, Breadcrumb in Page Header, Bottom Tab Bar, Mega Menu</td>
+            <td>Navbar, AppShell, Sidebar, SidebarNav, Tabs, Breadcrumb, FloatingPanel</td>
+          </tr>
+          <tr>
+            <td><strong>Forms</strong></td>
+            <td>Contact Form, Profile Settings, Payment / Checkout, Search with Filters, Multi-Step Wizard, Inline Validation</td>
+            <td>Input, Textarea, Select, Checkbox, Switch, Button, Alert, Stepper, Badge (active filters)</td>
+          </tr>
+          <tr>
+            <td><strong>Page Layouts</strong></td>
+            <td>Dashboard, Settings Page, Data List Page, Detail / Profile Page, Two-Column Content, Empty Onboarding</td>
+            <td>AppShell, Navbar, DataTable, Tabs, Avatar, Card, Stats, Pagination, EmptyState</td>
+          </tr>
+          <tr>
+            <td><strong>Feedback</strong></td>
+            <td>404 Not Found, 500 Server Error, Permission Denied, Success Confirmation, Loading Skeleton Page</td>
+            <td>Heading, Button, Placeholder, Icon (large)</td>
+          </tr>
+          <tr>
+            <td><strong>Marketing</strong></td>
+            <td>Pricing Table, Feature Grid, Hero CTA, Testimonials, Stats Bar</td>
+            <td>Card, Badge, Heading, Button, Divider, Avatar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">✦</span>
+      <div>
+        <strong>Every pattern story must:</strong>
+        <ul style="margin: 6px 0 0;">
+          <li>Use realistic copy (not Lorem Ipsum)</li>
+          <li>Work correctly in dark mode</li>
+          <li>Have a <code>play()</code> function covering the primary user flow</li>
+          <li>Pass Axe accessibility checks</li>
+          <li>Include a viewport-specific story for mobile if the pattern has responsive behaviour</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Design system from Storybook</h3>
+    <p>Pattern stories are the raw material for a living design system. The <code>build-storybook</code> command publishes them alongside component docs at <a href="https://ocelotui.netlify.app" style="color:var(--accent)">ocelotui.netlify.app</a>. This gives any team (or AI assistant) a complete reference for OUI-compliant UIs:</p>
+    <ul>
+      <li><strong>Stories as specs</strong> — each pattern story is self-contained code. "Here's how Sign In is built with OUI" is a precise, runnable answer, not a description.</li>
+      <li><strong>Claude Code workflow</strong> — request a new pattern with: <em>"using these OUI components, create a Storybook story matching this screenshot"</em>. Claude reads component APIs from existing stories and source files, then generates a new <code>src/stories/patterns/…stories.ts</code> file. It passes <code>npm run test-storybook</code> before being considered done.</li>
+      <li><strong>Pattern stories as regression anchors</strong> — because they exercise many components at once, a failing pattern story often surfaces a regression that individual component stories miss.</li>
+    </ul>
+
+    <h3>Patterns delivery timing</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>After phase</th><th>Patterns to add</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Phase 2</strong></td><td>Auth patterns, Contact Form, 404 / 500 pages</td></tr>
+          <tr><td><strong>Phase 3</strong></td><td>Dashboard, Settings Page, Data List, Navbar + AppShell components</td></tr>
+          <tr><td><strong>Phase 4</strong></td><td>Full pattern suite, CommandPalette, Marketing patterns</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <a href="#top" class="back-to-top">↑ Back to top</a>
