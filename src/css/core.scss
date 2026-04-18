@@ -1,6 +1,21 @@
-/**
-    Vue transitions
- */
+/* OUI design tokens — for local dev server (src/main.ts). Mirrors tailwind.css. */
+:root {
+    --oui-radius-sm: 0.125rem;
+    --oui-radius: 0.25rem;
+    --oui-radius-md: 0.375rem;
+    --oui-radius-lg: 0.5rem;
+    --oui-radius-xl: 0.75rem;
+    --oui-radius-2xl: 1rem;
+    --oui-radius-3xl: 1.5rem;
+    --oui-radius-full: 9999px;
+    --oui-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --oui-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --oui-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --oui-transition-duration: 150ms;
+    --oui-font-sans: inherit;
+}
+
+/* Vue transitions */
 .v-enter-active,
 .v-leave-active {
     transition: opacity 0.5s ease;

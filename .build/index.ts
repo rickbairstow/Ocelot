@@ -1,11 +1,6 @@
 /* This exposes files and components for the build process and bundles them up to the /dist folder. */
 
 /**
- * CSS Imports
- */
-import '@Css/core.scss'
-
-/**
  * Component Exports
  * Enables: import { Sidebar } from 'ocelot-ui'
  */
