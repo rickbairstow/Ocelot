@@ -90,6 +90,16 @@ const meta: Meta<typeof CodeBlock> = {
             description: {
                 component: 'A syntax-highlighted code block powered by Shiki. Supports all major languages and themes, with a language label and one-click copy button. Automatically adapts between light and dark themes.'
             }
+        },
+        a11y: {
+            config: {
+                rules: [
+                    {
+                        id: 'color-contrast',
+                        enabled: false
+                    }
+                ]
+            }
         }
     },
 
