@@ -1628,7 +1628,7 @@ Once Tier 1 components are complete:
 | ~~Progress (bar + circle)~~ | ✅ Done |
 | ~~Breadcrumb~~ | ✅ Done |
 | ~~Pagination~~ | ✅ Done |
-| Steps / Stepper | Multi-step forms and wizards |
+| ~~Steps / Stepper~~ | ✅ Done |
 | Textarea | Form primitive — highest priority form gap |
 | Checkbox + CheckboxGroup | Form primitive |
 | Radio + RadioGroup | Form primitive |
