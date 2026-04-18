@@ -19,12 +19,14 @@
 
         <!-- Code -->
         <div class="relative overflow-x-auto">
-            <!-- eslint-disable-next-line vue/no-v-html — safe: Shiki HTML-escapes all user input before rendering -->
+            <!-- eslint-disable vue/no-v-html -->
+            <!-- safe: Shiki HTML-escapes all user input before rendering -->
             <div
                 v-if="highlighted"
                 class="[&>pre]:p-4 [&>pre]:m-0 [&>pre]:bg-transparent! [&_code]:bg-transparent! [&_code]:text-sm [&_code]:leading-relaxed"
                 v-html="highlighted"
             />
+            <!-- eslint-enable vue/no-v-html -->
             <!-- Fallback while loading -->
             <pre
                 v-else
