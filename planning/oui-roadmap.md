@@ -1626,7 +1626,7 @@ Once Tier 1 components are complete:
 | ~~Avatar / AvatarGroup~~ | ✅ Done |
 | ~~Tabs / TabPanels~~ | ✅ Done |
 | ~~Progress (bar + circle)~~ | ✅ Done |
-| Breadcrumb | Navigation staple |
+| ~~Breadcrumb~~ | ✅ Done |
 | Pagination | Required alongside Table |
 | Steps / Stepper | Multi-step forms and wizards |
 | Textarea | Form primitive — highest priority form gap |
