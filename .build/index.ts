@@ -31,3 +31,9 @@ export { default as Scrim } from '@Components/Scrim.vue'
 export { default as Sidebar } from '@Components/Sidebar.vue'
 export { default as Toast } from '@Components/Toast.vue'
 export { default as Video } from '@Components/Video.vue'
+
+/**
+ * Icon utilities
+ */
+export { registerIcons } from '@Composables/useIcons'
+export type { IconName, IconProp, IconSize } from '@Composables/useIcons'

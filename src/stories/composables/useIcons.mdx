@@ -4,7 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 # useIcons
 
-A registry that maps short icon names to their [Tabler Icons](https://tabler.io/icons) Vue components, and maps size names to pixel values. Used internally by the `Icon` component but exported so consumers can validate names or enumerate the available set.
+A registry that maps short icon names to their [Tabler Icons](https://tabler.io/icons) Vue components, and maps size names to pixel values. Used internally by the `Icon` component but exported so consumers can validate names, enumerate the available set, or register additional icons.
 
 ---
 
@@ -12,16 +12,75 @@ A registry that maps short icon names to their [Tabler Icons](https://tabler.io/
 
 | Export | Type | Description |
 |---|---|---|
-| `availableIcons` | `Record<string, Component>` | Map of icon name → Tabler icon component |
+| `availableIcons` | `Record<string, Component>` | Mutable registry of icon name → Tabler icon component |
 | `availableSizes` | `Record<string, number>` | Map of size name → pixel value |
-| `IconName` | `type` | Union of all valid icon name strings |
+| `registerIcons` | `(map: Record<string, Component>) => void` | Register additional icons at app initialisation |
+| `IconName` | `type` | Union of all built-in registry key strings |
+| `IconProp` | `type` | `IconName \| Component` — type for any icon prop |
 | `IconSize` | `type` | Union of all valid size name strings |
 
 ---
 
-## Available icons
+## Usage
 
-`ArrowDown` `ArrowLeft` `ArrowRight` `ArrowUp` `Bell` `ChevronDown` `ChevronLeft` `ChevronRight` `ChevronUp` `ChevronsLeft` `ChevronsRight` `Loader` `Loader2` `Loader3` `Mail` `MailOpened` `Menu` `Phone` `Photo` `PhotoOff` `PlayerPlay` `Plus` `Search` `Trash` `User` `VideoOff` `X` `ZoomIn`
+### String lookup (built-in registry)
+
+The `Icon` component resolves string props against the built-in registry automatically:
+
+```vue
+<Icon icon="ArrowDown" size="lg" />
+```
+
+### Passing a component directly
+
+Pass any Vue component as the `icon` prop — no registry entry required:
+
+```vue
+<script setup>
+import { IconBrandGithub } from '@tabler/icons-vue'
+</script>
+
+<template>
+    <Icon :icon="IconBrandGithub" size="xl" />
+</template>
+```
+
+This is the recommended approach for icons outside the built-in set. Import directly from `@tabler/icons-vue` (or any icon library that exports Vue components) at the usage site.
+
+---
+
+## Registering custom icons
+
+Call `registerIcons()` once at app initialisation to add icons to the global registry. After this, string lookups like `<Icon icon="BrandGithub" />` work anywhere in the app without per-component imports:
+
+```ts
+// main.ts
+import { registerIcons } from 'ocelot-ui'
+import { IconBrandGithub, IconBrandLinkedin, IconWorld } from '@tabler/icons-vue'
+
+registerIcons({
+    BrandGithub: IconBrandGithub,
+    BrandLinkedin: IconBrandLinkedin,
+    World: IconWorld,
+})
+```
+
+### TypeScript autocomplete for registered icons
+
+If you want autocomplete on your registered icon names, augment the `OuiIconRegistry` interface in a `.d.ts` file in your project:
+
+```ts
+// types.d.ts
+import type { Component } from 'vue'
+
+declare module 'ocelot-ui' {
+    interface OuiIconRegistry {
+        BrandGithub: Component
+        BrandLinkedin: Component
+        World: Component
+    }
+}
+```
 
 ---
 
@@ -45,30 +104,8 @@ A registry that maps short icon names to their [Tabler Icons](https://tabler.io/
 
 ---
 
-## Usage
-
-The `Icon` component handles lookup automatically — pass the name as a string prop:
-
-```vue
-<Icon icon="ArrowDown" size="lg" />
-```
-
-If you need to validate an icon name or list available icons in your own code:
-
-```ts
-import { availableIcons, availableSizes } from '@Composables/useIcons'
-import type { IconName, IconSize } from '@Composables/useIcons'
-
-// Check a name is valid before passing to Icon
-const isValidIcon = (name: string): name is IconName => name in availableIcons
-
-// Resolve a size to pixels
-const px = availableSizes['2xl'] // 24
-```
-
----
-
 ## Notes
 
-- All icons are sourced from `@tabler/icons-vue`. Only icons listed above are registered — adding more requires updating `useIcons.ts`.
+- All built-in icons are sourced from `@tabler/icons-vue`. For icons outside the built-in set, import from `@tabler/icons-vue` directly and pass the component as a prop, or register them via `registerIcons()`.
 - Size names align with Tailwind's font-size scale for predictable pairing.
+- `registerIcons()` is designed to be called once before any components render. The registry is a plain module-scoped object — no reactivity is required.
