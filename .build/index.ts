@@ -6,6 +6,7 @@
  */
 export { default as Accordion } from '@Components/Accordion.vue'
 export { default as AccordionGroup } from '@Components/AccordionGroup.vue'
+export type { AccordionGroupContext } from '@Components/AccordionGroup.vue'
 export { default as Avatar } from '@Components/Avatar.vue'
 export type { AvatarSize, AvatarColor, AvatarShape } from '@Components/Avatar.vue'
 export { default as AvatarGroup } from '@Components/AvatarGroup.vue'
