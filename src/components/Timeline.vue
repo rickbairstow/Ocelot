@@ -29,14 +29,14 @@
                     </p>
                     <time
                         v-if="item.time"
-                        class="shrink-0 text-xs text-gray-400 dark:text-gray-500 mt-0.5"
+                        class="shrink-0 text-xs text-gray-800 dark:text-gray-200 mt-0.5"
                     >
                         {{ item.time }}
                     </time>
                 </div>
                 <p
                     v-if="item.description"
-                    class="mt-0.5 text-sm text-gray-500 dark:text-gray-400"
+                    class="mt-0.5 text-sm text-gray-800 dark:text-gray-200"
                 >
                     {{ item.description }}
                 </p>
