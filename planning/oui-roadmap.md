@@ -1658,9 +1658,10 @@ Once Tier 1 components are complete:
 | ~~Table~~ | ⏸ On hold — needs its own detailed spec before implementation. |
 | ~~Stats / Metric Card~~ | ✅ Done |
 | ~~Empty State~~ | ✅ Done |
-| Code Block | Needed for documentation-adjacent products |
+| ~~Code Block~~ | ✅ Done |
 | Timeline | Common in activity feeds |
 | Popover named export | Quick win from FloatingPanel — pre-configure for click-triggered, interactive content (no `role="tooltip"`) |
+| Quote | Styled blockquote for pull quotes, testimonials, and editorial content. Optional attribution (author + source). Relevant for content-heavy and marketing-adjacent products. |
 
 ### Phase 4 — Polish, power features, and 1.0 prep
 
