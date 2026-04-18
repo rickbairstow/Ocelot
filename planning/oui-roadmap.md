@@ -1653,17 +1653,14 @@ Once Tier 1 components are complete:
 
 | Component | Notes |
 |---|---|
-| Dropdown Menu | Complex ARIA — needs careful implementation |
-| Table | Semantic sub-components |
+| Tooltip | Thin wrapper over FloatingPanel — pre-configures `role="tooltip"`, `aria-describedby` wiring, hover-only interaction, and a show delay. Quick win. |
+| Dropdown Menu | FloatingPanel handles positioning; the menu itself needs its own `role="menu"` / `role="menuitem"` implementation with full keyboard nav (arrows, Home/End, typeahead, Escape). Keep separate from FloatingPanel. |
+| ~~Table~~ | ⏸ On hold — needs its own detailed spec before implementation. |
 | Stats / Metric Card | Dashboard staple |
 | Empty State | Needed alongside Table and lists |
 | Code Block | Needed for documentation-adjacent products |
 | Timeline | Common in activity feeds |
-| Popover named export | Quick win from FloatingPanel |
-| Select (native) | Form primitive — native first |
-| NumberInput | Form primitive |
-| File Upload | Form primitive |
-| Combobox (searchable select) | Complex form component |
+| Popover named export | Quick win from FloatingPanel — pre-configure for click-triggered, interactive content (no `role="tooltip"`) |
 
 ### Phase 4 — Polish, power features, and 1.0 prep
 
