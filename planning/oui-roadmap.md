@@ -1624,8 +1624,8 @@ Once Tier 1 components are complete:
 |---|---|
 | ~~Alert / Banner~~ | ✅ Done |
 | ~~Avatar / AvatarGroup~~ | ✅ Done |
-| Tabs / TabPanels | Fundamental navigation primitive |
-| Progress (bar + circle) | Needed for file upload, loading states, onboarding |
+| ~~Tabs / TabPanels~~ | ✅ Done |
+| ~~Progress (bar + circle)~~ | ✅ Done |
 | Breadcrumb | Navigation staple |
 | Pagination | Required alongside Table |
 | Steps / Stepper | Multi-step forms and wizards |
