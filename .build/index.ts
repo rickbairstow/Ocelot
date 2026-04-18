@@ -5,9 +5,12 @@
  * Enables: import { Sidebar } from 'ocelot-ui'
  */
 export { default as Accordion } from '@Components/Accordion.vue'
+export { default as AccordionGroup } from '@Components/AccordionGroup.vue'
+export { default as Avatar } from '@Components/Avatar.vue'
+export type { AvatarSize, AvatarColor, AvatarShape } from '@Components/Avatar.vue'
+export { default as AvatarGroup } from '@Components/AvatarGroup.vue'
 export { default as Banner } from '@Components/Banner.vue'
 export type { BannerType, BannerVariant } from '@Components/Banner.vue'
-export { default as AccordionGroup } from '@Components/AccordionGroup.vue'
 export { default as Badge } from '@Components/Badge.vue'
 export { default as Button } from '@Components/Button.vue'
 export { default as Card } from '@Components/Card.vue'
