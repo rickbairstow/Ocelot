@@ -333,7 +333,7 @@ export function registerIcons(icons: Record<string, Component>): void {
 
 export type IconName = keyof typeof builtInIcons
 export type IconSize = keyof typeof availableSizes
-export type IconProp = IconName | Component
+export type IconProp = IconName | Component | string
 
 export const availableIcons = registry
 
