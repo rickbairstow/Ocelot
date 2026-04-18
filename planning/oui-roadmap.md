@@ -1297,6 +1297,8 @@ A single accessibility utility: a "Skip to main content" link that is visually h
 
 ## 7. Forms & Inputs (Brief)
 
+> ⚠️ **Needs more thought before implementation.** Forms are on hold pending a validation strategy decision. The goal is to avoid reinventing the wheel — existing packages (Vee-Validate, FormKit, etc.) should be evaluated before building a custom validation layer. All components should stay as native as possible; avoid complex custom implementations where a styled native element will do.
+
 Forms are a significant workstream deserving their own detailed spec. Key gaps and architectural principles are noted here.
 
 ### Missing form primitives
@@ -1308,13 +1310,28 @@ Forms are a significant workstream deserving their own detailed spec. Key gaps a
 | Checkbox | 1 | With indeterminate state; `CheckboxGroup` wrapper |
 | Radio / RadioGroup | 1 | Horizontal and vertical layouts; `fieldset/legend` pattern |
 | Switch / Toggle | 1 | Replaces checkbox in on/off UIs; `role="switch"`, `aria-checked` |
-| NumberInput | 2 | With increment/decrement stepper buttons |
-| Combobox | 2 | Searchable select using Floating UI (already a dependency) |
+| Input[type=tel] | 1 | Extend existing Input with type support — native `<input type="tel">` |
+| Input[type=email] | 1 | Native `<input type="email">` with built-in browser validation |
+| Input[type=password] | 1 | Show/hide toggle; native `<input type="password">` |
+| Input[type=number] | 2 | Native number input; optional increment/decrement stepper buttons |
+| Input[type=search] | 2 | Native `<input type="search">` with clear button |
+| Date / Time pickers | 2 | Native `<input type="date">`, `type="time"`, `type="datetime-local">` first — styled wrappers; avoid a custom calendar if the native picker is sufficient |
+| ColorPicker | 3 | Native `<input type="color">` as a starting point; `culori` is already a dependency if more control is needed |
 | File Upload | 2 | Drag-and-drop zone, file list, upload progress integration |
 | Range / Slider | 2 | Single handle; dual-handle for min/max range |
-| DatePicker | 3 | Complex — evaluate a composable dependency rather than building from scratch |
-| ColorPicker | 3 | `culori` is already a dependency — leverageable |
+| Combobox | 3 | Searchable select using Floating UI (already a dependency) |
 | OTP / Pin Input | 3 | Multi-cell code entry for 2FA screens |
+
+### Validation — decision needed
+
+Before any new form component is built, a validation strategy must be chosen. Options:
+
+1. **Vee-Validate** — schema-based (Zod/Yup), widely used in Vue ecosystem, composable API, no opinion on UI.
+2. **FormKit** — full-stack form framework with its own component layer; more opinionated, may conflict with OUI's own components.
+3. **Native HTML5 only** — leverage the browser's built-in constraint validation API; lowest complexity, but limited UX control.
+4. **Custom `provide/inject` context** — lightweight Form/FormField wrapper, no external dep. Most flexibility, most work.
+
+**Recommendation:** Evaluate Vee-Validate first. It integrates cleanly alongside existing component libraries without replacing them, and its schema validation story is strong.
 
 ### Form context via `provide/inject`
 
@@ -1343,6 +1360,7 @@ States propagate from `Form` via `provide` or can be set directly via prop for s
 
 ### Cross-cutting form requirements
 
+- Stay native where possible — use `<input type="x">` before reaching for a custom implementation.
 - `required` fields use `aria-required="true"`, not just a visual asterisk. The asterisk should have `aria-hidden="true"` with a legend note.
 - `disabled` vs `readonly` must be visually distinct and both supported on all inputs.
 - `autocomplete` attribute must be passable on all text-input components.
@@ -1629,10 +1647,7 @@ Once Tier 1 components are complete:
 | ~~Breadcrumb~~ | ✅ Done |
 | ~~Pagination~~ | ✅ Done |
 | ~~Steps / Stepper~~ | ✅ Done |
-| Textarea | Form primitive — highest priority form gap |
-| Checkbox + CheckboxGroup | Form primitive |
-| Radio + RadioGroup | Form primitive |
-| Switch | Form primitive |
+| ~~Form primitives (Textarea, Checkbox, Radio, Switch, Input types, Date/Time/Colour pickers)~~ | ⏸ On hold — validation strategy decision needed first. See §7. |
 
 ### Phase 3 — Richer components and form depth
 
