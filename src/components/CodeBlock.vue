@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between gap-4 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
             <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide select-none">{{ language }}</span>
             <button
-                class="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+                class="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white transition-colors"
                 type="button"
                 @click="copy"
             >
