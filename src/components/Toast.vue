@@ -49,12 +49,23 @@
                             class="py-2"
                             size="xl"
                             :class="typeIconColor[toast.type]"
-                            :icon="typeIcon[toast.type]"
+                            :icon="toast.icon ?? typeIcon[toast.type]"
                         />
 
-                        <p class="flex-1 my-2 min-w-0 text-sm font-medium text-black dark:text-white">
-                            {{ toast.message }}
-                        </p>
+                        <div class="flex-1 my-2 min-w-0">
+                            <p class="text-sm font-medium text-black dark:text-white">
+                                {{ toast.message }}
+                            </p>
+
+                            <button
+                                v-if="toast.action"
+                                class="mt-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+                                type="button"
+                                @click="toast.action.onClick(); remove(toast.id)"
+                            >
+                                {{ toast.action.label }}
+                            </button>
+                        </div>
 
                         <Button
                             aria-label="Dismiss notification"

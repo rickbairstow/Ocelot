@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
+import { IconBrandGithub } from '@tabler/icons-vue'
 
 const colors = ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink']
 const types = ['primary', 'secondary', 'tertiary', 'text', 'none'] as const
@@ -27,6 +28,19 @@ const meta: Meta<typeof Button> = {
         href: {
             control: 'text',
             description: 'Sets the link href for anchor rendering.'
+        },
+        icon: {
+            control: 'text',
+            description: 'Icon registry key or Vue component. Renders alongside the label.'
+        },
+        iconOnly: {
+            control: 'boolean',
+            description: 'Square icon-only button. Requires aria-label.'
+        },
+        iconPosition: {
+            control: 'select',
+            options: ['start', 'end'],
+            description: 'Icon placement relative to label. Follows document direction (start = inline-start).'
         },
         loading: {
             control: 'boolean',
@@ -57,7 +71,8 @@ const meta: Meta<typeof Button> = {
         loadingIcon: 'Loader2',
         size: 'base',
         variant: 'primary',
-        href: null
+        href: null,
+        iconPosition: 'start'
     },
 
     render: (args) => ({
@@ -70,6 +85,9 @@ const meta: Meta<typeof Button> = {
                 :color="args.color"
                 :disabled="args.disabled"
                 :href="args.href"
+                :icon="args.icon"
+                :icon-only="args.iconOnly"
+                :icon-position="args.iconPosition"
                 :loading="args.loading"
                 :loading-icon="args.loadingIcon"
                 :size="args.size"
@@ -150,6 +168,99 @@ export const Loading: Story = {
         await expect(button).toHaveAttribute('aria-busy', 'true')
         await expect(button).toHaveAttribute('aria-disabled', 'true')
         await userEvent.click(button)
+    }
+}
+
+export const IconStart: Story = {
+    args: { icon: 'Plus', iconPosition: 'start', default: 'Add item' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const button = canvas.getByRole('button')
+        const svg = button.querySelector('svg')
+        await expect(svg).toBeInTheDocument()
+        // SVG is the first child of the inner flex span
+        const flex = button.querySelector('.flex')
+        await expect(flex?.firstElementChild?.tagName.toLowerCase()).toBe('svg')
+    }
+}
+
+export const IconEnd: Story = {
+    args: { icon: 'ArrowRight', iconPosition: 'end', default: 'Next' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const button = canvas.getByRole('button')
+        const svg = button.querySelector('svg')
+        await expect(svg).toBeInTheDocument()
+        // SVG is the last child of the inner flex span
+        const flex = button.querySelector('.flex')
+        await expect(flex?.lastElementChild?.tagName.toLowerCase()).toBe('svg')
+    }
+}
+
+export const IconComponent: Story = {
+    render: () => ({
+        components: { Button },
+        setup() {
+            return { IconBrandGithub }
+        },
+        template: `
+            <Button :icon="IconBrandGithub">
+                GitHub
+            </Button>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const svg = canvasElement.querySelector('svg')
+        await expect(svg).toBeInTheDocument()
+    }
+}
+
+export const IconOnly: Story = {
+    render: () => ({
+        components: { Button },
+        template: `
+            <div class="flex gap-3">
+                <Button icon="Plus" icon-only aria-label="Add item" size="small" />
+                <Button icon="Plus" icon-only aria-label="Add item" size="base" />
+                <Button icon="Plus" icon-only aria-label="Add item" size="large" />
+            </div>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const buttons = within(canvasElement).getAllByRole('button')
+        for (const button of buttons) {
+            await expect(button).toHaveAttribute('aria-label')
+            const svg = button.querySelector('svg')
+            await expect(svg).toBeInTheDocument()
+        }
+    }
+}
+
+export const IconNotFound: Story = {
+    args: { icon: 'NonExistentIcon' as never, default: 'Button' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const button = canvas.getByRole('button')
+        const svg = button.querySelector('svg')
+        // No icon rendered for unknown registry key
+        await expect(svg).not.toBeInTheDocument()
+    }
+}
+
+export const IconAllSizes: Story = {
+    render: () => ({
+        components: { Button },
+        template: `
+            <div class="flex items-center gap-3">
+                <Button icon="Check" size="small">Small</Button>
+                <Button icon="Check" size="base">Base</Button>
+                <Button icon="Check" size="large">Large</Button>
+            </div>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const svgs = canvasElement.querySelectorAll('svg')
+        await expect(svgs).toHaveLength(3)
     }
 }
 

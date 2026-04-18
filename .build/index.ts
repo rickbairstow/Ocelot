@@ -5,6 +5,7 @@
  * Enables: import { Sidebar } from 'ocelot-ui'
  */
 export { default as Accordion } from '@Components/Accordion.vue'
+export { default as AccordionGroup } from '@Components/AccordionGroup.vue'
 export { default as Badge } from '@Components/Badge.vue'
 export { default as Button } from '@Components/Button.vue'
 export { default as Card } from '@Components/Card.vue'
@@ -26,6 +27,12 @@ export { default as Scrim } from '@Components/Scrim.vue'
 export { default as Sidebar } from '@Components/Sidebar.vue'
 export { default as Toast } from '@Components/Toast.vue'
 export { default as Video } from '@Components/Video.vue'
+
+/**
+ * Composable exports
+ */
+export { useToast } from '@Composables/useToast'
+export type { ToastOptions, ToastItem, ToastType, ToastAction } from '@Composables/useToast'
 
 /**
  * Icon utilities

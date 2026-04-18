@@ -3,15 +3,15 @@
         role="separator"
         :class="wrapperCss"
     >
-        <span :class="lineCss" />
+        <span :class="startLineCss" />
         <span
-            v-if="hasText"
+            v-if="hasContent"
             class="px-3 text-sm font-medium whitespace-nowrap shrink-0"
             :class="textColorCss"
         >
-            <slot />
+            <slot>{{ label }}</slot>
         </span>
-        <span :class="lineCss" />
+        <span :class="endLineCss" />
     </div>
 </template>
 
@@ -19,20 +19,26 @@
 import { Comment, computed, useSlots } from 'vue'
 
 interface Props {
+    color?: 'default' | 'subtle' | 'strong'
+    label?: string
+    labelAlign?: 'start' | 'center' | 'end'
     orientation?: 'horizontal' | 'vertical'
     variant?: 'solid' | 'dashed' | 'dotted'
-    color?: 'default' | 'subtle' | 'strong'
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    color: 'default',
+    label: undefined,
+    labelAlign: 'center',
     orientation: 'horizontal',
-    variant: 'solid',
-    color: 'default'
+    variant: 'solid'
 })
 
 const slots = useSlots()
 
-const hasText = computed(() => !!slots.default?.().some(vnode => vnode.type !== Comment))
+const hasContent = computed(() =>
+    !!slots.default?.().some(vnode => vnode.type !== Comment) || !!props.label
+)
 
 const colorMap = {
     default: { border: 'border-gray-200 dark:border-gray-700', text: 'text-gray-500 dark:text-gray-400' },
@@ -58,13 +64,27 @@ const wrapperCss = computed((): string => {
     return 'flex items-center w-full'
 })
 
-const lineCss = computed((): string => {
+const baseLine = computed(() => {
     const { variant, color } = props
     const { border } = colorMap[color]
-    return `flex-1 border-t ${variantMap[variant]} ${border}`
+    return `border-t ${variantMap[variant]} ${border}`
 })
 
-const textColorCss = computed((): string => {
-    return colorMap[props.color].text
+// Start line — full width for 'end' alignment, narrow fixed for 'start'
+const startLineCss = computed((): string => {
+    if (!hasContent.value) return `flex-1 ${baseLine.value}`
+    const { labelAlign } = props
+    if (labelAlign === 'start') return `w-4 shrink-0 ${baseLine.value}`
+    return `flex-1 ${baseLine.value}`
 })
+
+// End line — full width for 'start' alignment, narrow fixed for 'end'
+const endLineCss = computed((): string => {
+    if (!hasContent.value) return `flex-1 ${baseLine.value}`
+    const { labelAlign } = props
+    if (labelAlign === 'end') return `w-4 shrink-0 ${baseLine.value}`
+    return `flex-1 ${baseLine.value}`
+})
+
+const textColorCss = computed((): string => colorMap[props.color].text)
 </script>

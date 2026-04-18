@@ -9,7 +9,7 @@
 
 ### Session 2 — April 2026
 
-**Shipped:** §3 Icon Library (hybrid icon prop, `registerIcons()`, registry expanded to ~115 icons, new stories). §4 Theming & Design Tokens (`--oui-*` tokens, `@theme inline` bridge, single-file CSS consolidation — `tailwind.css` is now the only consumer import). Future consideration recorded: §14 Remove Tailwind / replace with scoped CSS.
+**Shipped:** §3 Icon Library (hybrid icon prop, `registerIcons()`, registry expanded to ~115 icons, new stories). §4 Theming & Design Tokens (`--oui-*` tokens, `@theme inline` bridge, single-file CSS consolidation — `tailwind.css` is now the only consumer import). §5 Existing Component Improvements — Button icon support (strict sizes, `iconPosition` start/end/flex-aware), Badge (dot, removable, outline, truncate), Divider (label + labelAlign), Dialog (size prop replacing `small` boolean, description slot), Loader (size + color props), Card (named slots, variant, clickable, selected), Accordion (variant, expandIcon slot), AccordionGroup (exclusive mode via provide/inject), Toast.vue (action button, per-toast icon override, onClose callback), `AccordionGroup` and `useToast` added to library exports. All 121 tests passing. Future consideration recorded: §14 Remove Tailwind / replace with scoped CSS.
 
 ---
 
@@ -399,7 +399,7 @@ Existing components should be migrated to these patterns opportunistically (not 
 
 ---
 
-## 5. Existing Component Improvements
+## 5. Existing Component Improvements ✅
 
 ### Button
 

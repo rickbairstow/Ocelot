@@ -10,8 +10,22 @@
         @keydown.enter="handleKeyInteraction"
         @keydown.space="handleKeyInteraction"
     >
-        <span :class="loading ? 'opacity-0' : 'contents'">
-            <slot />
+        <span :class="loading ? 'opacity-0' : innerWrapClass">
+            <component
+                :is="resolvedIcon"
+                v-if="resolvedIcon && (iconOnly || iconPosition === 'start')"
+                aria-hidden="true"
+                :height="iconPixelSize"
+                :width="iconPixelSize"
+            />
+            <slot v-if="!iconOnly" />
+            <component
+                :is="resolvedIcon"
+                v-if="resolvedIcon && !iconOnly && iconPosition === 'end'"
+                aria-hidden="true"
+                :height="iconPixelSize"
+                :width="iconPixelSize"
+            />
         </span>
         <span
             v-if="loading"
@@ -28,14 +42,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, useAttrs } from 'vue'
+import type { Component } from 'vue'
 import Icon from './Icon.vue'
-import type { IconSize } from '@Composables/useIcons'
+import type { IconProp, IconSize } from '@Composables/useIcons'
+import { availableIcons, availableSizes } from '@Composables/useIcons'
 
 interface Props {
     color?: string
     disabled?: boolean
     href?: string | null
+    icon?: IconProp
+    iconOnly?: boolean
+    iconPosition?: 'start' | 'end'
     loading?: boolean
     loadingIcon?: string
     size?: 'small' | 'base' | 'large'
@@ -46,21 +65,19 @@ const props = withDefaults(defineProps<Props>(), {
     color: 'blue',
     disabled: false,
     href: null,
+    icon: undefined,
+    iconOnly: false,
+    iconPosition: 'start',
     loading: false,
     loadingIcon: 'Loader2',
     size: 'base',
     variant: 'primary'
 })
 
-/**
- * Functionally disabled when explicitly disabled or currently loading.
- */
+const attrs = useAttrs()
+
 const isDisabled = computed((): boolean => props.disabled || props.loading)
 
-/**
- * Handles click events.
- * Prevents action if aria-disabled or loading.
- */
 const handleInteraction = (e: MouseEvent) => {
     if (isDisabled.value) {
         e.preventDefault()
@@ -69,14 +86,6 @@ const handleInteraction = (e: MouseEvent) => {
     }
 }
 
-/**
- * Handles keyboard activation (Enter / Space).
- *
- * - Space: always prevents page scroll; triggers click when enabled.
- * - Enter on <button>: browser fires click natively — only block when disabled.
- * - Enter on <a>: browser fires click natively — only block when disabled.
- *   Previously using `.prevent` here blocked navigation on enabled link buttons.
- */
 const handleKeyInteraction = (e: KeyboardEvent) => {
     if (isDisabled.value) {
         e.preventDefault()
@@ -85,19 +94,48 @@ const handleKeyInteraction = (e: KeyboardEvent) => {
     }
 
     if (e.key === ' ') {
-        // Prevent page scroll on Space; trigger the equivalent of a click.
         e.preventDefault()
         ;(e.currentTarget as HTMLElement).click()
     }
-    // Enter: let the browser's native behaviour handle it (navigation for <a>,
-    // click for <button>). No intervention needed when not disabled.
 }
 
 const element = computed((): string => (props.href ? 'a' : 'button'))
 
-/**
- * Maps button size to Icon size for the loading spinner.
- */
+// Icon size in pixels, strictly matched to button size
+const iconSizeMap: Record<string, number> = {
+    small: availableSizes.xs,   // 12px — small button
+    base: availableSizes.sm,    // 14px — base button
+    large: availableSizes.lg    // 18px — large button
+}
+
+const iconPixelSize = computed((): number => iconSizeMap[props.size ?? 'base'] ?? availableSizes.sm)
+
+const resolvedIcon = computed((): Component | null => {
+    const { icon } = props
+    if (!icon) return null
+    if (typeof icon !== 'string') return icon
+    if (icon in availableIcons) return availableIcons[icon]
+    if (import.meta.env.DEV) {
+        console.warn(`[OuiButton] Icon "${icon}" not found in registry. Register it with registerIcons() or pass the component directly.`)
+    }
+    return null
+})
+
+// Gap between icon and label scales with button size
+const iconGapMap: Record<string, string> = {
+    small: 'gap-1',
+    base: 'gap-1.5',
+    large: 'gap-2'
+}
+
+// When icon + label: flex row with gap. Otherwise transparent to button's own flex layout.
+const innerWrapClass = computed((): string => {
+    if (resolvedIcon.value && !props.iconOnly) {
+        return `flex items-center ${iconGapMap[props.size ?? 'base'] ?? 'gap-1.5'}`
+    }
+    return 'contents'
+})
+
 const spinnerSize = computed((): IconSize => {
     const map: Record<string, IconSize> = {
         small: 'sm',
@@ -107,10 +145,18 @@ const spinnerSize = computed((): IconSize => {
     return map[props.size] ?? 'base'
 })
 
+// Normal padding (asymmetric horizontal)
 const padding: Record<string, string> = {
     small: 'py-1 px-2',
     base: 'py-2 px-3',
     large: 'py-3 px-4'
+}
+
+// Square padding for icon-only buttons — height matches normal variant
+const iconOnlyPadding: Record<string, string> = {
+    small: 'p-1',
+    base: 'p-2',
+    large: 'p-3'
 }
 
 const common = 'relative inline-flex items-center justify-center border rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
@@ -123,11 +169,6 @@ const disabledClasses: Record<string, string> = {
     none:      'text-gray-400 dark:text-gray-600 bg-transparent border-transparent opacity-50'
 }
 
-/**
- * Explicit per-color, per-variant class strings so Tailwind JIT can scan and
- * compile them. CSS custom properties cannot be overridden by dark: variants,
- * so we follow the same pattern as the Badge component.
- */
 const colorClasses: Record<string, Record<string, string>> = {
     primary: {
         blue:   'text-white bg-blue-600   border-blue-600   hover:bg-blue-700   focus-visible:outline-blue-600   dark:bg-blue-500   dark:border-blue-500   dark:hover:bg-blue-400',
@@ -174,23 +215,28 @@ const colorClasses: Record<string, Record<string, string>> = {
 
 const noneBase = 'text-black dark:text-white bg-transparent border-transparent'
 
-/**
- * Computed button classes based on props.
- * Loading state uses normal (non-disabled) visuals — only `disabled` prop affects appearance.
- */
 const componentStyle = computed((): string => {
-    const { size, variant, color, disabled: isExplicitlyDisabled } = props
+    const { size, variant, color, disabled: isExplicitlyDisabled, iconOnly } = props
     const interactive = isDisabled.value ? 'cursor-not-allowed' : 'cursor-pointer'
+    const padClass = iconOnly
+        ? (iconOnlyPadding[size] ?? iconOnlyPadding.base)
+        : (padding[size] ?? padding.base)
 
     if (isExplicitlyDisabled) {
-        return `${common} ${padding[size]} ${disabledClasses[variant]} ${interactive}`
+        return `${common} ${padClass} ${disabledClasses[variant]} ${interactive}`
     }
 
     if (variant === 'none') {
-        return `${common} ${padding[size]} ${noneBase} ${interactive}`
+        return `${common} ${padClass} ${noneBase} ${interactive}`
     }
 
     const colorClass = colorClasses[variant]?.[color] ?? colorClasses[variant]?.['blue'] ?? ''
-    return `${common} ${padding[size]} ${colorClass} ${interactive}`
+    return `${common} ${padClass} ${colorClass} ${interactive}`
+})
+
+onMounted(() => {
+    if (import.meta.env.DEV && props.iconOnly && !attrs['aria-label']) {
+        console.warn('[OuiButton] iconOnly is true but aria-label is not provided. Add an aria-label to describe the button action for screen readers.')
+    }
 })
 </script>

@@ -20,6 +20,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    icon: undefined,
     size: '2xl'
 })
 

@@ -7,6 +7,7 @@
                 aria-modal="true"
                 class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="dialog"
+                :aria-describedby="slots?.description ? descriptionId : undefined"
                 :aria-label="slots?.title ? undefined : ariaLabel"
                 :aria-labelledby="slots?.title ? titleId : undefined"
                 @keydown.esc="close"
@@ -40,6 +41,14 @@
                         >
                             <Icon icon="X" />
                         </Button>
+                    </div>
+
+                    <div
+                        v-if="slots?.description"
+                        :id="descriptionId"
+                        class="px-6 pt-4 text-sm text-gray-600 dark:text-gray-400"
+                    >
+                        <slot name="description" />
                     </div>
 
                     <div
@@ -80,25 +89,12 @@ import Scrim from '@Components/Scrim.vue'
 import useFocusMemory from '@Composables/useFocusMemory'
 import { generateUuid } from '@Utils/uuid'
 
-/**
- * Provides access to slot presence like `footer` and `title`.
- */
 const slots = useSlots()
 
-/**
- * Unique ID for the title element — prevents ID collisions when multiple
- * dialogs exist in the DOM simultaneously.
- */
 const titleId = generateUuid('dialog-title')
+const descriptionId = generateUuid('dialog-desc')
 
-/**
- * Track the open state of the dialog.
- */
 const isOpen = ref(false)
-
-/**
- * Ref to the scrollable content region of the dialog.
- */
 const dialogueContent = ref<HTMLDivElement | null>(null)
 
 interface Props {
@@ -106,41 +102,34 @@ interface Props {
     focusFrom?: string | null
     focusTo?: string | null
     portalTarget?: string
+    /** Dialog width. 'sm'=384px, 'md'=512px (default), 'lg'=672px, 'xl'=896px, 'fullscreen'=full viewport. */
+    size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen'
+    /** @deprecated Use size="sm" instead. */
     small?: boolean
 }
 
-/**
- * Props accepted by the dialog.
- * - ariaLabel: Descriptive label for screen readers.
- * - focusFrom: ID of the element to return focus to when dialog closes.
- * - focusTo: ID of the element to focus when dialog opens.
- * - portalTarget: Target for Teleport (e.g. #portal-target).
- * - small: If true, renders a narrower dialog width.
- */
 const props = withDefaults(defineProps<Props>(), {
     focusFrom: null,
     focusTo: null,
     portalTarget: '#portal-target',
-    small: true
+    size: 'md',
+    small: false
 })
 
-/**
- * Import focus tracking utilities.
- * `focusTo` sets the initial focus; `returnFocus` restores it.
- */
 const { focusTo: applyFocusTo, returnFocus } = useFocusMemory()
 
-/**
- * Returns dialog width class based on `small` prop.
- */
 const sizeClass = computed((): string => {
-    return props.small ? 'w-80 max-w-full' : 'w-full max-w-full'
+    const effectiveSize = props.small ? 'sm' : props.size
+    const map: Record<string, string> = {
+        sm:         'w-full sm:max-w-sm',
+        md:         'w-full sm:max-w-lg',
+        lg:         'w-full sm:max-w-2xl',
+        xl:         'w-full sm:max-w-4xl',
+        fullscreen: 'w-full max-w-full h-full max-h-full'
+    }
+    return map[effectiveSize] ?? map.md
 })
 
-/**
- * Opens the dialog and focuses on the target element.
- * Falls back to the dialog title if `focusTo` is not set.
- */
 const open = async (): Promise<void> => {
     isOpen.value = true
     await nextTick()
@@ -152,16 +141,10 @@ const open = async (): Promise<void> => {
     await applyFocusTo(targetEl)
 }
 
-/**
- * Closes the dialog and restores focus to original trigger.
- */
 const close = (): void => {
     isOpen.value = false
     returnFocus()
 }
 
-/**
- * Expose dialog methods to parent components via ref.
- */
 defineExpose({ open, close, isOpen })
 </script>
