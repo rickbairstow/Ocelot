@@ -43,6 +43,7 @@ export { default as TabPanel } from '@Components/TabPanel.vue'
 export { default as Tabs } from '@Components/Tabs.vue'
 export type { TabsContext } from '@Components/Tabs.vue'
 export { default as Toast } from '@Components/Toast.vue'
+export { default as Tooltip } from '@Components/Tooltip.vue'
 export { default as Video } from '@Components/Video.vue'
 
 /**

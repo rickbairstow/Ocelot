@@ -1653,7 +1653,7 @@ Once Tier 1 components are complete:
 
 | Component | Notes |
 |---|---|
-| Tooltip | Thin wrapper over FloatingPanel — pre-configures `role="tooltip"`, `aria-describedby` wiring, hover-only interaction, and a show delay. Quick win. |
+| ~~Tooltip~~ | ✅ Done |
 | Dropdown Menu | FloatingPanel handles positioning; the menu itself needs its own `role="menu"` / `role="menuitem"` implementation with full keyboard nav (arrows, Home/End, typeahead, Escape). Keep separate from FloatingPanel. |
 | ~~Table~~ | ⏸ On hold — needs its own detailed spec before implementation. |
 | Stats / Metric Card | Dashboard staple |
