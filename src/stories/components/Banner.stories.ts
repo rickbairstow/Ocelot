@@ -76,25 +76,6 @@ export const MultiLine: Story = {
     })
 }
 
-export const AllTypes: Story = {
-    render: () => ({
-        components: { Banner },
-        setup: () => ({ types }),
-        template: `
-            <div class="flex flex-col gap-3">
-                <Banner
-                    v-for="type in types"
-                    :key="type"
-                    :type="type"
-                    :title="type.charAt(0).toUpperCase() + type.slice(1)"
-                >
-                    <p>This is a {{ type }} banner providing inline feedback.</p>
-                </Banner>
-            </div>
-        `
-    })
-}
-
 export const AllVariants: Story = {
     render: () => ({
         components: { Banner },

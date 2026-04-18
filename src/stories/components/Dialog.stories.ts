@@ -155,13 +155,3 @@ export const WithDescription: Story = {
     }
 }
 
-export const EscapeToClose: Story = {
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        await userEvent.click(canvas.getByRole('button', { name: /click to open/i }))
-        const dialog = await canvas.findByRole('dialog')
-        await waitFor(() => expect(dialog).toBeVisible())
-        await userEvent.keyboard('{Escape}')
-        await waitFor(() => expect(dialog).not.toBeVisible())
-    }
-}

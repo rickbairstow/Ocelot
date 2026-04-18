@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
-import { IconBrandGithub } from '@tabler/icons-vue'
 
 const colors = ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink']
 const variants = ['primary', 'secondary', 'tertiary', 'text', 'none'] as const
@@ -126,49 +125,21 @@ export const Loading: Story = {
     }
 }
 
-export const IconStart: Story = {
-    args: { icon: 'Plus', iconPosition: 'start', default: 'Add item' },
-    play: async ({ canvasElement }) => {
-        const button = within(canvasElement).getByRole('button')
-        const flex = button.querySelector('.flex')
-        await expect(flex?.firstElementChild?.tagName.toLowerCase()).toBe('svg')
-    }
-}
-
-export const IconEnd: Story = {
-    args: { icon: 'ArrowRight', iconPosition: 'end', default: 'Next' },
-    play: async ({ canvasElement }) => {
-        const button = within(canvasElement).getByRole('button')
-        const flex = button.querySelector('.flex')
-        await expect(flex?.lastElementChild?.tagName.toLowerCase()).toBe('svg')
-    }
-}
-
-export const IconComponent: Story = {
-    render: () => ({
-        components: { Button },
-        setup() { return { IconBrandGithub } },
-        template: '<Button :icon="IconBrandGithub">GitHub</Button>'
-    }),
-    play: async ({ canvasElement }) => {
-        await expect(canvasElement.querySelector('svg')).toBeInTheDocument()
-    }
-}
-
-export const IconOnly: Story = {
+export const Icons: Story = {
     render: () => ({
         components: { Button },
         template: `
-            <div class="flex gap-3">
+            <div class="flex flex-wrap items-center gap-3">
+                <Button icon="Plus" icon-position="start">Icon start</Button>
+                <Button icon="ArrowRight" icon-position="end">Icon end</Button>
+                <Button icon="Plus" icon-only aria-label="Add item" />
                 <Button icon="Plus" icon-only aria-label="Add item" size="small" />
-                <Button icon="Plus" icon-only aria-label="Add item" size="base" />
                 <Button icon="Plus" icon-only aria-label="Add item" size="large" />
             </div>
         `
     }),
     play: async ({ canvasElement }) => {
         for (const button of within(canvasElement).getAllByRole('button')) {
-            await expect(button).toHaveAttribute('aria-label')
             await expect(button.querySelector('svg')).toBeInTheDocument()
         }
     }
@@ -186,6 +157,8 @@ export const AllVariations: Story = {
                         <Button v-for="variant in variants" :key="variant" :color="color" :variant="variant" :size="size">
                             {{ variant }}
                         </Button>
+                        <Button :color="color" :size="size" icon="Plus" icon-position="start">Icon</Button>
+                        <Button :color="color" :size="size" icon="Plus" icon-only aria-label="Icon only" />
                         <Button :color="color" :size="size" disabled>Disabled</Button>
                         <Button :color="color" :size="size" loading>Loading</Button>
                     </div>

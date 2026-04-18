@@ -5,7 +5,7 @@
             <section
                 v-if="isOpen"
                 aria-modal="true"
-                class="fixed inset-0 z-20 flex flex-col items-stretch justify-end sm:items-center sm:justify-center sm:p-6"
+                class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="dialog"
                 :aria-describedby="slots?.description ? descriptionId : undefined"
                 :aria-label="slots?.title ? undefined : ariaLabel"
@@ -18,37 +18,40 @@
                 />
 
                 <div
-                    class="relative flex flex-col max-h-[92dvh] w-full overflow-hidden text-black bg-white dark:text-white dark:bg-gray-900 z-10 rounded-t-2xl sm:rounded-2xl sm:max-h-[90vh] sm:h-auto"
+                    class="relative flex flex-col w-full h-full sm:h-auto sm:rounded-2xl sm:max-h-[90vh] overflow-hidden text-black bg-white dark:text-white dark:bg-gray-900 z-10"
                     :class="sizeClass"
                 >
                     <div
-                        class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700"
+                        class="flex items-start justify-between shrink-0 border-b border-gray-100 dark:border-gray-700 p-6 gap-4"
                     >
                         <div
-                            :id="titleId"
-                            class="flex p-6"
-                            tabindex="-1"
+                            class="flex flex-col gap-1 min-w-0"
                         >
-                            <slot name="title" />
+                            <div
+                                :id="titleId"
+                                tabindex="-1"
+                            >
+                                <slot name="title" />
+                            </div>
+
+                            <div
+                                v-if="slots?.description"
+                                :id="descriptionId"
+                                class="text-sm text-gray-500 dark:text-gray-400"
+                            >
+                                <slot name="description" />
+                            </div>
                         </div>
 
                         <Button
                             aria-label="Close dialog"
-                            class="mr-2"
+                            class="shrink-0"
                             color="gray"
                             variant="tertiary"
                             @click="close"
                         >
                             <Icon icon="X" />
                         </Button>
-                    </div>
-
-                    <div
-                        v-if="slots?.description"
-                        :id="descriptionId"
-                        class="px-6 pt-4 text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        <slot name="description" />
                     </div>
 
                     <div
@@ -66,15 +69,16 @@
                         <slot name="footer" />
                     </div>
 
-                    <Button
-                        aria-label="Close dialog"
-                        class="sr-only"
-                        color="gray"
-                        variant="tertiary"
-                        @click="close"
-                    >
-                        Close {{ ariaLabel }}
-                    </Button>
+                    <div class="sr-only">
+                        <Button
+                            aria-label="Close dialog"
+                            color="gray"
+                            variant="tertiary"
+                            @click="close"
+                        >
+                            Close {{ ariaLabel }}
+                        </Button>
+                    </div>
                 </div>
             </section>
         </Transition>
@@ -121,11 +125,11 @@ const { focusTo: applyFocusTo, returnFocus } = useFocusMemory()
 const sizeClass = computed((): string => {
     const effectiveSize = props.small ? 'sm' : props.size
     const map: Record<string, string> = {
-        sm:         'w-full sm:max-w-sm',
-        md:         'w-full sm:max-w-lg',
-        lg:         'w-full sm:max-w-2xl',
-        xl:         'w-full sm:max-w-4xl',
-        fullscreen: 'w-full max-w-full h-full max-h-full'
+        sm:         'sm:max-w-sm',
+        md:         'sm:max-w-lg',
+        lg:         'sm:max-w-2xl',
+        xl:         'sm:max-w-4xl',
+        fullscreen: 'sm:max-w-full sm:h-full sm:max-h-full sm:rounded-none'
     }
     return map[effectiveSize] ?? map.md
 })

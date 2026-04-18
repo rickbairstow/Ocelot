@@ -10,12 +10,12 @@
         <!-- Media slot (images, video, etc.) — falls back to imageSrc prop -->
         <figure
             v-if="slots.media || imageSrc"
-            class="overflow-hidden"
-            :class="vertical ? 'w-full h-40' : 'w-[40%] min-w-[120px] max-w-[200px]'"
+            class="overflow-hidden shrink-0"
+            :class="vertical ? 'w-full h-48' : 'w-40 aspect-square'"
         >
             <slot name="media">
-                <Image
-                    class="w-full h-full object-cover flex-none"
+                <img
+                    class="w-full h-full object-cover block"
                     :alt="imageAlt"
                     :src="imageSrc!"
                 />
@@ -89,7 +89,6 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
 import Badge from '@Components/Badge.vue'
-import Image from '@Components/Image.vue'
 
 interface BadgeItem {
     text: string
