@@ -56,7 +56,7 @@ const meta: Meta<typeof Card> = {
         ],
         clickable: false,
         imageAlt: faker.commerce.productName(),
-        imageSrc: faker.image.url({ width: 400, height: 300 }),
+        imageSrc: 'https://picsum.photos/seed/oui-card/400/300',
         selected: false,
         size: 'base',
         title: faker.commerce.productName(),
@@ -99,7 +99,7 @@ export const Horizontal: Story = {
 export const Vertical: Story = {
     args: {
         vertical: true,
-        imageSrc: faker.image.url({ width: 600, height: 240 })
+        imageSrc: 'https://picsum.photos/seed/oui-card-v/600/240'
     }
 }
 

@@ -5,7 +5,7 @@
             <section
                 v-if="isOpen"
                 aria-modal="true"
-                class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
+                class="fixed inset-0 z-20 flex flex-col items-stretch justify-end sm:items-center sm:justify-center sm:p-6"
                 role="dialog"
                 :aria-describedby="slots?.description ? descriptionId : undefined"
                 :aria-label="slots?.title ? undefined : ariaLabel"
@@ -18,7 +18,7 @@
                 />
 
                 <div
-                    class="relative flex flex-col justify-between max-h-full h-full overflow-hidden text-black bg-white dark:text-white dark:bg-gray-900 z-10 sm:h-auto sm:rounded-2xl"
+                    class="relative flex flex-col max-h-[92dvh] w-full overflow-hidden text-black bg-white dark:text-white dark:bg-gray-900 z-10 rounded-t-2xl sm:rounded-2xl sm:max-h-[90vh] sm:h-auto"
                     :class="sizeClass"
                 >
                     <div
@@ -53,7 +53,7 @@
 
                     <div
                         ref="dialogueContent"
-                        class="p-6 bg-white dark:bg-gray-900 overflow-auto"
+                        class="flex-1 min-h-0 p-6 overflow-auto"
                         tabindex="0"
                     >
                         <slot />
@@ -61,7 +61,7 @@
 
                     <div
                         v-if="slots?.footer"
-                        class="flex p-6 border-t border-gray-100 dark:border-gray-700"
+                        class="flex items-center justify-end gap-3 shrink-0 px-6 py-4 border-t border-gray-100 dark:border-gray-700"
                     >
                         <slot name="footer" />
                     </div>

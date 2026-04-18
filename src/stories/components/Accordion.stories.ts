@@ -98,10 +98,6 @@ export const Flush: Story = {
     args: { variant: 'flush' }
 }
 
-export const Contained: Story = {
-    args: { variant: 'contained' }
-}
-
 export const CustomExpandIcon: Story = {
     render: (args) => ({
         components: { Accordion },

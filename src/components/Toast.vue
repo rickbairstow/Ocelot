@@ -133,6 +133,7 @@ import Icon from '@Components/Icon.vue'
 import Button from '@Components/Button.vue'
 import { useToast } from '@Composables/useToast'
 import type { ToastType } from '@Composables/useToast'
+import type { IconName } from '@Composables/useIcons'
 
 type Placement = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
 
@@ -170,7 +171,7 @@ const containerClass = computed(() => [
 
 const transitionName = computed(() => isRight.value ? 'toast-slide-right' : 'toast-slide-left')
 
-const typeIcon: Record<ToastType, string> = {
+const typeIcon: Record<ToastType, IconName> = {
     default: 'Bell',
     success: 'CircleCheck',
     error: 'CircleX',

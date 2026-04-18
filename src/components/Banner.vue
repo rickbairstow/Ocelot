@@ -25,7 +25,9 @@
                 class="font-semibold text-sm mb-0.5"
                 :class="textColorCss"
             >
-                <slot name="title">{{ title }}</slot>
+                <slot name="title">
+                    {{ title }}
+                </slot>
             </h4>
 
             <slot />
@@ -43,8 +45,8 @@
             v-if="dismissible"
             aria-label="Dismiss"
             class="shrink-0 self-start -mt-0.5 -mr-1 p-1 rounded-md opacity-60 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1"
-            :class="[iconColorCss, focusRingCss]"
             type="button"
+            :class="[iconColorCss, focusRingCss]"
             @click="dismiss"
         >
             <Icon

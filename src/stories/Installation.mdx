@@ -8,7 +8,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 - Vue 3.5+
 - Tailwind CSS v4
-- Node.js 24+
+- Node.js 20+
 
 ## Install
 
@@ -18,49 +18,66 @@ npm install ocelot-ui
 
 ## Setup
 
-### 1. Configure Tailwind to scan the library
+### 1. Configure Tailwind
 
-Ocelot UI components use Tailwind utility classes. Add the compiled library to your Tailwind CSS source scanning so the utilities are included in your build. Also add the dark mode variant so `.dark` class toggling works:
+Import the OUI Tailwind plugin in your main CSS file. It adds the `@source` scan for OUI classes, design tokens, and the dark mode variant bridge:
 
 ```css
 /* your main CSS file */
-@source "../node_modules/ocelot-ui/dist/ocelot-ui.es.js";
-@custom-variant dark (&:where(.dark, .dark *));
 @import "tailwindcss";
+@import "ocelot-ui/tailwind.css";
+@custom-variant dark (&:where(.dark, .dark *));
 ```
 
-### 2. Import the library stylesheet
-
-The library ships a small additional stylesheet for dark mode variant configuration and Vue transitions. Import it once in your app entry point or root CSS file:
+### 2. Import Vue transition styles
 
 ```js
 // main.js / main.ts
 import 'ocelot-ui/style.css'
 ```
 
-Or in your root CSS:
+### 3. Use components
 
-```css
-@import 'ocelot-ui/style.css';
+Import components directly — fully tree-shakeable:
+
+```js
+import { Button, Dialog, Toast } from 'ocelot-ui'
 ```
 
-### 3. Register components
+Or register globally:
 
 ```js
 // main.js / main.ts
 import { createApp } from 'vue'
-import OcelotUI from 'ocelot-ui'
+import { Button, Input, Dialog } from 'ocelot-ui'
 import 'ocelot-ui/style.css'
 import App from './App.vue'
 
-createApp(App).use(OcelotUI).mount('#app')
+const app = createApp(App)
+app.component('Button', Button)
+app.component('Input', Input)
+app.component('Dialog', Dialog)
+app.mount('#app')
 ```
 
-Or import individually:
+---
+
+## Icons
+
+OUI uses [Tabler Icons](https://tabler.io/icons). A built-in set of common icons is bundled. To use additional icons, register them once at app startup:
 
 ```js
-import OcelotUI from 'ocelot-ui'
-const { Button, Input, Dialog } = OcelotUI
+import { registerIcons } from 'ocelot-ui'
+import { IconBrandGithub, IconStarFilled } from '@tabler/icons-vue'
+
+registerIcons({ IconBrandGithub, IconStarFilled })
+```
+
+Then reference them by name (without the `Icon` prefix) or pass the component directly:
+
+```vue
+<Icon icon="BrandGithub" />
+<Button :icon="IconBrandGithub">GitHub</Button>
 ```
 
 ---
@@ -86,3 +103,17 @@ Add a `#portal-target` element to your `index.html`:
 <div id="app"></div>
 <div id="portal-target"></div>
 ```
+
+---
+
+## Design tokens
+
+Override OUI's CSS custom properties to customise appearance without a Tailwind rebuild:
+
+```css
+:root {
+    --oui-radius-lg: 0.75rem;
+}
+```
+
+See `ocelot-ui/tailwind.css` for the full list of available tokens.

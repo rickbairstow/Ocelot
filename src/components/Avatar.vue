@@ -8,9 +8,9 @@
         <!-- Image -->
         <img
             v-if="src && !imgError"
-            :alt="alt"
             class="w-full h-full object-cover"
             loading="lazy"
+            :alt="alt"
             :src="src"
             @error="imgError = true"
         />
@@ -63,7 +63,7 @@ const props = withDefaults(defineProps<Props>(), {
     initials: undefined,
     shape: 'circle',
     size: 'base',
-    src: null,
+    src: null
 })
 
 const imgError = ref(false)
@@ -74,7 +74,7 @@ const sizeMap: Record<AvatarSize, string> = {
     base: 'size-10',
     lg:   'size-12',
     xl:   'size-16',
-    '2xl': 'size-20',
+    '2xl': 'size-20'
 }
 
 const initialsSizeMap: Record<AvatarSize, string> = {
@@ -83,7 +83,7 @@ const initialsSizeMap: Record<AvatarSize, string> = {
     base: 'text-base',
     lg:   'text-lg',
     xl:   'text-xl',
-    '2xl': 'text-2xl',
+    '2xl': 'text-2xl'
 }
 
 const iconSizeMap: Record<AvatarSize, IconSize> = {
@@ -92,7 +92,7 @@ const iconSizeMap: Record<AvatarSize, IconSize> = {
     base: 'lg',
     lg:   'xl',
     xl:   '2xl',
-    '2xl': '3xl',
+    '2xl': '3xl'
 }
 
 const colorMap: Record<AvatarColor, string> = {
@@ -104,12 +104,12 @@ const colorMap: Record<AvatarColor, string> = {
     indigo: 'bg-indigo-600 text-white',
     teal:   'bg-teal-700 text-white',
     pink:   'bg-pink-600 text-white',
-    gray:   'bg-gray-500 text-white',
+    gray:   'bg-gray-500 text-white'
 }
 
 const shapeMap: Record<AvatarShape, string> = {
     circle: 'rounded-full',
-    square: 'rounded-lg',
+    square: 'rounded-lg'
 }
 
 const containerCss = computed((): string => {
@@ -120,7 +120,7 @@ const containerCss = computed((): string => {
         sizeMap[props.size],
         shapeMap[props.shape],
         bg,
-        props.href ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500' : '',
+        props.href ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500' : ''
     ].filter(Boolean).join(' ')
 })
 

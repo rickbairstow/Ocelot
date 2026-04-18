@@ -3,20 +3,20 @@
         <Avatar
             v-for="(avatar, i) in visible"
             :key="i"
+            class="ring-2 ring-white dark:ring-gray-900 -ml-2 first:ml-0"
             :alt="avatar.alt"
             :color="avatar.color"
             :initials="avatar.initials"
             :shape="avatar.shape"
             :size="resolvedSize"
             :src="avatar.src"
-            class="ring-2 ring-white dark:ring-gray-900 -ml-2 first:ml-0"
         />
 
         <!-- Overflow badge -->
         <span
             v-if="overflow > 0"
-            :aria-label="`${overflow} more`"
             class="inline-flex items-center justify-center shrink-0 ring-2 ring-white dark:ring-gray-900 -ml-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold select-none"
+            :aria-label="`${overflow} more`"
             :class="[overflowSizeMap[resolvedSize], shapeClass]"
         >
             +{{ overflow }}
@@ -47,7 +47,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     max: 5,
     shape: 'circle',
-    size: 'base',
+    size: 'base'
 })
 
 const resolvedSize = computed((): AvatarSize => props.size)
@@ -61,6 +61,6 @@ const overflowSizeMap: Record<AvatarSize, string> = {
     base: 'size-10 text-sm',
     lg:   'size-12 text-sm',
     xl:   'size-16 text-base',
-    '2xl': 'size-20 text-lg',
+    '2xl': 'size-20 text-lg'
 }
 </script>
