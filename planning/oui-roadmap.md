@@ -1657,7 +1657,7 @@ Once Tier 1 components are complete:
 | Dropdown Menu | FloatingPanel handles positioning; the menu itself needs its own `role="menu"` / `role="menuitem"` implementation with full keyboard nav (arrows, Home/End, typeahead, Escape). Keep separate from FloatingPanel. Complex — needs its own spec before implementation. |
 | ~~Table~~ | ⏸ On hold — needs its own detailed spec before implementation. |
 | ~~Stats / Metric Card~~ | ✅ Done |
-| Empty State | Needed alongside Table and lists |
+| ~~Empty State~~ | ✅ Done |
 | Code Block | Needed for documentation-adjacent products |
 | Timeline | Common in activity feeds |
 | Popover named export | Quick win from FloatingPanel — pre-configure for click-triggered, interactive content (no `role="tooltip"`) |
