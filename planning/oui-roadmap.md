@@ -1622,8 +1622,8 @@ Once Tier 1 components are complete:
 
 | Component | Notes |
 |---|---|
-| Alert / Banner | Inline feedback — needed immediately for form error display |
-| Avatar / AvatarGroup | High-frequency component in almost every product |
+| ~~Alert / Banner~~ | ✅ Done |
+| ~~Avatar / AvatarGroup~~ | ✅ Done |
 | Tabs / TabPanels | Fundamental navigation primitive |
 | Progress (bar + circle) | Needed for file upload, loading states, onboarding |
 | Breadcrumb | Navigation staple |
