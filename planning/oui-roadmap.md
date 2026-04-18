@@ -1627,7 +1627,7 @@ Once Tier 1 components are complete:
 | ~~Tabs / TabPanels~~ | ✅ Done |
 | ~~Progress (bar + circle)~~ | ✅ Done |
 | ~~Breadcrumb~~ | ✅ Done |
-| Pagination | Required alongside Table |
+| ~~Pagination~~ | ✅ Done |
 | Steps / Stepper | Multi-step forms and wizards |
 | Textarea | Form primitive — highest priority form gap |
 | Checkbox + CheckboxGroup | Form primitive |
