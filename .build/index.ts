@@ -5,6 +5,8 @@
  * Enables: import { Sidebar } from 'ocelot-ui'
  */
 export { default as Accordion } from '@Components/Accordion.vue'
+export { default as Banner } from '@Components/Banner.vue'
+export type { BannerType, BannerVariant } from '@Components/Banner.vue'
 export { default as AccordionGroup } from '@Components/AccordionGroup.vue'
 export { default as Badge } from '@Components/Badge.vue'
 export { default as Button } from '@Components/Button.vue'
