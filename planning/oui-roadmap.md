@@ -1659,7 +1659,7 @@ Once Tier 1 components are complete:
 | ~~Stats / Metric Card~~ | ✅ Done |
 | ~~Empty State~~ | ✅ Done |
 | ~~Code Block~~ | ✅ Done — Shiki-powered, dark mode via `.dark` class |
-| Timeline | Common in activity feeds |
+| ~~Timeline~~ | ✅ Done |
 | Popover named export | Quick win from FloatingPanel — pre-configure for click-triggered, interactive content (no `role="tooltip"`) |
 | Quote | Styled blockquote for pull quotes, testimonials, and editorial content. Optional attribution (author + source). Relevant for content-heavy and marketing-adjacent products. |
 
