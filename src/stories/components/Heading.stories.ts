@@ -5,6 +5,14 @@ const meta: Meta<typeof Heading> = {
     title: 'Components/Heading',
     component: Heading,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Semantic heading element (h1–h6) with consistent typographic styles. The visual size can be decoupled from the semantic level using styleLevel, allowing correct document hierarchy without sacrificing design.'
+            }
+        }
+    },
+
     argTypes: {
         default: {
             control: 'text',

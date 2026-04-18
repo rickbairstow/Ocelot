@@ -7,6 +7,14 @@ const meta: Meta<typeof QrCode> = {
     title: 'Components/QrCode',
     component: QrCode,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Generates and renders a QR code from any URL or string value. Supports configurable foreground and background colours, error correction levels, and size, with output as an SVG or canvas element.'
+            }
+        }
+    },
+
     argTypes: {
         background: {
             control: 'color',

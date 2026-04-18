@@ -7,6 +7,14 @@ const meta: Meta<typeof Dialog> = {
     title: 'Components/Dialog',
     component: Dialog,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A modal overlay for focused interactions such as confirmations, forms, and detail views. Manages focus trapping and restoration automatically, and renders outside the component tree via a portal.'
+            }
+        }
+    },
+
     argTypes: {
         ariaLabel: {
             control: 'text',

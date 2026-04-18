@@ -8,6 +8,14 @@ const meta: Meta<typeof Accordion> = {
     title: 'Components/Accordion',
     component: Accordion,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Collapsible content panel with a toggle. Use for FAQs, settings panels, or any content that benefits from progressive disclosure. Multiple accordions can be grouped with AccordionGroup to enforce single-open behaviour.'
+            }
+        }
+    },
+
     argTypes: {
         default: {
             control: 'text',

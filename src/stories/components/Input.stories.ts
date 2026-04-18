@@ -6,6 +6,14 @@ const meta: Meta<typeof Input> = {
     title: 'Components/Input',
     component: Input,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A text input with an associated label, helper text, and error state. Supports prefix and suffix slots for icons or inline actions, and emits both v-model and native input/change events.'
+            }
+        }
+    },
+
     argTypes: {
         autoComplete: {
             control: 'boolean',

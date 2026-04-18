@@ -7,6 +7,14 @@ const meta: Meta<typeof Progress> = {
     title: 'Components/Progress',
     component: Progress,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A bar or circle indicator showing task completion. Supports determinate values with a visible label and percentage, and an indeterminate animated mode for tasks of unknown duration.'
+            }
+        }
+    },
+
     argTypes: {
         color: {
             control: 'select',

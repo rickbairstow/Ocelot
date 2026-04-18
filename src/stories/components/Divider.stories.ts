@@ -5,6 +5,14 @@ const meta: Meta<typeof Divider> = {
     title: 'Components/Divider',
     component: Divider,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A horizontal rule for separating content sections. Supports an optional centred, left-aligned, or right-aligned label and three colour intensities.'
+            }
+        }
+    },
+
     argTypes: {
         color: {
             control: 'select',

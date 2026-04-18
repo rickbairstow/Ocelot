@@ -7,6 +7,14 @@ const meta: Meta<typeof ReadMore> = {
     title: 'Components/ReadMore',
     component: ReadMore,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Truncates long text to a configurable number of lines with an expandable toggle. Toggle label text is customisable for internationalisation. Expands and collapses with a smooth animated transition.'
+            }
+        }
+    },
+
     argTypes: {
         default: {
             control: 'text',

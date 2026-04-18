@@ -17,6 +17,14 @@ const meta: Meta<typeof Tabs> = {
     title: 'Components/Tabs',
     component: Tabs,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A tabbed interface for organising content into switchable panels. Supports line, pill, and contained variants with full keyboard navigation (arrow keys, Home, End). Built from composable Tabs, TabList, Tab, and TabPanel components.'
+            }
+        }
+    },
+
     argTypes: {
         defaultValue: {
             control: 'text',

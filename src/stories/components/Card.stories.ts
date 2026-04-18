@@ -8,6 +8,14 @@ const meta: Meta<typeof Card> = {
     title: 'Components/Card',
     component: Card,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A flexible content container with named slots for header, body, footer, and actions. Supports an image, badge list, clickable state (renders as a button), and a selected/highlighted variant.'
+            }
+        }
+    },
+
     argTypes: {
         badges: {
             control: 'object',

@@ -7,6 +7,14 @@ const meta: Meta<typeof Pagination> = {
     title: 'Components/Pagination',
     component: Pagination,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Page navigation for large data sets. Automatically collapses long page ranges with ellipsis while always showing the first and last page. Supports configurable sibling counts and emits v-model updates on page change.'
+            }
+        }
+    },
+
     argTypes: {
         modelValue: { control: 'number', description: 'Current page (1-based).' },
         siblings: { control: 'number', description: 'Page buttons shown either side of the current page.' },

@@ -11,6 +11,14 @@ const meta: Meta<typeof Badge> = {
     title: 'Components/Badge',
     component: Badge,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Small status indicator for labels, counts, and tags. Supports primary, secondary, and outline variants, a dot mode for minimal indicators, and a removable variant that emits a dismiss event.'
+            }
+        }
+    },
+
     argTypes: {
         color: {
             control: 'select',

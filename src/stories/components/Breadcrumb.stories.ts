@@ -14,6 +14,14 @@ const meta: Meta<typeof Breadcrumb> = {
     title: 'Components/Breadcrumb',
     component: Breadcrumb,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Shows the user\'s current location within the site hierarchy. Supports chevron and slash separators, optional icons per item, and marks the final item with aria-current="page" for accessibility.'
+            }
+        }
+    },
+
     argTypes: {
         separator: {
             control: 'select',

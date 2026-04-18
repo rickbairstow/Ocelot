@@ -15,6 +15,14 @@ const meta: Meta<typeof Stepper> = {
     title: 'Components/Stepper',
     component: Stepper,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A step-by-step progress indicator for multi-step forms and wizards. Supports horizontal and vertical orientations with animated connector lines. Steps can display a number, custom icon, or a checkmark when completed.'
+            }
+        }
+    },
+
     argTypes: {
         modelValue: { control: 'number', description: 'Current step (1-based).' },
         orientation: {

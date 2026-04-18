@@ -6,6 +6,14 @@ const meta: Meta<typeof Loader> = {
     title: 'Components/Loader',
     component: Loader,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'An animated loading indicator. Supports inline, absolute overlay (fills a relative-positioned container), and fixed full-screen variants. Icon, animation style, and colour are all configurable.'
+            }
+        }
+    },
+
     argTypes: {
         animation: {
             control: 'select',

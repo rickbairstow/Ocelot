@@ -10,6 +10,14 @@ const meta: Meta<typeof Banner> = {
     title: 'Components/Banner',
     component: Banner,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Inline feedback message for alerts, warnings, errors, and success states. Sits within page content rather than appearing as a floating notification. Supports subtle, solid, and outline variants with an optional dismiss button.'
+            }
+        }
+    },
+
     argTypes: {
         dismissible: {
             control: 'boolean',

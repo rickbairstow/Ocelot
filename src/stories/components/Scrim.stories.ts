@@ -6,6 +6,14 @@ const meta: Meta<typeof Scrim> = {
     title: 'Components/Scrim',
     component: Scrim,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A semi-transparent overlay that visually blocks content beneath it. Supports absolute (fills a container) and fixed (full-screen) positioning. Can be made clickable to emit a dismiss event for closing panels or modals.'
+            }
+        }
+    },
+
     argTypes: {
         absolute: {
             control: 'boolean',
