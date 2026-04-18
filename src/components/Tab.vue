@@ -104,7 +104,7 @@ const tabClass = computed((): string => {
     if (variant === 'pill') {
         return active
             ? `${baseClasses} px-3 py-1.5 rounded-md bg-white dark:bg-gray-900 shadow text-gray-900 dark:text-white`
-            : `${baseClasses} px-3 py-1.5 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer`
+            : `${baseClasses} px-3 py-1.5 rounded-md text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white cursor-pointer`
     }
 
     if (variant === 'contained') {
