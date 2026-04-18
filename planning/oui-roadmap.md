@@ -1660,7 +1660,7 @@ Once Tier 1 components are complete:
 | ~~Empty State~~ | ✅ Done |
 | ~~Code Block~~ | ✅ Done — Shiki-powered, dark mode via `.dark` class |
 | ~~Timeline~~ | ✅ Done |
-| Popover named export | Quick win from FloatingPanel — pre-configure for click-triggered, interactive content (no `role="tooltip"`) |
+| ~~Popover~~ | ✅ Done |
 | ~~Quote~~ | ✅ Done |
 
 ### Phase 4 — Polish, power features, and 1.0 prep
