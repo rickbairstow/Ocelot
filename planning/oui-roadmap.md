@@ -7,6 +7,12 @@
 
 ## Session Log
 
+### Session 2 — April 2026
+
+**Shipped:** §3 Icon Library (hybrid icon prop, `registerIcons()`, registry expanded to ~115 icons, new stories). §4 Theming & Design Tokens (`--oui-*` tokens, `@theme inline` bridge, single-file CSS consolidation — `tailwind.css` is now the only consumer import). §5 Existing Component Improvements — Button icon support (strict sizes, `iconPosition` start/end/flex-aware), Badge (dot, removable, outline, truncate), Divider (label + labelAlign), Dialog (size prop replacing `small` boolean, description slot), Loader (size + color props), Card (named slots, variant, clickable, selected), Accordion (variant, expandIcon slot), AccordionGroup (exclusive mode via provide/inject), Toast.vue (action button, per-toast icon override, onClose callback), `AccordionGroup` and `useToast` added to library exports. All 121 tests passing. Future consideration recorded: §14 Remove Tailwind / replace with scoped CSS.
+
+---
+
 ### Session 1 — April 2026
 
 **Planning:** Full roadmap written (this document + HTML version).
@@ -46,6 +52,7 @@
 11. [Storybook Requirements](#11-storybook-requirements)
 12. [Prioritised Roadmap](#12-prioritised-roadmap)
 13. [Patterns & Compositions](#13-patterns--compositions)
+14. [Future: Remove Tailwind](#future-remove-tailwind--replace-with-scoped-css)
 
 ---
 
@@ -172,7 +179,7 @@ Understanding what the top libraries do informs both what to build and how to bu
 
 ---
 
-## 3. Icon Library — The Critical Problem
+## 3. Icon Library — ~~The Critical Problem~~ ✅ Done
 
 ### The problem
 
@@ -261,7 +268,7 @@ Grow from 53 to ~120 essential icons covering categories every product UI needs.
 
 ---
 
-## 4. Theming & Design Tokens
+## 4. Theming & Design Tokens ✅ Done
 
 This area is currently undocumented — consumers have no defined way to customise the visual appearance of OUI components.
 
@@ -392,7 +399,7 @@ Existing components should be migrated to these patterns opportunistically (not 
 
 ---
 
-## 5. Existing Component Improvements
+## 5. Existing Component Improvements ✅
 
 ### Button
 
@@ -1896,6 +1903,51 @@ The user's goal of using Claude Code to build a design system from Storybook sto
 - A new pattern can be requested with: "using these OUI components, create a Storybook story that matches the attached screenshot" — Claude Code reads the component API from the story files and existing component sources, then generates a new pattern story
 - The pattern story gets added to `src/stories/patterns/<category>/<PatternName>.stories.ts`
 - It passes `npm run test-storybook` before it is considered done (Axe + play functions)
+
+---
+
+## Future: Remove Tailwind — Replace with Scoped CSS
+
+> **Status:** Not planned for any current phase. Recorded here for future consideration only.
+
+The `--oui-*` design token layer (introduced in §4) was deliberately designed as the stable CSS API, making this migration theoretically straightforward when the time comes.
+
+### How scoped CSS in Vue works
+
+Vue `<style scoped>` CSS is compiled into the component's JS bundle. When a consumer imports a component — `import { Button } from 'ocelot-ui'` — the scoped styles are injected into the page as `<style>` tags by the bundler at runtime. **No separate CSS file needed for component-level styles.** This is the same behaviour as today's `dist/style.css`, but scoped per-component instead of global.
+
+Two things would still require a single global CSS file (`tailwind.css` or its successor):
+- **Design tokens** — `:root { --oui-* }` is inherently global
+- **Vue transition classes** — `.v-enter-active` etc. must be global because Vue applies them to the DOM at runtime, not at component render time
+
+So the consumer import would remain:
+```css
+@import "ocelot-ui/oui.css"; /* tokens + transitions only — no Tailwind */
+```
+
+### What the migration would look like
+
+1. **Replace utility classes with scoped CSS** — each component's `<style scoped>` block replaces Tailwind classes with CSS that references the `--oui-*` tokens directly:
+   ```css
+   /* Button.vue <style scoped> */
+   .btn {
+       border-radius: var(--oui-radius-lg);
+       transition: background-color var(--oui-transition-duration) ease;
+   }
+   ```
+2. **Remove `@tailwindcss/vite` from the build** — Tailwind is no longer a peer dependency
+3. **Remove `@theme inline` from `tailwind.css`** — the Tailwind bridge is gone; `tailwind.css` becomes a plain CSS file with just tokens and transitions
+4. **Responsive utilities** — see below
+
+### Responsive breakpoints
+
+Tailwind provides responsive utilities (`sm:`, `md:`, `lg:` prefixes) used throughout components. Replacing these requires a globally available breakpoint system. Options at migration time:
+
+- **CSS `@container` queries** — modern, no global config needed; components respond to their container size rather than the viewport. Preferred for a library.
+- **CSS custom media queries** — define once in `tailwind.css` and use in scoped styles: `@media (--oui-screen-md) { ... }`
+- **Hardcoded `@media` breakpoints** — simplest; match Tailwind's default scale (`640px`, `768px`, `1024px`, `1280px`, `1536px`) to avoid visible changes
+
+The breakpoints would need to match whatever the consumer's project uses, or be documented as fixed values that consumers cannot override (which is acceptable for a component library).
 
 ---
 

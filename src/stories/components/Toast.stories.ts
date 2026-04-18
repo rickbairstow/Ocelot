@@ -106,6 +106,107 @@ export const AllTypes: Story = {
     }
 }
 
+export const WithAction: Story = {
+    render: () => ({
+        components: { Toast },
+        setup() {
+            const { add, clear } = useToast()
+            const addWithAction = () => add('File deleted.', {
+                type: 'default',
+                action: { label: 'Undo', onClick: () => console.log('Undo clicked') }
+            })
+            return { addWithAction, clear }
+        },
+        template: `
+            <div id="portal-target"></div>
+
+            <button @click="addWithAction">Add toast with action</button>
+
+            <Toast placement="top-right" />
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const { clear } = useToast()
+        clear()
+
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button', { name: /add toast with action/i }))
+
+        const toast = await canvas.findByRole('status')
+        await waitFor(() => expect(toast).toBeVisible())
+
+        const actionBtn = canvas.getByRole('button', { name: /undo/i })
+        await expect(actionBtn).toBeVisible()
+        await userEvent.click(actionBtn)
+
+        await waitFor(() => expect(canvas.queryByRole('status')).not.toBeInTheDocument())
+    }
+}
+
+export const WithCustomIcon: Story = {
+    render: () => ({
+        components: { Toast },
+        setup() {
+            const { add, clear } = useToast()
+            const addWithIcon = () => add('Custom icon toast.', { icon: 'Star', type: 'info' })
+            return { addWithIcon, clear }
+        },
+        template: `
+            <div id="portal-target"></div>
+
+            <button @click="addWithIcon">Add custom icon toast</button>
+
+            <Toast placement="top-right" />
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const { clear } = useToast()
+        clear()
+
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button', { name: /add custom icon/i }))
+
+        const toast = await canvas.findByRole('status')
+        await waitFor(() => expect(toast).toBeVisible())
+    }
+}
+
+export const WithOnClose: Story = {
+    render: () => ({
+        components: { Toast },
+        setup() {
+            const { add, clear } = useToast()
+            const log = (msg: string) => console.log(msg)
+            const addWithClose = () => add('Closing will trigger callback.', {
+                onClose: () => log('Toast closed!')
+            })
+            return { addWithClose, clear }
+        },
+        template: `
+            <div id="portal-target"></div>
+
+            <button @click="addWithClose">Add toast with onClose</button>
+
+            <Toast placement="top-right" />
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const { clear } = useToast()
+        clear()
+
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button', { name: /add toast with onclose/i }))
+
+        const toast = await canvas.findByRole('status')
+        await waitFor(() => expect(toast).toBeVisible())
+
+        const dismiss = canvas.getByRole('button', { name: /dismiss notification/i })
+        await userEvent.click(dismiss)
+
+        await waitFor(() => expect(canvas.queryByRole('status')).not.toBeInTheDocument())
+    }
+}
+
 export const TopRight: Story = {
     args: { placement: 'top-right' },
     play: async ({ canvasElement }) => {
@@ -189,7 +290,6 @@ export const Permanent: Story = {
         const toast = await canvas.findByRole('status')
         await waitFor(() => expect(toast).toBeVisible())
 
-        // Wait beyond default duration to confirm it has not auto-dismissed
         await new Promise((r) => setTimeout(r, 5000))
         await expect(toast).toBeVisible()
     }
@@ -231,18 +331,15 @@ export const StackingDemo: Story = {
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /add 6 toasts/i }))
 
-        // Only 5 should be visible
         await waitFor(async () => {
             const statuses = canvas.queryAllByRole('status')
             const alerts = canvas.queryAllByRole('alert')
             expect(statuses.length + alerts.length).toBe(5)
         })
 
-        // Overflow indicator should be present
         const moreText = await canvas.findByText(/1 more notification/i)
         await expect(moreText).toBeVisible()
 
-        // Expand to show all
         await userEvent.click(canvas.getByRole('button', { name: /show all/i }))
 
         await waitFor(async () => {

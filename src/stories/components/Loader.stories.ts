@@ -10,33 +10,43 @@ const meta: Meta<typeof Loader> = {
         animation: {
             control: 'select',
             options: ['bounce', 'none', 'ping', 'pulse', 'spin'],
-            description:
-                'The animation to display the loader as, this changes the animation speed.'
+            description: 'Animation applied to the loader icon.'
+        },
+        color: {
+            control: 'select',
+            options: ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink', 'gray', 'default'],
+            description: 'Color of the icon and text.'
         },
         icon: {
             control: 'select',
             options: ['Loader', 'Loader2', 'Loader3'],
-            description: 'Change the displayed icon.'
+            description: 'Icon to display.'
+        },
+        size: {
+            control: 'select',
+            options: ['xs', 'sm', 'base', 'lg', 'xl'],
+            description: 'Size of the loader icon and text.'
         },
         text: {
             control: 'text',
-            description: 'Optional text to display with the loader.'
+            description: 'Optional text to display alongside the loader.'
         },
         variant: {
             control: 'select',
             options: ['absolute', 'fixed', 'inline'],
-            description:
-                'The variant to display the loader as, this changes positioning and sizing.'
+            description: 'Positioning variant.'
         },
         vertical: {
             control: 'boolean',
-            description: 'Set the loader to be vertical.'
+            description: 'Stack icon and text vertically.'
         }
     },
 
     args: {
         animation: 'spin',
+        color: 'default',
         icon: 'Loader2',
+        size: 'base',
         text: `${faker.lorem.sentence(2)}...`,
         variant: 'inline',
         vertical: false
@@ -44,15 +54,15 @@ const meta: Meta<typeof Loader> = {
 
     render: (args) => ({
         components: { Loader },
-
         setup() {
             return { args }
         },
-
         template: `
             <Loader
                 :animation="args.animation"
+                :color="args.color"
                 :icon="args.icon"
+                :size="args.size"
                 :text="args.text"
                 :variant="args.variant"
                 :vertical="args.vertical"
@@ -67,25 +77,48 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 export const Absolute: Story = {
-    args: {
-        variant: 'absolute'
-    }
+    args: { variant: 'absolute' }
 }
 
 export const Fixed: Story = {
-    args: {
-        variant: 'fixed'
-    }
+    args: { variant: 'fixed' }
 }
 
 export const Inline: Story = {
-    args: {
-        variant: 'inline'
-    }
+    args: { variant: 'inline' }
+}
+
+export const Vertical: Story = {
+    args: { vertical: true }
 }
 
 export const WithAlternateIcon: Story = {
-    args: {
-        icon: 'Photo'
-    }
+    args: { icon: 'Photo' }
+}
+
+export const AllSizes: Story = {
+    render: () => ({
+        components: { Loader },
+        setup: () => ({ sizes: ['xs', 'sm', 'base', 'lg', 'xl'] }),
+        template: `
+            <div class="flex flex-col gap-4">
+                <Loader v-for="size in sizes" :key="size" :size="size" :text="size" />
+            </div>
+        `
+    })
+}
+
+export const AllColors: Story = {
+    render: () => ({
+        components: { Loader },
+        setup: () => ({ colors: ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink', 'gray'] }),
+        template: `
+            <div class="flex flex-col gap-4">
+                <div v-for="color in colors" :key="color" class="flex items-center gap-3">
+                    <Loader :color="color" />
+                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ color }}</span>
+                </div>
+            </div>
+        `
+    })
 }

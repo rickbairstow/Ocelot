@@ -1,15 +1,16 @@
 /* This exposes files and components for the build process and bundles them up to the /dist folder. */
 
 /**
- * CSS Imports
- */
-import '@Css/core.scss'
-
-/**
  * Component Exports
  * Enables: import { Sidebar } from 'ocelot-ui'
  */
 export { default as Accordion } from '@Components/Accordion.vue'
+export { default as AccordionGroup } from '@Components/AccordionGroup.vue'
+export { default as Avatar } from '@Components/Avatar.vue'
+export type { AvatarSize, AvatarColor, AvatarShape } from '@Components/Avatar.vue'
+export { default as AvatarGroup } from '@Components/AvatarGroup.vue'
+export { default as Banner } from '@Components/Banner.vue'
+export type { BannerType, BannerVariant } from '@Components/Banner.vue'
 export { default as Badge } from '@Components/Badge.vue'
 export { default as Button } from '@Components/Button.vue'
 export { default as Card } from '@Components/Card.vue'
@@ -31,3 +32,15 @@ export { default as Scrim } from '@Components/Scrim.vue'
 export { default as Sidebar } from '@Components/Sidebar.vue'
 export { default as Toast } from '@Components/Toast.vue'
 export { default as Video } from '@Components/Video.vue'
+
+/**
+ * Composable exports
+ */
+export { useToast } from '@Composables/useToast'
+export type { ToastOptions, ToastItem, ToastType, ToastAction } from '@Composables/useToast'
+
+/**
+ * Icon utilities
+ */
+export { registerIcons } from '@Composables/useIcons'
+export type { IconName, IconProp, IconSize } from '@Composables/useIcons'

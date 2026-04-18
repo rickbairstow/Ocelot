@@ -7,6 +7,7 @@
                 aria-modal="true"
                 class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="dialog"
+                :aria-describedby="slots?.description ? descriptionId : undefined"
                 :aria-label="slots?.title ? undefined : ariaLabel"
                 :aria-labelledby="slots?.title ? titleId : undefined"
                 @keydown.esc="close"
@@ -17,23 +18,34 @@
                 />
 
                 <div
-                    class="relative flex flex-col justify-between max-h-full h-full overflow-hidden text-black bg-white dark:text-white dark:bg-gray-900 z-10 sm:h-auto sm:rounded-2xl"
+                    class="relative flex flex-col w-full h-full sm:h-auto sm:rounded-2xl sm:max-h-[90vh] overflow-hidden text-black bg-white dark:text-white dark:bg-gray-900 z-10"
                     :class="sizeClass"
                 >
                     <div
-                        class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700"
+                        class="flex items-start justify-between shrink-0 border-b border-gray-100 dark:border-gray-700 p-6 gap-4"
                     >
                         <div
-                            :id="titleId"
-                            class="flex p-6"
-                            tabindex="-1"
+                            class="flex flex-col gap-1 min-w-0"
                         >
-                            <slot name="title" />
+                            <div
+                                :id="titleId"
+                                tabindex="-1"
+                            >
+                                <slot name="title" />
+                            </div>
+
+                            <div
+                                v-if="slots?.description"
+                                :id="descriptionId"
+                                class="text-sm text-gray-500 dark:text-gray-400"
+                            >
+                                <slot name="description" />
+                            </div>
                         </div>
 
                         <Button
                             aria-label="Close dialog"
-                            class="mr-2"
+                            class="shrink-0"
                             color="gray"
                             variant="tertiary"
                             @click="close"
@@ -44,7 +56,7 @@
 
                     <div
                         ref="dialogueContent"
-                        class="p-6 bg-white dark:bg-gray-900 overflow-auto"
+                        class="flex-1 min-h-0 p-6 overflow-auto"
                         tabindex="0"
                     >
                         <slot />
@@ -52,20 +64,21 @@
 
                     <div
                         v-if="slots?.footer"
-                        class="flex p-6 border-t border-gray-100 dark:border-gray-700"
+                        class="flex items-center justify-end gap-3 shrink-0 px-6 py-4 border-t border-gray-100 dark:border-gray-700"
                     >
                         <slot name="footer" />
                     </div>
 
-                    <Button
-                        aria-label="Close dialog"
-                        class="sr-only"
-                        color="gray"
-                        variant="tertiary"
-                        @click="close"
-                    >
-                        Close {{ ariaLabel }}
-                    </Button>
+                    <div class="sr-only">
+                        <Button
+                            aria-label="Close dialog"
+                            color="gray"
+                            variant="tertiary"
+                            @click="close"
+                        >
+                            Close {{ ariaLabel }}
+                        </Button>
+                    </div>
                 </div>
             </section>
         </Transition>
@@ -80,25 +93,12 @@ import Scrim from '@Components/Scrim.vue'
 import useFocusMemory from '@Composables/useFocusMemory'
 import { generateUuid } from '@Utils/uuid'
 
-/**
- * Provides access to slot presence like `footer` and `title`.
- */
 const slots = useSlots()
 
-/**
- * Unique ID for the title element — prevents ID collisions when multiple
- * dialogs exist in the DOM simultaneously.
- */
 const titleId = generateUuid('dialog-title')
+const descriptionId = generateUuid('dialog-desc')
 
-/**
- * Track the open state of the dialog.
- */
 const isOpen = ref(false)
-
-/**
- * Ref to the scrollable content region of the dialog.
- */
 const dialogueContent = ref<HTMLDivElement | null>(null)
 
 interface Props {
@@ -106,41 +106,34 @@ interface Props {
     focusFrom?: string | null
     focusTo?: string | null
     portalTarget?: string
+    /** Dialog width. 'sm'=384px, 'md'=512px (default), 'lg'=672px, 'xl'=896px, 'fullscreen'=full viewport. */
+    size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen'
+    /** @deprecated Use size="sm" instead. */
     small?: boolean
 }
 
-/**
- * Props accepted by the dialog.
- * - ariaLabel: Descriptive label for screen readers.
- * - focusFrom: ID of the element to return focus to when dialog closes.
- * - focusTo: ID of the element to focus when dialog opens.
- * - portalTarget: Target for Teleport (e.g. #portal-target).
- * - small: If true, renders a narrower dialog width.
- */
 const props = withDefaults(defineProps<Props>(), {
     focusFrom: null,
     focusTo: null,
     portalTarget: '#portal-target',
-    small: true
+    size: 'md',
+    small: false
 })
 
-/**
- * Import focus tracking utilities.
- * `focusTo` sets the initial focus; `returnFocus` restores it.
- */
 const { focusTo: applyFocusTo, returnFocus } = useFocusMemory()
 
-/**
- * Returns dialog width class based on `small` prop.
- */
 const sizeClass = computed((): string => {
-    return props.small ? 'w-80 max-w-full' : 'w-full max-w-full'
+    const effectiveSize = props.small ? 'sm' : props.size
+    const map: Record<string, string> = {
+        sm:         'sm:max-w-sm',
+        md:         'sm:max-w-lg',
+        lg:         'sm:max-w-2xl',
+        xl:         'sm:max-w-4xl',
+        fullscreen: 'sm:max-w-full sm:h-full sm:max-h-full sm:rounded-none'
+    }
+    return map[effectiveSize] ?? map.md
 })
 
-/**
- * Opens the dialog and focuses on the target element.
- * Falls back to the dialog title if `focusTo` is not set.
- */
 const open = async (): Promise<void> => {
     isOpen.value = true
     await nextTick()
@@ -152,16 +145,10 @@ const open = async (): Promise<void> => {
     await applyFocusTo(targetEl)
 }
 
-/**
- * Closes the dialog and restores focus to original trigger.
- */
 const close = (): void => {
     isOpen.value = false
     returnFocus()
 }
 
-/**
- * Expose dialog methods to parent components via ref.
- */
 defineExpose({ open, close, isOpen })
 </script>

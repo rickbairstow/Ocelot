@@ -19,6 +19,8 @@
                     "screen",
                     "source",
                     "tailwind",
+                    "theme",
+                    "utility",
                     "variants"
                 ]
             }

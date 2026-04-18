@@ -6,9 +6,21 @@ const meta: Meta<typeof Divider> = {
     component: Divider,
 
     argTypes: {
-        default: {
+        color: {
+            control: 'select',
+            options: ['default', 'subtle', 'strong'],
+            description: 'Color intensity of the divider.'
+        },
+
+        label: {
             control: 'text',
-            description: 'Optional label text'
+            description: 'Optional label text rendered in the divider line.'
+        },
+
+        labelAlign: {
+            control: 'select',
+            options: ['start', 'center', 'end'],
+            description: 'Horizontal alignment of the label.'
         },
 
         orientation: {
@@ -21,38 +33,31 @@ const meta: Meta<typeof Divider> = {
             control: 'select',
             options: ['solid', 'dashed', 'dotted'],
             description: 'Border style of the divider.'
-        },
-
-        color: {
-            control: 'select',
-            options: ['default', 'subtle', 'strong'],
-            description: 'Color intensity of the divider.'
         }
     },
 
     args: {
-        default: '',
+        color: 'default',
+        label: '',
+        labelAlign: 'center',
         orientation: 'horizontal',
-        variant: 'solid',
-        color: 'default'
+        variant: 'solid'
     },
 
     render: (args) => ({
         components: { Divider },
-
         setup() {
             return { args }
         },
-
         template: `
             <div class="p-6 w-96">
                 <Divider
+                    :color="args.color"
+                    :label="args.label || undefined"
+                    :label-align="args.labelAlign"
                     :orientation="args.orientation"
                     :variant="args.variant"
-                    :color="args.color"
-                >
-                    <template v-if="args.default">{{ args.default }}</template>
-                </Divider>
+                />
             </div>
         `
     })
@@ -63,28 +68,32 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 
-export const WithText: Story = {
-    args: {
-        default: 'or'
-    }
+export const WithLabel: Story = {
+    args: { label: 'or' }
+}
+
+export const LabelStart: Story = {
+    args: { label: 'Section', labelAlign: 'start' }
+}
+
+export const LabelEnd: Story = {
+    args: { label: 'Section', labelAlign: 'end' }
 }
 
 export const Dashed: Story = {
-    args: {
-        variant: 'dashed'
-    }
+    args: { variant: 'dashed' }
 }
 
 export const Dotted: Story = {
-    args: {
-        variant: 'dotted'
-    }
+    args: { variant: 'dotted' }
 }
 
 export const Strong: Story = {
-    args: {
-        color: 'strong'
-    }
+    args: { color: 'strong' }
+}
+
+export const Subtle: Story = {
+    args: { color: 'subtle' }
 }
 
 export const Vertical: Story = {
