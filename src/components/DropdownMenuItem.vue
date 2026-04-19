@@ -18,8 +18,10 @@
         <span
             v-if="shortcut"
             aria-hidden="true"
-            class="ms-auto text-xs tracking-widest opacity-50"
-        >{{ shortcut }}</span>
+            class="ms-auto text-xs tracking-widest"
+        >
+            {{ shortcut }}
+        </span>
     </component>
 </template>
 
