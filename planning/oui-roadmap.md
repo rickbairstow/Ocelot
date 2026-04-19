@@ -9,7 +9,13 @@
 
 ### Session 4 — April 2026
 
-**Shipped:** Form components accessibility audit. All five failures from the previous session resolved (Switch `label-title-only` axe, Checkbox indeterminate timing, Textarea counter contrast). Full WCAG 2.1 AA audit of all form primitives then applied: `aria-checked="mixed"` on indeterminate Checkbox; CheckboxGroup converted to `<fieldset>/<legend>` with `label` prop; Radio `effectiveId` bug fixed (FormField inputId was injected but never used); FormField `role="alert"` + `aria-live="polite"` conflict resolved; Textarea character count linked to input via `aria-describedby`. All 245 tests passing.
+**Shipped:** Form components accessibility audit — all five prior test failures resolved (Switch `label-title-only` axe, Checkbox indeterminate DOM timing, Textarea counter contrast). Full WCAG 2.1 AA audit of all form primitives: `aria-checked="mixed"` on indeterminate Checkbox; CheckboxGroup converted to `<fieldset>/<legend>` with `label` prop; Radio `effectiveId` bug fixed; FormField `role="alert"` + `aria-live="polite"` conflict resolved; Textarea character count linked via `aria-describedby`.
+
+**Input type extensions** — Password show/hide eye toggle (built-in, disabled-aware); Search clear (×) button (appears reactively); Number `min`/`max`/`step` props; `type` prop narrowed to a union; `'search'` added to style lookup. Five new stories with play functions.
+
+**SkipLink component** — `sr-only` until focused (`focus:not-sr-only`); `target` prop (default `"main"`), `label` prop (default `"Skip to main content"`). WCAG 2.4.1 Bypass Blocks. Two stories.
+
+All 253 tests passing.
 
 ---
 
