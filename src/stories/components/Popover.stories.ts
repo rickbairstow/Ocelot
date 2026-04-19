@@ -46,9 +46,11 @@ export const Default: Story = {
     render: (args) => ({
         components: { Popover, Button },
         setup() {
-            const body = faker.lorem.sentences(2)
-            const title = faker.lorem.words(3)
-            return { args, body, title }
+            return {
+                args,
+                title: 'Popover title',
+                body: 'Popover body content'
+            }
         },
         template: `
             <div class="flex justify-center p-16">
@@ -74,13 +76,15 @@ export const Default: Story = {
         await userEvent.click(trigger)
 
         await waitFor(() => {
-            expect(trigger).toHaveAttribute('aria-expanded', 'true')
+            expect(canvas.getByText('Popover title')).toBeVisible()
+            expect(canvas.getByText('Popover body content')).toBeVisible()
         })
 
         await userEvent.click(trigger)
 
         await waitFor(() => {
-            expect(trigger).toHaveAttribute('aria-expanded', 'false')
+            expect(canvas.queryByText('Popover title')).not.toBeInTheDocument()
+            expect(canvas.queryByText('Popover body content')).not.toBeInTheDocument()
         })
     }
 }
