@@ -179,11 +179,78 @@ export const GroupFlush: Story = {
                     :key="item.id"
                     :id="item.id"
                     :title="item.title"
-                    variant="flush"
                 >
                     {{ item.body }}
                 </Accordion>
             </AccordionGroup>
         `
     })
+}
+
+export const GroupContained: Story = {
+    render: () => ({
+        components: { Accordion, AccordionGroup },
+        setup: () => ({
+            items: [
+                { id: 'c1', title: 'First item', body: faker.lorem.paragraph() },
+                { id: 'c2', title: 'Second item', body: faker.lorem.paragraph() },
+                { id: 'c3', title: 'Third item', body: faker.lorem.paragraph() }
+            ]
+        }),
+        template: `
+            <AccordionGroup variant="contained" default-open="c1">
+                <Accordion
+                    v-for="item in items"
+                    :key="item.id"
+                    :id="item.id"
+                    :title="item.title"
+                >
+                    {{ item.body }}
+                </Accordion>
+            </AccordionGroup>
+        `
+    }),
+    async play({ canvasElement }) {
+        const firstDetails = canvasElement.querySelectorAll('details')[0]
+        await expect(firstDetails.open).toBe(true)
+    }
+}
+
+export const GroupNonExclusive: Story = {
+    render: () => ({
+        components: { Accordion, AccordionGroup },
+        setup: () => ({
+            items: [
+                { id: 'd1', title: 'First item', body: faker.lorem.paragraph() },
+                { id: 'd2', title: 'Second item', body: faker.lorem.paragraph() },
+                { id: 'd3', title: 'Third item', body: faker.lorem.paragraph() }
+            ]
+        }),
+        template: `
+            <AccordionGroup :exclusive="false">
+                <Accordion
+                    v-for="item in items"
+                    :key="item.id"
+                    :id="item.id"
+                    :title="item.title"
+                >
+                    {{ item.body }}
+                </Accordion>
+            </AccordionGroup>
+        `
+    }),
+    async play({ canvasElement }) {
+        const summaries = canvasElement.querySelectorAll('summary span')
+        const details = canvasElement.querySelectorAll('details')
+
+        await userEvent.click(summaries[0])
+        await new Promise((r) => setTimeout(r, 150))
+        await expect(details[0].open).toBe(true)
+
+        // Open second — first must stay open (non-exclusive)
+        await userEvent.click(summaries[1])
+        await new Promise((r) => setTimeout(r, 150))
+        await expect(details[1].open).toBe(true)
+        await expect(details[0].open).toBe(true)
+    }
 }

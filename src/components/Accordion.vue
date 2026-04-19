@@ -94,6 +94,7 @@ const variantContentMap: Record<string, string> = {
     contained: 'bg-white dark:bg-gray-900'
 }
 
-const containerCss = computed(() => variantContainerMap[props.variant] ?? variantContainerMap.default)
-const contentCss = computed(() => variantContentMap[props.variant] ?? '')
+const effectiveVariant = computed(() => group?.variant.value ?? props.variant)
+const containerCss = computed(() => variantContainerMap[effectiveVariant.value] ?? variantContainerMap.default)
+const contentCss = computed(() => variantContentMap[effectiveVariant.value] ?? '')
 </script>
