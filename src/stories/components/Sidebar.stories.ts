@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Sidebar from '@Components/Sidebar.vue'
+import SidebarNavGroup from '@Components/SidebarNavGroup.vue'
+import SidebarNavItem from '@Components/SidebarNavItem.vue'
 import { ref } from 'vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
@@ -129,4 +131,57 @@ export const Left: Story = {
 export const Right: Story = {
     args: { side: 'right' },
     play: Left.play // same test logic
+}
+
+export const WithNav: Story = {
+    render: () => ({
+        components: { Sidebar, SidebarNavGroup, SidebarNavItem },
+        setup() {
+            const sidebar = ref<InstanceType<typeof Sidebar> | null>(null)
+            const active = ref('dashboard')
+            return { sidebar, active }
+        },
+        template: `
+            <button
+                class="mb-4 border px-3 py-2 rounded bg-gray-100 hover:bg-gray-200"
+                type="button"
+                @click="sidebar.open()"
+            >
+                Open Sidebar
+            </button>
+
+            <Sidebar ref="sidebar">
+                <template #title>My App</template>
+
+                <nav aria-label="Navigation" class="flex flex-col gap-1 p-2">
+                    <SidebarNavGroup label="Main">
+                        <SidebarNavItem icon="LayoutDashboard" href="#" :active="active === 'dashboard'" @click.prevent="active = 'dashboard'">Dashboard</SidebarNavItem>
+                        <SidebarNavItem icon="Users" href="#" :active="active === 'team'" @click.prevent="active = 'team'" :badge="4">Team</SidebarNavItem>
+                        <SidebarNavItem icon="FolderOpen" href="#" :active="active === 'projects'" @click.prevent="active = 'projects'">Projects</SidebarNavItem>
+                    </SidebarNavGroup>
+
+                    <SidebarNavGroup label="Settings">
+                        <SidebarNavItem icon="Settings" href="#" :active="active === 'settings'" @click.prevent="active = 'settings'">Settings</SidebarNavItem>
+                        <SidebarNavItem icon="Lock" disabled>Admin only</SidebarNavItem>
+                    </SidebarNavGroup>
+                </nav>
+            </Sidebar>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button', { name: /open sidebar/i }))
+
+        const nav = await canvas.findByRole('navigation', { name: /navigation/i })
+        await waitFor(() => expect(nav).toBeVisible())
+
+        const dashboardLink = canvas.getByRole('link', { name: /dashboard/i })
+        await expect(dashboardLink).toHaveAttribute('aria-current', 'page')
+
+        await userEvent.click(canvas.getByRole('link', { name: /team/i }))
+        await expect(canvas.getByRole('link', { name: /team/i })).toHaveAttribute('aria-current', 'page')
+        await expect(dashboardLink).not.toHaveAttribute('aria-current')
+
+        await expect(canvas.getByRole('button', { name: /admin only/i })).toBeDisabled()
+    }
 }

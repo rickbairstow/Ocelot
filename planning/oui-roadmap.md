@@ -1675,7 +1675,7 @@ Once Tier 1 components are complete:
 | ~~`AccordionGroup` exclusive mode~~ | ✅ Done | Variant inheritance via provide/inject; non-exclusive mode; GroupContained + GroupNonExclusive stories |
 | ~~Card slot-based sub-components~~ | ✅ Done | Already refactored; added SelectableToggle + CardGrid stories |
 | ~~Dialog — `size` prop + `ConfirmDialog`~~ | ✅ Done | `size` already done; added ConfirmPattern story, fixed close button layout, fullscreen keeps rounded corners |
-| Sidebar nav sub-components | — | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` |
+| ~~Sidebar nav sub-components~~ | ✅ Done | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` — with icon, active, badge, disabled, collapsible group support |
 | Toast action buttons | — | Update |
 | Badge — dot, removable, outline | — | Update |
 | `prefers-reduced-motion` audit | — | All animated components |

@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-1">
         <button
             v-if="collapsible && label"
-            class="flex w-full items-center justify-between px-2 py-1 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            class="flex w-full items-center justify-between px-2 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             :aria-expanded="isExpanded"
             @click="isExpanded = !isExpanded"
         >
@@ -16,7 +16,7 @@
 
         <p
             v-else-if="label"
-            class="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500"
+            class="px-2 py-1 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >
             {{ label }}
         </p>

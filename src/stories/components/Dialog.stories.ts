@@ -253,17 +253,17 @@ export const ConfirmPattern: Story = {
         const canvas = within(canvasElement)
 
         await userEvent.click(canvas.getByRole('button', { name: /delete item/i }))
-        const dialog = await canvas.findByRole('dialog')
-        await waitFor(() => expect(dialog).toBeVisible())
-
+        const dialog1 = await canvas.findByRole('dialog')
+        await waitFor(() => expect(dialog1).toBeVisible())
         await userEvent.click(canvas.getByRole('button', { name: /^delete$/i }))
-        await waitFor(() => expect(dialog).not.toBeVisible())
+        await waitFor(() => expect(dialog1).not.toBeVisible())
         await expect(canvas.getByTestId('result')).toHaveTextContent('confirmed')
 
         await userEvent.click(canvas.getByRole('button', { name: /delete item/i }))
-        await waitFor(() => expect(dialog).toBeVisible())
+        const dialog2 = await canvas.findByRole('dialog')
+        await waitFor(() => expect(dialog2).toBeVisible())
         await userEvent.click(canvas.getByRole('button', { name: /cancel/i }))
-        await waitFor(() => expect(dialog).not.toBeVisible())
+        await waitFor(() => expect(dialog2).not.toBeVisible())
         await expect(canvas.getByTestId('result')).toHaveTextContent('cancelled')
     }
 }
