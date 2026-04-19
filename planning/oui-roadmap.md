@@ -1654,7 +1654,7 @@ Once Tier 1 components are complete:
 | Component | Notes |
 |---|---|
 | ~~Tooltip~~ | ✅ Done |
-| Dropdown Menu | FloatingPanel handles positioning; the menu itself needs its own `role="menu"` / `role="menuitem"` implementation with full keyboard nav (arrows, Home/End, typeahead, Escape). Keep separate from FloatingPanel. Complex — needs its own spec before implementation. |
+| ~~Dropdown Menu~~ | ✅ Done — 7-component family with full keyboard nav, typeahead, ARIA semantics, floating positioning. Sub-menus deferred. |
 | ~~Table~~ | ⏸ On hold — needs its own detailed spec before implementation. |
 | ~~Stats / Metric Card~~ | ✅ Done |
 | ~~Empty State~~ | ✅ Done |
