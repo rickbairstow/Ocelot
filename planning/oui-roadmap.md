@@ -7,6 +7,12 @@
 
 ## Session Log
 
+### Session 4 — April 2026
+
+**Shipped:** Form components accessibility audit. All five failures from the previous session resolved (Switch `label-title-only` axe, Checkbox indeterminate timing, Textarea counter contrast). Full WCAG 2.1 AA audit of all form primitives then applied: `aria-checked="mixed"` on indeterminate Checkbox; CheckboxGroup converted to `<fieldset>/<legend>` with `label` prop; Radio `effectiveId` bug fixed (FormField inputId was injected but never used); FormField `role="alert"` + `aria-live="polite"` conflict resolved; Textarea character count linked to input via `aria-describedby`. All 245 tests passing.
+
+---
+
 ### Session 3 — April 2026
 
 **Audit:** Full codebase audit against current build. Roadmap reconciled against actual component files. TypeScript errors surfaced and catalogued. Component-by-component UX, accessibility, and usability review completed. Findings written to §15. Key discoveries: `SidebarNavGroup` and `SidebarNavItem` missing from library exports; `HelloWorld` incorrectly exported; 12 TypeScript errors across components and stories; no `prefers-reduced-motion` support in any animated component; `vite-plugin-dts` absent (consumers receive no `.d.ts` types from the npm package); several component-level a11y and UX issues logged for individual fix sessions. RTL audit confirms logical CSS properties used in most places but physical `left-`/`right-` still present in positioning components (Toast, Sidebar, Card selected indicator).
@@ -1685,6 +1691,7 @@ Once Tier 1 components are complete:
 | ~~Toast action buttons~~ | ✅ Done | `action`, `onClose`, `icon` in useToast; full stories present |
 | ~~Badge — dot, removable, outline~~ | ✅ Done | dot, removable, outline, truncate, AllVariations story |
 | ~~`prefers-reduced-motion` audit~~ | ✅ Done | CSS `@media` block in `core.scss` for Vue slide/toast/fade transitions; `motion-reduce:animate-none` on Loader, Button spinner, Image skeleton, Placeholder; `motion-reduce:transition-none` on Image LQIP, Progress bar, DropdownMenuContent, FloatingPanel; computed style for Progress circle SVG |
+| ~~Form components accessibility audit~~ | ✅ Done | Checkbox: `aria-checked="mixed"` for indeterminate (native `indeterminate` DOM prop is not exposed to AT); CheckboxGroup: converted `role="group"` div → `<fieldset>/<legend>` with `label` prop (matching RadioGroup); Radio: `formField?.inputId` was injected but ignored — now used as `effectiveId`; FormField: removed conflicting `aria-live="polite"` from `role="alert"` error paragraph, added `aria-live="polite"` to hint paragraph; Textarea: character count div now has an ID and is merged into `aria-describedby` so AT users hear the limit on focus. Switch: track changed from `<label>` to `aria-hidden div` with programmatic click forwarding to eliminate `label-title-only` axe violation. |
 
 ---
 
