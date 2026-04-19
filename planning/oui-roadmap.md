@@ -15,7 +15,11 @@
 
 **SkipLink component** — `sr-only` until focused (`focus:not-sr-only`); `target` prop (default `"main"`), `label` prop (default `"Skip to main content"`). WCAG 2.4.1 Bypass Blocks. Two stories.
 
-All 253 tests passing.
+**`culori` removed** — unused dead weight (~8KB); re-add only if a custom ColorPicker is built.
+
+**Date/Time inputs** — `type="date"`, `type="time"`, `type="datetime-local"` added to Input union; `min`/`max` widened to `number | string` to accept date strings. Three new stories.
+
+All 256 tests passing.
 
 ---
 
@@ -1306,6 +1310,12 @@ Distinct from Alert: Callout is static/editorial content; Alert is operational f
 #### ~~SkipLink~~
 
 ✅ Done — `sr-only` until focused; `target` prop (default `"main"`), `label` prop (default `"Skip to main content"`). WCAG 2.4.1 Bypass Blocks.
+
+---
+
+#### ~~Callout~~
+
+❌ Removed — duplicate of Banner. `tip` type added to Banner instead (emerald palette, Bulb icon, `role="status"`). No separate Callout component needed.
 
 ---
 

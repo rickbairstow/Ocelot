@@ -171,6 +171,18 @@ export const CustomIcon: Story = {
     })
 }
 
+export const Tip: Story = {
+    render: () => ({
+        components: { Banner },
+        template: '<Banner type="tip" title="Pro tip">You can press Cmd+K to open the command palette from anywhere.</Banner>'
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await expect(canvas.getByText('Pro tip')).toBeInTheDocument()
+        await expect(canvasElement.querySelector('[role="status"]')).not.toBeNull()
+    }
+}
+
 export const ErrorRole: Story = {
     args: { type: 'error', title: 'Submission failed' },
     render: (args) => ({
