@@ -219,6 +219,45 @@ export const NumberInput: Story = {
     }
 }
 
+export const DateInput: Story = {
+    render: () => ({
+        components: { Input },
+        setup() { return { value: ref('') } },
+        template: '<Input v-model="value" type="date" label="Date of birth" name="dob" min="1900-01-01" :max="new Date().toISOString().slice(0,10)" />'
+    }),
+    play: async ({ canvasElement }) => {
+        const input = within(canvasElement).getByLabelText('Date of birth') as HTMLInputElement
+        await expect(input).toHaveAttribute('type', 'date')
+        await expect(input).toHaveAttribute('min', '1900-01-01')
+    }
+}
+
+export const TimeInput: Story = {
+    render: () => ({
+        components: { Input },
+        setup() { return { value: ref('') } },
+        template: '<Input v-model="value" type="time" label="Meeting time" name="meeting-time" min="09:00" max="17:00" />'
+    }),
+    play: async ({ canvasElement }) => {
+        const input = within(canvasElement).getByLabelText('Meeting time') as HTMLInputElement
+        await expect(input).toHaveAttribute('type', 'time')
+        await expect(input).toHaveAttribute('min', '09:00')
+        await expect(input).toHaveAttribute('max', '17:00')
+    }
+}
+
+export const DateTimeInput: Story = {
+    render: () => ({
+        components: { Input },
+        setup() { return { value: ref('') } },
+        template: '<Input v-model="value" type="datetime-local" label="Appointment" name="appointment" />'
+    }),
+    play: async ({ canvasElement }) => {
+        const input = within(canvasElement).getByLabelText('Appointment') as HTMLInputElement
+        await expect(input).toHaveAttribute('type', 'datetime-local')
+    }
+}
+
 export const WithFormField: Story = {
     render: () => ({
         components: { Input, FormField },

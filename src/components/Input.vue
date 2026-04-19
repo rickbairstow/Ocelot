@@ -92,7 +92,7 @@ import Icon from '@Components/Icon.vue'
 import { generateUuid } from '@Utils/uuid'
 import { useFormField } from '@Composables/useFormField'
 
-type InputType = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url'
+type InputType = 'text' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'url' | 'date' | 'time' | 'datetime-local'
 
 const slots = useSlots()
 const uuid = generateUuid('input')
@@ -104,9 +104,9 @@ interface Props {
     autoComplete?: boolean
     disabled?: boolean
     label?: string
-    max?: number | null
+    max?: number | string | null
     maxlength?: number
-    min?: number | null
+    min?: number | string | null
     minlength?: number | null
     modelValue: string | number | boolean | string[] | null
     name: string
@@ -150,7 +150,7 @@ const hasSuffix = computed(() =>
 
 const typeLookup: Record<string, { types: string[]; style: { default: string; disabled: string; placeholder: string } }> = {
     text: {
-        types: ['email', 'number', 'password', 'search', 'tel', 'text', 'url'],
+        types: ['date', 'datetime-local', 'email', 'number', 'password', 'search', 'tel', 'text', 'time', 'url'],
         style: {
             default: 'border border-gray-500 text-gray-900 bg-white dark:border-gray-600 dark:text-gray-100 dark:bg-gray-800',
             disabled: 'border border-gray-300 text-gray-600 bg-gray-100 dark:border-gray-600 dark:text-gray-400 dark:bg-gray-700',

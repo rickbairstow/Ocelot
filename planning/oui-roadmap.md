@@ -123,13 +123,13 @@ Before adding anything new, the existing dependency model warrants scrutiny. Sev
 | `photoswipe` | ^5.4.4 | ~18KB gzip | Only used by LightboxImage — consumers without galleries pay for it |
 | `plyr` | ^3.8.4 | ~38KB gzip | Only used by Video — consumers without video pay for it |
 | `qrcode` | ^1.5.4 | ~25KB gzip | Only used by QrCode — consumers without QR pay for it |
-| `culori` | ^4.0.2 | ~8KB gzip | Currently unused beyond potential ColorPicker — dead weight today |
+| ~~`culori`~~ | ~~^4.0.2~~ | ~~~8KB gzip~~ | ✅ Removed — was unused dead weight; re-add if ColorPicker is ever built |
 
 ### Recommended actions
 
 1. **`photoswipe`, `plyr`, `qrcode`** — move to `peerDependencies` (optional). Consumers must install them only if they use `LightboxImage`, `Video`, or `QrCode` respectively. Provide clear installation instructions and a dev-mode warning if the library is used but not installed.
 
-2. **`culori`** — currently has no active consumer in the library. Remove from dependencies until a `ColorPicker` component is actively being built. Adds dead weight today.
+2. ~~**`culori`**~~ — ✅ Removed.
 
 3. **`@floating-ui/dom`** — keep as a full dependency. It is used by FloatingPanel (core) and will be used by Combobox, DropdownMenu, and Tooltip. The size is acceptable and consumers get it automatically.
 
@@ -1329,8 +1329,8 @@ Forms are a significant workstream deserving their own detailed spec. Key gaps a
 | ~~Input[type=password]~~ | ~~1~~ | ✅ Done — built-in show/hide eye toggle; disabled state handled |
 | ~~Input[type=number]~~ | ~~2~~ | ✅ Done — `min`, `max`, `step` props bound to native input |
 | ~~Input[type=search]~~ | ~~2~~ | ✅ Done — clear (×) button appears when value is non-empty |
-| Date / Time pickers | 2 | Native `<input type="date">`, `type="time"`, `type="datetime-local">` first — styled wrappers; avoid a custom calendar if the native picker is sufficient |
-| ColorPicker | 3 | Native `<input type="color">` as a starting point; `culori` is already a dependency if more control is needed |
+| ~~Date / Time pickers~~ | ~~2~~ | ✅ Done — `type="date"`, `type="time"`, `type="datetime-local"` added to Input; `min`/`max` props widened to `number \| string` to accept date strings |
+| ColorPicker | 3 | Native `<input type="color">` as a starting point |
 | File Upload | 2 | Drag-and-drop zone, file list, upload progress integration |
 | Range / Slider | 2 | Single handle; dual-handle for min/max range |
 | Combobox | 3 | Searchable select using Floating UI (already a dependency) |
