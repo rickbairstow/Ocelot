@@ -36,11 +36,11 @@ import Scrim from './Scrim.vue'
 import type { IconSize } from '@Composables/useIcons'
 
 const animationLookup: Record<string, string> = {
-    bounce: 'animate-bounce',
+    bounce: 'animate-bounce motion-reduce:animate-none',
     none: 'animate-none',
-    ping: 'animate-ping',
-    pulse: 'animate-pulse',
-    spin: 'animate-spin'
+    ping: 'animate-ping motion-reduce:animate-none',
+    pulse: 'animate-pulse motion-reduce:animate-none',
+    spin: 'animate-spin motion-reduce:animate-none'
 }
 
 interface Props {

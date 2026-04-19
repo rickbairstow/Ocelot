@@ -1,5 +1,5 @@
 <template>
-    <div class="animate-pulse">
+    <div class="animate-pulse motion-reduce:animate-none">
         <!-- Badge -->
         <div
             v-if="variant === 'badge'"

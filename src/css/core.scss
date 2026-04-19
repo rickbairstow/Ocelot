@@ -100,3 +100,31 @@
 .toast-slide-left-leave-active {
     position: absolute;
 }
+
+@media (prefers-reduced-motion: reduce) {
+    .v-enter-active,
+    .v-leave-active,
+    .slide-right-enter-active,
+    .slide-right-leave-active,
+    .slide-left-enter-active,
+    .slide-left-leave-active,
+    .toast-slide-right-enter-active,
+    .toast-slide-right-leave-active,
+    .toast-slide-left-enter-active,
+    .toast-slide-left-leave-active,
+    .toast-slide-right-move,
+    .toast-slide-left-move {
+        transition: none !important;
+    }
+
+    .slide-right-enter-from,
+    .slide-right-leave-to,
+    .slide-left-enter-from,
+    .slide-left-leave-to,
+    .toast-slide-right-enter-from,
+    .toast-slide-right-leave-to,
+    .toast-slide-left-enter-from,
+    .toast-slide-left-leave-to {
+        transform: none;
+    }
+}

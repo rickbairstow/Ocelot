@@ -1,9 +1,9 @@
 <template>
     <Transition
-        enter-active-class="transition-[opacity,transform] duration-100 ease-out"
+        enter-active-class="transition-[opacity,transform] duration-100 ease-out motion-reduce:transition-none"
         enter-from-class="opacity-0 scale-95"
         enter-to-class="opacity-100 scale-100"
-        leave-active-class="transition-[opacity,transform] duration-75 ease-in"
+        leave-active-class="transition-[opacity,transform] duration-75 ease-in motion-reduce:transition-none"
         leave-from-class="opacity-100 scale-100"
         leave-to-class="opacity-0 scale-95"
     >

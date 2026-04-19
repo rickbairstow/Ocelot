@@ -34,7 +34,7 @@
             class="absolute inset-0 flex items-center justify-center"
         >
             <Icon
-                class="animate-spin"
+                class="animate-spin motion-reduce:animate-none"
                 :icon="loadingIcon"
                 :size="spinnerSize"
             />

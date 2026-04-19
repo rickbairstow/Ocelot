@@ -1684,7 +1684,7 @@ Once Tier 1 components are complete:
 | ~~Sidebar nav sub-components~~ | ✅ Done | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` — with icon, active, badge, disabled, collapsible group support |
 | ~~Toast action buttons~~ | ✅ Done | `action`, `onClose`, `icon` in useToast; full stories present |
 | ~~Badge — dot, removable, outline~~ | ✅ Done | dot, removable, outline, truncate, AllVariations story |
-| `prefers-reduced-motion` audit | ⏳ Pending | All animated components |
+| ~~`prefers-reduced-motion` audit~~ | ✅ Done | CSS `@media` block in `core.scss` for Vue slide/toast/fade transitions; `motion-reduce:animate-none` on Loader, Button spinner, Image skeleton, Placeholder; `motion-reduce:transition-none` on Image LQIP, Progress bar, DropdownMenuContent, FloatingPanel; computed style for Progress circle SVG |
 
 ---
 

@@ -25,12 +25,12 @@
             >
                 <div
                     v-if="!isIndeterminate"
-                    :class="[colorFillClass, 'h-full rounded-full transition-[width] duration-500 ease-out']"
+                    :class="[colorFillClass, 'h-full rounded-full transition-[width] duration-500 ease-out motion-reduce:transition-none']"
                     :style="{ width: `${percentage}%` }"
                 />
                 <div
                     v-else
-                    :class="[colorFillClass, 'absolute inset-y-0 w-1/3 rounded-full [animation:oui-indeterminate_1.5s_ease-in-out_infinite]']"
+                    :class="[colorFillClass, 'absolute inset-y-0 w-1/3 rounded-full [animation:oui-indeterminate_1.5s_ease-in-out_infinite] motion-reduce:animate-none']"
                 />
             </div>
         </template>
@@ -64,7 +64,7 @@
                         r="15.9155"
                         stroke-linecap="round"
                         stroke-width="2.5"
-                        style="transition: stroke-dasharray 0.5s ease-out"
+                        :style="circleTransitionStyle"
                         :class="colorStrokeClass"
                         :stroke-dasharray="`${percentage} ${100 - percentage}`"
                     />
@@ -80,6 +80,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
+const prefersReducedMotion = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const circleTransitionStyle = prefersReducedMotion ? {} : { transition: 'stroke-dasharray 0.5s ease-out' }
 
 interface Props {
     color?: 'blue' | 'green' | 'red' | 'orange' | 'purple' | 'indigo' | 'teal' | 'pink'
