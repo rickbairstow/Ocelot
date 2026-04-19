@@ -1631,7 +1631,7 @@ Once Tier 1 components are complete:
 | `registerIcons()` composable | New export | Consumer extensibility |
 | Icon registry expansion (~120 icons) | Update `useIcons.ts` | Many new components need icons that aren't currently registered |
 | `Button` — prefix/suffix icon props + `iconOnly` variant | Update | First-class icon support is expected by every consumer |
-| `ButtonGroup` component | New | Used in toolbars, segmented controls, dialog footers |
+| ~~`ButtonGroup` component~~ | ✅ Done | Used in toolbars, segmented controls, dialog footers |
 | `Tooltip` named export | Thin wrapper | Highest-frequency missing pattern — affects every interactive component that needs hover help text |
 | `FormField` wrapper | New | Required foundation before any new form component is added |
 | Export `useToast` from library root | Update entry point | DX improvement; consumers currently import from an internal path |
