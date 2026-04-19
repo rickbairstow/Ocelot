@@ -1322,11 +1322,11 @@ Forms are a significant workstream deserving their own detailed spec. Key gaps a
 | Checkbox | 1 | With indeterminate state; `CheckboxGroup` wrapper |
 | Radio / RadioGroup | 1 | Horizontal and vertical layouts; `fieldset/legend` pattern |
 | Switch / Toggle | 1 | Replaces checkbox in on/off UIs; `role="switch"`, `aria-checked` |
-| Input[type=tel] | 1 | Extend existing Input with type support — native `<input type="tel">` |
-| Input[type=email] | 1 | Native `<input type="email">` with built-in browser validation |
-| Input[type=password] | 1 | Show/hide toggle; native `<input type="password">` |
-| Input[type=number] | 2 | Native number input; optional increment/decrement stepper buttons |
-| Input[type=search] | 2 | Native `<input type="search">` with clear button |
+| ~~Input[type=tel]~~ | ~~1~~ | ✅ Done |
+| ~~Input[type=email]~~ | ~~1~~ | ✅ Done |
+| ~~Input[type=password]~~ | ~~1~~ | ✅ Done — built-in show/hide eye toggle; disabled state handled |
+| ~~Input[type=number]~~ | ~~2~~ | ✅ Done — `min`, `max`, `step` props bound to native input |
+| ~~Input[type=search]~~ | ~~2~~ | ✅ Done — clear (×) button appears when value is non-empty |
 | Date / Time pickers | 2 | Native `<input type="date">`, `type="time"`, `type="datetime-local">` first — styled wrappers; avoid a custom calendar if the native picker is sufficient |
 | ColorPicker | 3 | Native `<input type="color">` as a starting point; `culori` is already a dependency if more control is needed |
 | File Upload | 2 | Drag-and-drop zone, file list, upload progress integration |
