@@ -1673,7 +1673,7 @@ Once Tier 1 components are complete:
 | **Accordion — ARIA cleanup** | ✅ Done (partial) | Redundant attrs removed; full `<button>` migration still outstanding |
 | CSS custom property theming | — | `--oui-radius`, `--oui-shadow`, `--oui-transition-duration` |
 | ~~`AccordionGroup` exclusive mode~~ | ✅ Done | Variant inheritance via provide/inject; non-exclusive mode; GroupContained + GroupNonExclusive stories |
-| Card slot-based sub-components | — | Refactor (backwards-compatible) |
+| ~~Card slot-based sub-components~~ | ✅ Done | Already refactored; added SelectableToggle + CardGrid stories |
 | Dialog — `size` prop + `ConfirmDialog` | — | Remaining from above |
 | Sidebar nav sub-components | — | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` |
 | Toast action buttons | — | Update |
