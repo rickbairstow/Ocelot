@@ -1672,7 +1672,7 @@ Once Tier 1 components are complete:
 | **Dialog — title slot + `aria-labelledby` + `aria-modal`** | ✅ Done (partial) | Sizes and ConfirmDialog still outstanding |
 | **Accordion — ARIA cleanup** | ✅ Done (partial) | Redundant attrs removed; full `<button>` migration still outstanding |
 | CSS custom property theming | — | `--oui-radius`, `--oui-shadow`, `--oui-transition-duration` |
-| `AccordionGroup` exclusive mode | — | Update to existing component |
+| ~~`AccordionGroup` exclusive mode~~ | ✅ Done | Variant inheritance via provide/inject; non-exclusive mode; GroupContained + GroupNonExclusive stories |
 | Card slot-based sub-components | — | Refactor (backwards-compatible) |
 | Dialog — `size` prop + `ConfirmDialog` | — | Remaining from above |
 | Sidebar nav sub-components | — | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` |
