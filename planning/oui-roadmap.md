@@ -1297,13 +1297,9 @@ Distinct from Alert: Callout is static/editorial content; Alert is operational f
 
 ---
 
-#### SkipLink
+#### ~~SkipLink~~
 
-A single accessibility utility: a "Skip to main content" link that is visually hidden until focused — required by WCAG 2.4.1 Bypass Blocks.
-
-**Props:** `target` (ID of main content element, default: `"main"`)
-
-**Story:** Focus demo showing the link appearing on Tab press.
+✅ Done — `sr-only` until focused; `target` prop (default `"main"`), `label` prop (default `"Skip to main content"`). WCAG 2.4.1 Bypass Blocks.
 
 ---
 
