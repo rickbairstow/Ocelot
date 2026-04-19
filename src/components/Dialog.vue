@@ -7,7 +7,6 @@
                 aria-modal="true"
                 class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="dialog"
-                :aria-describedby="slots?.description ? descriptionId : undefined"
                 :aria-label="slots?.title ? undefined : ariaLabel"
                 :aria-labelledby="slots?.title ? titleId : undefined"
                 @keydown.esc="close"
@@ -22,30 +21,19 @@
                     :class="sizeClass"
                 >
                     <div
-                        class="flex items-start justify-between shrink-0 border-b border-gray-100 dark:border-gray-700 p-6 gap-4"
+                        class="flex items-center justify-between shrink-0 border-b border-gray-100 dark:border-gray-700"
                     >
                         <div
-                            class="flex flex-col gap-1 min-w-0"
+                            :id="titleId"
+                            class="px-6 py-4"
+                            tabindex="-1"
                         >
-                            <div
-                                :id="titleId"
-                                tabindex="-1"
-                            >
-                                <slot name="title" />
-                            </div>
-
-                            <div
-                                v-if="slots?.description"
-                                :id="descriptionId"
-                                class="text-sm text-gray-500 dark:text-gray-400"
-                            >
-                                <slot name="description" />
-                            </div>
+                            <slot name="title" />
                         </div>
 
                         <Button
                             aria-label="Close dialog"
-                            class="shrink-0"
+                            class="self-start mr-2 mt-2"
                             color="gray"
                             variant="tertiary"
                             @click="close"
@@ -96,7 +84,6 @@ import { generateUuid } from '@Utils/uuid'
 const slots = useSlots()
 
 const titleId = generateUuid('dialog-title')
-const descriptionId = generateUuid('dialog-desc')
 
 const isOpen = ref(false)
 const dialogueContent = ref<HTMLDivElement | null>(null)
@@ -120,6 +107,8 @@ const props = withDefaults(defineProps<Props>(), {
     small: false
 })
 
+const emit = defineEmits<{ close: [] }>()
+
 const { focusTo: applyFocusTo, returnFocus } = useFocusMemory()
 
 const sizeClass = computed((): string => {
@@ -129,7 +118,7 @@ const sizeClass = computed((): string => {
         md:         'sm:max-w-lg',
         lg:         'sm:max-w-2xl',
         xl:         'sm:max-w-4xl',
-        fullscreen: 'sm:max-w-full sm:h-full sm:max-h-full sm:rounded-none'
+        fullscreen: 'sm:max-w-full sm:h-full sm:max-h-full'
     }
     return map[effectiveSize] ?? map.md
 })
@@ -146,8 +135,10 @@ const open = async (): Promise<void> => {
 }
 
 const close = (): void => {
+    if (!isOpen.value) return
     isOpen.value = false
     returnFocus()
+    emit('close')
 }
 
 defineExpose({ open, close, isOpen })

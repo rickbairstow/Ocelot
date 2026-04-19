@@ -46,7 +46,7 @@
                     >
                         <Icon
                             aria-hidden="true"
-                            class="py-2"
+                            class="my-2"
                             size="xl"
                             :class="typeIconColor[toast.type]"
                             :icon="toast.icon ?? typeIcon[toast.type]"

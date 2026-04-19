@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import Card from '@Components/Card.vue'
 import Badge from '@Components/Badge.vue'
 import { faker } from '@faker-js/faker'
+import { ref } from 'vue'
 import { expect, userEvent, within } from 'storybook/test'
 
 const meta: Meta<typeof Card> = {
@@ -131,7 +132,71 @@ export const Clickable: Story = {
 }
 
 export const Selected: Story = {
-    args: { selected: true, clickable: true, imageSrc: null }
+    args: { selected: true, clickable: true, imageSrc: null },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const card = canvas.getByRole('button')
+        await expect(card).toHaveClass('ring-2')
+        const tick = canvasElement.querySelector('[aria-hidden="true"]')
+        await expect(tick).toBeVisible()
+    }
+}
+
+export const SelectableToggle: Story = {
+    render: () => ({
+        components: { Card },
+        setup() {
+            const selected = ref(false)
+            return { selected, title: faker.commerce.productName(), body: faker.lorem.paragraph() }
+        },
+        template: `
+            <Card
+                clickable
+                :selected="selected"
+                :title="title"
+                @click="selected = !selected"
+            >
+                {{ body }}
+            </Card>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const card = canvas.getByRole('button')
+
+        await expect(card).not.toHaveClass('ring-2')
+        await userEvent.click(card)
+        await expect(card).toHaveClass('ring-2')
+        await userEvent.click(card)
+        await expect(card).not.toHaveClass('ring-2')
+    }
+}
+
+export const CardGrid: Story = {
+    render: () => ({
+        components: { Card },
+        setup: () => ({
+            items: Array.from({ length: 6 }, () => ({
+                title: faker.commerce.productName(),
+                body: faker.lorem.sentence(),
+                img: `https://picsum.photos/seed/${faker.string.alphanumeric(6)}/400/300`
+            }))
+        }),
+        template: `
+            <div class="grid grid-cols-3 gap-4 w-full">
+                <Card
+                    v-for="(item, i) in items"
+                    :key="i"
+                    class="!w-auto"
+                    vertical
+                    :image-src="item.img"
+                    :title="item.title"
+                >
+                    {{ item.body }}
+                </Card>
+            </div>
+        `
+    })
 }
 
 export const WithNamedSlots: Story = {

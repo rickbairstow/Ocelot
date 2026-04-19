@@ -1631,7 +1631,7 @@ Once Tier 1 components are complete:
 | `registerIcons()` composable | New export | Consumer extensibility |
 | Icon registry expansion (~120 icons) | Update `useIcons.ts` | Many new components need icons that aren't currently registered |
 | `Button` — prefix/suffix icon props + `iconOnly` variant | Update | First-class icon support is expected by every consumer |
-| `ButtonGroup` component | New | Used in toolbars, segmented controls, dialog footers |
+| ~~`ButtonGroup` component~~ | ✅ Done | Used in toolbars, segmented controls, dialog footers |
 | `Tooltip` named export | Thin wrapper | Highest-frequency missing pattern — affects every interactive component that needs hover help text |
 | `FormField` wrapper | New | Required foundation before any new form component is added |
 | Export `useToast` from library root | Update entry point | DX improvement; consumers currently import from an internal path |
@@ -1654,7 +1654,7 @@ Once Tier 1 components are complete:
 | Component | Notes |
 |---|---|
 | ~~Tooltip~~ | ✅ Done |
-| Dropdown Menu | FloatingPanel handles positioning; the menu itself needs its own `role="menu"` / `role="menuitem"` implementation with full keyboard nav (arrows, Home/End, typeahead, Escape). Keep separate from FloatingPanel. Complex — needs its own spec before implementation. |
+| ~~Dropdown Menu~~ | ✅ Done — 7-component family with full keyboard nav, typeahead, ARIA semantics, floating positioning. Sub-menus deferred. |
 | ~~Table~~ | ⏸ On hold — needs its own detailed spec before implementation. |
 | ~~Stats / Metric Card~~ | ✅ Done |
 | ~~Empty State~~ | ✅ Done |
@@ -1672,12 +1672,12 @@ Once Tier 1 components are complete:
 | **Dialog — title slot + `aria-labelledby` + `aria-modal`** | ✅ Done (partial) | Sizes and ConfirmDialog still outstanding |
 | **Accordion — ARIA cleanup** | ✅ Done (partial) | Redundant attrs removed; full `<button>` migration still outstanding |
 | CSS custom property theming | — | `--oui-radius`, `--oui-shadow`, `--oui-transition-duration` |
-| `AccordionGroup` exclusive mode | — | Update to existing component |
-| Card slot-based sub-components | — | Refactor (backwards-compatible) |
-| Dialog — `size` prop + `ConfirmDialog` | — | Remaining from above |
-| Sidebar nav sub-components | — | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` |
-| Toast action buttons | — | Update |
-| Badge — dot, removable, outline | — | Update |
+| ~~`AccordionGroup` exclusive mode~~ | ✅ Done | Variant inheritance via provide/inject; non-exclusive mode; GroupContained + GroupNonExclusive stories |
+| ~~Card slot-based sub-components~~ | ✅ Done | Already refactored; added SelectableToggle + CardGrid stories |
+| ~~Dialog — `size` prop + `ConfirmDialog`~~ | ✅ Done | `size` already done; added ConfirmPattern story, fixed close button layout, fullscreen keeps rounded corners |
+| ~~Sidebar nav sub-components~~ | ✅ Done | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` — with icon, active, badge, disabled, collapsible group support |
+| ~~Toast action buttons~~ | ✅ Done | Already implemented — `action`, `onClose`, `icon` in useToast; full stories present |
+| ~~Badge — dot, removable, outline~~ | ✅ Done | Already implemented — dot, removable, outline, truncate, AllVariations story |
 | `prefers-reduced-motion` audit | — | All animated components |
 | SSR/Nuxt audit | — | Guard browser API usage |
 | Bundle size limit in CI | — | `size-limit` or `bundlesize` |

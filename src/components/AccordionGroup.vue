@@ -9,10 +9,12 @@
 
 <script setup lang="ts">
 import { ref, provide, computed } from 'vue'
+import type { ComputedRef } from 'vue'
 
 export interface AccordionGroupContext {
     activeId: ReturnType<typeof ref<string | null>>
     open: (id: string) => void
+    variant: ComputedRef<'default' | 'flush' | 'contained'>
 }
 
 interface Props {
@@ -33,7 +35,9 @@ const open = (id: string) => {
     if (props.exclusive) activeId.value = id
 }
 
-provide<AccordionGroupContext>('accordionGroup', { activeId, open })
+const groupVariant = computed(() => props.variant)
+
+provide<AccordionGroupContext>('accordionGroup', { activeId, open, variant: groupVariant })
 
 const gap = computed(() => props.variant === 'flush' ? '' : 'gap-2')
 </script>

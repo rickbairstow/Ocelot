@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Dialog from '@Components/Dialog.vue'
+import Button from '@Components/Button.vue'
+import { faker } from '@faker-js/faker'
 import { ref } from 'vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
@@ -134,22 +136,22 @@ export const Fullscreen: Story = {
     }
 }
 
-export const WithDescription: Story = {
+export const WithScrollingContent: Story = {
     render: () => ({
         components: { Dialog },
         setup() {
-            const dialog = ref<{ open(): void } | null>(null)
-            return { dialog }
+            const dialog = ref<InstanceType<typeof Dialog> | null>(null)
+            return { dialog, body: faker.lorem.paragraphs(12) }
         },
         template: `
             <div id="portal-target"></div>
-
             <button id="dialogTrigger" @click="dialog.open()">Open dialog</button>
-
-            <Dialog ref="dialog" aria-label="Confirm delete" focus-from="dialogTrigger">
-                <template #title>Confirm deletion</template>
-                <template #description>This action cannot be undone. All associated data will be permanently removed.</template>
-                Are you sure you want to delete this item?
+            <Dialog ref="dialog" aria-label="Long content" focus-from="dialogTrigger">
+                <template #title>Long content dialog</template>
+                <p class="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{{ body }}</p>
+                <template #footer>
+                    <button @click="dialog.close()">Close</button>
+                </template>
             </Dialog>
         `
     }),
@@ -158,8 +160,110 @@ export const WithDescription: Story = {
         await userEvent.click(canvas.getByRole('button', { name: /open dialog/i }))
         const dialog = await canvas.findByRole('dialog')
         await waitFor(() => expect(dialog).toBeVisible())
-        const desc = canvas.getByText(/cannot be undone/i)
-        await expect(desc).toBeVisible()
     }
 }
 
+export const WithForm: Story = {
+    render: () => ({
+        components: { Dialog },
+        setup() {
+            const dialog = ref<InstanceType<typeof Dialog> | null>(null)
+            return { dialog }
+        },
+        template: `
+            <div id="portal-target"></div>
+            <button id="dialogTrigger" @click="dialog.open()">Open form dialog</button>
+            <Dialog ref="dialog" aria-label="Edit profile" focus-from="dialogTrigger">
+                <template #title>Edit profile</template>
+                <form class="flex flex-col gap-4">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Name
+                        <input id="nameField" class="border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600" type="text" placeholder="Your name" />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Email
+                        <input class="border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600" type="email" placeholder="you@example.com" />
+                    </label>
+                </form>
+                <template #footer>
+                    <button @click="dialog.close()">Cancel</button>
+                    <button @click="dialog.close()">Save</button>
+                </template>
+            </Dialog>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button', { name: /open form dialog/i }))
+        const dialog = await canvas.findByRole('dialog')
+        await waitFor(() => expect(dialog).toBeVisible())
+        const nameInput = canvas.getByPlaceholderText('Your name')
+        await userEvent.click(nameInput)
+        await userEvent.type(nameInput, 'Jane Doe')
+        await expect(nameInput).toHaveValue('Jane Doe')
+    }
+}
+
+
+export const ConfirmPattern: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story: 'Example of composing a confirmation dialog from Dialog + Button. Wire `@close` to handle dismissal (Escape or scrim click).'
+            }
+        }
+    },
+    render: () => ({
+        components: { Dialog, Button },
+        setup() {
+            const dialog = ref<InstanceType<typeof Dialog> | null>(null)
+            const result = ref<string | null>(null)
+            const open = () => {
+                result.value = null
+                dialog.value?.open()
+            }
+            const confirm = () => { result.value = 'confirmed'; dialog.value?.close() }
+            const cancel = () => { result.value = 'cancelled'; dialog.value?.close() }
+            const handleClose = () => { if (result.value === null) result.value = 'cancelled' }
+            return { dialog, result, open, confirm, cancel, handleClose }
+        },
+        template: `
+            <div id="portal-target"></div>
+            <Button id="deleteTrigger" color="red" @click="open">Delete item</Button>
+            <p v-if="result" class="mt-4 text-sm text-gray-600 dark:text-gray-400" data-testid="result">
+                Result: {{ result }}
+            </p>
+            <Dialog
+                ref="dialog"
+                aria-label="Delete item"
+                focus-from="deleteTrigger"
+                size="sm"
+                @close="handleClose"
+            >
+                <template #title>Delete item?</template>
+                <p class="text-gray-700 dark:text-gray-300">This item will be permanently removed. This action cannot be undone.</p>
+                <template #footer>
+                    <Button color="gray" variant="secondary" @click="cancel">Cancel</Button>
+                    <Button color="red" @click="confirm">Delete</Button>
+                </template>
+            </Dialog>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await userEvent.click(canvas.getByRole('button', { name: /delete item/i }))
+        const dialog1 = await canvas.findByRole('dialog')
+        await waitFor(() => expect(dialog1).toBeVisible())
+        await userEvent.click(canvas.getByRole('button', { name: /^delete$/i }))
+        await waitFor(() => expect(dialog1).not.toBeVisible())
+        await expect(canvas.getByTestId('result')).toHaveTextContent('confirmed')
+
+        await userEvent.click(canvas.getByRole('button', { name: /delete item/i }))
+        const dialog2 = await canvas.findByRole('dialog')
+        await waitFor(() => expect(dialog2).toBeVisible())
+        await userEvent.click(canvas.getByRole('button', { name: /cancel/i }))
+        await waitFor(() => expect(dialog2).not.toBeVisible())
+        await expect(canvas.getByTestId('result')).toHaveTextContent('cancelled')
+    }
+}
