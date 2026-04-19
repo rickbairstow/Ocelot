@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import Input from '@Components/Input.vue'
 
 const meta: Meta<typeof Input> = {
-    title: 'Components/Input',
+    title: 'Components/Form Fields/Input',
     component: Input,
 
     parameters: {

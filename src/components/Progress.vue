@@ -64,9 +64,9 @@
                         r="15.9155"
                         stroke-linecap="round"
                         stroke-width="2.5"
-                        :style="circleTransitionStyle"
                         :class="colorStrokeClass"
                         :stroke-dasharray="`${percentage} ${100 - percentage}`"
+                        :style="circleTransitionStyle"
                     />
                 </svg>
                 <span

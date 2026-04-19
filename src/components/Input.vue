@@ -2,7 +2,10 @@
     <div>
         <!-- text inputs -->
         <div class="flex flex-col gap-2">
-            <Label :for="uuid">
+            <Label
+                v-if="label && !formField"
+                :for="effectiveId"
+            >
                 {{ label }}
             </Label>
 
@@ -19,8 +22,10 @@
                 </div>
 
                 <input
-                    :id="uuid"
+                    :id="effectiveId"
                     class="min-w-0 flex-1 outline-hidden"
+                    :aria-describedby="formField?.describedBy || undefined"
+                    :aria-invalid="formField?.hasError ? 'true' : undefined"
                     :autocomplete="autoComplete ? 'on' : 'off'"
                     :class="[
                         slots?.prefix ? 'ps-0' : 'ps-3',
@@ -55,14 +60,17 @@
 import { computed, useSlots } from 'vue'
 import Label from '@Components/Label.vue'
 import { generateUuid } from '@Utils/uuid'
+import { useFormField } from '@Composables/useFormField'
 
 const slots = useSlots()
 const uuid = generateUuid('input')
+const formField = useFormField()
+const effectiveId = formField?.inputId ?? uuid
 
 interface Props {
     autoComplete?: boolean
     disabled?: boolean
-    label: string
+    label?: string
     maxlength?: number
     minlength?: number | null
     modelValue: string | number | boolean | string[] | null
@@ -77,6 +85,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     autoComplete: true,
     disabled: false,
+    label: undefined,
     maxlength: 255,
     minlength: null,
     pattern: null,

@@ -1639,7 +1639,7 @@ Once Tier 1 components are complete:
 | ~~`Button` — prefix/suffix icon props + `iconOnly` variant~~ | Update | ✅ Done |
 | ~~`ButtonGroup` component~~ | New | ✅ Done |
 | ~~`Tooltip`~~ | New | ✅ Done |
-| `FormField` wrapper | New | ⏳ Pending — required before new form components |
+| ~~`FormField` wrapper~~ | New | ✅ Done — layout + ARIA wrapper with `provide/inject` context; `Input.vue` updated to inject; no validation logic (consumers bring Vee-Validate etc.) |
 | ~~Export `useToast` from library root~~ | Update entry point | ✅ Done |
 
 ### Phase 2 — Core missing components
@@ -1653,7 +1653,7 @@ Once Tier 1 components are complete:
 | ~~Breadcrumb~~ | ✅ Done |
 | ~~Pagination~~ | ✅ Done |
 | ~~Steps / Stepper~~ | ✅ Done |
-| Form primitives (Textarea, Checkbox, Radio, Switch, Select) | ⏸ On hold — validation strategy decision needed first. See §7. |
+| ~~Form primitives (Textarea, Checkbox, Radio, Switch, Select)~~ | ✅ Done — all native, FormField-integrated, with CheckboxGroup + RadioGroup. No validation logic (consumer's responsibility). |
 
 ### Phase 3 — Richer components and form depth
 
