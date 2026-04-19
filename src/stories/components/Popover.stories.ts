@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import Popover from '@Components/Popover.vue'
 import Button from '@Components/Button.vue'
 import { userEvent, expect, waitFor, within } from 'storybook/test'
-import { faker } from '@faker-js/faker'
 
 const meta: Meta<typeof Popover> = {
     title: 'Components/Popover',

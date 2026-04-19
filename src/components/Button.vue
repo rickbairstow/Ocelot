@@ -43,11 +43,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, useAttrs } from 'vue'
+import { computed, inject, onMounted, useAttrs } from 'vue'
 import type { Component } from 'vue'
 import Icon from './Icon.vue'
 import type { IconProp, IconSize } from '@Composables/useIcons'
 import { availableIcons, availableSizes } from '@Composables/useIcons'
+import type { ButtonGroupContext } from './ButtonGroup.vue'
 
 interface Props {
     color?: string
@@ -63,7 +64,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    color: 'blue',
+    color: undefined,
     disabled: false,
     href: null,
     icon: undefined,
@@ -71,9 +72,15 @@ const props = withDefaults(defineProps<Props>(), {
     iconPosition: 'start',
     loading: false,
     loadingIcon: 'Loader2',
-    size: 'base',
-    variant: 'primary'
+    size: undefined,
+    variant: undefined
 })
+
+const buttonGroup = inject<ButtonGroupContext | null>('buttonGroup', null)
+
+const effectiveColor = computed(() => props.color ?? buttonGroup?.color.value ?? 'blue')
+const effectiveSize = computed(() => props.size ?? buttonGroup?.size.value ?? 'base')
+const effectiveVariant = computed(() => props.variant ?? buttonGroup?.variant.value ?? 'primary')
 
 const attrs = useAttrs()
 
@@ -109,7 +116,7 @@ const iconSizeMap: Record<string, number> = {
 }
 
 const iconPixelSize = computed((): number => {
-    return iconSizeMap[props.size ?? 'base'] ?? availableSizes.sm
+    return iconSizeMap[effectiveSize.value] ?? availableSizes.sm
 })
 
 const resolvedIcon = computed((): Component | null => {
@@ -136,7 +143,7 @@ const iconGapMap: Record<string, string> = {
 
 const innerWrapClass = computed((): string => {
     if (resolvedIcon.value && !props.iconOnly) {
-        return `flex items-center ${iconGapMap[props.size ?? 'base'] ?? 'gap-1.5'}`
+        return `flex items-center ${iconGapMap[effectiveSize.value] ?? 'gap-1.5'}`
     }
 
     return 'contents'
@@ -149,7 +156,7 @@ const spinnerSize = computed((): IconSize => {
         large: 'lg'
     }
 
-    return map[props.size] ?? 'base'
+    return map[effectiveSize.value] ?? 'base'
 })
 
 const padding: Record<string, string> = {
@@ -225,7 +232,10 @@ const colorClasses: Record<string, Record<string, string>> = {
 const noneBase = 'text-black dark:text-white bg-transparent border-transparent'
 
 const componentStyle = computed((): string => {
-    const { size, variant, color, iconOnly } = props
+    const { iconOnly } = props
+    const size = effectiveSize.value
+    const variant = effectiveVariant.value
+    const color = effectiveColor.value
 
     const interactive = isDisabled.value ? 'cursor-not-allowed' : 'cursor-pointer'
     const padClass = iconOnly
