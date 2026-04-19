@@ -571,7 +571,7 @@
 
   <div class="sidenav-section">
     <div class="sidenav-section-label">Session Log</div>
-    <a href="#session-log">✓ Session 1 — Apr 2026</a>
+    <a href="#session-log">Sessions 1–3 — Apr 2026</a>
   </div>
 
   <div class="sidenav-section">
@@ -586,6 +586,7 @@
     <div class="sidenav-section-label">Plan</div>
     <a href="#s12">12. Roadmap</a>
     <a href="#s13">13. Patterns</a>
+    <a href="#s15">15. Audit Findings</a>
   </div>
 </nav>
 
@@ -611,8 +612,21 @@
   <!-- ══════════════════════════════════════════ -->
   <section class="section" id="session-log">
     <h2><span class="section-number" style="background:var(--green-soft);color:var(--green);">✓</span> Session Log</h2>
-    <div class="section-desc">Work completed in Session 1 — April 2026. All 82 tests passing.</div>
+    <div class="section-desc">Cumulative work log across all sessions.</div>
 
+    <h3>Session 3 — April 2026</h3>
+    <div class="callout callout-info">
+      <span class="callout-icon">🔍</span>
+      <div><strong>Full codebase audit.</strong> Roadmap reconciled against actual build (50 components, ~115 icons). TypeScript errors catalogued (12 errors across components and stories). Component-by-component UX, a11y, and usability review completed — findings in §15. Key discoveries: <code>SidebarNavGroup</code> and <code>SidebarNavItem</code> missing from library exports; <code>HelloWorld</code> incorrectly exported; no <code>prefers-reduced-motion</code> support anywhere; <code>vite-plugin-dts</code> absent (consumers receive no <code>.d.ts</code> types from the npm package). RTL audit: logical CSS properties mostly used but physical <code>left-</code>/<code>right-</code> remain in Toast, Sidebar, Card, and FloatingPanel positioning.</div>
+    </div>
+
+    <h3>Session 2 — April 2026</h3>
+    <div class="callout callout-success">
+      <span class="callout-icon">✓</span>
+      <div><strong>121 tests passing.</strong> Icon library (hybrid prop, <code>registerIcons()</code>, ~115 icons), Theming (<code>--oui-*</code> tokens, <code>tailwind.css</code> consolidation), Button icon support, Badge (dot/removable/outline), Divider, Dialog (size prop), Loader, Card (named slots), Accordion (variant, expandIcon), AccordionGroup (exclusive mode), Toast (action buttons), Sidebar nav sub-components. All components from Phase 2 and Phase 3 shipped.</div>
+    </div>
+
+    <h3>Session 1 — April 2026</h3>
     <div class="callout callout-success">
       <span class="callout-icon">✓</span>
       <div><strong>82/82 Storybook tests passing</strong> after the fixes below. No regressions.</div>
@@ -1530,46 +1544,14 @@ Components / [Name] / Default, [Variant], [State], Interactive</pre>
         </div>
       </div>
       <div class="phase-items">
-        <div class="phase-item">
-          <span class="badge badge-update">Update</span>
-          <span class="phase-item-label"><strong>Icon hybrid prop</strong> (string + component)</span>
-          <span class="phase-item-note">Unblocks icon usage on Button, Badge, Alert, Avatar, Tabs, and all new components</span>
-        </div>
-        <div class="phase-item">
-          <span class="badge badge-new">New</span>
-          <span class="phase-item-label"><strong>registerIcons()</strong> composable + root export</span>
-          <span class="phase-item-note">Consumer extensibility without library rebuilds</span>
-        </div>
-        <div class="phase-item">
-          <span class="badge badge-update">Update</span>
-          <span class="phase-item-label"><strong>Icon registry</strong> expansion 53 → ~120 icons</span>
-          <span class="phase-item-note">Many new components need icons that aren't currently registered</span>
-        </div>
-        <div class="phase-item">
-          <span class="badge badge-update">Update</span>
-          <span class="phase-item-label"><strong>Button</strong> — prefixIcon, suffixIcon, iconOnly</span>
-          <span class="phase-item-note">First-class icon support expected by every consumer</span>
-        </div>
-        <div class="phase-item">
-          <span class="badge badge-new">New</span>
-          <span class="phase-item-label"><strong>ButtonGroup</strong> component</span>
-          <span class="phase-item-note">Used in toolbars, segmented controls, dialog footers</span>
-        </div>
-        <div class="phase-item">
-          <span class="badge badge-new">New</span>
-          <span class="phase-item-label"><strong>Tooltip</strong> named export</span>
-          <span class="phase-item-note">Highest-frequency missing primitive — needed on nearly every interactive component</span>
-        </div>
-        <div class="phase-item">
-          <span class="badge badge-new">New</span>
-          <span class="phase-item-label"><strong>FormField</strong> wrapper</span>
-          <span class="phase-item-note">Required foundation before any new form component is added</span>
-        </div>
-        <div class="phase-item">
-          <span class="badge badge-update">Update</span>
-          <span class="phase-item-label"><strong>useToast</strong> export from library root</span>
-          <span class="phase-item-note">DX improvement — currently requires internal path import</span>
-        </div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Icon hybrid prop</strong> (string + component)</span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>registerIcons()</strong> composable + root export</span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Icon registry</strong> expansion ~115 icons</span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Button</strong> — icon, iconOnly, iconPosition</span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>ButtonGroup</strong> component</span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Tooltip</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>FormField</strong> wrapper</span><span class="phase-item-note">Pending — required before new form components</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>useToast</strong> export from library root</span><span class="phase-item-note">Done</span></div>
       </div>
     </div>
 
@@ -1578,18 +1560,18 @@ Components / [Name] / Default, [Variant], [State], Interactive</pre>
         <div class="phase-number">2</div>
         <div>
           <div class="phase-title">Phase 2 — Core missing components</div>
-          <div class="phase-subtitle">All Tier 1 components. Target 1.0 release after this phase.</div>
+          <div class="phase-subtitle">All shipped. Form primitives on hold pending validation strategy.</div>
         </div>
       </div>
       <div class="phase-items">
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Alert / Banner</strong></span><span class="phase-item-note">Needed immediately for form error display and system notices</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Avatar / AvatarGroup</strong></span><span class="phase-item-note">High-frequency in almost every product</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Tabs / TabPanels</strong></span><span class="phase-item-note">Fundamental navigation primitive</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Progress (bar + circle)</strong></span><span class="phase-item-note">Needed for file upload, loading states, onboarding flows</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Breadcrumb</strong></span><span class="phase-item-note">Navigation staple</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Pagination</strong></span><span class="phase-item-note">Required alongside Table</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Steps / Stepper</strong></span><span class="phase-item-note">Multi-step forms and wizards</span></div>
-        <div class="phase-item"><span class="badge badge-new">Form</span><span class="phase-item-label"><strong>Textarea, Checkbox, Radio, Switch</strong></span><span class="phase-item-note">Core form primitives — highest-priority form gaps</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Alert / Banner</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Avatar / AvatarGroup</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Tabs / TabPanels</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Progress (bar + circle)</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Breadcrumb</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Pagination</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Steps / Stepper</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item"><span class="badge badge-new">Form</span><span class="phase-item-label"><strong>Textarea, Checkbox, Radio, Switch, Select</strong></span><span class="phase-item-note">⏸ On hold — validation strategy decision needed first. See §7.</span></div>
       </div>
     </div>
 
@@ -1597,19 +1579,19 @@ Components / [Name] / Default, [Variant], [State], Interactive</pre>
       <div class="phase-header">
         <div class="phase-number">3</div>
         <div>
-          <div class="phase-title">Phase 3 — Richer components + form depth</div>
-          <div class="phase-subtitle">Tier 2 components and more complex form patterns.</div>
+          <div class="phase-title">Phase 3 — Richer components</div>
+          <div class="phase-subtitle">All shipped except Table (needs TanStack integration spec).</div>
         </div>
       </div>
       <div class="phase-items">
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Dropdown Menu</strong></span><span class="phase-item-note">Complex ARIA — needs careful implementation before starting</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Table</strong> (semantic sub-components)</span><span class="phase-item-note">Structure only — not a DataTable</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Stats / Metric Card</strong></span><span class="phase-item-note">Dashboard staple</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Empty State</strong></span><span class="phase-item-note">Needed alongside Table and list components</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Code Block</strong></span><span class="phase-item-note">Docs-adjacent products — highlighter-agnostic</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Timeline</strong></span><span class="phase-item-note">Activity feeds and history views</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Popover</strong> named export</span><span class="phase-item-note">Quick win from FloatingPanel</span></div>
-        <div class="phase-item"><span class="badge badge-new">Form</span><span class="phase-item-label"><strong>Select, NumberInput, File Upload, Combobox</strong></span><span class="phase-item-note">Progressively complex form components</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Dropdown Menu</strong> (7-component family)</span><span class="phase-item-note">Done — full keyboard nav, typeahead, ARIA, floating positioning</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>Table</strong> (TanStack integration)</span><span class="phase-item-note">⏸ On hold — needs its own detailed spec before implementation</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Stats / Metric Card</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Empty State</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Code Block</strong> (Shiki)</span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Timeline</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Popover</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Quote</strong></span><span class="phase-item-note">Done</span></div>
       </div>
     </div>
 
@@ -1617,26 +1599,23 @@ Components / [Name] / Default, [Variant], [State], Interactive</pre>
       <div class="phase-header">
         <div class="phase-number">4</div>
         <div>
-          <div class="phase-title">Phase 4 — Polish, power features, and 1.0 prep</div>
-          <div class="phase-subtitle">Existing component improvements, technical debt, and stability work.</div>
+          <div class="phase-title">Phase 4 — Polish and power features</div>
+          <div class="phase-subtitle">Existing component improvements, TypeScript, tooling, and outstanding fixes.</div>
         </div>
       </div>
       <div class="phase-items">
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>CSS custom property theming</strong></span><span class="phase-item-note">--oui-radius, --oui-shadow, --oui-transition-duration</span></div>
-        <div class="phase-item"><span class="badge badge-update">Update</span><span class="phase-item-label"><strong>AccordionGroup, Card slots, Dialog improvements, Sidebar nav</strong></span><span class="phase-item-note">Backwards-compatible refactors</span></div>
-        <div class="phase-item"><span class="badge badge-update">Update</span><span class="phase-item-label"><strong>Toast action buttons, Badge dot/removable/outline</strong></span><span class="phase-item-note">Enhancement pass</span></div>
-        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>prefers-reduced-motion</strong> across all animated components</span><span class="phase-item-note">motion-reduce: Tailwind variants throughout</span></div>
-        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>SSR / Nuxt</strong> browser API guard pass</span><span class="phase-item-note">All onMounted guards, document Teleport requirement</span></div>
-        <div class="phase-item"><span class="badge badge-new">CI</span><span class="phase-item-label"><strong>Bundle size tracking</strong> in CI</span><span class="phase-item-note">size-limit: ESM ≤ 100KB pre-gzip</span></div>
-        <div class="phase-item"><span class="badge badge-story">Storybook</span><span class="phase-item-label"><strong>Visual regression baseline</strong></span><span class="phase-item-note">Playwright snapshots committed to repo</span></div>
-        <div class="phase-item"><span class="badge badge-story">Docs</span><span class="phase-item-label"><strong>Design System Storybook section</strong></span><span class="phase-item-note">Typography, Spacing, Motion docs</span></div>
-        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>CommandPalette, Chip/Tag, Callout, SkipLink</strong></span><span class="phase-item-note">Tier 3 components</span></div>
-        <div class="phase-item"><span class="badge badge-new">Docs</span><span class="phase-item-label"><strong>CHANGELOG.md + MIGRATION.md</strong></span><span class="phase-item-note">Required before 1.0</span></div>
-        <div class="phase-item" style="background: var(--accent-soft); border-radius: 0;">
-          <span class="badge" style="background: var(--accent); color: #fff;">🚀</span>
-          <span class="phase-item-label" style="color: var(--text);"><strong>1.0 release</strong> — stable API contract</span>
-          <span class="phase-item-note">Strict semver begins. Breaking changes require major bump + migration guide.</span>
-        </div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>CSS custom property theming</strong></span><span class="phase-item-note">Done — --oui-radius-*, --oui-shadow-*, --oui-transition-duration in tailwind.css</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>AccordionGroup, Card slots, Dialog size, Sidebar nav</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item" style="opacity:0.5"><span class="badge" style="background:var(--green);color:#000;">✓</span><span class="phase-item-label"><strong>Toast action buttons, Badge dot/removable/outline</strong></span><span class="phase-item-note">Done</span></div>
+        <div class="phase-item"><span class="badge badge-update">Fix</span><span class="phase-item-label"><strong>SidebarNavGroup + SidebarNavItem</strong> missing from exports</span><span class="phase-item-note">Consumers cannot use sidebar sub-components without this</span></div>
+        <div class="phase-item"><span class="badge badge-update">Fix</span><span class="phase-item-label"><strong>HelloWorld</strong> incorrectly exported from library</span><span class="phase-item-note">Remove from .build/index.ts</span></div>
+        <div class="phase-item"><span class="badge badge-update">Fix</span><span class="phase-item-label"><strong>12 TypeScript errors</strong> — components + stories</span><span class="phase-item-note">FloatingPanel timers, Input emit narrowing, Video Plyr types, story file issues, tsconfig deprecation. See §15.</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>vite-plugin-dts</strong> — generate components.d.ts</span><span class="phase-item-note">Without this, npm consumers receive no TypeScript type declarations for components</span></div>
+        <div class="phase-item"><span class="badge badge-new">New</span><span class="phase-item-label"><strong>rollup-plugin-visualizer</strong> — bundle analysis</span><span class="phase-item-note">npm run build:analyse — treemap of bundle composition for monitoring heavy deps</span></div>
+        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>prefers-reduced-motion</strong> — not implemented anywhere</span><span class="phase-item-note">Add @media block to tailwind.css. Affects Toast, Sidebar, Dialog, FloatingPanel, Progress, Stepper, Loader.</span></div>
+        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>Accordion full &lt;button&gt; migration</strong></span><span class="phase-item-note">Replace &lt;details&gt;/&lt;summary&gt; — inconsistent AT support across browser+screen reader combos</span></div>
+        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>Component-level bugs + a11y fixes</strong> from §15</span><span class="phase-item-note">Button type="button", Input error state, Toast i18n strings, Tab disabled nav, SidebarNavItem disabled link, Card heading-in-button, Loader aria-live, and more</span></div>
+        <div class="phase-item"><span class="badge badge-update">Audit</span><span class="phase-item-label"><strong>RTL fixes</strong> — physical properties remaining</span><span class="phase-item-note">Toast, Sidebar, Card selected indicator, FloatingPanel positioning</span></div>
       </div>
     </div>
 
@@ -1788,6 +1767,121 @@ Components / [Name] / Default, [Variant], [State], Interactive</pre>
           <tr><td><strong>Phase 2</strong></td><td>Auth patterns, Contact Form, 404 / 500 pages</td></tr>
           <tr><td><strong>Phase 3</strong></td><td>Dashboard, Settings Page, Data List, Navbar + AppShell components</td></tr>
           <tr><td><strong>Phase 4</strong></td><td>Full pattern suite, CommandPalette, Marketing patterns</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <a href="#top" class="back-to-top">↑ Back to top</a>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- §15 — COMPONENT AUDIT -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" id="s15">
+    <h2><span class="section-number">15</span> Component Audit — Session 3 Findings</h2>
+    <div class="section-desc">Full audit of all 50 components against TypeScript coverage, WCAG 2.1 AA, UX laws, and known bugs. Address items individually.</div>
+
+    <h3>TypeScript &amp; Build Errors</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Location</th><th>Error</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td><code>.build/index.ts:36</code></td><td><code>HelloWorld.vue</code> exported but file does not exist</td><td>Remove <code>HelloWorld</code> export — demo component, not library API</td></tr>
+          <tr><td><code>FloatingPanel.vue:252,264</code></td><td><code>window.setTimeout()</code> returns <code>number</code> but refs typed as <code>Timeout</code></td><td>Change ref types to <code>number | null</code></td></tr>
+          <tr><td><code>FloatingPanel.vue:373–378</code></td><td><code>middlewareData.arrow</code> typed as <code>{}</code> — no <code>x</code>/<code>y</code> properties</td><td>Cast to <code>{ x?: number; y?: number }</code></td></tr>
+          <tr><td><code>Input.vue:138</code></td><td><code>emit(eventType, value)</code> where <code>eventType</code> is union — TS cannot narrow</td><td>Use explicit <code>if/else</code> branches per emit call</td></tr>
+          <tr><td><code>Video.vue:145</code></td><td><code>title</code> not in Plyr <code>Options</code> type</td><td>Cast options object with comment explaining Plyr's incomplete types</td></tr>
+          <tr><td><code>Input.stories.ts:101</code></td><td><code>minLength</code> (camelCase) — correct prop is <code>minlength</code></td><td>Rename to <code>minlength</code></td></tr>
+          <tr><td><code>QRCode.stories.ts:43</code></td><td>Storybook control shape <code>{ required: true }</code> is invalid</td><td>Use <code>control: 'text'</code></td></tr>
+          <tr><td><code>QRCode.stories.ts:80,82</code></td><td><code>.alt</code> not on <code>HTMLElement</code></td><td>Cast to <code>HTMLImageElement</code></td></tr>
+          <tr><td><code>Sidebar.stories.ts:59</code></td><td><code>sidebar.value</code> possibly <code>null</code></td><td>Add null guard</td></tr>
+          <tr><td><code>Timeline.stories.ts:7</code></td><td>Story data typed as <code>{ color: string }[]</code> — incompatible with <code>TimelineColor</code> union</td><td>Type array as <code>TimelineItem[]</code></td></tr>
+          <tr><td><code>tsconfig.json:13</code></td><td><code>baseUrl</code> deprecated in TypeScript 7</td><td>Add <code>"ignoreDeprecations": "6.0"</code> to <code>compilerOptions</code></td></tr>
+          <tr><td><code>vitest.config.ts:20</code></td><td><code>extends: true</code> not in <code>UserProjectConfigExport</code></td><td>Verify Vitest version; update config shape</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Missing / Incorrect Library Exports</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Issue</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td><code>SidebarNavGroup</code> not exported from <code>.build/index.ts</code></td><td>Add export — consumers cannot use sidebar sub-components without it</td></tr>
+          <tr><td><code>SidebarNavItem</code> not exported from <code>.build/index.ts</code></td><td>Add export — same reason</td></tr>
+          <tr><td><code>HelloWorld</code> incorrectly exported</td><td>Remove from <code>.build/index.ts</code></td></tr>
+          <tr><td>No <code>components.d.ts</code> generated</td><td>Add <code>vite-plugin-dts</code> with <code>insertTypesEntry: true</code>. Without this, TypeScript consumers receive no type declarations and all props resolve to <code>any</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Tooling Gaps</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td><strong>No bundle analyser</strong></td><td>Add <code>rollup-plugin-visualizer</code> as devDependency. Wire to <code>npm run build:analyse</code>. Gives treemap of bundle composition for monitoring heavy deps (Plyr, PhotoSwipe, etc.).</td></tr>
+          <tr><td><strong>No <code>check-types</code> script</strong></td><td>Add <code>"check-types": "vue-tsc --noEmit"</code> to <code>package.json</code> and document in <code>CLAUDE.md</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Cross-Cutting — <code>prefers-reduced-motion</code> (not implemented anywhere)</h3>
+    <div class="callout callout-warning">
+      <span class="callout-icon">⚠</span>
+      <div>Add to <code>tailwind.css</code>: <code>@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }</code><br><br>
+      <strong>Affected:</strong> Toast (TransitionGroup slide), Sidebar (Transition slide), Dialog (Transition fade), FloatingPanel (Transition opacity), Progress (indeterminate animation + transition-[width]), Stepper (transition-colors), Loader (animate-spin/bounce etc.)</div>
+    </div>
+
+    <h3>Cross-Cutting — RTL (partial)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Physical property</th><th>Location</th></tr></thead>
+        <tbody>
+          <tr><td><code>Toast.vue</code></td><td><code>right-4</code> / <code>left-4</code></td><td>Placement positioning</td></tr>
+          <tr><td><code>Sidebar.vue</code></td><td><code>left-0</code> / <code>right-0</code></td><td>Side positioning</td></tr>
+          <tr><td><code>Card.vue</code></td><td><code>top-2 right-2</code></td><td>Selected tick indicator</td></tr>
+          <tr><td><code>FloatingPanel.vue</code></td><td><code>left: ${x}px</code> inline style</td><td>Floating-UI computed position — floating-ui has RTL support, wire it up</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Component-by-Component Findings</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Component</th><th>Type</th><th>Issue</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Button</strong></td><td><span class="badge badge-tier1">Bug</span></td><td>No <code>type="button"</code> — inside a <code>&lt;form&gt;</code> defaults to <code>type="submit"</code> and will accidentally submit</td></tr>
+          <tr><td><strong>Button</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>role="link"</code> on <code>&lt;a&gt;</code> elements is redundant and may cause double-announcement</td></tr>
+          <tr><td><strong>Accordion</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>&lt;details&gt;/&lt;summary&gt;</code> — inconsistent AT support (NVDA+Firefox broken). Full <code>&lt;button aria-expanded&gt;</code> migration needed.</td></tr>
+          <tr><td><strong>Accordion</strong></td><td><span class="badge badge-update">UX</span></td><td>No animation on content reveal — content appears/disappears instantly</td></tr>
+          <tr><td><strong>Accordion</strong></td><td><span class="badge badge-update">UX</span></td><td><code>expandIcon</code> slot does not expose <code>isOpen</code> as a slot prop — custom icons cannot react to state</td></tr>
+          <tr><td><strong>AccordionGroup</strong></td><td><span class="badge badge-update">UX</span></td><td><code>exclusive: true</code> by default — non-exclusive is likely the more expected default</td></tr>
+          <tr><td><strong>Input</strong></td><td><span class="badge badge-tier1">Bug/A11y</span></td><td>No <code>aria-invalid</code> binding — invalid field state not communicated to AT</td></tr>
+          <tr><td><strong>Input</strong></td><td><span class="badge badge-tier1">Bug/A11y</span></td><td>No <code>aria-describedby</code> — error/helper text cannot be linked to the input</td></tr>
+          <tr><td><strong>Input</strong></td><td><span class="badge badge-update">UX</span></td><td>No error state prop or styling; no helper text prop; <code>type</code> is plain <code>string</code> not a union; <code>autocomplete</code> is boolean not token string; no character count</td></tr>
+          <tr><td><strong>Dialog</strong></td><td><span class="badge badge-update">A11y</span></td><td>sr-only close button at bottom is redundant with header close button — two "Close dialog" announcements for screen readers</td></tr>
+          <tr><td><strong>Dialog</strong></td><td><span class="badge badge-update">A11y</span></td><td>No <code>aria-describedby</code> for dialog description content</td></tr>
+          <tr><td><strong>FloatingPanel</strong></td><td><span class="badge badge-update">A11y</span></td><td>No <code>aria-label</code>/<code>aria-labelledby</code> for non-tooltip/menu roles</td></tr>
+          <tr><td><strong>Toast</strong></td><td><span class="badge badge-update">UX</span></td><td>"Show all"/"Show less" hardcoded English — no i18n props (inconsistent with ReadMore)</td></tr>
+          <tr><td><strong>Tabs / Tab</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>TabList</code> missing <code>aria-orientation="horizontal"</code></td></tr>
+          <tr><td><strong>Tabs / Tab</strong></td><td><span class="badge badge-update">A11y</span></td><td>Arrow key navigation does not skip disabled Tab items</td></tr>
+          <tr><td><strong>SidebarNavItem</strong></td><td><span class="badge badge-tier1">Bug/A11y</span></td><td>When <code>href</code> + <code>disabled</code> both set, <code>aria-disabled</code> alone does not prevent keyboard Enter activation on <code>&lt;a&gt;</code> — <code>href</code> must be removed when disabled</td></tr>
+          <tr><td><strong>Badge</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>role="note"</code> is unconventional — consider <code>role="status"</code> or no role</td></tr>
+          <tr><td><strong>Badge</strong></td><td><span class="badge badge-update">A11y</span></td><td>Dot badge with no <code>ariaLabel</code> is invisible to screen readers</td></tr>
+          <tr><td><strong>Card</strong></td><td><span class="badge badge-update">A11y</span></td><td>Clickable card renders <code>&lt;button&gt;</code> containing <code>&lt;h2&gt;</code> — headings inside buttons is invalid HTML</td></tr>
+          <tr><td><strong>Card</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>selected</code> state has no <code>aria-pressed</code> or <code>aria-selected</code></td></tr>
+          <tr><td><strong>Avatar</strong></td><td><span class="badge badge-update">A11y</span></td><td>When <code>href</code> set, <code>ariaLabel</code> is optional — unlabelled link is a WCAG failure</td></tr>
+          <tr><td><strong>Banner</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>&lt;h4&gt;</code> hardcoded for title — disrupts heading hierarchy. Consider <code>&lt;p&gt;</code> or slot.</td></tr>
+          <tr><td><strong>Banner</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>role="alert"</code> only announces dynamically injected content — banners present on page load will not be read</td></tr>
+          <tr><td><strong>Stepper</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>&lt;ol&gt;</code> has no <code>aria-label</code> identifying it as a progress stepper</td></tr>
+          <tr><td><strong>Progress</strong></td><td><span class="badge badge-update">A11y</span></td><td>Indeterminate animation has no <code>prefers-reduced-motion</code> fallback</td></tr>
+          <tr><td><strong>StatCard</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>aria-label="Trend"</code> not descriptive — should include value e.g., "Trend: up 12%"</td></tr>
+          <tr><td><strong>StatCard</strong></td><td><span class="badge badge-update">A11y</span></td><td>Positive/negative trend uses colour alone (green/red) — not WCAG compliant for colour-blind users</td></tr>
+          <tr><td><strong>Timeline</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>&lt;ol&gt;</code> has no <code>aria-label</code></td></tr>
+          <tr><td><strong>EmptyState</strong></td><td><span class="badge badge-update">A11y</span></td><td><code>&lt;h3&gt;</code> hardcoded — may disrupt heading hierarchy</td></tr>
+          <tr><td><strong>Loader</strong></td><td><span class="badge badge-update">A11y</span></td><td>No <code>aria-live</code> region or <code>role="status"</code> — screen readers receive no feedback about loading state</td></tr>
         </tbody>
       </table>
     </div>

@@ -1,11 +1,33 @@
 # Ocelot UI — Component Library Roadmap
 
 > **Status:** Planning document · April 2026  
-> **Current version:** 0.0.21 · 23 components · 53 registered icons
+> **Current version:** 0.0.21 · 50 components · ~115 registered icons
 
 ---
 
 ## Session Log
+
+### Session 4 — April 2026
+
+**Shipped:** Form components accessibility audit — all five prior test failures resolved (Switch `label-title-only` axe, Checkbox indeterminate DOM timing, Textarea counter contrast). Full WCAG 2.1 AA audit of all form primitives: `aria-checked="mixed"` on indeterminate Checkbox; CheckboxGroup converted to `<fieldset>/<legend>` with `label` prop; Radio `effectiveId` bug fixed; FormField `role="alert"` + `aria-live="polite"` conflict resolved; Textarea character count linked via `aria-describedby`.
+
+**Input type extensions** — Password show/hide eye toggle (built-in, disabled-aware); Search clear (×) button (appears reactively); Number `min`/`max`/`step` props; `type` prop narrowed to a union; `'search'` added to style lookup. Five new stories with play functions.
+
+**SkipLink component** — `sr-only` until focused (`focus:not-sr-only`); `target` prop (default `"main"`), `label` prop (default `"Skip to main content"`). WCAG 2.4.1 Bypass Blocks. Two stories.
+
+**`culori` removed** — unused dead weight (~8KB); re-add only if a custom ColorPicker is built.
+
+**Date/Time inputs** — `type="date"`, `type="time"`, `type="datetime-local"` added to Input union; `min`/`max` widened to `number | string` to accept date strings. Three new stories.
+
+All 256 tests passing.
+
+---
+
+### Session 3 — April 2026
+
+**Audit:** Full codebase audit against current build. Roadmap reconciled against actual component files. TypeScript errors surfaced and catalogued. Component-by-component UX, accessibility, and usability review completed. Findings written to §15. Key discoveries: `SidebarNavGroup` and `SidebarNavItem` missing from library exports; `HelloWorld` incorrectly exported; 12 TypeScript errors across components and stories; no `prefers-reduced-motion` support in any animated component; `vite-plugin-dts` absent (consumers receive no `.d.ts` types from the npm package); several component-level a11y and UX issues logged for individual fix sessions. RTL audit confirms logical CSS properties used in most places but physical `left-`/`right-` still present in positioning components (Toast, Sidebar, Card selected indicator).
+
+---
 
 ### Session 2 — April 2026
 
@@ -105,13 +127,13 @@ Before adding anything new, the existing dependency model warrants scrutiny. Sev
 | `photoswipe` | ^5.4.4 | ~18KB gzip | Only used by LightboxImage — consumers without galleries pay for it |
 | `plyr` | ^3.8.4 | ~38KB gzip | Only used by Video — consumers without video pay for it |
 | `qrcode` | ^1.5.4 | ~25KB gzip | Only used by QrCode — consumers without QR pay for it |
-| `culori` | ^4.0.2 | ~8KB gzip | Currently unused beyond potential ColorPicker — dead weight today |
+| ~~`culori`~~ | ~~^4.0.2~~ | ~~~8KB gzip~~ | ✅ Removed — was unused dead weight; re-add if ColorPicker is ever built |
 
 ### Recommended actions
 
 1. **`photoswipe`, `plyr`, `qrcode`** — move to `peerDependencies` (optional). Consumers must install them only if they use `LightboxImage`, `Video`, or `QrCode` respectively. Provide clear installation instructions and a dev-mode warning if the library is used but not installed.
 
-2. **`culori`** — currently has no active consumer in the library. Remove from dependencies until a `ColorPicker` component is actively being built. Adds dead weight today.
+2. ~~**`culori`**~~ — ✅ Removed.
 
 3. **`@floating-ui/dom`** — keep as a full dependency. It is used by FloatingPanel (core) and will be used by Combobox, DropdownMenu, and Tooltip. The size is acceptable and consumers get it automatically.
 
@@ -1285,13 +1307,15 @@ Distinct from Alert: Callout is static/editorial content; Alert is operational f
 
 ---
 
-#### SkipLink
+#### ~~SkipLink~~
 
-A single accessibility utility: a "Skip to main content" link that is visually hidden until focused — required by WCAG 2.4.1 Bypass Blocks.
+✅ Done — `sr-only` until focused; `target` prop (default `"main"`), `label` prop (default `"Skip to main content"`). WCAG 2.4.1 Bypass Blocks.
 
-**Props:** `target` (ID of main content element, default: `"main"`)
+---
 
-**Story:** Focus demo showing the link appearing on Tab press.
+#### ~~Callout~~
+
+❌ Removed — duplicate of Banner. `tip` type added to Banner instead (emerald palette, Bulb icon, `role="status"`). No separate Callout component needed.
 
 ---
 
@@ -1310,13 +1334,13 @@ Forms are a significant workstream deserving their own detailed spec. Key gaps a
 | Checkbox | 1 | With indeterminate state; `CheckboxGroup` wrapper |
 | Radio / RadioGroup | 1 | Horizontal and vertical layouts; `fieldset/legend` pattern |
 | Switch / Toggle | 1 | Replaces checkbox in on/off UIs; `role="switch"`, `aria-checked` |
-| Input[type=tel] | 1 | Extend existing Input with type support — native `<input type="tel">` |
-| Input[type=email] | 1 | Native `<input type="email">` with built-in browser validation |
-| Input[type=password] | 1 | Show/hide toggle; native `<input type="password">` |
-| Input[type=number] | 2 | Native number input; optional increment/decrement stepper buttons |
-| Input[type=search] | 2 | Native `<input type="search">` with clear button |
-| Date / Time pickers | 2 | Native `<input type="date">`, `type="time"`, `type="datetime-local">` first — styled wrappers; avoid a custom calendar if the native picker is sufficient |
-| ColorPicker | 3 | Native `<input type="color">` as a starting point; `culori` is already a dependency if more control is needed |
+| ~~Input[type=tel]~~ | ~~1~~ | ✅ Done |
+| ~~Input[type=email]~~ | ~~1~~ | ✅ Done |
+| ~~Input[type=password]~~ | ~~1~~ | ✅ Done — built-in show/hide eye toggle; disabled state handled |
+| ~~Input[type=number]~~ | ~~2~~ | ✅ Done — `min`, `max`, `step` props bound to native input |
+| ~~Input[type=search]~~ | ~~2~~ | ✅ Done — clear (×) button appears when value is non-empty |
+| ~~Date / Time pickers~~ | ~~2~~ | ✅ Done — `type="date"`, `type="time"`, `type="datetime-local"` added to Input; `min`/`max` props widened to `number \| string` to accept date strings |
+| ColorPicker | 3 | Native `<input type="color">` as a starting point |
 | File Upload | 2 | Drag-and-drop zone, file list, upload progress integration |
 | Range / Slider | 2 | Single handle; dual-handle for min/max range |
 | Combobox | 3 | Searchable select using Floating UI (already a dependency) |
@@ -1625,16 +1649,16 @@ Once Tier 1 components are complete:
 
 ### Phase 1 — Foundation (prerequisite for everything else)
 
-| Item | Type | Why first |
+| Item | Type | Status |
 |---|---|---|
-| Icon hybrid prop (string + component) | Update `Icon.vue` | Unblocks icon usage on Button, Badge, Alert, Avatar, Tabs, and all new components |
-| `registerIcons()` composable | New export | Consumer extensibility |
-| Icon registry expansion (~120 icons) | Update `useIcons.ts` | Many new components need icons that aren't currently registered |
-| `Button` — prefix/suffix icon props + `iconOnly` variant | Update | First-class icon support is expected by every consumer |
-| ~~`ButtonGroup` component~~ | ✅ Done | Used in toolbars, segmented controls, dialog footers |
-| `Tooltip` named export | Thin wrapper | Highest-frequency missing pattern — affects every interactive component that needs hover help text |
-| `FormField` wrapper | New | Required foundation before any new form component is added |
-| Export `useToast` from library root | Update entry point | DX improvement; consumers currently import from an internal path |
+| ~~Icon hybrid prop (string + component)~~ | Update `Icon.vue` | ✅ Done |
+| ~~`registerIcons()` composable~~ | New export | ✅ Done |
+| ~~Icon registry expansion (~120 icons)~~ | Update `useIcons.ts` | ✅ Done |
+| ~~`Button` — prefix/suffix icon props + `iconOnly` variant~~ | Update | ✅ Done |
+| ~~`ButtonGroup` component~~ | New | ✅ Done |
+| ~~`Tooltip`~~ | New | ✅ Done |
+| ~~`FormField` wrapper~~ | New | ✅ Done — layout + ARIA wrapper with `provide/inject` context; `Input.vue` updated to inject; no validation logic (consumers bring Vee-Validate etc.) |
+| ~~Export `useToast` from library root~~ | Update entry point | ✅ Done |
 
 ### Phase 2 — Core missing components
 
@@ -1647,7 +1671,7 @@ Once Tier 1 components are complete:
 | ~~Breadcrumb~~ | ✅ Done |
 | ~~Pagination~~ | ✅ Done |
 | ~~Steps / Stepper~~ | ✅ Done |
-| ~~Form primitives (Textarea, Checkbox, Radio, Switch, Input types, Date/Time/Colour pickers)~~ | ⏸ On hold — validation strategy decision needed first. See §7. |
+| ~~Form primitives (Textarea, Checkbox, Radio, Switch, Select)~~ | ✅ Done — all native, FormField-integrated, with CheckboxGroup + RadioGroup. No validation logic (consumer's responsibility). |
 
 ### Phase 3 — Richer components and form depth
 
@@ -1655,7 +1679,7 @@ Once Tier 1 components are complete:
 |---|---|
 | ~~Tooltip~~ | ✅ Done |
 | ~~Dropdown Menu~~ | ✅ Done — 7-component family with full keyboard nav, typeahead, ARIA semantics, floating positioning. Sub-menus deferred. |
-| ~~Table~~ | ⏸ On hold — needs its own detailed spec before implementation. |
+| Table | ⏸ On hold — needs its own detailed spec before implementation. |
 | ~~Stats / Metric Card~~ | ✅ Done |
 | ~~Empty State~~ | ✅ Done |
 | ~~Code Block~~ | ✅ Done — Shiki-powered, dark mode via `.dark` class |
@@ -1663,32 +1687,23 @@ Once Tier 1 components are complete:
 | ~~Popover~~ | ✅ Done |
 | ~~Quote~~ | ✅ Done |
 
-### Phase 4 — Polish, power features, and 1.0 prep
+### Phase 4 — Polish and power features
 
 | Item | Status | Notes |
 |---|---|---|
 | **Bug fixes — Session 1** | ✅ Done | Input missing attrs, Dialog ARIA/ID/tabindex/aria-modal, Accordion ARIA + CSS, Button `<a>` keyboard, Scrim invalid aria-disabled |
 | **ReadMore i18n labels** | ✅ Done | `expandLabel`/`collapseLabel` props added |
-| **Dialog — title slot + `aria-labelledby` + `aria-modal`** | ✅ Done (partial) | Sizes and ConfirmDialog still outstanding |
+| **Dialog — title slot + `aria-labelledby` + `aria-modal`** | ✅ Done | |
 | **Accordion — ARIA cleanup** | ✅ Done (partial) | Redundant attrs removed; full `<button>` migration still outstanding |
-| CSS custom property theming | — | `--oui-radius`, `--oui-shadow`, `--oui-transition-duration` |
+| ~~CSS custom property theming~~ | ✅ Done | `--oui-radius-*`, `--oui-shadow-*`, `--oui-transition-duration` in `tailwind.css` |
 | ~~`AccordionGroup` exclusive mode~~ | ✅ Done | Variant inheritance via provide/inject; non-exclusive mode; GroupContained + GroupNonExclusive stories |
-| ~~Card slot-based sub-components~~ | ✅ Done | Already refactored; added SelectableToggle + CardGrid stories |
-| ~~Dialog — `size` prop + `ConfirmDialog`~~ | ✅ Done | `size` already done; added ConfirmPattern story, fixed close button layout, fullscreen keeps rounded corners |
+| ~~Card slot-based sub-components~~ | ✅ Done | Added SelectableToggle + CardGrid stories |
+| ~~Dialog — `size` prop + `ConfirmDialog`~~ | ✅ Done | Added ConfirmPattern story, fixed close button layout |
 | ~~Sidebar nav sub-components~~ | ✅ Done | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` — with icon, active, badge, disabled, collapsible group support |
-| ~~Toast action buttons~~ | ✅ Done | Already implemented — `action`, `onClose`, `icon` in useToast; full stories present |
-| ~~Badge — dot, removable, outline~~ | ✅ Done | Already implemented — dot, removable, outline, truncate, AllVariations story |
-| `prefers-reduced-motion` audit | — | All animated components |
-| SSR/Nuxt audit | — | Guard browser API usage |
-| Bundle size limit in CI | — | `size-limit` or `bundlesize` |
-| Visual regression baseline | — | Playwright snapshot baseline |
-| Design System Storybook section | — | Typography, Spacing, Motion docs |
-| CommandPalette | — | Complex but high-impact |
-| Chip / Tag | — | Filter UIs |
-| Callout | — | Editorial content |
-| SkipLink | — | WCAG 2.4.1 utility |
-| `CHANGELOG.md` + `MIGRATION.md` | — | Pre-1.0 documentation |
-| **1.0 release** | — | Stable API contract |
+| ~~Toast action buttons~~ | ✅ Done | `action`, `onClose`, `icon` in useToast; full stories present |
+| ~~Badge — dot, removable, outline~~ | ✅ Done | dot, removable, outline, truncate, AllVariations story |
+| ~~`prefers-reduced-motion` audit~~ | ✅ Done | CSS `@media` block in `core.scss` for Vue slide/toast/fade transitions; `motion-reduce:animate-none` on Loader, Button spinner, Image skeleton, Placeholder; `motion-reduce:transition-none` on Image LQIP, Progress bar, DropdownMenuContent, FloatingPanel; computed style for Progress circle SVG |
+| ~~Form components accessibility audit~~ | ✅ Done | Checkbox: `aria-checked="mixed"` for indeterminate (native `indeterminate` DOM prop is not exposed to AT); CheckboxGroup: converted `role="group"` div → `<fieldset>/<legend>` with `label` prop (matching RadioGroup); Radio: `formField?.inputId` was injected but ignored — now used as `effectiveId`; FormField: removed conflicting `aria-live="polite"` from `role="alert"` error paragraph, added `aria-live="polite"` to hint paragraph; Textarea: character count div now has an ID and is merged into `aria-describedby` so AT users hear the limit on focus. Switch: track changed from `<label>` to `aria-hidden div` with programmatic click forwarding to eliminate `label-title-only` axe violation. |
 
 ---
 
@@ -1978,4 +1993,196 @@ Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the
 
 ---
 
-*Document generated April 2026. Revisit and revise after Phase 2 is complete.*
+*Document generated April 2026. Last updated Session 3.*
+
+---
+
+## 15. Component Audit — Session 3 Findings
+
+> Full audit of all 50 components against TypeScript coverage, accessibility (WCAG 2.1 AA), UX laws, and known bugs. Items to be addressed individually.
+
+---
+
+### TypeScript & Build Errors
+
+| Location | Error | Fix |
+|---|---|---|
+| `.build/index.ts:36` | `HelloWorld.vue` exported but file does not exist | Remove `HelloWorld` export entirely (it is a demo component, not a library component) |
+| `FloatingPanel.vue:252,264` | `window.setTimeout()` returns `number` but refs typed as `Timeout` | Change ref types to `number \| null` or use `ReturnType<typeof window.setTimeout>` |
+| `FloatingPanel.vue:373,374,377,378` | `middlewareData.arrow` typed as `{}` — no `x`/`y` properties | Cast `middlewareData.arrow` to `{ x?: number; y?: number }` |
+| `Input.vue:138` | `emit(eventType, value)` where `eventType` is `'input' \| 'change'` — TypeScript cannot narrow the union | Use explicit `if/else` branches for each emit call |
+| `Video.vue:145` | `title` does not exist in Plyr `Options` type | Cast options object or use `as unknown as Options` with a comment |
+| `Input.stories.ts:101` | `minLength` (camelCase) does not exist; correct prop is `minlength` | Rename to `minlength` |
+| `QRCode.stories.ts:43` | Storybook control shape `{ required: true }` is invalid | Use `control: { type: 'text' }` or `control: 'text'` |
+| `QRCode.stories.ts:80,82` | `.alt` does not exist on `HTMLElement` — should be `HTMLImageElement` | Cast to `HTMLImageElement` |
+| `Sidebar.stories.ts:59` | `sidebar.value` possibly `null` | Add null guard |
+| `Timeline.stories.ts:7` | Story data has `color: string` but `TimelineColor` is a union | Type the story data array as `TimelineItem[]` |
+| `tsconfig.json:13` | `baseUrl` deprecated in TypeScript 7 | Add `"ignoreDeprecations": "6.0"` to `compilerOptions` |
+| `vitest.config.ts:20` | `extends: true` not in `UserProjectConfigExport` type | Vitest version mismatch — verify Vitest version and update config shape accordingly |
+
+---
+
+### Missing / Incorrect Library Exports
+
+| Issue | Fix |
+|---|---|
+| `SidebarNavGroup` not exported from `.build/index.ts` | Add export — consumers cannot use sub-component without it |
+| `SidebarNavItem` not exported from `.build/index.ts` | Add export — same reason |
+| `HelloWorld` exported from `.build/index.ts` | Remove — it is a demo scaffold component, not part of the public API |
+| No `components.d.ts` generated | Add `vite-plugin-dts` to devDependencies and configure in `vite.config.ts` with `insertTypesEntry: true`. Without this, TypeScript consumers of the npm package receive no type declarations and all props resolve to `any`. |
+
+---
+
+### Tooling Gaps
+
+| Item | Detail |
+|---|---|
+| **No bundle analyser** | Add `rollup-plugin-visualizer` as a devDependency. Wire it to a `npm run build:analyse` script (`visualizer({ open: true })`). Gives a visual treemap of bundle composition — useful for tracking heavy dependencies (Plyr, PhotoSwipe, etc.) without needing a formal size-limit gate. |
+| **No `check-types` npm script** | Add `"check-types": "vue-tsc --noEmit"` to `package.json` scripts and document it in `CLAUDE.md`. Currently requires knowing to run `npx vue-tsc` manually. |
+
+---
+
+### Cross-Cutting Issues
+
+#### `prefers-reduced-motion` — Not implemented anywhere
+
+All animated components ignore user motion preferences. Add the following to `tailwind.css`:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+```
+
+**Affected components:** Toast (TransitionGroup slide), Sidebar (Transition slide), Dialog (Transition fade), FloatingPanel (Transition opacity), Progress (indeterminate bar animation, `transition-[width]`), Stepper (`transition-colors`), Loader (`animate-spin`, `animate-bounce` etc.).
+
+#### RTL Support — Partial
+
+Most components correctly use logical CSS properties (`ps-`, `pe-`, `ms-`, `me-`, `text-start`). The following still use physical properties that will not flip in RTL:
+
+| Component | Physical property | Where |
+|---|---|---|
+| `Toast.vue` | `right-4` / `left-4` | Placement positioning |
+| `Sidebar.vue` | `left-0` / `right-0` | Side positioning |
+| `Card.vue` | `top-2 right-2` | Selected tick indicator |
+| `FloatingPanel.vue` | `left: ${x}px` in inline style | Floating-UI computed position (floating-ui itself has RTL support — wire it up) |
+
+---
+
+### Component-by-Component Findings
+
+#### Button
+| Type | Issue |
+|---|---|
+| **Bug** | No `type="button"` attribute — inside an HTML `<form>`, an untyped button defaults to `type="submit"` and will accidentally submit the form |
+| **A11y** | `role="link"` applied to `<a>` elements — redundant; native `<a>` already carries the link role and adding it explicitly can cause double-announcement in some ATs |
+
+#### Accordion
+| Type | Issue |
+|---|---|
+| **A11y** | Uses `<details>/<summary>` — browser/AT support is inconsistent (NVDA+Firefox does not expose `aria-expanded`; VoiceOver+Safari is fine). Full `<button aria-expanded>` migration planned but not done. |
+| **UX** | No animation on content reveal — content appears/disappears instantly. A CSS `max-height` or `grid-rows` transition would significantly improve perceived quality. |
+| **UX** | `expandIcon` slot does not expose `isOpen` as a slot prop — custom icons cannot react to the open/closed state |
+| **UX** | `title` prop only accepts a string — no slot alternative for rich/HTML titles |
+
+#### AccordionGroup
+| Type | Issue |
+|---|---|
+| **UX** | `exclusive: true` by default — non-exclusive (multiple open) is likely the more expected default |
+
+#### Input
+| Type | Issue |
+|---|---|
+| **A11y/Bug** | No `aria-invalid` binding — an invalid field state is not communicated to assistive technology |
+| **A11y/Bug** | No `aria-describedby` wiring — error messages or helper text cannot be programmatically linked to the input |
+| **UX** | No error state prop or styling — consumers must implement their own error presentation |
+| **UX** | No helper/hint text prop |
+| **UX** | `type` prop is plain `string` — should be a union of valid HTML input types |
+| **UX** | `autocomplete` is a `boolean` (`on`/`off`) — HTML `autocomplete` accepts specific token strings (e.g., `"email"`, `"current-password"`, `"given-name"`). This is too restrictive. |
+| **UX** | No character count display when `maxlength` is set |
+
+#### Dialog
+| Type | Issue |
+|---|---|
+| **A11y** | The sr-only close button at the bottom of the dialog body is redundant with the visible close button in the header — may cause screen readers to announce two "Close dialog" buttons in sequence |
+| **A11y** | No `aria-describedby` — dialogs with description text cannot programmatically link it to the dialog element |
+
+#### FloatingPanel
+| Type | Issue |
+|---|---|
+| **A11y** | No `aria-label` or `aria-labelledby` for non-tooltip/menu role panels — floating content without a label is opaque to AT |
+
+#### Toast
+| Type | Issue |
+|---|---|
+| **UX** | "Show all" / "Show less" strings are hardcoded English with no i18n props (inconsistent — `ReadMore` has `expandLabel`/`collapseLabel`) |
+
+#### Tabs / Tab
+| Type | Issue |
+|---|---|
+| **A11y** | `TabList` missing `aria-orientation="horizontal"` — screen readers may not announce correct arrow key navigation |
+| **A11y/UX** | Keyboard Arrow navigation does not skip disabled `Tab` items — focus lands on a disabled tab that cannot be activated |
+
+#### SidebarNavItem
+| Type | Issue |
+|---|---|
+| **Bug/A11y** | When both `href` and `disabled` are set, `aria-disabled` alone does not prevent keyboard activation via Enter on a real `<a>` element — the `href` attribute must be removed when disabled |
+
+#### Badge
+| Type | Issue |
+|---|---|
+| **A11y** | `role="note"` on the label badge is unconventional — consider `role="status"` or no role |
+| **A11y** | Dot badge with no `ariaLabel` prop is invisible to screen readers — `ariaLabel` should be documented as required when `dot` is `true` |
+
+#### Card
+| Type | Issue |
+|---|---|
+| **A11y** | Clickable card renders `<button>` but contains `<h2>` inside — headings inside buttons is invalid HTML and causes AT issues |
+| **A11y** | `selected` state has no `aria-pressed` or `aria-selected` — interactive selection state not communicated to AT |
+
+#### Avatar
+| Type | Issue |
+|---|---|
+| **A11y** | When `href` is set (link avatar), `ariaLabel` is optional — an unlabelled link is a WCAG failure. Prop should be documented as required when `href` is provided. |
+
+#### Banner
+| Type | Issue |
+|---|---|
+| **A11y** | Uses `<h4>` for the title — creates a heading in the document outline regardless of context, which may disrupt heading hierarchy. Consider `<p>` with `font-semibold` or let consumers control heading level via slot. |
+| **A11y** | `role="alert"` applied to non-dismissible error/warning banners — `role="alert"` only announces dynamically injected content; banners present on initial page load will not be read by this role |
+
+#### Stepper
+| Type | Issue |
+|---|---|
+| **A11y** | `<ol>` has no `aria-label` — screen readers have no context that this is a progress stepper |
+| **UX** | No overall progress announcement (e.g., "Step 2 of 5") accessible to AT |
+
+#### Progress
+| Type | Issue |
+|---|---|
+| **A11y** | Indeterminate bar uses `[animation:oui-indeterminate_...]` Tailwind arbitrary value — the `@keyframes oui-indeterminate` is defined in `core.scss` (confirmed), but no `prefers-reduced-motion` fallback pauses it |
+
+#### StatCard
+| Type | Issue |
+|---|---|
+| **A11y** | `aria-label="Trend"` is not descriptive — should include the value, e.g., "Trend: up 12%" |
+| **A11y** | Positive/negative trend relies on colour alone (green/red) — icon helps but is `aria-hidden` |
+
+#### Timeline
+| Type | Issue |
+|---|---|
+| **A11y** | `<ol>` has no `aria-label` identifying it as a timeline |
+
+#### EmptyState
+| Type | Issue |
+|---|---|
+| **A11y** | `<h3>` hardcoded for the title — disrupts heading hierarchy if the empty state appears at a level where h3 is inappropriate |
+
+#### Loader
+| Type | Issue |
+|---|---|
+| **A11y** | No `aria-live` region or `role="status"` on the container — screen readers receive no feedback that a loading state is in progress |
+| **A11y** | Animated icon has no `aria-label` |

@@ -18,10 +18,10 @@
         </div>
 
         <Transition
-            enter-active-class="transition-opacity duration-150 ease-out"
+            enter-active-class="transition-opacity duration-150 ease-out motion-reduce:transition-none"
             enter-from-class="opacity-0"
             enter-to-class="opacity-100"
-            leave-active-class="transition-opacity duration-150 ease-in"
+            leave-active-class="transition-opacity duration-150 ease-in motion-reduce:transition-none"
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
         >

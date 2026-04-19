@@ -8,7 +8,7 @@
         <div
             v-if="state === 'loading'"
             aria-hidden="true"
-            class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 animate-pulse"
+            class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 animate-pulse motion-reduce:animate-none"
         >
             <Icon
                 class="w-1/4 h-1/4 max-w-12 max-h-12 text-gray-300 dark:text-gray-600"
@@ -34,7 +34,7 @@
             v-if="placeholder"
             alt=""
             aria-hidden="true"
-            class="absolute inset-0 w-full h-full transition-opacity duration-500 pointer-events-none select-none"
+            class="absolute inset-0 w-full h-full transition-opacity duration-500 motion-reduce:transition-none pointer-events-none select-none"
             :class="[fitClass, state === 'loaded' ? 'opacity-0' : 'opacity-100 blur-sm scale-105']"
             :src="placeholder"
             :style="objectPositionStyle"
@@ -44,7 +44,7 @@
         <img
             v-if="state !== 'error'"
             v-bind="$attrs"
-            class="absolute inset-0 w-full h-full transition-opacity duration-500"
+            class="absolute inset-0 w-full h-full transition-opacity duration-500 motion-reduce:transition-none"
             :alt="alt"
             :class="[fitClass, state === 'loaded' ? 'opacity-100' : 'opacity-0']"
             :decoding="decoding"

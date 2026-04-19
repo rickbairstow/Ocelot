@@ -62,7 +62,7 @@
 import { ref, computed, useSlots } from 'vue'
 import Icon from '@Components/Icon.vue'
 
-export type BannerType = 'info' | 'success' | 'warning' | 'error'
+export type BannerType = 'info' | 'success' | 'warning' | 'error' | 'tip'
 export type BannerVariant = 'subtle' | 'solid' | 'outline'
 
 interface Props {
@@ -93,7 +93,8 @@ const typeIcon: Record<BannerType, string> = {
     info:    'InfoCircle',
     success: 'CircleCheck',
     warning: 'AlertTriangle',
-    error:   'CircleX'
+    error:   'CircleX',
+    tip:     'Bulb'
 }
 
 // role="alert" for assertive types, role="status" for polite, nothing for static
@@ -124,6 +125,11 @@ const palette: Record<BannerType, Record<BannerVariant, ColorSet>> = {
         subtle:  { container: 'bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800', icon: 'text-red-600 dark:text-red-400', text: 'text-red-900 dark:text-red-100', desc: 'text-red-800 dark:text-red-200', ring: 'focus-visible:outline-red-600 dark:focus-visible:outline-red-400' },
         solid:   { container: 'bg-red-600 dark:bg-red-500', icon: 'text-white', text: 'text-white', desc: 'text-white', ring: 'focus-visible:outline-white' },
         outline: { container: 'border-2 border-red-500 dark:border-red-400', icon: 'text-red-600 dark:text-red-400', text: 'text-red-900 dark:text-red-100', desc: 'text-red-800 dark:text-red-200', ring: 'focus-visible:outline-red-600 dark:focus-visible:outline-red-400' }
+    },
+    tip: {
+        subtle:  { container: 'bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800', icon: 'text-emerald-600 dark:text-emerald-400', text: 'text-emerald-900 dark:text-emerald-100', desc: 'text-emerald-800 dark:text-emerald-200', ring: 'focus-visible:outline-emerald-600 dark:focus-visible:outline-emerald-400' },
+        solid:   { container: 'bg-emerald-600 dark:bg-emerald-500', icon: 'text-white', text: 'text-white', desc: 'text-emerald-50', ring: 'focus-visible:outline-white' },
+        outline: { container: 'border-2 border-emerald-500 dark:border-emerald-400', icon: 'text-emerald-600 dark:text-emerald-400', text: 'text-emerald-900 dark:text-emerald-100', desc: 'text-emerald-800 dark:text-emerald-200', ring: 'focus-visible:outline-emerald-600 dark:focus-visible:outline-emerald-400' }
     }
 }
 
