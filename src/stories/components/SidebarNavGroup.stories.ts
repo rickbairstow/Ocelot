@@ -4,7 +4,7 @@ import SidebarNavItem from '@Components/SidebarNavItem.vue'
 import { expect, userEvent, within } from 'storybook/test'
 
 const meta: Meta<typeof SidebarNavGroup> = {
-    title: 'Components/SidebarNavGroup',
+    title: 'Components/Sidebar/SidebarNavGroup',
     component: SidebarNavGroup,
 
     parameters: {

@@ -3,7 +3,7 @@ import SidebarNavItem from '@Components/SidebarNavItem.vue'
 import { expect, within } from 'storybook/test'
 
 const meta: Meta<typeof SidebarNavItem> = {
-    title: 'Components/SidebarNavItem',
+    title: 'Components/Sidebar/SidebarNavItem',
     component: SidebarNavItem,
 
     parameters: {

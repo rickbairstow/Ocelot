@@ -1676,8 +1676,8 @@ Once Tier 1 components are complete:
 | ~~Card slot-based sub-components~~ | ✅ Done | Already refactored; added SelectableToggle + CardGrid stories |
 | ~~Dialog — `size` prop + `ConfirmDialog`~~ | ✅ Done | `size` already done; added ConfirmPattern story, fixed close button layout, fullscreen keeps rounded corners |
 | ~~Sidebar nav sub-components~~ | ✅ Done | `SidebarNav`, `SidebarNavItem`, `SidebarNavGroup` — with icon, active, badge, disabled, collapsible group support |
-| Toast action buttons | — | Update |
-| Badge — dot, removable, outline | — | Update |
+| ~~Toast action buttons~~ | ✅ Done | Already implemented — `action`, `onClose`, `icon` in useToast; full stories present |
+| ~~Badge — dot, removable, outline~~ | ✅ Done | Already implemented — dot, removable, outline, truncate, AllVariations story |
 | `prefers-reduced-motion` audit | — | All animated components |
 | SSR/Nuxt audit | — | Guard browser API usage |
 | Bundle size limit in CI | — | `size-limit` or `bundlesize` |
