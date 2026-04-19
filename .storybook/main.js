@@ -1,3 +1,5 @@
+import remarkGfm from 'remark-gfm'
+
 /** @type { import('@storybook/vue3-vite').StorybookConfig } */
 const config = {
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -6,7 +8,16 @@ const config = {
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@storybook/addon-themes',
-        '@storybook/addon-docs',
+        {
+            name: '@storybook/addon-docs',
+            options: {
+                mdxPluginOptions: {
+                    mdxCompileOptions: {
+                        remarkPlugins: [remarkGfm]
+                    }
+                }
+            }
+        },
         '@storybook/addon-vitest'
     ],
     framework: {

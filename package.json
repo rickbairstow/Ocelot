@@ -60,7 +60,9 @@
     "culori": "^4.0.2",
     "photoswipe": "^5.4.4",
     "plyr": "^3.8.4",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "remark-gfm": "^4.0.1",
+    "shiki": "^4.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

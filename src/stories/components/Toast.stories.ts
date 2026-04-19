@@ -11,6 +11,14 @@ const meta: Meta<typeof Toast> = {
     title: 'Components/Toast',
     component: Toast,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A non-blocking notification that appears temporarily at the screen edge. Managed via the `useToast` composable — call `useToast().show()` from anywhere to trigger a toast. Supports success, error, warning, and info types with optional actions.'
+            }
+        }
+    },
+
     argTypes: {
         placement: {
             control: 'select',

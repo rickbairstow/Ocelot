@@ -14,6 +14,14 @@ const meta: Meta<typeof Image> = {
     title: 'Components/Image',
     component: Image,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'An enhanced image with LQIP blur-up loading, lazy loading, and configurable aspect ratio. Shows a skeleton placeholder while loading and gracefully handles load errors.'
+            }
+        }
+    },
+
     argTypes: {
         alt: {
             control: 'text',

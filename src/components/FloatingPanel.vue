@@ -79,6 +79,7 @@ interface Props {
     maxWidth?: number | string
     placement?: Placement
     role?: PanelRole
+    showDelay?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -87,7 +88,8 @@ const props = withDefaults(defineProps<Props>(), {
     interaction: 'all',
     maxWidth: '260px',
     placement: 'bottom',
-    role: null
+    role: null,
+    showDelay: 0
 })
 
 const emit = defineEmits<{
@@ -100,6 +102,7 @@ const arrowDirection = ref<string>(props.placement.split('-')[0])
 const arrowStyle = ref<Record<string, string>>({})
 const cleanupAutoUpdate = ref<(() => void) | null>(null)
 const closeTimeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
+const openTimeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
 const contentRef = ref<HTMLElement | null>(null)
 const isDark = ref(false)
 const isHoveringContent = ref(false)
@@ -208,6 +211,13 @@ const clearCloseTimeout = (): void => {
     }
 }
 
+const clearOpenTimeout = (): void => {
+    if (openTimeoutId.value) {
+        clearTimeout(openTimeoutId.value)
+        openTimeoutId.value = null
+    }
+}
+
 const close = (): void => {
     isOpen.value = false
     emit('close')
@@ -249,8 +259,17 @@ const setHoverState = (hoverRef: { value: boolean }, hovering: boolean): void =>
     hoverRef.value = hovering
     if (hovering) {
         clearCloseTimeout()
-        open()
+        if (props.showDelay > 0) {
+            clearOpenTimeout()
+            openTimeoutId.value = window.setTimeout(() => {
+                openTimeoutId.value = null
+                if (isHoveringTrigger.value || isHoveringContent.value) open()
+            }, props.showDelay)
+        } else {
+            open()
+        }
     } else {
+        clearOpenTimeout()
         scheduleClose()
     }
 }
@@ -393,6 +412,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
     destroyAutoPositioning()
     clearCloseTimeout()
+    clearOpenTimeout()
     document.removeEventListener('pointerdown', handleOutsidePointerDown)
     darkObserver?.disconnect()
     darkObserver = null

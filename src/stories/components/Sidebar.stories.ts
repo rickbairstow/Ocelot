@@ -7,6 +7,14 @@ const meta: Meta<typeof Sidebar> = {
     title: 'Components/Sidebar',
     component: Sidebar,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A collapsible side navigation panel. Slides in from the left and pairs with a Scrim overlay for mobile viewports. Provides default and footer slots for flexible content layout.'
+            }
+        }
+    },
+
     argTypes: {
         default: {
             control: 'text',

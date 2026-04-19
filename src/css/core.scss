@@ -15,6 +15,12 @@
     --oui-font-sans: inherit;
 }
 
+/* Progress indeterminate animation */
+@keyframes oui-indeterminate {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+}
+
 /* Vue transitions */
 .v-enter-active,
 .v-leave-active {

@@ -10,6 +10,14 @@ const meta: Meta<typeof Button> = {
     title: 'Components/Button',
     component: Button,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Triggers an action or navigates to a URL. Supports multiple variants, colours, and sizes, leading and trailing icons, a loading state that disables interaction and shows a spinner, and renders as an anchor when an href is provided.'
+            }
+        }
+    },
+
     argTypes: {
         color: {
             control: 'select',

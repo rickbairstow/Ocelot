@@ -5,6 +5,14 @@ const meta: Meta<typeof Label> = {
     title: 'Components/Label',
     component: Label,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'A form label that associates with an input via the for attribute. Supports required and optional indicators, making field intent clear without relying on placeholder text alone.'
+            }
+        }
+    },
+
     argTypes: {
         default: {
             control: 'text',

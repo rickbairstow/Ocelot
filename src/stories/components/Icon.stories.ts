@@ -8,6 +8,14 @@ const meta: Meta<typeof Icon> = {
     title: 'Components/Icon',
     component: Icon,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Renders a Tabler icon by registry key string, or accepts any Vue component directly. Extend the built-in registry with `registerIcons()` to add custom or third-party icons. Supports xs through 9xl sizes.'
+            }
+        }
+    },
+
     argTypes: {
         icon: {
             control: 'select',

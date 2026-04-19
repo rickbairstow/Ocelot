@@ -11,6 +11,14 @@ const meta: Meta<typeof Avatar> = {
     title: 'Components/Avatar',
     component: Avatar,
 
+    parameters: {
+        docs: {
+            description: {
+                component: 'Displays a user\'s profile image, initials, or fallback icon. Supports multiple sizes, shapes, and colours. Group multiple avatars together with AvatarGroup to show a stacked collection with an overflow count.'
+            }
+        }
+    },
+
     argTypes: {
         alt: {
             control: 'text',

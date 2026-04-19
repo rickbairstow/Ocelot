@@ -122,6 +122,8 @@ import {
 
     // Q
     IconQrcode as QrCode,
+    IconQuote as Quote,
+    IconQuoteFilled as QuoteFilled,
 
     // R
     IconRefresh as Refresh,
@@ -285,6 +287,8 @@ const builtInIcons = {
 
     // Q
     QrCode,
+    Quote,
+    QuoteFilled,
 
     // R
     Refresh,
