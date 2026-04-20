@@ -81,6 +81,18 @@ Toggle dark mode via the `.dark` class on `<html>`:
 
 ---
 
+## Bundle analysis
+
+To inspect the library bundle composition locally, run:
+
+```bash
+npm run build:analyse
+```
+
+This generates a treemap report at `dist/bundle-analysis.html`.
+
+---
+
 ## Publishing to npm
 
 To publish a new version:

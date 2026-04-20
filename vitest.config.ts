@@ -4,7 +4,7 @@ import { playwright } from '@vitest/browser-playwright'
 import path from 'path'
 import { fileURLToPath } from 'node:url'
 
-import viteConfig from './vite.config'
+import { createViteConfig } from './vite.config'
 
 const dirname =
     typeof __dirname !== 'undefined'
@@ -12,7 +12,7 @@ const dirname =
         : path.dirname(fileURLToPath(import.meta.url))
 
 export default mergeConfig(
-    viteConfig,
+    createViteConfig('test'),
     defineConfig({
         test: {
             projects: [
