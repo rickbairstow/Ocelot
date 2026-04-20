@@ -58,3 +58,4 @@ cypress/screenshots/
 # =========================
 .claude*
 CLAUDE.md
+AGENTS.md
