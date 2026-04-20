@@ -15,11 +15,7 @@ export default defineConfig({
         vue(),
         tailwindcss(),
         dts({
-            exclude: [
-                'src/App.vue',
-                'src/main.ts',
-                'src/stories/**/*'
-            ],
+            exclude: ['src/stories/**/*'],
             include: [
                 '.build/index.ts',
                 'src/components',
@@ -53,7 +49,15 @@ export default defineConfig({
             fileName: (format) => `ocelot-ui.${format}.js`
         },
         rollupOptions: {
-            external: ['vue'],
+            external: [
+                'vue',
+                'photoswipe',
+                'photoswipe/lightbox',
+                'photoswipe/style.css',
+                'plyr',
+                'plyr/dist/plyr.css',
+                'qrcode'
+            ],
             output: {
                 globals: {
                     vue: 'Vue'

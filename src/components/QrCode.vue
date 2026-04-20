@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import QRCode from 'qrcode'
+import { warnOptionalDependency } from '@Utils/optionalDependency'
 
 interface Props {
     value: string
@@ -43,6 +43,35 @@ const props = withDefaults(defineProps<Props>(), {
 
 const dataUrl = ref('')
 const isDark = ref(false)
+let qrCodeModulePromise: Promise<QrCodeModule | null> | null = null
+
+interface QrCodeModule {
+    toDataURL: (
+        text: string,
+        options: {
+            color: {
+                light: string
+                dark: string
+            }
+            errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
+            margin: number
+            width: number
+        }
+    ) => Promise<string>
+}
+
+const loadQrCodeModule = async (): Promise<QrCodeModule | null> => {
+    if (!qrCodeModulePromise) {
+        qrCodeModulePromise = import('qrcode')
+            .then(module => module.default)
+            .catch(() => {
+                warnOptionalDependency('OuiQrCode', 'qrcode')
+                return null
+            })
+    }
+
+    return qrCodeModulePromise
+}
 
 /**
  * When using default colors, flip them for dark mode.
@@ -71,8 +100,14 @@ const altText = computed((): string =>
  * Generate QR code as a data URL
  */
 const generateQrCode = async (text: string): Promise<void> => {
+    const qrCode = await loadQrCodeModule()
+    if (!qrCode) {
+        dataUrl.value = ''
+        return
+    }
+
     try {
-        dataUrl.value = await QRCode.toDataURL(text, {
+        dataUrl.value = await qrCode.toDataURL(text, {
             color: {
                 light: effectiveBackground.value,
                 dark: effectiveForeground.value

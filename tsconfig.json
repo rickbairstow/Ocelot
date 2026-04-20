@@ -27,9 +27,5 @@
         ".build/**/*.ts",
         "vite.config.ts",
         "vitest.config.ts"
-    ],
-    "exclude": [
-        "src/App.vue",
-        "src/main.ts"
     ]
 }
