@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
+import dts from 'vite-plugin-dts'
 
 const dirname =
     typeof __dirname !== 'undefined'
@@ -10,7 +11,26 @@ const dirname =
         : path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-    plugins: [vue(), tailwindcss()],
+    plugins: [
+        vue(),
+        tailwindcss(),
+        dts({
+            exclude: [
+                'src/App.vue',
+                'src/main.ts',
+                'src/stories/**/*'
+            ],
+            include: [
+                '.build/index.ts',
+                'src/components',
+                'src/composables',
+                'src/utilities'
+            ],
+            insertTypesEntry: true,
+            outDir: 'dist',
+            tsconfigPath: './tsconfig.json'
+        })
+    ],
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
