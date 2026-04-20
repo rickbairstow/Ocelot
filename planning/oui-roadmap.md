@@ -59,6 +59,34 @@ All 256 tests passing.
 
 ---
 
+## Status Snapshot
+
+### Covered
+
+- Foundation work is largely complete: icon system overhaul, `registerIcons()`, expanded registry, `ButtonGroup`, `Tooltip`, `FormField`, `useToast` export, theming/design tokens, and reduced-motion support.
+- Existing component upgrades are largely complete: Button, Badge, Card, Accordion, Divider, Dialog, Toast, Loader, Input, `ReadMore` labels, `SkipLink`, and date/time input support are all recorded as shipped.
+- Phase 2 is effectively complete: Alert/Banner, Avatar/AvatarGroup, Tabs, Breadcrumb, Progress, Pagination, Stepper, and the full first wave of form primitives are marked done.
+- Most of Phase 3 is complete: Dropdown Menu, Stats / Metric Card, Empty State, Code Block, Timeline, Popover, and Quote are marked done.
+- Form accessibility work is substantially complete: the Session 4 audit closed the previously failing form stories and documented WCAG 2.1 AA fixes across Checkbox, CheckboxGroup, Radio, FormField, Textarea, and Switch.
+
+### Partially Covered
+
+- Dependency architecture follow-up remains partially complete: `culori` has been removed, but the roadmap still recommends moving `photoswipe`, `plyr`, and `qrcode` to optional peer dependencies.
+- Accordion accessibility is only partially closed: redundant ARIA on `<summary>` is fixed, but the audit still notes that a full `<button aria-expanded>` implementation is outstanding.
+- Validation/form ergonomics remain intentionally partial: `FormField` exists, but validation strategy, richer validation states, and consumer guidance are still open-ended rather than fully productised.
+- RTL support is partial: the audit says most logical properties are in place, but some components still rely on physical `left` / `right` positioning.
+- Storybook/DX polish is partial: the roadmap defines strong story and testing standards, but tooling items such as generated package types, a bundle analyser, and a dedicated type-check script are still tracked separately in the audit.
+
+### Still Left To Do
+
+- `Table` is the main roadmap gap and is explicitly marked on hold pending a dedicated spec.
+- Packaging and developer-experience follow-up from the audit still needs closure: generated `.d.ts` output, `check-types`, and any unresolved TypeScript/build issues.
+- Export and public API cleanup still needs verification where noted in the audit: `SidebarNavGroup`, `SidebarNavItem`, and removal of `HelloWorld` from the library surface if still present.
+- Remaining accessibility/backlog items in §15 still need individual follow-up, including issues noted for Dialog, Tabs, SidebarNavItem, Card, Avatar, Banner, Stepper, Progress, StatCard, Timeline, EmptyState, and Loader.
+- Lower-priority component work remains open where no shipped status is recorded, notably `NavigationBar / AppShell`, `CommandPalette`, `Chip / Tag`, and potentially `Callout` depending on final scope.
+
+---
+
 ## Table of Contents
 
 1. [Current State Assessment](#1-current-state-assessment)
