@@ -18,6 +18,21 @@ npm install ocelot-ui
 
 **Prerequisites:** Vue 3.5+, Tailwind CSS v4, Node.js 24+
 
+Optional media dependencies:
+
+```bash
+# LightboxImage
+npm install photoswipe
+
+# Video
+npm install plyr
+
+# QrCode
+npm install qrcode
+```
+
+Install only the packages for the media components you actually use. OUI will warn in development if `LightboxImage`, `Video`, or `QrCode` is mounted without its matching dependency.
+
 ### 1. Configure Tailwind
 
 Import the OUI Tailwind plugin alongside your Tailwind import. This tells Tailwind to scan OUI components so their utility classes are included in your build:
@@ -63,6 +78,18 @@ Toggle dark mode via the `.dark` class on `<html>`:
 ```html
 <html class="dark">...</html>
 ```
+
+---
+
+## Bundle analysis
+
+To inspect the library bundle composition locally, run:
+
+```bash
+npm run build:analyse
+```
+
+This generates a treemap report at `dist/bundle-analysis.html`.
 
 ---
 

@@ -1,5 +1,14 @@
 <template>
-    <ol :class="orientation === 'vertical' ? 'flex flex-col' : 'flex w-full'">
+    <div
+        class="sr-only"
+        role="status"
+    >
+        {{ progressAnnouncement }}
+    </div>
+    <ol
+        :aria-label="ariaLabel"
+        :class="orientation === 'vertical' ? 'flex flex-col' : 'flex w-full'"
+    >
         <li
             v-for="(step, index) in steps"
             :key="index"
@@ -109,12 +118,14 @@ export interface StepItem {
 type StepState = 'completed' | 'current' | 'upcoming'
 
 interface Props {
+    ariaLabel?: string
     modelValue: number
     orientation?: 'horizontal' | 'vertical'
     steps: StepItem[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    ariaLabel: 'Progress steps',
     orientation: 'horizontal'
 })
 
@@ -147,5 +158,10 @@ const titleClass = computed(() => (index: number): string => {
     if (state === 'completed') return 'text-sm font-medium text-gray-700 dark:text-gray-300'
     if (state === 'current') return 'text-sm font-semibold text-blue-600 dark:text-blue-400'
     return 'text-sm font-medium text-gray-500 dark:text-gray-400'
+})
+
+const progressAnnouncement = computed((): string => {
+    const current = Math.min(Math.max(props.modelValue, 1), props.steps.length)
+    return `Step ${current} of ${props.steps.length}`
 })
 </script>

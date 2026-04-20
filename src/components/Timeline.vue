@@ -1,5 +1,8 @@
 <template>
-    <ol class="flex flex-col">
+    <ol
+        class="flex flex-col"
+        :aria-label="ariaLabel"
+    >
         <li
             v-for="(item, index) in items"
             :key="index"
@@ -61,10 +64,13 @@ export interface TimelineItem {
 }
 
 interface Props {
+    ariaLabel?: string
     items: TimelineItem[]
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+    ariaLabel: 'Timeline'
+})
 
 const colorMap: Record<TimelineColor, string> = {
     blue:   'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400',

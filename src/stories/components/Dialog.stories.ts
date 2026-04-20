@@ -70,6 +70,9 @@ const meta: Meta<typeof Dialog> = {
                 :size="args.size"
             >
                 <template #title>Dialog title</template>
+                <template #description>
+                    <p>Dialog description text.</p>
+                </template>
                 Dialog content goes here.
                 <template #footer>
                     <button @click="dialog.close()">Close</button>
@@ -91,14 +94,13 @@ export const Default: Story = {
 
         const dialog = await canvas.findByRole('dialog', { name: /dialog title/i })
         await waitFor(() => expect(dialog).toBeVisible())
+        await expect(dialog).toHaveAttribute('aria-describedby')
 
         const title = await canvas.findByText(/dialog title/i)
         await expect(title).toHaveFocus()
 
         const closeButtons = await canvas.findAllByRole('button', { name: /close dialog/i })
-        const closeButton = closeButtons.find(
-            (btn) => getComputedStyle(btn).display !== 'none' && !btn.classList.contains('sr-only')
-        )
+        const closeButton = closeButtons.find((button) => button.className.includes('self-start'))
         await userEvent.click(closeButton!)
 
         await waitFor(() => expect(dialog).not.toBeVisible())
@@ -148,6 +150,9 @@ export const WithScrollingContent: Story = {
             <button id="dialogTrigger" @click="dialog.open()">Open dialog</button>
             <Dialog ref="dialog" aria-label="Long content" focus-from="dialogTrigger">
                 <template #title>Long content dialog</template>
+                <template #description>
+                    <p class="text-gray-700 dark:text-gray-300">This dialog contains enough copy to verify scrolling content and description linkage.</p>
+                </template>
                 <p class="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{{ body }}</p>
                 <template #footer>
                     <button @click="dialog.close()">Close</button>
@@ -175,6 +180,9 @@ export const WithForm: Story = {
             <button id="dialogTrigger" @click="dialog.open()">Open form dialog</button>
             <Dialog ref="dialog" aria-label="Edit profile" focus-from="dialogTrigger">
                 <template #title>Edit profile</template>
+                <template #description>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Update your personal details below.</p>
+                </template>
                 <form class="flex flex-col gap-4">
                     <label class="flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                         Name

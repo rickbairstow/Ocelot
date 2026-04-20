@@ -55,26 +55,33 @@ const handleClick = () => {
 const handleKeydown = (e: KeyboardEvent) => {
     const order = ctx?.tabOrder.value ?? []
     const currentIndex = order.indexOf(props.value)
+    const enabledOrder = order.filter((value) => {
+        const tab = document.getElementById(`${ctx!.baseId}-tab-${value.replace(/\s+/g, '-')}`)
+        return tab?.getAttribute('aria-disabled') !== 'true'
+    })
+    const enabledCurrentIndex = enabledOrder.indexOf(props.value)
 
     const focusTab = (index: number) => {
-        const target = order[index]
+        const target = enabledOrder[index]
         if (target) {
             document.getElementById(`${ctx!.baseId}-tab-${target.replace(/\s+/g, '-')}`)?.focus()
         }
     }
 
+    if (props.disabled || currentIndex === -1 || enabledOrder.length === 0 || enabledCurrentIndex === -1) return
+
     if (e.key === 'ArrowRight') {
         e.preventDefault()
-        focusTab((currentIndex + 1) % order.length)
+        focusTab((enabledCurrentIndex + 1) % enabledOrder.length)
     } else if (e.key === 'ArrowLeft') {
         e.preventDefault()
-        focusTab((currentIndex - 1 + order.length) % order.length)
+        focusTab((enabledCurrentIndex - 1 + enabledOrder.length) % enabledOrder.length)
     } else if (e.key === 'Home') {
         e.preventDefault()
         focusTab(0)
     } else if (e.key === 'End') {
         e.preventDefault()
-        focusTab(order.length - 1)
+        focusTab(enabledOrder.length - 1)
     }
 }
 

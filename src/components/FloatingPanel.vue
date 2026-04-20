@@ -31,6 +31,8 @@
                 :id="panelId"
                 ref="contentRef"
                 class="z-30 rounded-lg bg-white text-black text-xs break-words drop-shadow-lg dark:bg-gray-800 dark:text-white"
+                :aria-label="panelLabel"
+                :aria-labelledby="panelLabelledby"
                 :role="role ?? undefined"
                 :style="floatingStyle"
                 @mouseenter="handleContentMouseEnter"
@@ -72,7 +74,9 @@ import { generateUuid } from '@Utils/uuid'
 type Interaction = 'all' | 'click' | 'hover'
 type PanelRole = 'listbox' | 'menu' | 'tooltip' | null
 
-interface Props {
+export interface Props {
+    ariaLabel?: string
+    ariaLabelledby?: string
     disabled?: boolean
     flush?: boolean
     interaction?: Interaction
@@ -83,6 +87,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    ariaLabel: undefined,
+    ariaLabelledby: undefined,
     disabled: false,
     flush: false,
     interaction: 'all',
@@ -101,8 +107,8 @@ const arrowRef = ref<HTMLElement | null>(null)
 const arrowDirection = ref<string>(props.placement.split('-')[0])
 const arrowStyle = ref<Record<string, string>>({})
 const cleanupAutoUpdate = ref<(() => void) | null>(null)
-const closeTimeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
-const openTimeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
+const closeTimeoutId = ref<number | null>(null)
+const openTimeoutId = ref<number | null>(null)
 const contentRef = ref<HTMLElement | null>(null)
 const isDark = ref(false)
 const isHoveringContent = ref(false)
@@ -185,6 +191,16 @@ const triggerAria = computed((): Record<string, string> => {
     return {}
 })
 
+const panelLabel = computed((): string | undefined => {
+    if (props.role === 'tooltip' || props.role === 'menu' || props.role === 'listbox') return undefined
+    return props.ariaLabel
+})
+
+const panelLabelledby = computed((): string | undefined => {
+    if (props.role === 'tooltip' || props.role === 'menu' || props.role === 'listbox') return undefined
+    return props.ariaLabelledby
+})
+
 /**
  * Propagates ARIA attributes to the first focusable descendant inside the trigger
  * slot (or the trigger wrapper itself when no focusable child exists). This ensures
@@ -205,14 +221,14 @@ watchEffect(() => {
 })
 
 const clearCloseTimeout = (): void => {
-    if (closeTimeoutId.value) {
+    if (closeTimeoutId.value !== null) {
         clearTimeout(closeTimeoutId.value)
         closeTimeoutId.value = null
     }
 }
 
 const clearOpenTimeout = (): void => {
-    if (openTimeoutId.value) {
+    if (openTimeoutId.value !== null) {
         clearTimeout(openTimeoutId.value)
         openTimeoutId.value = null
     }
@@ -362,7 +378,7 @@ const initAutoPositioning = (): void => {
             const side = finalPlacement.split('-')[0]
             arrowDirection.value = side
 
-            const arrowData = middlewareData.arrow ?? {}
+            const arrowData = (middlewareData.arrow ?? {}) as { x?: number; y?: number }
             const style: Record<string, string> = {}
             const oppositePlacement = OPPOSITE_SIDE[side]
 

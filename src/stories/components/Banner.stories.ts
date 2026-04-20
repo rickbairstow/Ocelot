@@ -179,17 +179,17 @@ export const Tip: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await expect(canvas.getByText('Pro tip')).toBeInTheDocument()
-        await expect(canvasElement.querySelector('[role="status"]')).not.toBeNull()
+        await expect(canvasElement.querySelector('[role="status"], [role="alert"]')).toBeNull()
     }
 }
 
 export const ErrorRole: Story = {
-    args: { type: 'error', title: 'Submission failed' },
+    args: { announce: true, type: 'error', title: 'Submission failed' },
     render: (args) => ({
         components: { Banner },
         setup() { return { args } },
         template: `
-            <Banner :type="args.type" :title="args.title">
+            <Banner :announce="args.announce" :type="args.type" :title="args.title">
                 <p>Please correct the highlighted fields and try again.</p>
             </Banner>
         `
@@ -205,7 +205,7 @@ export const InsideForm: Story = {
         components: { Banner },
         template: `
             <div class="flex flex-col gap-4 max-w-md">
-                <Banner type="error" title="Form has errors">
+                <Banner type="error" title="Form has errors" title-tag="h2">
                     <p>Fix the 2 errors below before submitting.</p>
                 </Banner>
                 <div class="flex flex-col gap-1">

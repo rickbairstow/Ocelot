@@ -64,7 +64,9 @@ const meta: Meta<typeof Avatar> = {
         template: `
             <Avatar
                 :alt="args.alt"
+                :aria-label="args.ariaLabel"
                 :color="args.color"
+                :href="args.href"
                 :initials="args.initials"
                 :shape="args.shape"
                 :size="args.size"
@@ -137,6 +139,19 @@ export const AllSizes: Story = {
 
 export const Square: Story = {
     args: { shape: 'square', initials: 'JD' }
+}
+
+export const LinkAvatar: Story = {
+    args: {
+        href: '#profile',
+        alt: 'Jane Doe profile',
+        initials: 'JD'
+    },
+    play: async ({ canvasElement }) => {
+        const link = canvasElement.querySelector('a')
+        await expect(link).not.toBeNull()
+        await expect(link).toHaveAccessibleName('Jane Doe profile')
+    }
 }
 
 export const FallbackStates: Story = {

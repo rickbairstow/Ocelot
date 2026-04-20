@@ -178,6 +178,10 @@ const clearSearch = () => {
 
 const emitIntercept = (value: string, eventType: 'input' | 'change') => {
     emit('update:modelValue', value)
-    emit(eventType, value)
+    if (eventType === 'input') {
+        emit('input', value)
+    } else {
+        emit('change', value)
+    }
 }
 </script>

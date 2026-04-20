@@ -18,9 +18,11 @@
             <div
                 aria-valuemin="0"
                 role="progressbar"
+                :aria-busy="isIndeterminate ? 'true' : undefined"
                 :aria-label="label"
                 :aria-valuemax="max"
                 :aria-valuenow="isIndeterminate ? undefined : percentage"
+                :aria-valuetext="isIndeterminate ? indeterminateLabel : `${percentage}%`"
                 :class="trackClass"
             >
                 <div
@@ -40,9 +42,11 @@
             <div
                 aria-valuemin="0"
                 role="progressbar"
+                :aria-busy="isIndeterminate ? 'true' : undefined"
                 :aria-label="label"
                 :aria-valuemax="max"
                 :aria-valuenow="isIndeterminate ? undefined : percentage"
+                :aria-valuetext="isIndeterminate ? indeterminateLabel : `${percentage}%`"
                 :class="['relative inline-flex items-center justify-center', circleSizeClass]"
             >
                 <svg
@@ -88,6 +92,7 @@ const circleTransitionStyle = prefersReducedMotion ? {} : { transition: 'stroke-
 
 interface Props {
     color?: 'blue' | 'green' | 'red' | 'orange' | 'purple' | 'indigo' | 'teal' | 'pink'
+    indeterminateLabel?: string
     label?: string
     max?: number
     showValue?: boolean
@@ -98,6 +103,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     color: 'blue',
+    indeterminateLabel: 'Loading progress',
     label: undefined,
     max: 100,
     showValue: false,

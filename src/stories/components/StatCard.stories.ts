@@ -60,7 +60,7 @@ export const PositiveTrend: Story = {
     },
 
     async play({ canvasElement }) {
-        const trend = canvasElement.querySelector('[aria-label="Trend"]')
+        const trend = canvasElement.querySelector('[aria-label="Trend: up 8%"]')
         await expect(trend).not.toBeNull()
         await expect(trend!.textContent).toContain('8%')
     }
@@ -77,7 +77,7 @@ export const NegativeTrend: Story = {
     },
 
     async play({ canvasElement }) {
-        const trend = canvasElement.querySelector('[aria-label="Trend"]')
+        const trend = canvasElement.querySelector('[aria-label="Trend: down 3%"]')
         await expect(trend).not.toBeNull()
         await expect(trend!.textContent).toContain('3%')
     }
@@ -108,7 +108,7 @@ export const NoTrend: Story = {
     },
 
     async play({ canvasElement }) {
-        const trend = canvasElement.querySelector('[aria-label="Trend"]')
+        const trend = canvasElement.querySelector('[aria-label^="Trend:"]')
         await expect(trend).toBeNull()
     }
 }

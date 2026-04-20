@@ -1,6 +1,7 @@
 <template>
     <component
         :is="clickable ? 'button' : 'div'"
+        :aria-pressed="clickable ? String(selected) : undefined"
         :class="cardCss"
         :role="clickable ? undefined : 'article'"
         :tabindex="clickable ? 0 : undefined"
@@ -27,9 +28,12 @@
             <!-- Header slot — falls back to title prop -->
             <div v-if="slots.header || title">
                 <slot name="header">
-                    <h2 class="font-bold text-xl mb-1 text-gray-900 dark:text-white">
+                    <component
+                        :is="titleTag"
+                        class="font-bold text-xl mb-1 text-gray-900 dark:text-white"
+                    >
                         {{ title }}
-                    </h2>
+                    </component>
                 </slot>
             </div>
 
@@ -88,6 +92,7 @@
 
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
+import type { Slots } from 'vue'
 import Badge from '@Components/Badge.vue'
 
 interface BadgeItem {
@@ -120,7 +125,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{ click: [event: MouseEvent] }>()
-const slots = useSlots()
+const slots: Slots = useSlots()
+const titleTag = computed((): string => props.clickable ? 'div' : 'h2')
 
 const sizeCss = computed((): string => {
     const map = {

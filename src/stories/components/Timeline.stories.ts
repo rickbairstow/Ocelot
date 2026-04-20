@@ -4,12 +4,15 @@ import type { TimelineItem } from '@Components/Timeline.vue'
 import { expect, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
-const makeItems = (count = 4): TimelineItem[] => [
-    { color: 'green',  icon: 'Check',     title: faker.lorem.words(3), description: faker.lorem.sentence(8),  time: '2 min ago' },
-    { color: 'blue',   icon: 'Bell',      title: faker.lorem.words(3), description: faker.lorem.sentence(6),  time: '1 hr ago' },
-    { color: 'purple', icon: 'User',      title: faker.lorem.words(3), description: faker.lorem.sentence(7),  time: 'Yesterday' },
-    { color: 'orange', icon: 'AlertCircle', title: faker.lorem.words(3), description: faker.lorem.sentence(5), time: '3 days ago' }
-].slice(0, count)
+const makeItems = (count = 4): TimelineItem[] => {
+    const items: TimelineItem[] = [
+        { color: 'green', icon: 'Check', title: faker.lorem.words(3), description: faker.lorem.sentence(8), time: '2 min ago' },
+        { color: 'blue', icon: 'Bell', title: faker.lorem.words(3), description: faker.lorem.sentence(6), time: '1 hr ago' },
+        { color: 'purple', icon: 'User', title: faker.lorem.words(3), description: faker.lorem.sentence(7), time: 'Yesterday' },
+        { color: 'orange', icon: 'AlertCircle', title: faker.lorem.words(3), description: faker.lorem.sentence(5), time: '3 days ago' }
+    ]
+    return items.slice(0, count)
+}
 
 const meta: Meta<typeof Timeline> = {
     title: 'Components/Timeline',
@@ -39,8 +42,10 @@ export const Default: Story = {
     async play({ canvasElement, args }) {
         const canvas = within(canvasElement)
         const items = args.items as TimelineItem[]
+        const timeline = canvas.getByRole('list', { name: /timeline/i })
 
         await expect(canvas.getByText(items[0].title)).toBeVisible()
+        await expect(timeline).toBeVisible()
         await expect(canvasElement.querySelectorAll('li').length).toBe(items.length)
     }
 }

@@ -75,13 +75,12 @@ All 256 tests passing.
 - Accordion accessibility is only partially closed: redundant ARIA on `<summary>` is fixed, but the audit still notes that a full `<button aria-expanded>` implementation is outstanding.
 - Validation/form ergonomics remain intentionally partial: `FormField` exists, but validation strategy, richer validation states, and consumer guidance are still open-ended rather than fully productised.
 - RTL support is partial: the audit says most logical properties are in place, but some components still rely on physical `left` / `right` positioning.
-- Storybook/DX polish is partial: the roadmap defines strong story and testing standards, but tooling items such as generated package types, a bundle analyser, and a dedicated type-check script are still tracked separately in the audit.
+- Storybook/DX polish is partial: the roadmap defines strong story and testing standards, but tooling items such as a bundle analyser are still tracked separately in the audit.
 
 ### Still Left To Do
 
 - `Table` is the main roadmap gap and is explicitly marked on hold pending a dedicated spec.
-- Packaging and developer-experience follow-up from the audit still needs closure: generated `.d.ts` output, `check-types`, and any unresolved TypeScript/build issues.
-- Export and public API cleanup still needs verification where noted in the audit: `SidebarNavGroup`, `SidebarNavItem`, and removal of `HelloWorld` from the library surface if still present.
+- Packaging and developer-experience follow-up from the audit still needs closure for unresolved TypeScript/build issues and remaining tooling gaps.
 - Remaining accessibility/backlog items in §15 still need individual follow-up, including issues noted for Dialog, Tabs, SidebarNavItem, Card, Avatar, Banner, Stepper, Progress, StatCard, Timeline, EmptyState, and Loader.
 - Lower-priority component work remains open where no shipped status is recorded, notably `NavigationBar / AppShell`, `CommandPalette`, `Chip / Tag`, and potentially `Callout` depending on final scope.
 
@@ -2054,10 +2053,10 @@ Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the
 
 | Issue | Fix |
 |---|---|
-| `SidebarNavGroup` not exported from `.build/index.ts` | Add export — consumers cannot use sub-component without it |
-| `SidebarNavItem` not exported from `.build/index.ts` | Add export — same reason |
-| `HelloWorld` exported from `.build/index.ts` | Remove — it is a demo scaffold component, not part of the public API |
-| No `components.d.ts` generated | Add `vite-plugin-dts` to devDependencies and configure in `vite.config.ts` with `insertTypesEntry: true`. Without this, TypeScript consumers of the npm package receive no type declarations and all props resolve to `any`. |
+| ~~`SidebarNavGroup` not exported from `.build/index.ts`~~ | Done — export added to `.build/index.ts` |
+| ~~`SidebarNavItem` not exported from `.build/index.ts`~~ | Done — export added to `.build/index.ts` |
+| ~~`HelloWorld` exported from `.build/index.ts`~~ | Done — export removed from `.build/index.ts` |
+| ~~No `components.d.ts` generated~~ | Done — `vite-plugin-dts` added and configured in `vite.config.ts` with `insertTypesEntry: true` |
 
 ---
 
@@ -2066,7 +2065,7 @@ Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the
 | Item | Detail |
 |---|---|
 | **No bundle analyser** | Add `rollup-plugin-visualizer` as a devDependency. Wire it to a `npm run build:analyse` script (`visualizer({ open: true })`). Gives a visual treemap of bundle composition — useful for tracking heavy dependencies (Plyr, PhotoSwipe, etc.) without needing a formal size-limit gate. |
-| **No `check-types` npm script** | Add `"check-types": "vue-tsc --noEmit"` to `package.json` scripts and document it in `CLAUDE.md`. Currently requires knowing to run `npx vue-tsc` manually. |
+| ~~No `check-types` npm script~~ | Done — `package.json` now includes `"check-types": "vue-tsc --noEmit"` and the command is documented in `CLAUDE.md`. |
 
 ---
 

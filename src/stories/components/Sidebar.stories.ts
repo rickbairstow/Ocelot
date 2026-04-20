@@ -56,7 +56,7 @@ const meta: Meta<typeof Sidebar> = {
             const triggerRef = ref<HTMLElement | null>(null)
 
             const openSidebar = () => {
-                sidebar.value.open()
+                sidebar.value?.open()
             }
 
             return {
@@ -162,7 +162,7 @@ export const WithNav: Story = {
 
                     <SidebarNavGroup label="Settings">
                         <SidebarNavItem icon="Settings" href="#" :active="active === 'settings'" @click.prevent="active = 'settings'">Settings</SidebarNavItem>
-                        <SidebarNavItem icon="Lock" disabled>Admin only</SidebarNavItem>
+                        <SidebarNavItem icon="Lock" href="#" disabled>Admin only</SidebarNavItem>
                     </SidebarNavGroup>
                 </nav>
             </Sidebar>
@@ -182,6 +182,9 @@ export const WithNav: Story = {
         await expect(canvas.getByRole('link', { name: /team/i })).toHaveAttribute('aria-current', 'page')
         await expect(dashboardLink).not.toHaveAttribute('aria-current')
 
-        await expect(canvas.getByRole('button', { name: /admin only/i })).toBeDisabled()
+        const disabledItem = canvas.getByText(/admin only/i).closest('a')
+        await expect(disabledItem).not.toBeNull()
+        await expect(disabledItem).toHaveAttribute('aria-disabled', 'true')
+        await expect(disabledItem).not.toHaveAttribute('href')
     }
 }

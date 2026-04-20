@@ -74,6 +74,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
     async play({ canvasElement }) {
         const canvas = within(canvasElement)
+        const tabList = canvas.getByRole('tablist')
+        await expect(tabList).toHaveAttribute('aria-orientation', 'horizontal')
         const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
 
         // Initial state: first tab active
@@ -186,7 +188,7 @@ export const WithDisabledTab: Story = {
 
     async play({ canvasElement }) {
         const canvas = within(canvasElement)
-        const [tab1, tab2] = canvas.getAllByRole('tab')
+        const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
 
         await expect(tab2).toHaveAttribute('aria-disabled', 'true')
 
@@ -194,6 +196,10 @@ export const WithDisabledTab: Story = {
         await userEvent.click(tab2)
         await expect(tab1).toHaveAttribute('aria-selected', 'true')
         await expect(tab2).toHaveAttribute('aria-selected', 'false')
+
+        await userEvent.click(tab1)
+        await userEvent.keyboard('{ArrowRight}')
+        await expect(tab3).toHaveFocus()
     }
 }
 

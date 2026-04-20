@@ -30,10 +30,6 @@ const meta: Meta<typeof Placeholder> = {
         }
     },
 
-    args: {
-        default: 'Placeholder content'
-    },
-
     render: (args) => ({
         components: { Placeholder },
 

@@ -39,8 +39,7 @@ const meta: Meta<typeof QrCode> = {
         },
         value: {
             control: 'text',
-            description: 'The string to encode as a QR code (e.g., URL, text)',
-            type: { required: true }
+            description: 'The string to encode as a QR code (e.g., URL, text)'
         }
     },
 
@@ -69,11 +68,11 @@ export const Default: Story = {
     play: async ({ canvasElement, args }) => {
         const canvas = within(canvasElement)
 
-        const img = await canvas.findByRole('img')
+        const img = await canvas.findByRole('img') as HTMLImageElement
         expect(img).toBeVisible()
 
         // Check base64 QR output
-        expect((img as HTMLImageElement).src).toMatch(/^data:image\/png;base64,/)
+        expect(img.src).toMatch(/^data:image\/png;base64,/)
 
         // Check alt text reflects the value
         if ((args.value as string).startsWith('http')) {

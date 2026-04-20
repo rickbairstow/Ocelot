@@ -64,6 +64,8 @@ export const Indeterminate: Story = {
     async play({ canvasElement }) {
         const bar = within(canvasElement).getByRole('progressbar')
         await expect(bar).not.toHaveAttribute('aria-valuenow')
+        await expect(bar).toHaveAttribute('aria-busy', 'true')
+        await expect(bar).toHaveAttribute('aria-valuetext', 'Loading progress')
     }
 }
 

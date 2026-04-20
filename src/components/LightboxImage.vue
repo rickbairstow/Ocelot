@@ -138,9 +138,9 @@ let entry: LightboxEntry | null = null
 
 const handleClick = () => {
     if (props.lightboxGroup) {
-        openGroup(props.lightboxGroup, entry!)
+        void openGroup(props.lightboxGroup, entry!)
     } else {
-        openSingle(getSlide())
+        void openSingle(getSlide())
     }
 }
 

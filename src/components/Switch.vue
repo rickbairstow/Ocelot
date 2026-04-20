@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { generateUuid } from '@Utils/uuid'
 import { useFormField } from '@Composables/useFormField'
 
@@ -50,12 +50,18 @@ interface Props {
     disabled?: boolean
 }
 
-const { label, ariaLabel, disabled } = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     name: undefined,
     label: undefined,
     ariaLabel: undefined,
     disabled: false
 })
+
+const modelValue = computed(() => props.modelValue)
+const name = computed(() => props.name)
+const label = computed(() => props.label)
+const ariaLabel = computed(() => props.ariaLabel)
+const disabled = computed(() => props.disabled)
 
 const emit = defineEmits<{
     'update:modelValue': [value: boolean]
@@ -68,7 +74,7 @@ const effectiveId = formField?.inputId ?? uuid
 const inputRef = ref<HTMLInputElement | null>(null)
 
 const onTrackClick = () => {
-    if (!disabled) inputRef.value?.click()
+    if (!props.disabled) inputRef.value?.click()
 }
 
 const onChange = (e: Event) => {

@@ -37,8 +37,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import Plyr from 'plyr'
-import 'plyr/dist/plyr.css'
+import { warnOptionalDependency } from '@Utils/optionalDependency'
 
 interface Caption {
     /** URL to a VTT/SRT caption file */
@@ -97,7 +96,61 @@ const emit = defineEmits<{
 
 const videoRef = ref<HTMLVideoElement | null>(null)
 const embedRef = ref<HTMLElement | null>(null)
-let player: Plyr | null = null
+let player: PlyrInstance | null = null
+let isUnmounted = false
+let plyrConstructorPromise: Promise<PlyrConstructor | null> | null = null
+
+interface PlyrSource {
+    type: 'video'
+    sources: Array<{
+        src: string
+        provider?: 'youtube' | 'vimeo'
+        type?: string
+    }>
+}
+
+interface PlyrInstance {
+    elements: {
+        container?: HTMLElement
+    }
+    source: PlyrSource
+    destroy: () => void
+    on: (event: string, callback: () => void) => void
+}
+
+interface PlyrOptions {
+    autoplay: boolean
+    muted: boolean
+    loop: {
+        active: boolean
+    }
+    ratio: string
+    controls: string[]
+    storage: {
+        enabled: boolean
+    }
+}
+
+type PlyrConstructor = new (
+    element: HTMLElement,
+    options: PlyrOptions
+) => PlyrInstance
+
+const loadPlyr = async (): Promise<PlyrConstructor | null> => {
+    if (!plyrConstructorPromise) {
+        plyrConstructorPromise = Promise.all([
+            import('plyr'),
+            import('plyr/dist/plyr.css')
+        ])
+            .then(([module]) => module.default as PlyrConstructor)
+            .catch(() => {
+                warnOptionalDependency('OuiVideo', 'plyr')
+                return null
+            })
+    }
+
+    return plyrConstructorPromise
+}
 
 /** Detected embed provider, or null for native video. */
 const embedProvider = computed((): 'youtube' | 'vimeo' | null => {
@@ -137,12 +190,17 @@ const containerStyle = computed(() => ({
     width: props.width ? toCssSize(props.width) : '100%'
 }))
 
-const initPlayer = () => {
+const initPlayer = async (): Promise<void> => {
     const el = (embedRef.value ?? videoRef.value) as HTMLElement | null
     if (!el) return
 
+    const Plyr = await loadPlyr()
+    if (!Plyr || isUnmounted) {
+        emit('error')
+        return
+    }
+
     player = new Plyr(el, {
-        title: props.title,
         autoplay: props.autoplay,
         muted: props.muted || props.autoplay,
         loop: { active: props.loop },
@@ -160,15 +218,24 @@ const initPlayer = () => {
 
     // Plyr sets both `allow="fullscreen"` and the legacy boolean `allowfullscreen`
     // on its generated iframe. Modern browsers warn that `allow` takes precedence,
-    // so remove the redundant boolean once the player is ready.
+    // so remove the redundant boolean once the player is ready. Also set an explicit
+    // title for embed iframes to keep the embedded player accessible.
     player.on('ready', () => {
-        player?.elements.container?.querySelector('iframe')?.removeAttribute('allowfullscreen')
+        const iframe = player?.elements.container?.querySelector('iframe')
+        iframe?.removeAttribute('allowfullscreen')
+        if (props.title) {
+            iframe?.setAttribute('title', props.title)
+        }
     })
 }
 
-onMounted(initPlayer)
+onMounted(() => {
+    isUnmounted = false
+    void initPlayer()
+})
 
 onUnmounted(() => {
+    isUnmounted = true
     player?.destroy()
     player = null
 })

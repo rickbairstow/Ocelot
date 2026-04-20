@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import { Comment, computed, useSlots } from 'vue'
+import type { Slots, VNode } from 'vue'
 
 interface Props {
     color?: 'default' | 'subtle' | 'strong'
@@ -34,11 +35,12 @@ const props = withDefaults(defineProps<Props>(), {
     variant: 'solid'
 })
 
-const slots = useSlots()
+const slots: Slots = useSlots()
 
-const hasContent = computed(() =>
-    !!slots.default?.().some(vnode => vnode.type !== Comment) || !!props.label
-)
+const hasContent = computed((): boolean => {
+    const defaultNodes = (slots.default as (() => VNode[]) | undefined)?.() ?? []
+    return defaultNodes.some((vnode: VNode) => vnode.type !== Comment) || !!props.label
+})
 
 const colorMap = {
     default: { border: 'border-gray-200 dark:border-gray-700', text: 'text-gray-500 dark:text-gray-400' },

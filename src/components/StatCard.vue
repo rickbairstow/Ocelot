@@ -28,7 +28,7 @@
         >
             <span
                 v-if="trend !== undefined"
-                aria-label="Trend"
+                :aria-label="trendLabel"
                 :class="trendClass"
             >
                 <Icon
@@ -36,6 +36,7 @@
                     size="xs"
                     :icon="trend >= 0 ? 'ArrowUp' : 'ArrowDown'"
                 />
+                <span class="sr-only">{{ trendDirectionText }}</span>
                 {{ Math.abs(trend) }}%
             </span>
             <p
@@ -96,5 +97,14 @@ const trendClass = computed(() => {
             ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400'
             : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'
     ].join(' ')
+})
+
+const trendDirectionText = computed((): string =>
+    props.trend !== undefined && props.trend >= 0 ? 'Up' : 'Down'
+)
+
+const trendLabel = computed((): string | undefined => {
+    if (props.trend === undefined) return undefined
+    return `Trend: ${trendDirectionText.value.toLowerCase()} ${Math.abs(props.trend)}%`
 })
 </script>
