@@ -72,7 +72,7 @@ import { generateUuid } from '@Utils/uuid'
 type Interaction = 'all' | 'click' | 'hover'
 type PanelRole = 'listbox' | 'menu' | 'tooltip' | null
 
-interface Props {
+export interface Props {
     disabled?: boolean
     flush?: boolean
     interaction?: Interaction

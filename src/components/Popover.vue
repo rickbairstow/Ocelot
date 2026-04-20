@@ -36,7 +36,13 @@ withDefaults(defineProps<Props>(), {
     placement: 'bottom'
 })
 
-const panel = ref<InstanceType<typeof FloatingPanel> | null>(null)
+interface FloatingPanelExpose {
+    close: () => void
+    isOpen: boolean
+    open: () => void
+}
+
+const panel = ref<FloatingPanelExpose | null>(null)
 
 defineExpose({
     close: () => panel.value?.close(),

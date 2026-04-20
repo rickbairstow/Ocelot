@@ -88,6 +88,7 @@
 
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
+import type { Slots } from 'vue'
 import Badge from '@Components/Badge.vue'
 
 interface BadgeItem {
@@ -120,7 +121,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{ click: [event: MouseEvent] }>()
-const slots = useSlots()
+const slots: Slots = useSlots()
 
 const sizeCss = computed((): string => {
     const map = {

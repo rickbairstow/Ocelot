@@ -22,6 +22,7 @@ export function createViteConfig(mode = ''): UserConfig {
             dts({
                 exclude: ['src/stories/**/*'],
                 include: [
+                    'env.d.ts',
                     '.build/index.ts',
                     'src/components',
                     'src/composables',

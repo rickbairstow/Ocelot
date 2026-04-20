@@ -75,13 +75,14 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, useSlots } from 'vue'
+import type { Slots } from 'vue'
 import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'
 import useFocusMemory from '@Composables/useFocusMemory'
 import { generateUuid } from '@Utils/uuid'
 
-const slots = useSlots()
+const slots: Slots = useSlots()
 
 const titleId = generateUuid('dialog-title')
 
