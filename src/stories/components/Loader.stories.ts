@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Loader from '@Components/Loader.vue'
 import { faker } from '@faker-js/faker'
+import { expect, within } from 'storybook/test'
 
 const meta: Meta<typeof Loader> = {
     title: 'Components/Loader',
@@ -82,7 +83,13 @@ const meta: Meta<typeof Loader> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const loader = canvas.getByRole('status')
+        await expect(loader).toBeVisible()
+    }
+}
 
 export const Absolute: Story = {
     args: { variant: 'absolute' }
@@ -93,11 +100,13 @@ export const Fixed: Story = {
 }
 
 export const Inline: Story = {
-    args: { variant: 'inline' }
+    args: { variant: 'inline' },
+    play: Default.play
 }
 
 export const Vertical: Story = {
-    args: { vertical: true }
+    args: { vertical: true },
+    play: Default.play
 }
 
 export const WithAlternateIcon: Story = {

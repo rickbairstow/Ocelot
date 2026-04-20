@@ -12,9 +12,12 @@
             />
         </div>
 
-        <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+        <component
+            :is="titleTag"
+            class="text-base font-semibold text-gray-900 dark:text-white"
+        >
             {{ title }}
-        </h3>
+        </component>
 
         <p
             v-if="description"
@@ -40,10 +43,13 @@ interface Props {
     description?: string
     icon?: IconProp
     title: string
+    titleTag?: 'div' | 'h2' | 'h3' | 'h4' | 'p'
 }
 
 withDefaults(defineProps<Props>(), {
     description: undefined,
     icon: undefined
+    ,
+    titleTag: 'p'
 })
 </script>

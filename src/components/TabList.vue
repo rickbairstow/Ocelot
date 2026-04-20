@@ -1,5 +1,6 @@
 <template>
     <div
+        aria-orientation="horizontal"
         role="tablist"
         :aria-label="props.label"
         :class="listClass"

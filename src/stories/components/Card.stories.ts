@@ -136,6 +136,7 @@ export const Selected: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         const card = canvas.getByRole('button')
+        await expect(card).toHaveAttribute('aria-pressed', 'true')
         await expect(card).toHaveClass('ring-2')
         const tick = canvasElement.querySelector('[aria-hidden="true"]')
         await expect(tick).toBeVisible()
@@ -164,10 +165,13 @@ export const SelectableToggle: Story = {
         const canvas = within(canvasElement)
         const card = canvas.getByRole('button')
 
+        await expect(card).toHaveAttribute('aria-pressed', 'false')
         await expect(card).not.toHaveClass('ring-2')
         await userEvent.click(card)
+        await expect(card).toHaveAttribute('aria-pressed', 'true')
         await expect(card).toHaveClass('ring-2')
         await userEvent.click(card)
+        await expect(card).toHaveAttribute('aria-pressed', 'false')
         await expect(card).not.toHaveClass('ring-2')
     }
 }

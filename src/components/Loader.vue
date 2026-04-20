@@ -1,5 +1,10 @@
 <template>
-    <div :class="variantCss">
+    <div
+        aria-live="polite"
+        role="status"
+        :aria-label="effectiveAriaLabel"
+        :class="variantCss"
+    >
         <Scrim
             v-if="showScrim"
             absolute
@@ -45,6 +50,7 @@ const animationLookup: Record<string, string> = {
 
 interface Props {
     animation?: 'bounce' | 'none' | 'ping' | 'pulse' | 'spin'
+    ariaLabel?: string
     color?: 'blue' | 'green' | 'red' | 'orange' | 'purple' | 'indigo' | 'teal' | 'pink' | 'gray' | 'default'
     icon?: string
     size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl'
@@ -55,6 +61,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     animation: 'spin',
+    ariaLabel: undefined,
     color: 'default',
     icon: 'Loader2',
     size: 'base',
@@ -110,4 +117,5 @@ const colorMap: Record<string, string> = {
 }
 
 const colorCss = computed((): string => colorMap[props.color] ?? '')
+const effectiveAriaLabel = computed((): string => props.ariaLabel ?? props.text ?? 'Loading')
 </script>

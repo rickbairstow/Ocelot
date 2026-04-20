@@ -31,6 +31,8 @@
                 :id="panelId"
                 ref="contentRef"
                 class="z-30 rounded-lg bg-white text-black text-xs break-words drop-shadow-lg dark:bg-gray-800 dark:text-white"
+                :aria-label="panelLabel"
+                :aria-labelledby="panelLabelledby"
                 :role="role ?? undefined"
                 :style="floatingStyle"
                 @mouseenter="handleContentMouseEnter"
@@ -73,6 +75,8 @@ type Interaction = 'all' | 'click' | 'hover'
 type PanelRole = 'listbox' | 'menu' | 'tooltip' | null
 
 export interface Props {
+    ariaLabel?: string
+    ariaLabelledby?: string
     disabled?: boolean
     flush?: boolean
     interaction?: Interaction
@@ -83,6 +87,8 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    ariaLabel: undefined,
+    ariaLabelledby: undefined,
     disabled: false,
     flush: false,
     interaction: 'all',
@@ -183,6 +189,16 @@ const triggerAria = computed((): Record<string, string> => {
     }
 
     return {}
+})
+
+const panelLabel = computed((): string | undefined => {
+    if (props.role === 'tooltip' || props.role === 'menu' || props.role === 'listbox') return undefined
+    return props.ariaLabel
+})
+
+const panelLabelledby = computed((): string | undefined => {
+    if (props.role === 'tooltip' || props.role === 'menu' || props.role === 'listbox') return undefined
+    return props.ariaLabelledby
 })
 
 /**

@@ -42,8 +42,10 @@ export const Default: Story = {
     async play({ canvasElement, args }) {
         const canvas = within(canvasElement)
         const items = args.items as TimelineItem[]
+        const timeline = canvas.getByRole('list', { name: /timeline/i })
 
         await expect(canvas.getByText(items[0].title)).toBeVisible()
+        await expect(timeline).toBeVisible()
         await expect(canvasElement.querySelectorAll('li').length).toBe(items.length)
     }
 }

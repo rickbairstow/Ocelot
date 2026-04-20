@@ -2,7 +2,7 @@
     <div
         v-if="!dismissed"
         :class="containerCss"
-        :role="liveRole"
+        :role="announce ? announceRole : undefined"
     >
         <!-- Icon column -->
         <div
@@ -20,7 +20,8 @@
             class="flex-1 min-w-0 text-sm"
             :class="descColorCss"
         >
-            <h4
+            <component
+                :is="titleTag"
                 v-if="slots.title || title"
                 class="font-semibold text-sm mb-0.5"
                 :class="textColorCss"
@@ -28,7 +29,7 @@
                 <slot name="title">
                     {{ title }}
                 </slot>
-            </h4>
+            </component>
 
             <slot />
 
@@ -66,15 +67,19 @@ export type BannerType = 'info' | 'success' | 'warning' | 'error' | 'tip'
 export type BannerVariant = 'subtle' | 'solid' | 'outline'
 
 interface Props {
+    announce?: boolean
     dismissible?: boolean
     title?: string
+    titleTag?: 'div' | 'h2' | 'h3' | 'h4' | 'p'
     type?: BannerType
     variant?: BannerVariant
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    announce: false,
     dismissible: false,
     title: undefined,
+    titleTag: 'p',
     type: 'info',
     variant: 'subtle'
 })
@@ -97,10 +102,8 @@ const typeIcon: Record<BannerType, string> = {
     tip:     'Bulb'
 }
 
-// role="alert" for assertive types, role="status" for polite, nothing for static
-const liveRole = computed((): string | undefined => {
-    if (props.dismissible) return undefined
-    return props.type === 'error' || props.type === 'warning' ? 'alert' : 'status'
+const announceRole = computed((): string => {
+    return props.type === 'error' ? 'alert' : 'status'
 })
 
 type ColorSet = { container: string; icon: string; text: string; desc: string; ring: string }

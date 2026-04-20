@@ -7,6 +7,7 @@
                 aria-modal="true"
                 class="fixed inset-0 z-20 flex items-center justify-center sm:p-6"
                 role="dialog"
+                :aria-describedby="hasDescription ? descriptionId : undefined"
                 :aria-label="slots?.title ? undefined : ariaLabel"
                 :aria-labelledby="slots?.title ? titleId : undefined"
                 @keydown.esc="close"
@@ -47,6 +48,13 @@
                         class="flex-1 min-h-0 p-6 overflow-auto"
                         tabindex="0"
                     >
+                        <div
+                            v-if="hasDescription"
+                            :id="descriptionId"
+                            class="mb-4"
+                        >
+                            <slot name="description" />
+                        </div>
                         <slot />
                     </div>
 
@@ -55,17 +63,6 @@
                         class="flex items-center justify-end gap-3 shrink-0 px-6 py-4 border-t border-gray-100 dark:border-gray-700"
                     >
                         <slot name="footer" />
-                    </div>
-
-                    <div class="sr-only">
-                        <Button
-                            aria-label="Close dialog"
-                            color="gray"
-                            variant="tertiary"
-                            @click="close"
-                        >
-                            Close {{ ariaLabel }}
-                        </Button>
                     </div>
                 </div>
             </section>
@@ -85,6 +82,7 @@ import { generateUuid } from '@Utils/uuid'
 const slots: Slots = useSlots()
 
 const titleId = generateUuid('dialog-title')
+const descriptionId = generateUuid('dialog-description')
 
 const isOpen = ref(false)
 const dialogueContent = ref<HTMLDivElement | null>(null)
@@ -111,6 +109,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{ close: [] }>()
 
 const { focusTo: applyFocusTo, returnFocus } = useFocusMemory()
+const hasDescription = computed((): boolean => !!slots.description)
 
 const sizeClass = computed((): string => {
     const effectiveSize = props.small ? 'sm' : props.size

@@ -54,8 +54,12 @@ export const Default: Story = {
     async play({ canvasElement, args }) {
         const steps = args.steps as StepItem[]
         const items = canvasElement.querySelectorAll('li')
+        const list = canvasElement.querySelector('ol')
+        const announcement = canvasElement.querySelector('[role="status"]')
 
         await expect(items.length).toBe(steps.length)
+        await expect(list).toHaveAttribute('aria-label', 'Progress steps')
+        await expect(announcement).toHaveTextContent('Step 2 of 4')
 
         // Second step is current
         const currentItem = canvasElement.querySelector('[aria-current="step"]')
@@ -164,6 +168,7 @@ export const Interactive: Story = {
         const current = canvasElement.querySelector('[aria-current="step"]')
         await expect(current).not.toBeNull()
         await expect(canvas.getByRole('button', { name: 'Back' })).toBeDisabled()
+        await expect(canvasElement.querySelector('[role="status"]')).toHaveTextContent('Step 1 of 4')
 
         // Advance to step 2
         await userEvent.click(canvas.getByRole('button', { name: 'Next' }))
@@ -173,5 +178,6 @@ export const Interactive: Story = {
         const items = canvasElement.querySelectorAll('li')
         await expect(items[1].getAttribute('aria-current')).toBe('step')
         await expect(items[0].getAttribute('aria-current')).toBeNull()
+        await expect(canvasElement.querySelector('[role="status"]')).toHaveTextContent('Step 2 of 4')
     }
 }

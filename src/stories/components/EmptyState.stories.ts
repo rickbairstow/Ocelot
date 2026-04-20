@@ -130,3 +130,15 @@ export const NoDescription: Story = {
         await expect(canvas.getByRole('button', { name: 'Clear filters' })).toBeVisible()
     }
 }
+
+export const WithHeadingTag: Story = {
+    args: {
+        title: 'Section empty',
+        titleTag: 'h2'
+    },
+    play: async ({ canvasElement }) => {
+        const heading = canvasElement.querySelector('h2')
+        await expect(heading).not.toBeNull()
+        await expect(heading).toHaveTextContent('Section empty')
+    }
+}

@@ -1,7 +1,7 @@
 <template>
     <component
         :is="href ? 'a' : 'span'"
-        :aria-label="ariaLabel"
+        :aria-label="effectiveAriaLabel"
         :class="containerCss"
         :href="href ?? undefined"
     >
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Icon from '@Components/Icon.vue'
 import type { IconSize } from '@Composables/useIcons'
 
@@ -67,6 +67,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const imgError = ref(false)
+
+const effectiveAriaLabel = computed((): string | undefined => {
+    if (props.ariaLabel) return props.ariaLabel
+    if (props.href) return props.alt || props.initials || 'Avatar link'
+    return undefined
+})
 
 const sizeMap: Record<AvatarSize, string> = {
     xs:   'size-6',
@@ -126,4 +132,10 @@ const containerCss = computed((): string => {
 
 const initialsSizeCss = computed((): string => initialsSizeMap[props.size])
 const iconSize = computed((): IconSize => iconSizeMap[props.size])
+
+onMounted(() => {
+    if (import.meta.env.DEV && props.href && !props.ariaLabel && !props.alt && !props.initials) {
+        console.warn('[OuiAvatar] Link avatars should provide ariaLabel, alt, or initials so the link has an accessible name.')
+    }
+})
 </script>

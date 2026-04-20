@@ -6,7 +6,7 @@
         :aria-disabled="disabled ? 'true' : undefined"
         :class="itemClass"
         :disabled="!href && disabled ? true : undefined"
-        :href="href ?? undefined"
+        :href="effectiveHref"
         @click="disabled ? $event.preventDefault() : undefined"
     >
         <Icon
@@ -52,6 +52,11 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     href: undefined,
     icon: undefined
+})
+
+const effectiveHref = computed((): string | undefined => {
+    if (props.disabled) return undefined
+    return props.href
 })
 
 const itemClass = computed(() => {

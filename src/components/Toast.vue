@@ -91,7 +91,7 @@
             >
                 <template v-if="!isExpanded">
                     <span class="text-black dark:text-white">
-                        {{ hiddenCount }} more notification{{ hiddenCount === 1 ? '' : 's' }}
+                        {{ hiddenCount }} {{ hiddenCount === 1 ? moreLabelSingular : moreLabelPlural }}
                     </span>
                     <div class="flex">
                         <Button
@@ -99,7 +99,7 @@
                             variant="text"
                             @click="isExpanded = true"
                         >
-                            Show all
+                            {{ showAllLabel }}
                         </Button>
 
                         <Button
@@ -107,7 +107,7 @@
                             variant="text"
                             @click="clear()"
                         >
-                            Dismiss all
+                            {{ dismissAllLabel }}
                         </Button>
                     </div>
                 </template>
@@ -119,7 +119,7 @@
                         variant="text"
                         @click="isExpanded = false"
                     >
-                        Show less
+                        {{ showLessLabel }}
                     </Button>
                 </template>
             </div>
@@ -138,9 +138,19 @@ import type { IconName } from '@Composables/useIcons'
 type Placement = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
 
 const props = withDefaults(defineProps<{
+    dismissAllLabel?: string
+    moreLabelPlural?: string
+    moreLabelSingular?: string
     placement?: Placement
+    showAllLabel?: string
+    showLessLabel?: string
 }>(), {
-    placement: 'top-right'
+    dismissAllLabel: 'Dismiss all',
+    moreLabelPlural: 'more notifications',
+    moreLabelSingular: 'more notification',
+    placement: 'top-right',
+    showAllLabel: 'Show all',
+    showLessLabel: 'Show less'
 })
 
 const { toasts, remove, clear, pauseTimer, resumeTimer } = useToast()

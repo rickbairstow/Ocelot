@@ -62,6 +62,7 @@ const meta: Meta<typeof FloatingPanel> = {
     },
 
     args: {
+        ariaLabel: undefined,
         content: faker.lorem.sentence(),
         disabled: false,
         flush: false,
@@ -80,6 +81,7 @@ const meta: Meta<typeof FloatingPanel> = {
         template: `
             <div style="display:flex; align-items:center; justify-content:center; height:100vh; width:100%;">
                 <FloatingPanel
+                    :aria-label="args.ariaLabel"
                     :disabled="args.disabled"
                     :flush="args.flush"
                     :interaction="args.interaction"
@@ -140,6 +142,21 @@ export const ClickOnly: Story = {
         await waitFor(() => {
             expect(canvasElement.querySelector('[id^="floating-panel_"]')).toBeNull()
         })
+    }
+}
+
+export const LabelledPopover: Story = {
+    args: {
+        ariaLabel: 'Formatting options',
+        interaction: 'click',
+        role: null,
+        trigger: 'Open formatting options'
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await userEvent.click(canvas.getByRole('button', { name: /open formatting options/i }))
+        const panel = await canvas.findByLabelText(/formatting options/i)
+        await waitFor(() => expect(panel).toBeVisible())
     }
 }
 
