@@ -101,8 +101,8 @@ const arrowRef = ref<HTMLElement | null>(null)
 const arrowDirection = ref<string>(props.placement.split('-')[0])
 const arrowStyle = ref<Record<string, string>>({})
 const cleanupAutoUpdate = ref<(() => void) | null>(null)
-const closeTimeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
-const openTimeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
+const closeTimeoutId = ref<number | null>(null)
+const openTimeoutId = ref<number | null>(null)
 const contentRef = ref<HTMLElement | null>(null)
 const isDark = ref(false)
 const isHoveringContent = ref(false)
@@ -205,14 +205,14 @@ watchEffect(() => {
 })
 
 const clearCloseTimeout = (): void => {
-    if (closeTimeoutId.value) {
+    if (closeTimeoutId.value !== null) {
         clearTimeout(closeTimeoutId.value)
         closeTimeoutId.value = null
     }
 }
 
 const clearOpenTimeout = (): void => {
-    if (openTimeoutId.value) {
+    if (openTimeoutId.value !== null) {
         clearTimeout(openTimeoutId.value)
         openTimeoutId.value = null
     }
@@ -362,7 +362,7 @@ const initAutoPositioning = (): void => {
             const side = finalPlacement.split('-')[0]
             arrowDirection.value = side
 
-            const arrowData = middlewareData.arrow ?? {}
+            const arrowData = (middlewareData.arrow ?? {}) as { x?: number; y?: number }
             const style: Record<string, string> = {}
             const oppositePlacement = OPPOSITE_SIDE[side]
 

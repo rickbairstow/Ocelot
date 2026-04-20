@@ -43,7 +43,7 @@ const meta: Meta<typeof Input> = {
         },
 
         modelValue: {
-            control: 'disabled',
+            control: false,
             description:
                 'Exposes modelValue for use, however the preference is to use v-model instead. Note that for Storybook setting this will only set the initial value, thus it has been disabled to prevent any confusion.'
         },
@@ -77,16 +77,6 @@ const meta: Meta<typeof Input> = {
         suffix: {
             control: 'text',
             description: 'Slot content for suffix.'
-        },
-
-        'update:modelValue': {
-            description: 'Emitted when the input value changes. Used for v-model binding.'
-        },
-        input: {
-            description: 'Emitted on every input event, passing the current input value.'
-        },
-        change: {
-            description: 'Emitted when the input loses focus after a change.'
         }
     },
 

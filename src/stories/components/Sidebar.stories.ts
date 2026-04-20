@@ -56,7 +56,7 @@ const meta: Meta<typeof Sidebar> = {
             const triggerRef = ref<HTMLElement | null>(null)
 
             const openSidebar = () => {
-                sidebar.value.open()
+                sidebar.value?.open()
             }
 
             return {

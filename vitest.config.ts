@@ -33,7 +33,7 @@ export default mergeConfig(
                         },
                         setupFiles: []
                     }
-                })
+                } as unknown as Parameters<typeof defineProject>[0])
             ]
         }
     })

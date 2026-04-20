@@ -142,7 +142,6 @@ const initPlayer = () => {
     if (!el) return
 
     player = new Plyr(el, {
-        title: props.title,
         autoplay: props.autoplay,
         muted: props.muted || props.autoplay,
         loop: { active: props.loop },
@@ -160,9 +159,14 @@ const initPlayer = () => {
 
     // Plyr sets both `allow="fullscreen"` and the legacy boolean `allowfullscreen`
     // on its generated iframe. Modern browsers warn that `allow` takes precedence,
-    // so remove the redundant boolean once the player is ready.
+    // so remove the redundant boolean once the player is ready. Also set an explicit
+    // title for embed iframes to keep the embedded player accessible.
     player.on('ready', () => {
-        player?.elements.container?.querySelector('iframe')?.removeAttribute('allowfullscreen')
+        const iframe = player?.elements.container?.querySelector('iframe')
+        iframe?.removeAttribute('allowfullscreen')
+        if (props.title) {
+            iframe?.setAttribute('title', props.title)
+        }
     })
 }
 
