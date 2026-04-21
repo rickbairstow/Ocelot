@@ -16,11 +16,14 @@ Head to [OcelotUI on Netlify](https://ocelotui.netlify.app) for the Storybook si
 npm install ocelot-ui
 ```
 
-**Prerequisites:** Vue 3.5+, Tailwind CSS v4, Node.js 24+
+**Prerequisites:** Vue 3.5+, Tailwind CSS v4, Node.js 20+
 
-Optional media dependencies:
+Optional feature dependencies:
 
 ```bash
+# Table
+npm install @tanstack/vue-table
+
 # LightboxImage
 npm install photoswipe
 
@@ -31,7 +34,14 @@ npm install plyr
 npm install qrcode
 ```
 
-Install only the packages for the media components you actually use. OUI will warn in development if `LightboxImage`, `Video`, or `QrCode` is mounted without its matching dependency.
+Install only the packages for the components you actually use. OUI will warn in development if `Table`, `LightboxImage`, `Video`, or `QrCode` is mounted without its matching dependency.
+
+For example:
+
+- `Table` requires `@tanstack/vue-table`
+- `LightboxImage` requires `photoswipe`
+- `Video` requires `plyr`
+- `QrCode` requires `qrcode`
 
 ### 1. Configure Tailwind
 
@@ -68,6 +78,10 @@ import { Button, Dialog, Sidebar } from 'ocelot-ui'
 <div id="app"></div>
 <div id="portal-target"></div>
 ```
+
+### Table notes
+
+`Table` includes a built-in settings menu for density, column visibility, and pinning. On small screens it can either stay horizontally scrollable or switch rows into stacked cards with `mobileLayout="card"`.
 
 ---
 

@@ -57,6 +57,7 @@ export function createViteConfig(mode = ''): UserConfig {
             rollupOptions: {
                 external: [
                     'vue',
+                    '@tanstack/vue-table',
                     'photoswipe',
                     'photoswipe/lightbox',
                     'photoswipe/style.css',
