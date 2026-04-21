@@ -30,7 +30,7 @@
                 v-if="isOpen && !disabled"
                 :id="panelId"
                 ref="contentRef"
-                class="z-30 rounded-lg bg-white text-black text-xs break-words drop-shadow-lg dark:bg-gray-800 dark:text-white"
+                class="z-50 rounded-lg bg-white text-black text-xs break-words drop-shadow-lg dark:bg-gray-800 dark:text-white"
                 :aria-label="panelLabel"
                 :aria-labelledby="panelLabelledby"
                 :role="role ?? undefined"

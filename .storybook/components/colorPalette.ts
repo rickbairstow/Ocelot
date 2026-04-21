@@ -1,5 +1,4 @@
 import React from 'react'
-import { formatHex, oklch } from 'culori'
 
 // Tailwind no longer provides resolveConfig, so we need to get a list of colours manually.
 // Grab the list of colours from https://tailwindcss.com/docs/colors#default-color-palette-reference
@@ -252,22 +251,21 @@ const cssVariables = `
 
 type ColorMap = Record<string, Record<string, string>>
 
-function convertOklchToHexStructure(css: string): ColorMap {
-    const regex = /--color-([\w-]+)-(\d+):\s*oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\);/g
+function extractColorStructure(css: string): ColorMap {
+    const regex = /--color-([\w-]+)-(\d+):\s*([^;]+);/g
     const colors: ColorMap = {}
 
     let match
     while ((match = regex.exec(css)) !== null) {
-        const [, colorName, shade, l, c, h] = match
-        const hexValue = formatHex(oklch({ l: parseFloat(l), c: parseFloat(c), h: parseFloat(h) }))
+        const [, colorName, shade, value] = match
         if (!colors[colorName]) colors[colorName] = {}
-        colors[colorName][shade] = hexValue as string
+        colors[colorName][shade] = value.trim()
     }
 
     return colors
 }
 
-const colors = convertOklchToHexStructure(cssVariables)
+const colors = extractColorStructure(cssVariables)
 
 function ColorPalette(): React.ReactElement {
     return React.createElement(
