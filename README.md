@@ -71,7 +71,7 @@ Use named imports directly in your components:
 import { Button, Dialog, Sidebar } from 'ocelot-ui'
 ```
 
-### 4. Add a portal target for Dialog
+### 4. Add a portal target for Dialog and CommandPalette
 
 ```html
 <!-- index.html -->
@@ -82,6 +82,10 @@ import { Button, Dialog, Sidebar } from 'ocelot-ui'
 ### Table notes
 
 `Table` includes a built-in settings menu for density, column visibility, and pinning. On small screens it can either stay horizontally scrollable or switch rows into stacked cards with `mobileLayout="card"`.
+
+### CommandPalette notes
+
+`CommandPalette` also teleports to `#portal-target`. Register commands with `useCommandPalette()`, then mount the component once near the app root so it can respond to `Ctrl+K` / `Cmd+K`.
 
 ---
 

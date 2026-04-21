@@ -1,7 +1,7 @@
 # Ocelot UI — Component Library Roadmap
 
 > **Status:** Planning document · April 2026  
-> **Current version:** 0.0.21 · 50 components · ~115 registered icons
+> **Current version:** 0.0.21 · 63 components · ~115 registered icons
 
 ---
 
@@ -71,18 +71,18 @@ All 256 tests passing.
 
 ### Partially Covered
 
-- Dependency architecture follow-up remains partially complete: `culori` has been removed, but the roadmap still recommends moving `photoswipe`, `plyr`, and `qrcode` to optional peer dependencies.
 - Accordion accessibility is only partially closed: redundant ARIA on `<summary>` is fixed, but the audit still notes that a full `<button aria-expanded>` implementation is outstanding.
 - Validation/form ergonomics remain intentionally partial: `FormField` exists, but validation strategy, richer validation states, and consumer guidance are still open-ended rather than fully productised.
 - RTL support is partial: the audit says most logical properties are in place, but some components still rely on physical `left` / `right` positioning.
-- Storybook/DX polish is partial: the roadmap defines strong story and testing standards, but tooling items such as a bundle analyser are still tracked separately in the audit.
+- Storybook/DX polish is still an ongoing area rather than a single unfinished task: the bundle analyser, optional dependency cleanup, and build/type cleanup are now done, but pattern documentation and example compositions still need follow-through.
+
 
 ### Still Left To Do
 
-- `Table` is the main roadmap gap and is explicitly marked on hold pending a dedicated spec.
-- Packaging and developer-experience follow-up from the audit still needs closure for unresolved TypeScript/build issues and remaining tooling gaps.
-- Remaining accessibility/backlog items in §15 still need individual follow-up, including issues noted for Dialog, Tabs, SidebarNavItem, Card, Avatar, Banner, Stepper, Progress, StatCard, Timeline, EmptyState, and Loader.
-- Lower-priority component work remains open where no shipped status is recorded, notably `CommandPalette`, and potentially `Callout` depending on final scope. `Chip / Tag` has been intentionally folded into `Badge` to avoid duplicate naming and overlapping API surface.
+- Broader docs and composition follow-through still needs work so the roadmap, README, and Storybook continue to reflect what has actually shipped.
+- Pattern-level examples remain the clearest open product gap: realistic dashboard, settings, data-list, onboarding, and marketing compositions are still more documented in the roadmap than demonstrated in Storybook.
+- `Callout` remains optional and should only be revived if it proves meaningfully different from `Banner`.
+
 
 ---
 
@@ -106,6 +106,8 @@ All 256 tests passing.
 ---
 
 ## 1. Current State Assessment
+
+This section captures the initial audit baseline from the start of the roadmap. The current shipped state has moved on substantially; use the session log and status snapshot above for the up-to-date view.
 
 ### What exists (23 components)
 
@@ -1265,6 +1267,8 @@ A dedicated component for KPI and metric display — essential for dashboards.
 
 #### NavigationBar / AppShell
 
+**Status:** Implemented. Keep this section as the original scope/spec reference for future refinement work.
+
 Almost every web application has a top navigation bar. Currently consumers must build this entirely from scratch using OUI primitives. A `NavigationBar` component would not be prescriptive about layout — it would handle the common patterns:
 
 - **`NavBar`** — a `<header>` wrapper with `role="banner"`, consistent height, horizontal layout, and a `sticky` prop.
@@ -1295,6 +1299,8 @@ Covered in §5. Summarised here for priority tracking:
 ---
 
 #### CommandPalette (⌘K)
+
+**Status:** Implemented. Keep this section as the original scope/spec reference for future refinement work.
 
 A full-screen search overlay — increasingly expected in modern web products.
 
@@ -1698,7 +1704,7 @@ Once Tier 1 components are complete:
 |---|---|
 | ~~Tooltip~~ | ✅ Done |
 | ~~Dropdown Menu~~ | ✅ Done — 7-component family with full keyboard nav, typeahead, ARIA semantics, floating positioning. Sub-menus deferred. |
-| Table | ⏸ On hold — needs its own detailed spec before implementation. |
+| ~~Table~~ | ✅ Done — TanStack-powered table shipped with sorting, filtering, pagination, selection, resizing, pinning, expansion, mobile card layout, and Storybook coverage. |
 | ~~Stats / Metric Card~~ | ✅ Done |
 | ~~Empty State~~ | ✅ Done |
 | ~~Code Block~~ | ✅ Done — Shiki-powered, dark mode via `.dark` class |
@@ -1778,6 +1784,8 @@ Every app needs a top navigation bar, but the responsive behaviour (desktop hori
 
 #### AppShell (Application Layout Wrapper)
 
+**Status:** Implemented. Treat the details below as the original design intent and follow-up reference rather than an open missing component.
+
 A pre-wired layout that composes a `Navbar` + `Sidebar` + main content area + optional footer. Its value is the CSS grid/flex layout, the landmark roles, and the `provide/inject` context that coordinates sidebar open state between the Navbar's hamburger and the Sidebar component.
 
 **Props:**
@@ -1806,6 +1814,8 @@ A pre-wired layout that composes a `Navbar` + `Sidebar` + main content area + op
 ---
 
 #### CommandPalette (Cmd+K Search)
+
+**Status:** Implemented. Treat the details below as the original design intent and follow-up reference rather than an open missing component.
 
 The most complex pattern on this list — warrants a component because of: global keyboard shortcut listener, modal focus trap, fuzzy search state, keyboard navigation within results, and the accessibility requirements for a `combobox`-like interface.
 
@@ -2018,7 +2028,7 @@ Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the
 
 ## 15. Component Audit — Session 3 Findings
 
-> Full audit of all 50 components against TypeScript coverage, accessibility (WCAG 2.1 AA), UX laws, and known bugs. Items to be addressed individually.
+> Full audit of all 63 components against TypeScript coverage, accessibility (WCAG 2.1 AA), UX laws, and known bugs. Items to be addressed individually.
 
 ---
 
@@ -2205,3 +2215,4 @@ Most components correctly use logical CSS properties (`ps-`, `pe-`, `ms-`, `me-`
 |---|---|
 | **A11y** | No `aria-live` region or `role="status"` on the container — screen readers receive no feedback that a loading state is in progress |
 | **A11y** | Animated icon has no `aria-label` |
+
