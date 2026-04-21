@@ -82,6 +82,10 @@ app.mount('#app')
 
 `Table` depends on `@tanstack/vue-table` and includes a built-in settings menu for density, column visibility, and pinning. On smaller screens, you can keep the table scrollable or switch to stacked cards with `mobileLayout="card"`.
 
+### CommandPalette notes
+
+`CommandPalette` teleports to `#portal-target`. Register commands with `useCommandPalette()`, then mount the component once near the app root so it can respond to `Ctrl+K` / `Cmd+K`.
+
 ---
 
 ## Icons
@@ -116,9 +120,9 @@ Dark mode is toggled via the `.dark` class on a parent element (typically `<html
 
 ---
 
-## Dialog portal target
+## Dialog and CommandPalette portal target
 
-The `Dialog` component uses Vue's `<Teleport>` to render outside the component tree.
+The `Dialog` and `CommandPalette` components use Vue's `<Teleport>` to render outside the component tree.
 Add a `#portal-target` element to your `index.html`:
 
 ```html
