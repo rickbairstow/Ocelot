@@ -82,7 +82,7 @@ All 256 tests passing.
 - `Table` is the main roadmap gap and is explicitly marked on hold pending a dedicated spec.
 - Packaging and developer-experience follow-up from the audit still needs closure for unresolved TypeScript/build issues and remaining tooling gaps.
 - Remaining accessibility/backlog items in §15 still need individual follow-up, including issues noted for Dialog, Tabs, SidebarNavItem, Card, Avatar, Banner, Stepper, Progress, StatCard, Timeline, EmptyState, and Loader.
-- Lower-priority component work remains open where no shipped status is recorded, notably `NavigationBar / AppShell`, `CommandPalette`, `Chip / Tag`, and potentially `Callout` depending on final scope.
+- Lower-priority component work remains open where no shipped status is recorded, notably `CommandPalette`, and potentially `Callout` depending on final scope. `Chip / Tag` has been intentionally folded into `Badge` to avoid duplicate naming and overlapping API surface.
 
 ---
 
@@ -1308,17 +1308,9 @@ A full-screen search overlay — increasingly expected in modern web products.
 
 ---
 
-#### Chip / Tag
+#### ~~Chip / Tag~~
 
-Similar to Badge but interactive — for filter UIs and multi-select representations.
-
-**Props:** `label`, `removable`, `selected`, `disabled`, `icon` (IconProp)
-
-**Emits:** `@remove`, `@click`
-
-Distinguished from Badge: Badge is purely decorative; Chip is interactive (has `role="button"` or is wrapped in a `<button>`).
-
-**Stories:** Basic, removable (play function tests @remove), selected state, disabled, chip group (horizontal wrap), chip used as filter UI.
+No longer planned as a separate component. OUI standardises on the term **Badge** and avoids shipping a duplicate label for substantially overlapping UI. If future product requirements call for selectable filter pills, removable tokens, or input-style chips, that work should be scoped as an interactive Badge extension or a more clearly named token/filter component rather than a generic `Chip / Tag`.
 
 ---
 
