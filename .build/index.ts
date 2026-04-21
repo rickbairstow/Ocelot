@@ -25,6 +25,7 @@ export { default as Card } from '@Components/Card.vue'
 export { default as Checkbox } from '@Components/Checkbox.vue'
 export { default as CheckboxGroup } from '@Components/CheckboxGroup.vue'
 export { default as CodeBlock } from '@Components/CodeBlock.vue'
+export { default as CommandPalette } from '@Components/CommandPalette.vue'
 export { default as Dialog } from '@Components/Dialog.vue'
 export { default as Divider } from '@Components/Divider.vue'
 export { default as EmptyState } from '@Components/EmptyState.vue'
@@ -86,12 +87,14 @@ export type { TimelineItem } from '@Components/Timeline.vue'
  * Composable Exports
  */
 export { useFormField } from '@Composables/useFormField'
+export { useCommandPalette } from '@Composables/useCommandPalette'
 export { useToast } from '@Composables/useToast'
 
 /**
  * Composable Type Exports
  */
 export type { FormFieldContext } from '@Composables/useFormField'
+export type { CommandPaletteItem } from '@Composables/useCommandPalette'
 export type { ToastOptions, ToastItem, ToastType, ToastAction } from '@Composables/useToast'
 
 /**
