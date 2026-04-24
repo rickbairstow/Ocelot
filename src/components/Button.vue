@@ -146,7 +146,7 @@ const innerWrapClass = computed((): string => {
         return `flex items-center ${iconGapMap[effectiveSize.value] ?? 'gap-1.5'}`
     }
 
-    return 'contents'
+    return ''
 })
 
 const spinnerSize = computed((): IconSize => {
