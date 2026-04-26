@@ -152,7 +152,7 @@ const normalizedMaxWidth = computed((): string => {
 })
 
 const floatingStyle = computed((): CSSProperties => ({
-    left: `${x.value}px`,
+    insetInlineStart: `${x.value}px`,
     position: POSITION_STRATEGY,
     top: `${y.value}px`
 }))

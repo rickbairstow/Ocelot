@@ -5,7 +5,7 @@
         :aria-disabled="isDisabled ? 'true' : undefined"
         :class="componentStyle"
         :href="href"
-        :role="href ? 'link' : 'button'"
+        :type="element === 'button' ? 'button' : undefined"
         @click="handleInteraction"
         @keydown.enter="handleKeyInteraction"
         @keydown.space="handleKeyInteraction"

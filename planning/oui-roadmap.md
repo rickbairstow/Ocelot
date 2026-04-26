@@ -81,7 +81,9 @@ All 256 tests passing.
 
 - Broader docs and composition follow-through still needs work so the roadmap, README, and Storybook continue to reflect what has actually shipped.
 - Pattern-level examples remain the clearest open product gap: realistic dashboard, settings, data-list, onboarding, and marketing compositions are still more documented in the roadmap than demonstrated in Storybook.
-- `Callout` remains optional and should only be revived if it proves meaningfully different from `Banner`.
+- Unit coverage needs a targeted pass for `src/utilities/optionalDependency.ts`: current coverage is 12.5%, and this helper should be brought to 100% because it guards optional peer-dependency loading and failure behaviour.
+- `NavigationBar` needs a responsive follow-up: the nav currently disappears below its configured breakpoint unless consumers compose their own mobile navigation. Even if docs recommend moving dense navigation into subnav/drawer patterns at small sizes, the base component should provide a usable small-screen path and stories/tests for it.
+- `Callout` should be consolidated back into `Banner`: the new component is functionally near-identical, while `Banner` is more complete. Remove the standalone `Callout`, fold the preferred callout colour treatment into `Banner`, and document static/editorial callouts as a `Banner` story rather than a separate primitive.
 
 
 ---
@@ -1780,6 +1782,8 @@ Every app needs a top navigation bar, but the responsive behaviour (desktop hori
 
 **Stories:** Default (desktop), mobile viewport (hamburger visible), with user avatar + dropdown, with notification badge on icon, sticky behaviour (scroll play function), programmatic open/close.
 
+**Responsive follow-up:** The current `NavigationBar` hides inline nav links below the configured breakpoint, but does not provide its own fallback menu unless consumers wire one externally. Add a first-class small-screen path such as a `#mobile-menu` slot, controlled open state, and documented behaviour for when teams should move dense navigation into subnav, Sidebar, or AppShell patterns. Include mobile viewport stories and play functions that assert nav items remain reachable.
+
 ---
 
 #### AppShell (Application Layout Wrapper)
@@ -2067,6 +2071,7 @@ Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the
 | Item | Detail |
 |---|---|
 | **No bundle analyser** | Add `rollup-plugin-visualizer` as a devDependency. Wire it to a `npm run build:analyse` script (`visualizer({ open: true })`). Gives a visual treemap of bundle composition — useful for tracking heavy dependencies (Plyr, PhotoSwipe, etc.) without needing a formal size-limit gate. |
+| **Low coverage: `optionalDependency.ts`** | `src/utilities/optionalDependency.ts` is currently at 12.5% coverage. Add focused unit tests for successful optional import, missing dependency handling, cached resolution, warning/error paths, and any SSR-safe branches until this file reaches 100% coverage. |
 | ~~No `check-types` npm script~~ | Done — `package.json` now includes `"check-types": "vue-tsc --noEmit"` and the command is documented in `CLAUDE.md`. |
 
 ---

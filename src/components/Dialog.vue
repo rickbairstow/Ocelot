@@ -1,5 +1,8 @@
 <template>
-    <Teleport :to="portalTarget">
+    <Teleport
+        v-if="portalReady"
+        :to="resolvedPortalTarget"
+    >
         <Transition>
             <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
             <section
@@ -77,6 +80,7 @@ import Button from '@Components/Button.vue'
 import Icon from '@Components/Icon.vue'
 import Scrim from '@Components/Scrim.vue'
 import useFocusMemory from '@Composables/useFocusMemory'
+import useTeleportTarget from '@Composables/useTeleportTarget'
 import { generateUuid } from '@Utils/uuid'
 
 const slots: Slots = useSlots()
@@ -101,10 +105,15 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     focusFrom: null,
     focusTo: null,
-    portalTarget: '#portal-target',
+    portalTarget: undefined,
     size: 'md',
     small: false
 })
+
+const {
+    isReady: portalReady,
+    target: resolvedPortalTarget
+} = useTeleportTarget({ target: props.portalTarget })
 
 const emit = defineEmits<{ close: [] }>()
 

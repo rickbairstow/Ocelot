@@ -1,5 +1,8 @@
 <template>
-    <Teleport to="#portal-target">
+    <Teleport
+        v-if="portalReady"
+        :to="resolvedPortalTarget"
+    >
         <div
             aria-label="Notifications"
             role="region"
@@ -132,6 +135,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import Icon from '@Components/Icon.vue'
 import Button from '@Components/Button.vue'
 import { useToast } from '@Composables/useToast'
+import useTeleportTarget from '@Composables/useTeleportTarget'
 import type { ToastType } from '@Composables/useToast'
 import type { IconName } from '@Composables/useIcons'
 
@@ -154,6 +158,10 @@ const props = withDefaults(defineProps<{
 })
 
 const { toasts, remove, clear, pauseTimer, resumeTimer } = useToast()
+const {
+    isReady: portalReady,
+    target: resolvedPortalTarget
+} = useTeleportTarget()
 
 const MAX_VISIBLE = 5
 const isExpanded = ref(false)
@@ -175,7 +183,7 @@ const containerClass = computed(() => [
     'fixed z-100 flex gap-2 min-w-80 max-w-[calc(100vw-2rem)]',
     isBottom.value ? 'flex-col-reverse' : 'flex-col',
     isBottom.value ? 'bottom-4' : 'top-4',
-    isRight.value ? 'right-4' : 'left-4',
+    isRight.value ? 'end-4' : 'start-4',
     isExpanded.value ? 'max-h-[calc(100vh-2rem)]' : ''
 ])
 
