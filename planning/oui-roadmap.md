@@ -1,11 +1,29 @@
 # Ocelot UI — Component Library Roadmap
 
 > **Status:** Planning document · April 2026  
-> **Current version:** 0.0.21 · 63 components · ~115 registered icons
+> **Current version:** 0.0.22 · 66 components · ~115 registered icons
 
 ---
 
 ## Session Log
+
+### Session 5 — April 2026
+
+**Shipped:** RTL cleanup for the known physical-positioning leftovers — Toast, Sidebar, Card selected indicator, FloatingPanel, DropdownMenuContent, and DropdownMenuSubmenu now use logical start/end positioning or inline logical properties where appropriate.
+
+**Accordion cleanup** — `Accordion` migrated from native `<details>/<summary>` to the explicit `<button aria-expanded aria-controls>` disclosure pattern, with animated content reveal, richer title slot support, and `expandIcon` slot state. `AccordionGroup` stories cover exclusive and non-exclusive modes.
+
+**Two-level submenu support** — `DropdownMenuSubmenu` and `NavigationBarSubmenu` were added and exported. The nesting limit is intentionally two levels total: a top-level menu plus one submenu level. Deeper nesting remains out of scope and should be called out in docs.
+
+**Teleport target automation** — `useTeleportTarget()` and `configureTeleportTarget()` were added and exported. Dialog, Toast, and CommandPalette now ensure a target exists on the client, while still allowing consumers to register a custom target. Storybook composable docs now cover this API.
+
+**Audit leftovers closed** — Button now avoids accidental form submission with `type="button"` and no longer adds redundant `role="link"` to native anchors. Badge no longer applies redundant note semantics.
+
+**Decision recorded:** `Callout` overlaps too heavily with `Banner`. Keep the current `Banner` direction, preserve the preferred callout/tip colour treatment there, and remove the standalone `Callout` component and story before release.
+
+Validation after this pass: `npm run lint`, `npm run check-types`, and `npm run test` passed.
+
+---
 
 ### Session 4 — April 2026
 
@@ -66,15 +84,16 @@ All 256 tests passing.
 - Foundation work is largely complete: icon system overhaul, `registerIcons()`, expanded registry, `ButtonGroup`, `Tooltip`, `FormField`, `useToast` export, theming/design tokens, and reduced-motion support.
 - Existing component upgrades are largely complete: Button, Badge, Card, Accordion, Divider, Dialog, Toast, Loader, Input, `ReadMore` labels, `SkipLink`, and date/time input support are all recorded as shipped.
 - Phase 2 is effectively complete: Alert/Banner, Avatar/AvatarGroup, Tabs, Breadcrumb, Progress, Pagination, Stepper, and the full first wave of form primitives are marked done.
-- Most of Phase 3 is complete: Dropdown Menu, Stats / Metric Card, Empty State, Code Block, Timeline, Popover, and Quote are marked done.
+- Phase 3 is substantially complete: Dropdown Menu, two-level Dropdown submenus, two-level NavigationBar submenus, Stats / Metric Card, Empty State, Code Block, Timeline, Popover, and Quote are marked done.
 - Form accessibility work is substantially complete: the Session 4 audit closed the previously failing form stories and documented WCAG 2.1 AA fixes across Checkbox, CheckboxGroup, Radio, FormField, Textarea, and Switch.
+- Teleport target handling is covered by `useTeleportTarget()` / `configureTeleportTarget()` and Storybook composable docs.
 
 ### Partially Covered
 
-- Accordion accessibility is only partially closed: redundant ARIA on `<summary>` is fixed, but the audit still notes that a full `<button aria-expanded>` implementation is outstanding.
 - Validation/form ergonomics remain intentionally partial: `FormField` exists, but validation strategy, richer validation states, and consumer guidance are still open-ended rather than fully productised.
-- RTL support is partial: the audit says most logical properties are in place, but some components still rely on physical `left` / `right` positioning.
-- Storybook/DX polish is still an ongoing area rather than a single unfinished task: the bundle analyser, optional dependency cleanup, and build/type cleanup are now done, but pattern documentation and example compositions still need follow-through.
+- RTL support is improved but not formally certified: the known listed physical-positioning leftovers have been cleaned up, but a full RTL visual/story audit remains future work if OUI decides to officially support RTL.
+- Storybook/DX polish is still an ongoing area rather than a single unfinished task: the bundle analyser, optional dependency cleanup, build/type cleanup, and `useTeleportTarget` docs are now done, but pattern documentation and example compositions still need follow-through.
+- SSR/Nuxt compatibility is partially addressed for Teleport targets; broader browser API usage in media and floating components still needs a documented audit.
 
 
 ### Still Left To Do
@@ -149,20 +168,20 @@ This section captures the initial audit baseline from the start of the roadmap. 
 
 Before adding anything new, the existing dependency model warrants scrutiny. Several runtime dependencies ship with the library bundle and add real weight that consumers cannot opt out of.
 
-### Current full dependencies (not peer)
+### Current dependency state
 
 | Package | Version | Size (approx.) | Issue |
 |---|---|---|---|
 | `@tabler/icons-vue` | ^3.41.1 | ~2MB (full) / tree-shaken | Used by `useIcons.ts` — tree-shaking is only partial unless consumer imports directly |
 | `@floating-ui/dom` | ^1.7.6 | ~15KB gzip | Reasonable; used by FloatingPanel |
-| `photoswipe` | ^5.4.4 | ~18KB gzip | Only used by LightboxImage — consumers without galleries pay for it |
-| `plyr` | ^3.8.4 | ~38KB gzip | Only used by Video — consumers without video pay for it |
-| `qrcode` | ^1.5.4 | ~25KB gzip | Only used by QrCode — consumers without QR pay for it |
+| ~~`photoswipe`~~ | ^5.4.4 | ~18KB gzip | ✅ Moved to optional peer dependency; installed as devDependency for local tests/stories |
+| ~~`plyr`~~ | ^3.8.4 | ~38KB gzip | ✅ Moved to optional peer dependency; installed as devDependency for local tests/stories |
+| ~~`qrcode`~~ | ^1.5.4 | ~25KB gzip | ✅ Moved to optional peer dependency; installed as devDependency for local tests/stories |
 | ~~`culori`~~ | ~~^4.0.2~~ | ~~~8KB gzip~~ | ✅ Removed — was unused dead weight; re-add if ColorPicker is ever built |
 
 ### Recommended actions
 
-1. **`photoswipe`, `plyr`, `qrcode`** — move to `peerDependencies` (optional). Consumers must install them only if they use `LightboxImage`, `Video`, or `QrCode` respectively. Provide clear installation instructions and a dev-mode warning if the library is used but not installed.
+1. ~~**`photoswipe`, `plyr`, `qrcode`**~~ — ✅ Moved to optional `peerDependencies` with local `devDependencies` for development. Remaining work: improve docs and keep `optionalDependency.ts` fully covered because it now guards the consumer-facing failure paths.
 
 2. ~~**`culori`**~~ — ✅ Removed.
 
@@ -597,14 +616,18 @@ The current flat-prop API becomes limiting quickly. A slot-based approach is the
 
 ### Accordion
 
-**Recommended improvements:**
+**Status:** Implemented. Keep this section as the original scope/spec reference and decision record.
 
-1. **`AccordionGroup` wrapper** — controls which child `Accordion` is currently open. Props: `exclusive` (bool, default: true — only one open at a time), `defaultOpen` (index or ID). The Group passes state down via `provide/inject`.
-2. **`variant` prop on `Accordion`:** `default` (bordered individual panel), `flush` (no outer border, dividers only — common in sidebars), `contained` (box with background — common in cards).
-3. **`id` prop** — allow consumers to control the item's identity for use with `AccordionGroup`'s `defaultOpen`.
-4. **`expandIcon` slot** — override the default chevron with any content.
-5. ✅ **ARIA improvement (partial)** — ~~the native `<details>/<summary>` element is used currently, which has inconsistent cross-browser ARIA support.~~ Fixed: removed redundant `aria-expanded` and `aria-controls` from `<summary>` which caused double-announcement (native `<details>` handles these in the accessibility tree already). Also fixed: invalid `duration-[1000]` CSS class. Full migration to `<button aria-expanded>` pattern remains a future task.
-6. **Story additions:** AccordionGroup exclusive mode, AccordionGroup with defaultOpen, all variants, with custom expand icon, with rich content (forms, images, nested lists).
+**Shipped improvements:**
+
+1. **`AccordionGroup` wrapper** — controls child `Accordion` state via provide/inject, with exclusive and non-exclusive modes.
+2. **`variant` prop on `Accordion`:** `default`, `flush`, and `contained`.
+3. **`id` prop** — allows consumers to control the item identity used by `AccordionGroup`.
+4. **`expandIcon` slot** — supports custom icons and exposes open state to the slot.
+5. **ARIA disclosure migration** — replaced `<details>/<summary>` with the explicit `<button aria-expanded aria-controls>` pattern, avoiding inconsistent browser/AT behaviour and duplicate announcements.
+6. **Story coverage** — AccordionGroup exclusive mode, non-exclusive mode, default open state, variants, custom expand icon, and richer content examples.
+
+**Open note:** The audit still questions whether `AccordionGroup` should default to `exclusive: true` or whether multiple-open behaviour is the more expected default. That is an API decision, not an implementation gap.
 
 ### Divider
 
@@ -997,7 +1020,11 @@ Covered in §5 (FloatingPanel improvements). Summarised here for priority tracki
 
 A fully ARIA-compliant menu component. Distinct from FloatingPanel: FloatingPanel positions arbitrary content; DropdownMenu is specifically for command menus and action lists with ARIA `menu` semantics and full keyboard navigation.
 
-**Components:** `DropdownMenu` (root), `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuCheckboxItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, `DropdownMenuSub` (nested)
+**Status:** Implemented, including one submenu level.
+
+**Components:** `DropdownMenu` (root), `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuCheckboxItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, `DropdownMenuSubmenu` (nested)
+
+**Intentional limitation:** Dropdown nesting is limited to two levels total: the top-level menu plus one submenu level. Deeper nested menus are intentionally unsupported because they become difficult to scan, steer, and use on touch devices.
 
 **`DropdownMenuItem` props:** `label`, `icon` (IconProp), `shortcut` (display string, e.g. `"⌘K"`), `disabled`, `destructive` (red colour), `href` (renders as `<a>`)
 
@@ -1269,20 +1296,24 @@ A dedicated component for KPI and metric display — essential for dashboards.
 
 #### NavigationBar / AppShell
 
-**Status:** Implemented. Keep this section as the original scope/spec reference for future refinement work.
+**Status:** Implemented, including one submenu level. Keep this section as the original scope/spec reference for future refinement work.
 
 Almost every web application has a top navigation bar. Currently consumers must build this entirely from scratch using OUI primitives. A `NavigationBar` component would not be prescriptive about layout — it would handle the common patterns:
 
 - **`NavBar`** — a `<header>` wrapper with `role="banner"`, consistent height, horizontal layout, and a `sticky` prop.
   - Slots: `#brand` (logo/name), `#nav` (primary nav links), `#actions` (right-side: search, avatar, theme toggle)
 - **`NavBarItem`** — an individual nav link with: `href`, `active` (`aria-current="page"`), `icon` (IconProp)
-- **`NavBarDropdown`** — a nav item with a dropdown sub-menu (uses DropdownMenu internally)
+- **`NavigationBarSubmenu`** — a nav item with a dropdown sub-menu.
+
+**Intentional limitation:** Navigation submenus are limited to two levels total: a top-level nav item plus one submenu panel. For deeper information architecture, recommend Sidebar, AppShell, or a dedicated page-level subnav instead.
 
 **Note:** This component is intentionally layout-focused, not opinionated about visual design. The `#nav`, `#brand`, and `#actions` slots give consumers full control over content.
 
 **ARIA:** The outer `<header>` uses the implicit `banner` landmark. The `<nav>` inside must have `aria-label` to distinguish it from other `<nav>` elements on the page (e.g. the Sidebar's nav).
 
-**Stories:** Basic NavBar with brand + links + avatar, with dropdown nav item, mobile (hamburger menu opens Sidebar), sticky on scroll.
+**Stories:** Basic NavBar with brand + links + avatar, with submenu nav item, mobile/responsive coverage, sticky on scroll.
+
+**Open gap:** The current `NavigationBar` still needs a first-class small-screen fallback so links remain reachable below the inline breakpoint without requiring every consumer to build a separate mobile menu from scratch.
 
 ---
 
@@ -1322,27 +1353,17 @@ No longer planned as a separate component. OUI standardises on the term **Badge*
 
 ---
 
-#### Callout
+#### ~~Callout~~
 
-A styled editorial aside for documentation and rich content.
+**Decision:** Do not keep a standalone `Callout` primitive. A prototype exists, but it overlaps too heavily with `Banner`, and `Banner` already has the broader API: dismissibility, announcement roles, title tag control, variants, icon slot, and the `tip` palette.
 
-**Props:** `type` (`'info' \| 'warning' \| 'tip' \| 'danger'`), `title`
-
-Distinct from Alert: Callout is static/editorial content; Alert is operational feedback.
-
-**Stories:** All 4 types, with and without title, nested in a prose block.
+**Cleanup required:** Remove `Callout.vue`, `Callout.stories.ts`, and the `Callout` exports. Preserve the preferred callout colour treatment in `Banner`, and add/keep a `Banner` story that demonstrates static/editorial documentation callouts.
 
 ---
 
 #### ~~SkipLink~~
 
 ✅ Done — `sr-only` until focused; `target` prop (default `"main"`), `label` prop (default `"Skip to main content"`). WCAG 2.4.1 Bypass Blocks.
-
----
-
-#### ~~Callout~~
-
-❌ Removed — duplicate of Banner. `tip` type added to Banner instead (emerald palette, Bulb icon, `role="status"`). No separate Callout component needed.
 
 ---
 
@@ -1429,7 +1450,7 @@ States propagate from `Form` via `provide` or can be set directly via prop for s
 OUI is a Vue 3 library. Many consumers will use it with Nuxt. Potential SSR issues:
 
 - **`document` / `window` access** — FloatingPanel, Sidebar, Dialog, and Toast use browser APIs. All must be guarded with `typeof window !== 'undefined'` or `onMounted()`. **Audit all current components for this.**
-- **`Teleport`** — Dialog uses `<Teleport>` which requires the target to exist in the DOM. In SSR, the portal target (`#portal-target`) may not be available during hydration. Use `defer` on Teleport or use a `ClientOnly` pattern and document the requirement.
+- **`Teleport`** — Dialog, Toast, and CommandPalette use `<Teleport>`. This is now covered by `useTeleportTarget()` / `configureTeleportTarget()`, which can create a client-side target automatically and lets Nuxt consumers register a custom target. Keep the composable Storybook docs up to date if the API changes.
 - **QrCode** — `qrcode` package renders to `<canvas>`, which is client-only. Must be wrapped in `onMounted`.
 - **Video / LightboxImage** — Plyr and PhotoSwipe must be initialised client-side only. Already likely the case but needs explicit documentation.
 - **Recommendation:** Add a Storybook MDX page documenting SSR/Nuxt usage patterns and any `ClientOnly` wrapping requirements.
@@ -1468,6 +1489,7 @@ RTL is not in scope for the initial roadmap, but decisions made now will determi
 - Avoid `left-0`/`right-0` in favour of `start-0`/`end-0` for positioned elements.
 - FloatingPanel placements (left/right) should use `start`/`end` variants.
 - **Recommendation:** adopt start/end logical properties now in all new components, even if RTL is not officially supported. It costs nothing and avoids a painful migration later.
+- **Current cleanup state:** the known physical-positioning leftovers from the Session 3 audit have been corrected in Toast, Sidebar, Card, FloatingPanel, DropdownMenuContent, and DropdownMenuSubmenu. A full visual RTL test matrix remains future work.
 
 ### Print styles
 
@@ -1705,7 +1727,7 @@ Once Tier 1 components are complete:
 | Component | Notes |
 |---|---|
 | ~~Tooltip~~ | ✅ Done |
-| ~~Dropdown Menu~~ | ✅ Done — 7-component family with full keyboard nav, typeahead, ARIA semantics, floating positioning. Sub-menus deferred. |
+| ~~Dropdown Menu~~ | ✅ Done — full keyboard nav, typeahead, ARIA semantics, floating positioning, and one submenu level. Deeper nesting is intentionally unsupported. |
 | ~~Table~~ | ✅ Done — TanStack-powered table shipped with sorting, filtering, pagination, selection, resizing, pinning, expansion, mobile card layout, and Storybook coverage. |
 | ~~Stats / Metric Card~~ | ✅ Done |
 | ~~Empty State~~ | ✅ Done |
@@ -1721,7 +1743,7 @@ Once Tier 1 components are complete:
 | **Bug fixes — Session 1** | ✅ Done | Input missing attrs, Dialog ARIA/ID/tabindex/aria-modal, Accordion ARIA + CSS, Button `<a>` keyboard, Scrim invalid aria-disabled |
 | **ReadMore i18n labels** | ✅ Done | `expandLabel`/`collapseLabel` props added |
 | **Dialog — title slot + `aria-labelledby` + `aria-modal`** | ✅ Done | |
-| **Accordion — ARIA cleanup** | ✅ Done (partial) | Redundant attrs removed; full `<button>` migration still outstanding |
+| **Accordion — ARIA cleanup** | ✅ Done | Migrated to explicit `<button aria-expanded aria-controls>` disclosure pattern with animated reveal |
 | ~~CSS custom property theming~~ | ✅ Done | `--oui-radius-*`, `--oui-shadow-*`, `--oui-transition-duration` in `tailwind.css` |
 | ~~`AccordionGroup` exclusive mode~~ | ✅ Done | Variant inheritance via provide/inject; non-exclusive mode; GroupContained + GroupNonExclusive stories |
 | ~~Card slot-based sub-components~~ | ✅ Done | Added SelectableToggle + CardGrid stories |
@@ -2032,7 +2054,7 @@ Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the
 
 ## 15. Component Audit — Session 3 Findings
 
-> Full audit of all 63 components against TypeScript coverage, accessibility (WCAG 2.1 AA), UX laws, and known bugs. Items to be addressed individually.
+> Full audit of the then-current 63 components against TypeScript coverage, accessibility (WCAG 2.1 AA), UX laws, and known bugs. Items to be addressed individually.
 
 ---
 
@@ -2070,7 +2092,7 @@ Add `Patterns/` as a Phase 5 milestone (or treat each batch as a sub-task of the
 
 | Item | Detail |
 |---|---|
-| **No bundle analyser** | Add `rollup-plugin-visualizer` as a devDependency. Wire it to a `npm run build:analyse` script (`visualizer({ open: true })`). Gives a visual treemap of bundle composition — useful for tracking heavy dependencies (Plyr, PhotoSwipe, etc.) without needing a formal size-limit gate. |
+| ~~No bundle analyser~~ | Done — `rollup-plugin-visualizer` is installed and `npm run build:analyse` is available. |
 | **Low coverage: `optionalDependency.ts`** | `src/utilities/optionalDependency.ts` is currently at 12.5% coverage. Add focused unit tests for successful optional import, missing dependency handling, cached resolution, warning/error paths, and any SSR-safe branches until this file reaches 100% coverage. |
 | ~~No `check-types` npm script~~ | Done — `package.json` now includes `"check-types": "vue-tsc --noEmit"` and the command is documented in `CLAUDE.md`. |
 
@@ -2093,16 +2115,19 @@ All animated components ignore user motion preferences. Add the following to `ta
 
 **Affected components:** Toast (TransitionGroup slide), Sidebar (Transition slide), Dialog (Transition fade), FloatingPanel (Transition opacity), Progress (indeterminate bar animation, `transition-[width]`), Stepper (`transition-colors`), Loader (`animate-spin`, `animate-bounce` etc.).
 
-#### RTL Support — Partial
+#### RTL Support — Improved, Not Certified
 
-Most components correctly use logical CSS properties (`ps-`, `pe-`, `ms-`, `me-`, `text-start`). The following still use physical properties that will not flip in RTL:
+Most components correctly use logical CSS properties (`ps-`, `pe-`, `ms-`, `me-`, `text-start`). The physical-positioning leftovers from the Session 3 audit have been cleaned up:
 
-| Component | Physical property | Where |
+| Component | Prior issue | Status |
 |---|---|---|
-| `Toast.vue` | `right-4` / `left-4` | Placement positioning |
-| `Sidebar.vue` | `left-0` / `right-0` | Side positioning |
-| `Card.vue` | `top-2 right-2` | Selected tick indicator |
-| `FloatingPanel.vue` | `left: ${x}px` in inline style | Floating-UI computed position (floating-ui itself has RTL support — wire it up) |
+| `Toast.vue` | `right-4` / `left-4` placement positioning | ✅ Uses logical start/end placement |
+| `Sidebar.vue` | `left-0` / `right-0` side positioning | ✅ Uses logical start/end positioning |
+| `Card.vue` | `top-2 right-2` selected tick indicator | ✅ Uses logical end positioning |
+| `FloatingPanel.vue` | `left: ${x}px` inline style | ✅ Uses inline logical positioning |
+| `DropdownMenuContent.vue` / `DropdownMenuSubmenu.vue` | Floating content positioning | ✅ Uses inline logical positioning |
+
+Remaining gap: OUI still needs a dedicated RTL Storybook/visual pass before claiming official RTL support.
 
 ---
 
@@ -2111,16 +2136,16 @@ Most components correctly use logical CSS properties (`ps-`, `pe-`, `ms-`, `me-`
 #### Button
 | Type | Issue |
 |---|---|
-| **Bug** | No `type="button"` attribute — inside an HTML `<form>`, an untyped button defaults to `type="submit"` and will accidentally submit the form |
-| **A11y** | `role="link"` applied to `<a>` elements — redundant; native `<a>` already carries the link role and adding it explicitly can cause double-announcement in some ATs |
+| **Bug** | ✅ Fixed — native buttons now set `type="button"` by default to avoid accidental form submission |
+| **A11y** | ✅ Fixed — native anchors no longer receive redundant `role="link"` |
 
 #### Accordion
 | Type | Issue |
 |---|---|
-| **A11y** | Uses `<details>/<summary>` — browser/AT support is inconsistent (NVDA+Firefox does not expose `aria-expanded`; VoiceOver+Safari is fine). Full `<button aria-expanded>` migration planned but not done. |
-| **UX** | No animation on content reveal — content appears/disappears instantly. A CSS `max-height` or `grid-rows` transition would significantly improve perceived quality. |
-| **UX** | `expandIcon` slot does not expose `isOpen` as a slot prop — custom icons cannot react to the open/closed state |
-| **UX** | `title` prop only accepts a string — no slot alternative for rich/HTML titles |
+| **A11y** | ✅ Fixed — migrated from `<details>/<summary>` to `<button aria-expanded aria-controls>` |
+| **UX** | ✅ Fixed — content reveal is animated |
+| **UX** | ✅ Fixed — `expandIcon` exposes open state |
+| **UX** | ✅ Fixed — title slot supports richer title content |
 
 #### AccordionGroup
 | Type | Issue |
