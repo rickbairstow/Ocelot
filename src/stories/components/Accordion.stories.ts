@@ -67,33 +67,33 @@ export const Default: Story = {
     async play({ canvasElement, args }) {
         const canvas = within(canvasElement)
 
-        const summary = canvas.getByText(args.title as string, { selector: 'summary span' })
+        const summary = canvas.getByRole('button', { name: args.title as string })
         const content = canvasElement.querySelector('.content')
 
         await expect(content).not.toBeNull()
 
         if (args.startOpen) {
-            await expect(content).toBeVisible()
+            await expect(summary).toHaveAttribute('aria-expanded', 'true')
         } else {
-            await expect(content).not.toBeVisible()
+            await expect(summary).toHaveAttribute('aria-expanded', 'false')
         }
 
         await userEvent.click(summary)
         await new Promise((r) => setTimeout(r, 150))
 
         if (args.startOpen) {
-            await expect(content).not.toBeVisible()
+            await expect(summary).toHaveAttribute('aria-expanded', 'false')
         } else {
-            await expect(content).toBeVisible()
+            await expect(summary).toHaveAttribute('aria-expanded', 'true')
         }
 
         await userEvent.click(summary)
         await new Promise((r) => setTimeout(r, 150))
 
         if (args.startOpen) {
-            await expect(content).toBeVisible()
+            await expect(summary).toHaveAttribute('aria-expanded', 'true')
         } else {
-            await expect(content).not.toBeVisible()
+            await expect(summary).toHaveAttribute('aria-expanded', 'false')
         }
     }
 }
@@ -112,8 +112,8 @@ export const CustomExpandIcon: Story = {
         setup() { return { args } },
         template: `
             <Accordion :title="args.title">
-                <template #expandIcon>
-                    <span class="text-xs text-gray-500">▾</span>
+                <template #expandIcon="{ isOpen }">
+                    <span class="text-xs text-gray-500">{{ isOpen ? 'Hide' : 'Show' }}</span>
                 </template>
                 {{ args.default }}
             </Accordion>
@@ -145,20 +145,18 @@ export const Group: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
-        const summaries = canvasElement.querySelectorAll('summary span')
+        const summaries = canvasElement.querySelectorAll('button[aria-controls]')
         await expect(summaries.length).toBe(3)
 
         // First should be open (defaultOpen="a1")
-        const firstDetails = canvasElement.querySelectorAll('details')[0]
-        await expect(firstDetails.open).toBe(true)
+        await expect(summaries[0]).toHaveAttribute('aria-expanded', 'true')
 
         // Open second — first should close
         await userEvent.click(summaries[1])
         await new Promise((r) => setTimeout(r, 150))
 
-        const secondDetails = canvasElement.querySelectorAll('details')[1]
-        await expect(secondDetails.open).toBe(true)
-        await expect(firstDetails.open).toBe(false)
+        await expect(summaries[1]).toHaveAttribute('aria-expanded', 'true')
+        await expect(summaries[0]).toHaveAttribute('aria-expanded', 'false')
     }
 }
 
@@ -211,8 +209,8 @@ export const GroupContained: Story = {
         `
     }),
     async play({ canvasElement }) {
-        const firstDetails = canvasElement.querySelectorAll('details')[0]
-        await expect(firstDetails.open).toBe(true)
+        const firstDetails = canvasElement.querySelectorAll('button[aria-controls]')[0]
+        await expect(firstDetails).toHaveAttribute('aria-expanded', 'true')
     }
 }
 
@@ -240,17 +238,16 @@ export const GroupNonExclusive: Story = {
         `
     }),
     async play({ canvasElement }) {
-        const summaries = canvasElement.querySelectorAll('summary span')
-        const details = canvasElement.querySelectorAll('details')
+        const summaries = canvasElement.querySelectorAll('button[aria-controls]')
 
         await userEvent.click(summaries[0])
         await new Promise((r) => setTimeout(r, 150))
-        await expect(details[0].open).toBe(true)
+        await expect(summaries[0]).toHaveAttribute('aria-expanded', 'true')
 
         // Open second — first must stay open (non-exclusive)
         await userEvent.click(summaries[1])
         await new Promise((r) => setTimeout(r, 150))
-        await expect(details[1].open).toBe(true)
-        await expect(details[0].open).toBe(true)
+        await expect(summaries[1]).toHaveAttribute('aria-expanded', 'true')
+        await expect(summaries[0]).toHaveAttribute('aria-expanded', 'true')
     }
 }

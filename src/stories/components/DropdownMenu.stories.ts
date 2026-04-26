@@ -6,9 +6,10 @@ import DropdownMenuContent from '@Components/DropdownMenuContent.vue'
 import DropdownMenuItem from '@Components/DropdownMenuItem.vue'
 import DropdownMenuCheckboxItem from '@Components/DropdownMenuCheckboxItem.vue'
 import DropdownMenuSeparator from '@Components/DropdownMenuSeparator.vue'
+import DropdownMenuSubmenu from '@Components/DropdownMenuSubmenu.vue'
 import DropdownMenuLabel from '@Components/DropdownMenuLabel.vue'
 import Button from '@Components/Button.vue'
-import { userEvent, expect, within, waitFor } from 'storybook/test'
+import { fireEvent, userEvent, expect, within, waitFor } from 'storybook/test'
 
 const meta: Meta<typeof DropdownMenu> = {
     title: 'Components/DropdownMenu',
@@ -17,14 +18,58 @@ const meta: Meta<typeof DropdownMenu> = {
     parameters: {
         docs: {
             description: {
-                component: 'A fully accessible dropdown menu with keyboard navigation, typeahead, and ARIA semantics. Compose with DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuSeparator, and DropdownMenuLabel.'
+                component: 'A fully accessible dropdown menu with keyboard navigation, typeahead, and ARIA semantics. Compose with DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuSubmenu, DropdownMenuSeparator, and DropdownMenuLabel. Submenus intentionally support one nested level only.'
             }
         }
     }
 }
 
-export default meta
 type Story = StoryObj<typeof meta>
+
+export const WithSubmenu: Story = {
+    render: () => ({
+        components: { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuSubmenu, Button },
+        template: `
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <Button variant="secondary">File</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem icon="File" label="New file" />
+                    <DropdownMenuSubmenu icon="Folder" label="New from template">
+                        <DropdownMenuItem label="Dashboard" />
+                        <DropdownMenuItem label="Settings page" />
+                        <DropdownMenuItem label="Data table" />
+                    </DropdownMenuSubmenu>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem icon="Download" label="Export" />
+                </DropdownMenuContent>
+            </DropdownMenu>
+        `
+    }),
+    parameters: {
+        docs: {
+            description: {
+                story: 'Demonstrates the intentional two-level limit: a top-level menu item can reveal one submenu, and submenu content should contain final actions only.'
+            }
+        }
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await userEvent.click(canvas.getByRole('button', { name: 'File' }))
+        const submenuTrigger = await canvas.findByRole('menuitem', { name: /New from template/ })
+        submenuTrigger.focus()
+        await userEvent.keyboard('{ArrowRight}')
+
+        const dashboardItem = canvas.getByRole('menuitem', { name: 'Dashboard' })
+        await waitFor(() => expect(dashboardItem).toBeVisible())
+        await fireEvent.keyDown(dashboardItem, { key: 'ArrowLeft' })
+        await waitFor(() => expect(submenuTrigger).toHaveFocus())
+    }
+}
+
+export default meta
 
 export const Default: Story = {
     render: () => ({

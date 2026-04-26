@@ -1,5 +1,8 @@
 <template>
-    <Teleport :to="portalTarget">
+    <Teleport
+        v-if="portalReady"
+        :to="resolvedPortalTarget"
+    >
         <Transition
             enter-active-class="transition-opacity duration-150 ease-out motion-reduce:transition-none"
             enter-from-class="opacity-0"
@@ -173,6 +176,7 @@ import Scrim from '@Components/Scrim.vue'
 import { useCommandPalette } from '@Composables/useCommandPalette'
 import type { CommandPaletteItem } from '@Composables/useCommandPalette'
 import useFocusMemory from '@Composables/useFocusMemory'
+import useTeleportTarget from '@Composables/useTeleportTarget'
 import { generateUuid } from '@Utils/uuid'
 
 interface Props {
@@ -186,8 +190,13 @@ const props = withDefaults(defineProps<Props>(), {
     emptyText: 'No commands found.',
     listenForShortcut: true,
     placeholder: 'Search commands…',
-    portalTarget: '#portal-target'
+    portalTarget: undefined
 })
+
+const {
+    isReady: portalReady,
+    target: resolvedPortalTarget
+} = useTeleportTarget({ target: props.portalTarget })
 
 const inputId = generateUuid('command-palette-input')
 const listboxId = generateUuid('command-palette-listbox')

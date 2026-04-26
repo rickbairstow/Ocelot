@@ -70,7 +70,7 @@
         <div
             v-if="selected"
             aria-hidden="true"
-            class="absolute top-2 right-2 flex items-center justify-center size-5 rounded-full bg-blue-600 text-white"
+            class="absolute top-2 end-2 flex items-center justify-center size-5 rounded-full bg-blue-600 text-white"
         >
             <svg
                 fill="none"
