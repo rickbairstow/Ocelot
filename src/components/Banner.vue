@@ -63,7 +63,7 @@
 import { ref, computed, useSlots } from 'vue'
 import Icon from '@Components/Icon.vue'
 
-export type BannerType = 'info' | 'success' | 'warning' | 'error' | 'tip'
+export type BannerType = 'info' | 'success' | 'warning' | 'error' | 'tip' | 'note'
 export type BannerVariant = 'subtle' | 'solid' | 'outline'
 
 interface Props {
@@ -99,7 +99,8 @@ const typeIcon: Record<BannerType, string> = {
     success: 'CircleCheck',
     warning: 'AlertTriangle',
     error:   'CircleX',
-    tip:     'Bulb'
+    tip:     'Bulb',
+    note:    'Quote'
 }
 
 const announceRole = computed((): string => {
@@ -131,8 +132,13 @@ const palette: Record<BannerType, Record<BannerVariant, ColorSet>> = {
     },
     tip: {
         subtle:  { container: 'bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800', icon: 'text-emerald-600 dark:text-emerald-400', text: 'text-emerald-900 dark:text-emerald-100', desc: 'text-emerald-800 dark:text-emerald-200', ring: 'focus-visible:outline-emerald-600 dark:focus-visible:outline-emerald-400' },
-        solid:   { container: 'bg-emerald-600 dark:bg-emerald-500', icon: 'text-white', text: 'text-white', desc: 'text-emerald-50', ring: 'focus-visible:outline-white' },
+        solid:   { container: 'bg-emerald-700 dark:bg-emerald-500', icon: 'text-white', text: 'text-white', desc: 'text-white', ring: 'focus-visible:outline-white' },
         outline: { container: 'border-2 border-emerald-500 dark:border-emerald-400', icon: 'text-emerald-600 dark:text-emerald-400', text: 'text-emerald-900 dark:text-emerald-100', desc: 'text-emerald-800 dark:text-emerald-200', ring: 'focus-visible:outline-emerald-600 dark:focus-visible:outline-emerald-400' }
+    },
+    note: {
+        subtle:  { container: 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700', icon: 'text-gray-600 dark:text-gray-300', text: 'text-gray-950 dark:text-gray-50', desc: 'text-gray-700 dark:text-gray-200', ring: 'focus-visible:outline-gray-600 dark:focus-visible:outline-gray-300' },
+        solid:   { container: 'bg-gray-900 dark:bg-gray-100', icon: 'text-white dark:text-gray-950', text: 'text-white dark:text-gray-950', desc: 'text-gray-100 dark:text-gray-800', ring: 'focus-visible:outline-white dark:focus-visible:outline-gray-950' },
+        outline: { container: 'border-2 border-gray-400 dark:border-gray-500', icon: 'text-gray-600 dark:text-gray-300', text: 'text-gray-950 dark:text-gray-50', desc: 'text-gray-700 dark:text-gray-200', ring: 'focus-visible:outline-gray-600 dark:focus-visible:outline-gray-300' }
     }
 }
 

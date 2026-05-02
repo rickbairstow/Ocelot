@@ -13,7 +13,7 @@ It is used internally by overlay-style components such as `Dialog`, `Toast`, and
 ## Features
 
 - Creates `#portal-target` automatically when it is missing
-- Avoids touching `document` during SSR render
+- Avoids touching `document` before the component has mounted in the browser
 - Lets apps configure a global Teleport target once
 - Allows per-component target overrides
 - Supports opting out of automatic target creation
@@ -134,12 +134,12 @@ Returns a resolved target selector, readiness state, and an imperative target cr
 |---|---|---|
 | `target` | `ComputedRef<string>` | Resolved Teleport selector. |
 | `isReady` | `Ref<boolean>` | `true` after a target exists in the mounted browser DOM. |
-| `ensureTarget` | `() => HTMLElement \| null` | Creates or returns the target element, or `null` on SSR / missing opt-out. |
+| `ensureTarget` | `() => HTMLElement \| null` | Creates or returns the target element, or `null` before browser DOM access is available / missing opt-out. |
 
 ---
 
-## SSR Notes
+## Browser Safety Notes
 
-`useTeleportTarget()` does not access `document` until `onMounted()` or until `ensureTarget()` is called manually in the browser. Components should gate Teleport with `v-if="isReady"` so server render and hydration do not depend on the portal element already existing.
+`useTeleportTarget()` does not access `document` until `onMounted()` or until `ensureTarget()` is called manually in the browser. Components should gate Teleport with `v-if="isReady"` so render timing does not depend on the portal element already existing.
 
-This does not replace all SSR work in a component. It only handles the Teleport target. Components that use other browser APIs still need their own `typeof window !== 'undefined'`, `onMounted()`, or client-only guards where appropriate.
+This composable only handles the Teleport target. Components that use other browser APIs still need their own mounted-state guards where appropriate.

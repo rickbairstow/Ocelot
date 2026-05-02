@@ -7,6 +7,34 @@
 
 ## Session Log
 
+### Session 7 — May 2026
+
+**Docs follow-through:** Added Storybook guidance pages for form validation, dark mode, and RTL support. README installation notes now reflect automatic Teleport target creation, NavigationBar mobile menu support, dark mode expectations, and the validation boundary.
+
+**RTL visual pass:** Added `Patterns/RTL Layouts` as a right-to-left smoke-test composition covering NavigationBar, Breadcrumb, Banner, Stepper, Card, Badge, Button, and Pagination.
+
+**Validation decision recorded:** OUI keeps validation library logic out of scope for the current release line. `FormField` owns accessible structure and ARIA wiring; host apps or validation libraries own rules, touched/dirty state, async validation, and submission state. Vee-Validate is documented as the recommended first external integration for schema-driven Vue validation.
+
+**Dark mode coverage:** Added a forced-dark Storybook smoke-test composition covering common surfaces, navigation, form controls, status colours, and progress states.
+
+Validation after this pass: `npm run lint`, `npm run check-types`, and `npm run test:run` passed.
+
+---
+
+### Session 6 — May 2026
+
+**Shipped:** `Callout` consolidation is complete. The standalone `Callout.vue` component, story, export, and type export were removed. `Banner` now covers static/editorial callouts directly with the existing `tip` treatment plus a new `note` type and a dedicated `EditorialCallouts` story.
+
+**NavigationBar responsive follow-up closed** — `NavigationBar` now has a first-class `#mobile-menu` slot, controlled/uncontrolled `mobileMenuOpen` support, `update:mobileMenuOpen`, `aria-expanded`, `aria-controls`, and an internal toggle path while preserving the existing `menu-toggle` event.
+
+**Optional dependency coverage** — `src/utilities/optionalDependency.ts` now has focused unit coverage for development warnings, duplicate suppression, and production silence.
+
+**Pattern follow-through** — added `Patterns/Product Screens` stories covering dashboard, settings, data-list, onboarding, and marketing compositions using OUI primitives.
+
+Validation after this pass: `npm run check-types`, `npm run eslint`, and the focused optional dependency Vitest run passed.
+
+---
+
 ### Session 5 — April 2026
 
 **Shipped:** RTL cleanup for the known physical-positioning leftovers — Toast, Sidebar, Card selected indicator, FloatingPanel, DropdownMenuContent, and DropdownMenuSubmenu now use logical start/end positioning or inline logical properties where appropriate.
@@ -87,22 +115,24 @@ All 256 tests passing.
 - Phase 3 is substantially complete: Dropdown Menu, two-level Dropdown submenus, two-level NavigationBar submenus, Stats / Metric Card, Empty State, Code Block, Timeline, Popover, and Quote are marked done.
 - Form accessibility work is substantially complete: the Session 4 audit closed the previously failing form stories and documented WCAG 2.1 AA fixes across Checkbox, CheckboxGroup, Radio, FormField, Textarea, and Switch.
 - Teleport target handling is covered by `useTeleportTarget()` / `configureTeleportTarget()` and Storybook composable docs.
+- NavigationBar now includes a built-in small-screen menu composition path via `#mobile-menu`.
+- Static/editorial callouts are now represented as `Banner` compositions; the standalone `Callout` primitive has been removed.
+- Product-level Storybook compositions now cover dashboard, settings, data-list, onboarding, and marketing examples.
+- Form validation strategy is documented: OUI provides accessible field structure and leaves validation state/rules to the host app, with Vee-Validate as the recommended external-library path.
+- Dark mode setup and expectations are documented, with a forced-dark Storybook coverage story for common surfaces and controls.
+- RTL guidance and a Storybook smoke-test composition are in place.
 
 ### Partially Covered
 
-- Validation/form ergonomics remain intentionally partial: `FormField` exists, but validation strategy, richer validation states, and consumer guidance are still open-ended rather than fully productised.
-- RTL support is improved but not formally certified: the known listed physical-positioning leftovers have been cleaned up, but a full RTL visual/story audit remains future work if OUI decides to officially support RTL.
-- Storybook/DX polish is still an ongoing area rather than a single unfinished task: the bundle analyser, optional dependency cleanup, build/type cleanup, and `useTeleportTarget` docs are now done, but pattern documentation and example compositions still need follow-through.
-- SSR/Nuxt compatibility is partially addressed for Teleport targets; broader browser API usage in media and floating components still needs a documented audit.
+- RTL support is improved and has a Storybook smoke test, but is not yet formally certified with viewport snapshots and a full keyboard/overlay matrix.
+- Storybook/DX polish is now mostly documentation upkeep rather than a single unfinished task: bundle analyser, optional dependency cleanup, build/type cleanup, `useTeleportTarget` docs, product patterns, validation guidance, dark mode notes, and RTL notes are covered.
 
 
 ### Still Left To Do
 
-- Broader docs and composition follow-through still needs work so the roadmap, README, and Storybook continue to reflect what has actually shipped.
-- Pattern-level examples remain the clearest open product gap: realistic dashboard, settings, data-list, onboarding, and marketing compositions are still more documented in the roadmap than demonstrated in Storybook.
-- Unit coverage needs a targeted pass for `src/utilities/optionalDependency.ts`: current coverage is 12.5%, and this helper should be brought to 100% because it guards optional peer-dependency loading and failure behaviour.
-- `NavigationBar` needs a responsive follow-up: the nav currently disappears below its configured breakpoint unless consumers compose their own mobile navigation. Even if docs recommend moving dense navigation into subnav/drawer patterns at small sizes, the base component should provide a usable small-screen path and stories/tests for it.
-- `Callout` should be consolidated back into `Banner`: the new component is functionally near-identical, while `Banner` is more complete. Remove the standalone `Callout`, fold the preferred callout colour treatment into `Banner`, and document static/editorial callouts as a `Banner` story rather than a separate primitive.
+- Formal RTL certification still needs viewport snapshots, keyboard navigation checks, and overlay placement checks before OUI claims official RTL support.
+- Dark mode still needs manual visual review in Storybook for every component before a stable release, even with the forced-dark smoke test in place.
+- Release documentation should keep being reconciled before a stable release so README, Storybook, and the roadmap match the shipped API surface.
 
 
 ---
@@ -1296,7 +1326,7 @@ A dedicated component for KPI and metric display — essential for dashboards.
 
 #### NavigationBar / AppShell
 
-**Status:** Implemented, including one submenu level. Keep this section as the original scope/spec reference for future refinement work.
+**Status:** Implemented, including one submenu level and a first-class small-screen `#mobile-menu` slot. Keep this section as the original scope/spec reference for future refinement work.
 
 Almost every web application has a top navigation bar. Currently consumers must build this entirely from scratch using OUI primitives. A `NavigationBar` component would not be prescriptive about layout — it would handle the common patterns:
 
@@ -1313,7 +1343,7 @@ Almost every web application has a top navigation bar. Currently consumers must 
 
 **Stories:** Basic NavBar with brand + links + avatar, with submenu nav item, mobile/responsive coverage, sticky on scroll.
 
-**Open gap:** The current `NavigationBar` still needs a first-class small-screen fallback so links remain reachable below the inline breakpoint without requiring every consumer to build a separate mobile menu from scratch.
+**Responsive follow-up:** Closed in Session 6 with `#mobile-menu`, `mobileMenuOpen`, `update:mobileMenuOpen`, `aria-expanded`, and `aria-controls`.
 
 ---
 
@@ -1355,9 +1385,9 @@ No longer planned as a separate component. OUI standardises on the term **Badge*
 
 #### ~~Callout~~
 
-**Decision:** Do not keep a standalone `Callout` primitive. A prototype exists, but it overlaps too heavily with `Banner`, and `Banner` already has the broader API: dismissibility, announcement roles, title tag control, variants, icon slot, and the `tip` palette.
+**Status:** Removed in Session 6. Static/editorial callouts now use `Banner`.
 
-**Cleanup required:** Remove `Callout.vue`, `Callout.stories.ts`, and the `Callout` exports. Preserve the preferred callout colour treatment in `Banner`, and add/keep a `Banner` story that demonstrates static/editorial documentation callouts.
+**Decision:** Do not keep a standalone `Callout` primitive. It overlaps too heavily with `Banner`, and `Banner` already has the broader API: dismissibility, announcement roles, title tag control, variants, icon slot, and the `tip` / `note` palettes.
 
 ---
 
@@ -1445,15 +1475,9 @@ States propagate from `Form` via `provide` or can be set directly via prop for s
 
 ## 8. Cross-Cutting Technical Concerns
 
-### Server-Side Rendering (SSR) / Nuxt compatibility
+### Browser-only dependencies
 
-OUI is a Vue 3 library. Many consumers will use it with Nuxt. Potential SSR issues:
-
-- **`document` / `window` access** — FloatingPanel, Sidebar, Dialog, and Toast use browser APIs. All must be guarded with `typeof window !== 'undefined'` or `onMounted()`. **Audit all current components for this.**
-- **`Teleport`** — Dialog, Toast, and CommandPalette use `<Teleport>`. This is now covered by `useTeleportTarget()` / `configureTeleportTarget()`, which can create a client-side target automatically and lets Nuxt consumers register a custom target. Keep the composable Storybook docs up to date if the API changes.
-- **QrCode** — `qrcode` package renders to `<canvas>`, which is client-only. Must be wrapped in `onMounted`.
-- **Video / LightboxImage** — Plyr and PhotoSwipe must be initialised client-side only. Already likely the case but needs explicit documentation.
-- **Recommendation:** Add a Storybook MDX page documenting SSR/Nuxt usage patterns and any `ClientOnly` wrapping requirements.
+OUI is scoped as a Vue client-side component library. Browser-only dependencies such as Photoswipe, Plyr, QR code generation, focus management, and Teleport targets should stay lazily loaded or mounted-state guarded where required. Full SSR/Nuxt certification is out of scope for the current roadmap.
 
 ### `prefers-reduced-motion`
 

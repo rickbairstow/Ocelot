@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { expect, within } from 'storybook/test'
-import { ref } from 'vue'
+import { expect, userEvent, within } from 'storybook/test'
+import { computed, ref } from 'vue'
 import FormField from '@Components/FormField.vue'
 import Input from '@Components/Input.vue'
 
@@ -130,5 +130,81 @@ export const ErrorOverridesHint: Story = {
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('alert')).toBeInTheDocument()
         await expect(canvas.queryByText('Enter your username.')).not.toBeInTheDocument()
+    }
+}
+
+export const FrontendValidation: Story = {
+    render: () => ({
+        components: { FormField, Input },
+        setup() {
+            const email = ref('')
+            const touched = ref(false)
+
+            const error = computed(() => {
+                if (!touched.value) return ''
+                if (!email.value) return 'Email is required.'
+                if (!email.value.includes('@')) return 'Enter a valid email address.'
+                return ''
+            })
+
+            const markTouched = () => {
+                touched.value = true
+            }
+
+            return { email, error, markTouched }
+        },
+        template: `
+            <form
+                novalidate
+                @submit.prevent="markTouched"
+            >
+                <FormField
+                    :error="error"
+                    hint="Use your work email address."
+                    label="Email"
+                    required
+                >
+                    <Input
+                        v-model="email"
+                        name="email"
+                        required
+                        type="email"
+                        @change="markTouched"
+                    />
+                </FormField>
+
+                <button
+                    class="mt-3 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:outline-blue-400"
+                    type="submit"
+                >
+                    Continue
+                </button>
+            </form>
+        `
+    }),
+    parameters: {
+        docs: {
+            description: {
+                story: 'A lightweight frontend validation flow showing the same binding contract external libraries use: compute an error string and pass it to FormField.'
+            }
+        }
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const input = canvas.getByRole('textbox')
+
+        await userEvent.click(canvas.getByRole('button', { name: /continue/i }))
+        await expect(canvas.getByRole('alert')).toHaveTextContent('Email is required.')
+        await expect(input).toHaveAttribute('aria-invalid', 'true')
+
+        await userEvent.type(input, 'bad-email')
+        await userEvent.tab()
+        await expect(canvas.getByRole('alert')).toHaveTextContent('Enter a valid email address.')
+
+        await userEvent.clear(input)
+        await userEvent.type(input, 'person@example.com')
+        await userEvent.tab()
+        await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
+        await expect(input).not.toHaveAttribute('aria-invalid')
     }
 }

@@ -128,7 +128,7 @@
                                         </p>
                                         <p
                                             v-if="command.description"
-                                            class="truncate text-sm text-gray-500 dark:text-gray-400"
+                                            :class="commandDescriptionClass(command)"
                                         >
                                             {{ command.description }}
                                         </p>
@@ -307,6 +307,14 @@ const commandRowClass = (command: CommandPaletteItem): string => {
     return isActive
         ? 'bg-blue-50 text-blue-950 dark:bg-blue-950/60 dark:text-blue-100'
         : 'text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800'
+}
+
+const commandDescriptionClass = (command: CommandPaletteItem): string => {
+    if (command.disabled) return 'truncate text-sm text-gray-400 dark:text-gray-500'
+
+    return activeCommand.value?.id === command.id
+        ? 'truncate text-sm text-blue-800 dark:text-blue-200'
+        : 'truncate text-sm text-gray-600 dark:text-gray-400'
 }
 
 const handleGlobalShortcut = (event: KeyboardEvent): void => {

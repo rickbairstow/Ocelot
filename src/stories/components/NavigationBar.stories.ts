@@ -21,7 +21,7 @@ const meta: Meta<typeof NavigationBar> = {
     parameters: {
         docs: {
             description: {
-                component: 'A layout-focused top navigation wrapper with brand, nav, and actions slots. Supports sticky positioning and an optional mobile menu toggle trigger. The menu toggle only renders as an accessible button below the configured breakpoint.'
+                component: 'A layout-focused top navigation wrapper with brand, nav, actions, and mobile-menu slots. Supports sticky positioning and an optional first-class mobile menu path below the configured breakpoint.'
             }
         }
     },
@@ -207,6 +207,16 @@ export const WithMenuToggle: Story = {
                         <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Overview</a>
                         <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Projects</a>
                     </template>
+
+                    <template #mobile-menu>
+                        <nav
+                            aria-label="Mobile navigation"
+                            class="grid gap-1"
+                        >
+                            <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Overview</a>
+                            <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Projects</a>
+                        </nav>
+                    </template>
                 </NavigationBar>
 
                 <p class="text-sm text-gray-600 dark:text-gray-300">Toggle count: {{ toggleCount }}</p>
@@ -220,7 +230,13 @@ export const WithMenuToggle: Story = {
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
-        await userEvent.click(canvas.getByRole('button', { name: /open navigation/i }))
+        const toggle = canvas.getByRole('button', { name: /open navigation/i })
+
+        await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+        await userEvent.click(toggle)
+
         await expect(canvas.getByText(/toggle count: 1/i)).toBeVisible()
+        await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+        await expect(canvas.getByRole('navigation', { name: /mobile navigation/i })).toBeVisible()
     }
 }

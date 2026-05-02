@@ -1,0 +1,144 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Getting Started/Form Validation" />
+
+# Form Validation
+
+OUI keeps validation logic outside the component library. Components expose the structure that validators need: labels, ids, `aria-describedby`, `aria-invalid`, native input attributes, and alert text.
+
+Use whichever validation system fits the app. For Vue apps, start with Vee-Validate when you need schema-backed frontend validation. Native HTML constraint validation remains a good lightweight option, and server-returned errors should map into the same `FormField error` contract.
+
+## Recommended Pattern
+
+Use `FormField` as the accessibility wrapper and pass the current error message into its `error` prop.
+
+```vue
+<script setup>
+import { ref, computed } from 'vue'
+import { FormField, Input, Button } from 'ocelot-ui'
+
+const email = ref('')
+const submitted = ref(false)
+
+const emailError = computed(() => {
+    if (!submitted.value) return ''
+    if (!email.value) return 'Email is required.'
+    if (!email.value.includes('@')) return 'Enter a valid email address.'
+    return ''
+})
+</script>
+
+<template>
+    <form @submit.prevent="submitted = true">
+        <FormField
+            :error="emailError"
+            hint="Use your work email address."
+            label="Email"
+            required
+        >
+            <Input
+                v-model="email"
+                name="email"
+                required
+                type="email"
+            />
+        </FormField>
+
+        <Button type="submit">Continue</Button>
+    </form>
+</template>
+```
+
+When `error` is present, `FormField` hides the hint, renders the error with `role="alert"`, and child inputs that use `useFormField()` receive `aria-invalid="true"` plus the matching `aria-describedby`.
+
+## Vee-Validate Pattern
+
+Install Vee-Validate and your schema library in the consumer app, not in OUI:
+
+```bash
+npm install vee-validate zod @vee-validate/zod
+```
+
+Bind `errors.<field>` into `FormField error`, and keep the OUI input as the rendered control:
+
+```vue
+<script setup>
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { z } from 'zod'
+import { FormField, Input, Button } from 'ocelot-ui'
+
+const { defineField, errors, handleSubmit } = useForm({
+    validationSchema: toTypedSchema(z.object({
+        email: z.string().email('Enter a valid email address.')
+    }))
+})
+
+const [email] = defineField('email')
+const submit = handleSubmit((values) => {
+    console.log(values)
+})
+</script>
+
+<template>
+    <form @submit.prevent="submit">
+        <FormField
+            :error="errors.email"
+            label="Email"
+            required
+        >
+            <Input
+                v-model="email"
+                name="email"
+                type="email"
+            />
+        </FormField>
+
+        <Button type="submit">Continue</Button>
+    </form>
+</template>
+```
+
+The validation library owns rules, touched state, and submit handling. OUI owns the accessible field structure.
+
+## Native Validation
+
+Native attributes should still be passed to the actual input component:
+
+```vue
+<FormField label="Password" required>
+    <Input
+        v-model="password"
+        minlength="12"
+        name="password"
+        required
+        type="password"
+    />
+</FormField>
+```
+
+This gives browsers the correct form semantics while allowing the app to control when custom messages appear.
+
+## Server Errors
+
+Map server-returned field errors into `FormField error` props. Keep summary errors in a `Banner type="error" announce` above the form when the whole submission fails.
+
+```vue
+<Banner
+    v-if="formError"
+    announce
+    title="Submission failed"
+    type="error"
+>
+    {{ formError }}
+</Banner>
+```
+
+## Current Scope
+
+OUI does not ship a form controller, validation schema API, or cross-field validation primitive. That is intentional for the current release line. The stable contract is:
+
+- `FormField` owns label, hint, error, required, and optional text.
+- Form inputs consume the `FormField` context for ids and ARIA state.
+- Validation libraries own rules, touched/dirty state, submission state, and async validation.
+- Page-level failures use `Banner`.

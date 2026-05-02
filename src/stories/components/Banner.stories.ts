@@ -3,7 +3,7 @@ import Banner from '@Components/Banner.vue'
 import type { BannerType, BannerVariant } from '@Components/Banner.vue'
 import { expect, userEvent, within } from 'storybook/test'
 
-const types: BannerType[] = ['info', 'success', 'warning', 'error']
+const types: BannerType[] = ['info', 'success', 'warning', 'error', 'tip', 'note']
 const variants: BannerVariant[] = ['subtle', 'solid', 'outline']
 
 const meta: Meta<typeof Banner> = {
@@ -13,7 +13,7 @@ const meta: Meta<typeof Banner> = {
     parameters: {
         docs: {
             description: {
-                component: 'Inline feedback message for alerts, warnings, errors, and success states. Sits within page content rather than appearing as a floating notification. Supports subtle, solid, and outline variants with an optional dismiss button.'
+                component: 'Inline feedback message for alerts, warnings, errors, success states, and static editorial guidance. Sits within page content rather than appearing as a floating notification. Supports subtle, solid, and outline variants with an optional dismiss button.'
             }
         }
     },
@@ -179,6 +179,50 @@ export const Tip: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await expect(canvas.getByText('Pro tip')).toBeInTheDocument()
+        await expect(canvasElement.querySelector('[role="status"], [role="alert"]')).toBeNull()
+    }
+}
+
+export const EditorialCallouts: Story = {
+    render: () => ({
+        components: { Banner },
+        template: `
+            <div class="grid gap-3">
+                <Banner
+                    title="Implementation note"
+                    type="note"
+                >
+                    This static guidance is part of the surrounding content, not a transient system alert.
+                </Banner>
+
+                <Banner
+                    title="Before you continue"
+                    type="warning"
+                >
+                    Check that the consumer app has imported <code class="rounded bg-amber-100 px-1 py-0.5 text-xs dark:bg-amber-900">ocelot-ui/tailwind.css</code>.
+                </Banner>
+
+                <Banner
+                    title="Tip"
+                    type="tip"
+                >
+                    Use the icon slot when documentation needs a product-specific symbol.
+                </Banner>
+            </div>
+        `
+    }),
+    parameters: {
+        docs: {
+            description: {
+                story: 'Static documentation callouts are represented as Banner compositions instead of a separate Callout primitive.'
+            }
+        }
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await expect(canvas.getByText('Implementation note')).toBeVisible()
+        await expect(canvas.getByText('Before you continue')).toBeVisible()
         await expect(canvasElement.querySelector('[role="status"], [role="alert"]')).toBeNull()
     }
 }

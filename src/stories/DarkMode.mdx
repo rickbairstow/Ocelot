@@ -1,0 +1,32 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Getting Started/Dark Mode" />
+
+# Dark Mode
+
+OUI uses Tailwind's class-based dark mode. Consumers enable it by adding the `dark` class to a parent element, usually `<html>`.
+
+```html
+<html class="dark">
+    ...
+</html>
+```
+
+The host app must include the dark variant bridge in its Tailwind CSS:
+
+```css
+@import "tailwindcss";
+@import "ocelot-ui/tailwind.css";
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+## Component Expectations
+
+Every component should remain legible and accessible in dark mode. Any component or story that introduces a text, border, surface, focus, or status colour should include the matching `dark:` variant.
+
+Structural components such as `AccordionGroup`, `ButtonGroup`, `Tabs`, and `Icon` may not contain `dark:` classes directly because they inherit colour or only provide layout/context. Their rendered stories should still be checked under the Storybook Dark theme.
+
+## Release Check
+
+Use the Storybook theme switcher and the `Patterns/Dark Mode Coverage` story as a fast smoke test before release. The automated a11y run also exercises the forced-dark coverage story so obvious contrast regressions fail in CI.
+
