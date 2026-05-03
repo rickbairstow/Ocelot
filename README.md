@@ -71,13 +71,9 @@ Use named imports directly in your components:
 import { Button, Dialog, Sidebar } from 'ocelot-ui'
 ```
 
-### 4. Add a portal target for Dialog and CommandPalette
+### 4. Portal targets
 
-```html
-<!-- index.html -->
-<div id="app"></div>
-<div id="portal-target"></div>
-```
+`Dialog`, `Toast`, and `CommandPalette` use Vue Teleport. OUI creates `#portal-target` automatically after mount when it is missing, or you can provide one yourself in `index.html`.
 
 ### Table notes
 
@@ -86,6 +82,14 @@ import { Button, Dialog, Sidebar } from 'ocelot-ui'
 ### CommandPalette notes
 
 `CommandPalette` also teleports to `#portal-target`. Register commands with `useCommandPalette()`, then mount the component once near the app root so it can respond to `Ctrl+K` / `Cmd+K`.
+
+### NavigationBar notes
+
+`NavigationBar` includes desktop nav slots, two-level submenu support, and a `#mobile-menu` slot for small-screen navigation. Use `mobileMenuOpen` / `update:mobileMenuOpen` when the host app needs controlled state.
+
+### Forms and RTL
+
+Storybook includes guidance for form validation integration and RTL support. OUI provides accessible form structure but leaves validation rules, touched/submission state, async checks, and server error mapping to the host app or its chosen validation library. Vee-Validate, Zod, native HTML constraints, and server-driven validation should all feed the same `FormField error` contract.
 
 ---
 
@@ -96,6 +100,8 @@ Toggle dark mode via the `.dark` class on `<html>`:
 ```html
 <html class="dark">...</html>
 ```
+
+All components and product pattern stories should be checked under the Storybook dark theme before release. New component stories should use semantic Tailwind colours with `dark:` variants for any text, border, or background colour they introduce.
 
 ---
 

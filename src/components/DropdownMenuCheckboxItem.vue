@@ -1,11 +1,13 @@
 <template>
     <button
+        data-dropdown-menu-item
         role="menuitemcheckbox"
         tabindex="-1"
         :aria-checked="checked ? 'true' : 'false'"
         :aria-disabled="disabled ? 'true' : undefined"
         :class="itemClass"
         @click="handleClick"
+        @keydown.left.prevent="submenu?.closeToTrigger()"
     >
         <span
             aria-hidden="true"
@@ -28,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import Icon from './Icon.vue'
 import type { IconProp } from '@Composables/useIcons'
 
@@ -48,6 +50,8 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     'update:checked': [value: boolean]
 }>()
+
+const submenu = inject<{ closeToTrigger: () => void } | null>('dropdownSubmenu', null)
 
 const handleClick = () => {
     if (props.disabled) return

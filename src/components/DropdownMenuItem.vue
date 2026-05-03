@@ -1,12 +1,14 @@
 <template>
     <component
         :is="href ? 'a' : 'button'"
+        data-dropdown-menu-item
         role="menuitem"
         tabindex="-1"
         :aria-disabled="disabled ? 'true' : undefined"
         :class="itemClass"
-        :href="href ?? undefined"
+        :href="effectiveHref"
         @click="handleClick"
+        @keydown.left.prevent="submenu?.closeToTrigger()"
     >
         <Icon
             v-if="icon"
@@ -49,6 +51,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const context = inject<DropdownMenuContext>('dropdownMenu')!
+const submenu = inject<{ closeToTrigger: () => void } | null>('dropdownSubmenu', null)
+
+const effectiveHref = computed((): string | undefined => {
+    if (props.disabled) return undefined
+    return props.href
+})
 
 const handleClick = () => {
     if (props.disabled) return

@@ -1,31 +1,59 @@
 <template>
-    <details
-        ref="details"
+    <div
         :class="containerCss"
-        @toggle="handleToggle"
     >
-        <summary
-            class="list-none border-0 flex justify-between gap-4 cursor-pointer p-4 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium focus:outline-none [&::-webkit-details-marker]:hidden"
+        <button
+            class="flex w-full justify-between gap-4 border-0 p-4 text-start font-medium transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:hover:bg-gray-700"
+            type="button"
+            :aria-controls="contentId"
+            :aria-expanded="isOpen"
             :class="isOpen ? 'bg-gray-100 text-black dark:bg-gray-700 dark:text-white' : 'text-gray-700 dark:text-gray-300'"
+            @click="toggle"
         >
-            <span>{{ title }}</span>
+            <span>
+                <slot
+                    name="title"
+                    :is-open="isOpen"
+                >
+                    {{ title }}
+                </slot>
+            </span>
 
-            <slot name="expandIcon">
+            <slot
+                name="expandIcon"
+                :is-open="isOpen"
+            >
                 <Icon
                     aria-hidden="true"
                     :icon="isOpen ? 'ChevronUp' : 'ChevronDown'"
                 />
             </slot>
-        </summary>
+        </button>
 
-        <div
-            :id="uuid"
-            class="p-4 text-gray-700 dark:text-gray-200"
-            :class="contentCss"
+        <Transition
+            enter-active-class="transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none"
+            enter-from-class="grid-rows-[0fr] opacity-0"
+            enter-to-class="grid-rows-[1fr] opacity-100"
+            leave-active-class="transition-[grid-template-rows,opacity] duration-150 ease-in motion-reduce:transition-none"
+            leave-from-class="grid-rows-[1fr] opacity-100"
+            leave-to-class="grid-rows-[0fr] opacity-0"
         >
-            <slot />
-        </div>
-    </details>
+            <div
+                v-show="isOpen"
+                :id="contentId"
+                class="grid"
+            >
+                <div class="overflow-hidden">
+                    <div
+                        class="content p-4 text-gray-700 dark:text-gray-200"
+                        :class="contentCss"
+                    >
+                        <slot />
+                    </div>
+                </div>
+            </div>
+        </Transition>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -34,7 +62,8 @@ import { generateUuid } from '@Utils/uuid'
 import Icon from '@/components/Icon.vue'
 import type { AccordionGroupContext } from './AccordionGroup.vue'
 
-const uuid = generateUuid('accordion-')
+const uuid = generateUuid('accordion')
+const contentId = `${uuid}-content`
 
 interface Props {
     id?: string
@@ -49,26 +78,28 @@ const props = withDefaults(defineProps<Props>(), {
     variant: 'default'
 })
 
-const details = ref<HTMLDetailsElement | null>(null)
 const isOpen = ref<boolean>(false)
 
 // Optional AccordionGroup context for exclusive mode
 const group = inject<AccordionGroupContext | null>('accordionGroup', null)
 const itemId = props.id ?? uuid
 
-const handleToggle = () => {
-    const nowOpen = details.value?.open ?? false
-    isOpen.value = nowOpen
-    if (nowOpen && group) {
+const toggle = () => {
+    isOpen.value = !isOpen.value
+
+    if (isOpen.value && group) {
         group.open(itemId)
+    }
+
+    if (!isOpen.value && group) {
+        group.close(itemId)
     }
 }
 
 // Group tells us to close if another item opened
 if (group) {
     watch(() => group.activeId.value, (activeId) => {
-        if (activeId !== itemId && details.value?.open) {
-            details.value.open = false
+        if (activeId !== itemId && isOpen.value) {
             isOpen.value = false
         }
     })
@@ -76,8 +107,7 @@ if (group) {
 
 onMounted(() => {
     const shouldOpen = props.startOpen || (group && group.activeId.value === itemId)
-    if (shouldOpen && details.value) {
-        details.value.open = true
+    if (shouldOpen) {
         isOpen.value = true
     }
 })

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ocelot UI - Last 4 Weeks Change Report</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg: #f7f7f4;
+            --panel: #ffffff;
+            --text: #1d1d1b;
+            --muted: #666861;
+            --border: #d9d9d2;
+            --accent: #2563eb;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #111111;
+                --panel: #1b1b1b;
+                --text: #f4f4f1;
+                --muted: #b8b8b0;
+                --border: #33332f;
+                --accent: #8ab4ff;
+            }
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        main {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        h1,
+        h2 {
+            line-height: 1.15;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        h2 {
+            border-top: 1px solid var(--border);
+            font-size: 1.15rem;
+            margin-top: 28px;
+            padding-top: 22px;
+        }
+
+        p {
+            margin: 10px 0 0;
+        }
+
+        ul {
+            margin: 10px 0 0;
+            padding-left: 22px;
+        }
+
+        li + li {
+            margin-top: 6px;
+        }
+
+        .meta,
+        .note {
+            color: var(--muted);
+        }
+
+        .summary {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            margin-top: 22px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .number {
+            display: block;
+            font-size: 1.65rem;
+            font-weight: 700;
+        }
+
+        .tag {
+            color: var(--accent);
+            font-weight: 650;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid var(--border);
+            padding: 10px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.9rem;
+            font-weight: 650;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Ocelot UI Change Report</h1>
+    <p class="meta">Window: 5 April 2026 to 3 May 2026. Source: git history plus current uncommitted workspace changes.</p>
+
+    <section class="summary" aria-label="Summary numbers">
+        <div class="card">
+            <span class="number">170</span>
+            commits in window
+        </div>
+        <div class="card">
+            <span class="number">16</span>
+            package releases
+        </div>
+        <div class="card">
+            <span class="number">v0.0.7 -> v0.0.22</span>
+            release range
+        </div>
+    </section>
+
+    <h2>Headline Changes</h2>
+    <ul>
+        <li><span class="tag">Component growth:</span> added or expanded Video, LightboxImage, Toast, Avatar, Banner, Breadcrumb, Progress, Tabs, Pagination, Stepper, Tooltip, StatCard, EmptyState, CodeBlock, Timeline, Quote, Popover, ButtonGroup, DropdownMenu, form controls, SkipLink, Table, AppShell, NavigationBar, CommandPalette and Callout.</li>
+        <li><span class="tag">Dark mode:</span> upgraded Tailwind v4 dark-mode support, refreshed component dark styles, added dark-mode docs and coverage stories.</li>
+        <li><span class="tag">Accessibility:</span> improved dialogs, sidebar nav, form stories, reduced-motion support, skip links, Storybook axe coverage and interaction tests.</li>
+        <li><span class="tag">Forms:</span> added form primitives and documented validation as a consuming-app concern rather than a library dependency.</li>
+        <li><span class="tag">Build and typing:</span> added declaration output, type checking, optional dependency tests, build analysis and Vite/Storybook setup refinements.</li>
+        <li><span class="tag">Docs and planning:</span> added roadmap docs, richer Storybook descriptions, installation updates, composable docs and product/RTL/dark-mode pattern pages.</li>
+    </ul>
+
+    <h2>Timeline</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Focus</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>5-8 Apr</td>
+            <td>Video and lightbox components, favicon/public cleanup, dependency bumps, badge and toast work.</td>
+        </tr>
+        <tr>
+            <td>11-12 Apr</td>
+            <td>Release run from v0.0.9 to v0.0.21, dark-mode upgrades, icon additions, prop naming cleanup and export fixes.</td>
+        </tr>
+        <tr>
+            <td>17-18 Apr</td>
+            <td>Planning docs, configurable styling, icon system updates, core component improvements, and new avatar/banner/tabs/progress/breadcrumb/pagination/stepper components.</td>
+        </tr>
+        <tr>
+            <td>19 Apr</td>
+            <td>Major component expansion: tooltip, stat card, empty state, code block, timeline, quote, popover, button group, dropdown menu, sidebar groups, forms, skip link and reduced-motion support.</td>
+        </tr>
+        <tr>
+            <td>20-21 Apr</td>
+            <td>Type output, build analyser, a11y updates, table component, navigation bar, app shell and command palette.</td>
+        </tr>
+        <tr>
+            <td>25-26 Apr</td>
+            <td>v0.0.22 release, package upgrades, teleport-target composable docs, component refinements and roadmap updates.</td>
+        </tr>
+        <tr>
+            <td>2-3 May</td>
+            <td>Docs clarified around validation ownership, dark-mode/form docs updated, Storybook test-runner and story interaction fixes.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Current Uncommitted Work</h2>
+    <ul>
+        <li>README, roadmap and MDX docs now say validation should live in the consuming project, with OUI providing accessible structure and error display.</li>
+        <li>Storybook stories were adjusted for AppShell, NavigationBar and Table browser tests.</li>
+        <li>Sidebar and toast story icons were cleaned up to reduce warning noise.</li>
+        <li>The Storybook test runner now handles story-level a11y rule disabling for CodeBlock syntax highlighting.</li>
+    </ul>
+
+    <h2>Verification Snapshot</h2>
+    <p>Latest local checks after the uncommitted updates were green: lint, type check, Vitest, library build, Storybook build and Storybook browser/a11y tests.</p>
+    <p class="note">Git status still reports a local permission warning for the global ignore file, but repository status is readable.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,50 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Getting Started/RTL Support" />
+
+# RTL Support
+
+OUI uses logical Tailwind utilities and logical inline styles where practical, so most layout primitives adapt naturally inside `dir="rtl"`.
+
+## Current Status
+
+RTL support is improved and documented, but not yet certified as a full release guarantee. Known physical positioning leftovers from the roadmap have been cleaned up in `Toast`, `Sidebar`, `Card`, `FloatingPanel`, `DropdownMenuContent`, and `DropdownMenuSubmenu`.
+
+Use the `Patterns/RTL Layouts` stories as the visual smoke test for common primitives.
+
+## App Setup
+
+Set direction at the document or page boundary:
+
+```html
+<html dir="rtl">
+    ...
+</html>
+```
+
+Or scope it to a region:
+
+```vue
+<section dir="rtl">
+    <Banner title="تم الحفظ" type="success">
+        تم تحديث الإعدادات بنجاح.
+    </Banner>
+</section>
+```
+
+## Component Guidance
+
+- Prefer `start` / `end` alignment props when a component offers them.
+- Avoid custom classes such as `ml-*`, `mr-*`, `left-*`, and `right-*` in app-level slots unless the direction is fixed.
+- Use logical utilities such as `ms-*`, `me-*`, `start-*`, `end-*`, `text-start`, and `text-end`.
+- Test dropdowns, tooltips, sidebars, toasts, and selected indicators in both LTR and RTL.
+
+## Release Checklist
+
+Before declaring official RTL support:
+
+- Add Storybook viewport snapshots for representative RTL pages.
+- Exercise keyboard navigation in menus, tabs, forms, and pagination.
+- Check overlay positioning for `start` and `end` placements.
+- Verify mixed-language content does not break truncation or icon spacing.
+

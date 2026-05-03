@@ -1,0 +1,145 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Composables/useTeleportTarget" />
+
+# useTeleportTarget
+
+A small composable for components that render with Vue's `<Teleport>`. It resolves a portal target selector, creates the DOM node when it is missing, and exposes an `isReady` flag so Teleport is only rendered after the browser DOM exists.
+
+It is used internally by overlay-style components such as `Dialog`, `Toast`, and `CommandPalette`.
+
+---
+
+## Features
+
+- Creates `#portal-target` automatically when it is missing
+- Avoids touching `document` before the component has mounted in the browser
+- Lets apps configure a global Teleport target once
+- Allows per-component target overrides
+- Supports opting out of automatic target creation
+
+---
+
+## App Setup
+
+Most apps do not need any setup. If no target exists, OUI creates this element after mount:
+
+```html
+<div id="portal-target"></div>
+```
+
+If your app already owns the portal element, keep it in your app shell:
+
+```html
+<body>
+    <div id="app"></div>
+    <div id="portal-target"></div>
+</body>
+```
+
+---
+
+## Configure A Global Target
+
+Use `configureTeleportTarget()` once during app initialisation when your project uses a different portal selector:
+
+```ts
+// main.ts
+import { configureTeleportTarget } from 'ocelot-ui'
+
+configureTeleportTarget('#overlays')
+```
+
+After this, OUI components that use Teleport will target `#overlays` unless a component receives its own `portalTarget` prop.
+
+---
+
+## Usage
+
+```ts
+import { useTeleportTarget } from 'ocelot-ui'
+
+const {
+    ensureTarget,
+    isReady,
+    target
+} = useTeleportTarget()
+```
+
+```vue
+<template>
+    <Teleport
+        v-if="isReady"
+        :to="target"
+    >
+        <div>Overlay content</div>
+    </Teleport>
+</template>
+```
+
+---
+
+## Per-Component Target
+
+Pass a target selector when a component should use a specific portal location:
+
+```ts
+const { isReady, target } = useTeleportTarget({
+    target: '#dialog-root'
+})
+```
+
+This overrides the global target for that composable instance only.
+
+---
+
+## Opt Out Of Auto-Creation
+
+Set `createIfMissing: false` when the target must be provided by the host app:
+
+```ts
+const { ensureTarget, isReady } = useTeleportTarget({
+    createIfMissing: false,
+    target: '#host-managed-overlay-root'
+})
+```
+
+If the element does not exist, `ensureTarget()` returns `null` and `isReady` remains `false`.
+
+---
+
+## API Reference
+
+### `configureTeleportTarget(target)`
+
+Sets the default portal selector for all future `useTeleportTarget()` calls that do not provide their own `target`.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `target` | `string` | CSS selector for the global Teleport target. Usually an id selector such as `#overlays`. |
+
+---
+
+### `useTeleportTarget(options?)`
+
+Returns a resolved target selector, readiness state, and an imperative target creation helper.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `target` | `string` | globally configured target, initially `#portal-target` | CSS selector to resolve. |
+| `id` | `string` | derived from `target` | Id used when auto-creating the element. |
+| `createIfMissing` | `boolean` | `true` | Creates the target element when it does not exist. |
+
+| Return | Type | Description |
+|---|---|---|
+| `target` | `ComputedRef<string>` | Resolved Teleport selector. |
+| `isReady` | `Ref<boolean>` | `true` after a target exists in the mounted browser DOM. |
+| `ensureTarget` | `() => HTMLElement \| null` | Creates or returns the target element, or `null` before browser DOM access is available / missing opt-out. |
+
+---
+
+## Browser Safety Notes
+
+`useTeleportTarget()` does not access `document` until `onMounted()` or until `ensureTarget()` is called manually in the browser. Components should gate Teleport with `v-if="isReady"` so render timing does not depend on the portal element already existing.
+
+This composable only handles the Teleport target. Components that use other browser APIs still need their own mounted-state guards where appropriate.

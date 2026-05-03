@@ -276,11 +276,11 @@ export const AllFunctionality: Story = {
 
         await userEvent.clear(canvas.getByRole('searchbox', { name: /search rows/i }))
 
-        await waitFor(() => expect(canvas.getAllByRole('checkbox').length).toBeGreaterThan(1))
-        const checkboxes = canvas.getAllByRole('checkbox')
+        await waitFor(() => expect(canvas.getAllByRole('checkbox', { name: /select row/i }).length).toBeGreaterThan(0))
+        const checkboxes = canvas.getAllByRole('checkbox', { name: /select row/i })
 
-        await userEvent.click(checkboxes[1])
-        await expect(checkboxes[1]).toBeChecked()
+        await userEvent.click(checkboxes[0])
+        await expect(checkboxes[0]).toBeChecked()
     }
 }
 

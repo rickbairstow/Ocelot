@@ -18,6 +18,14 @@ export default mergeConfig(
             projects: [
                 defineProject({
                     extends: true,
+                    test: {
+                        environment: 'node',
+                        include: ['src/**/*.test.ts'],
+                        name: 'unit'
+                    }
+                } as unknown as Parameters<typeof defineProject>[0]),
+                defineProject({
+                    extends: true,
                     plugins: [
                         storybookTest({
                             configDir: path.join(dirname, '.storybook')

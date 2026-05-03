@@ -15,7 +15,7 @@
             class="z-50 min-w-36 overflow-hidden rounded-lg border border-gray-200 bg-white p-1 shadow-lg text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
             role="menu"
             tabindex="-1"
-            :style="{ left: `${x}px`, position: 'fixed', top: `${y}px` }"
+            :style="{ insetInlineStart: `${x}px`, position: 'fixed', top: `${y}px` }"
             @keydown="handleKeydown"
         >
             <slot />
@@ -39,9 +39,9 @@ let cleanupPositioning: (() => void) | null = null
 const getItems = (): HTMLElement[] =>
     Array.from(
         menuRef.value?.querySelectorAll<HTMLElement>(
-            '[role="menuitem"]:not([aria-disabled="true"]), [role="menuitemcheckbox"]:not([aria-disabled="true"])'
+            '[data-dropdown-menu-item]:not([aria-disabled="true"])'
         ) ?? []
-    )
+    ).filter((item) => !item.closest('[data-dropdown-submenu-content]'))
 
 const focusItem = (index: number) => {
     const items = getItems()

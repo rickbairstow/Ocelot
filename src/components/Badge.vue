@@ -10,7 +10,6 @@
     <!-- Label badge -->
     <span
         v-else
-        role="note"
         :class="badgeCss"
     >
         <span :class="truncate ? 'truncate' : 'contents'">

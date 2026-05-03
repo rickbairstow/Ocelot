@@ -155,8 +155,8 @@ export const WithNav: Story = {
 
                 <nav aria-label="Navigation" class="flex flex-col gap-1 p-2">
                     <SidebarNavGroup label="Main">
-                        <SidebarNavItem icon="LayoutDashboard" href="#" :active="active === 'dashboard'" @click.prevent="active = 'dashboard'">Dashboard</SidebarNavItem>
-                        <SidebarNavItem icon="Users" href="#" :active="active === 'team'" @click.prevent="active = 'team'" :badge="4">Team</SidebarNavItem>
+                        <SidebarNavItem icon="LayoutGrid" href="#" :active="active === 'dashboard'" @click.prevent="active = 'dashboard'">Dashboard</SidebarNavItem>
+                        <SidebarNavItem icon="User" href="#" :active="active === 'team'" @click.prevent="active = 'team'" :badge="4">Team</SidebarNavItem>
                         <SidebarNavItem icon="FolderOpen" href="#" :active="active === 'projects'" @click.prevent="active = 'projects'">Projects</SidebarNavItem>
                     </SidebarNavGroup>
 

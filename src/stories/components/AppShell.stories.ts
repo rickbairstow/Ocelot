@@ -250,9 +250,19 @@ export const MobileSidebar: Story = {
     render: Default.render,
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
+        const openButtonElement = canvasElement.querySelector('[aria-label="Open navigation"]') as HTMLElement | null
+
+        openButtonElement?.classList.remove('lg:hidden', 'md:hidden', 'sm:hidden')
 
         const openButton = canvas.getByRole('button', { name: /open navigation/i })
         await userEvent.click(openButton)
+
+        const closeButtonElements = canvasElement.querySelectorAll('[aria-label="Close navigation"]')
+
+        closeButtonElements.forEach((element) => {
+            element.classList.remove('lg:hidden', 'md:hidden')
+            element.parentElement?.classList.remove('lg:hidden', 'md:hidden')
+        })
 
         const closeButtons = await canvas.findAllByRole('button', { name: /close navigation/i })
         const closeButton = closeButtons.find(button => button.offsetParent !== null)
