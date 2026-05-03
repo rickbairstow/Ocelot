@@ -156,7 +156,7 @@ export const WithCustomIcon: Story = {
         components: { Toast },
         setup() {
             const { add, clear } = useToast()
-            const addWithIcon = () => add('Custom icon toast.', { icon: 'Star', type: 'info' })
+            const addWithIcon = () => add('Custom icon toast.', { icon: 'Stars', type: 'info' })
             return { addWithIcon, clear }
         },
         template: `

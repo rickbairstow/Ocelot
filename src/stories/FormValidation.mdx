@@ -1,12 +1,12 @@
 import { Meta } from '@storybook/addon-docs/blocks'
 
-<Meta title="Getting Started/Form Validation" />
+<Meta title="Getting Started/Form Validation Integration" />
 
-# Form Validation
+# Form Validation Integration
 
 OUI keeps validation logic outside the component library. Components expose the structure that validators need: labels, ids, `aria-describedby`, `aria-invalid`, native input attributes, and alert text.
 
-Use whichever validation system fits the app. For Vue apps, start with Vee-Validate when you need schema-backed frontend validation. Native HTML constraint validation remains a good lightweight option, and server-returned errors should map into the same `FormField error` contract.
+Use whichever validation system fits the consuming app. Vee-Validate and Zod are good options when that app needs schema-backed frontend validation, native HTML constraint validation remains a good lightweight option, and server-returned errors should map into the same `FormField error` contract.
 
 ## Recommended Pattern
 
@@ -51,7 +51,7 @@ const emailError = computed(() => {
 
 When `error` is present, `FormField` hides the hint, renders the error with `role="alert"`, and child inputs that use `useFormField()` receive `aria-invalid="true"` plus the matching `aria-describedby`.
 
-## Vee-Validate Pattern
+## External Library Pattern
 
 Install Vee-Validate and your schema library in the consumer app, not in OUI:
 

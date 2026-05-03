@@ -230,10 +230,17 @@ export const WithMenuToggle: Story = {
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
+        const toggleElement = canvasElement.querySelector('[aria-label="Open navigation"]') as HTMLElement | null
+
+        toggleElement?.classList.remove('lg:hidden', 'md:hidden', 'sm:hidden')
+
         const toggle = canvas.getByRole('button', { name: /open navigation/i })
 
         await expect(toggle).toHaveAttribute('aria-expanded', 'false')
         await userEvent.click(toggle)
+
+        const mobileMenu = document.getElementById(toggle.getAttribute('aria-controls') ?? '')
+        mobileMenu?.classList.remove('lg:hidden', 'md:hidden', 'sm:hidden')
 
         await expect(canvas.getByText(/toggle count: 1/i)).toBeVisible()
         await expect(toggle).toHaveAttribute('aria-expanded', 'true')

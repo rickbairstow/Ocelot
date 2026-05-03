@@ -81,7 +81,7 @@ export const Active: Story = {
 }
 
 export const WithIcon: Story = {
-    args: { href: '#', icon: 'LayoutDashboard' }
+    args: { href: '#', icon: 'LayoutGrid' }
 }
 
 export const WithBadge: Story = {

@@ -10,7 +10,7 @@ const meta: Meta<typeof FormField> = {
     parameters: {
         docs: {
             description: {
-                component: 'A structural wrapper that handles label rendering, hint/error text, and ARIA linking (for/id, aria-describedby, aria-invalid) for form inputs. Brings no validation logic — pair it with Vee-Validate, native HTML5 validation, or any other strategy.'
+                component: 'A structural wrapper that handles label rendering, hint/error text, and ARIA linking (for/id, aria-describedby, aria-invalid) for form inputs. Brings no validation logic - pair it with a consumer-owned validator, native HTML5 validation, or any other strategy.'
             }
         }
     },
@@ -133,7 +133,7 @@ export const ErrorOverridesHint: Story = {
     }
 }
 
-export const FrontendValidation: Story = {
+export const ConsumerValidationContract: Story = {
     render: () => ({
         components: { FormField, Input },
         setup() {
@@ -185,7 +185,7 @@ export const FrontendValidation: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'A lightweight frontend validation flow showing the same binding contract external libraries use: compute an error string and pass it to FormField.'
+                story: 'A lightweight consumer-owned validation flow showing the same binding contract external libraries use: compute an error string and pass it to FormField.'
             }
         }
     },

@@ -37,8 +37,8 @@ const meta: Meta<typeof SidebarNavGroup> = {
                     :label="args.label"
                     :start-collapsed="args.startCollapsed"
                 >
-                    <SidebarNavItem icon="LayoutDashboard" href="#" active>Dashboard</SidebarNavItem>
-                    <SidebarNavItem icon="Users" href="#" :badge="4">Team</SidebarNavItem>
+                    <SidebarNavItem icon="LayoutGrid" href="#" active>Dashboard</SidebarNavItem>
+                    <SidebarNavItem icon="User" href="#" :badge="4">Team</SidebarNavItem>
                     <SidebarNavItem icon="FolderOpen" href="#">Projects</SidebarNavItem>
                 </SidebarNavGroup>
             </div>

@@ -89,7 +89,7 @@ import { Button, Dialog, Sidebar } from 'ocelot-ui'
 
 ### Forms and RTL
 
-Storybook includes guidance for form validation and RTL support. OUI provides accessible form structure but leaves validation rules and touched/submission state to the host app or a validation library. Vee-Validate is the recommended first integration to try for schema-driven frontend validation.
+Storybook includes guidance for form validation integration and RTL support. OUI provides accessible form structure but leaves validation rules, touched/submission state, async checks, and server error mapping to the host app or its chosen validation library. Vee-Validate, Zod, native HTML constraints, and server-driven validation should all feed the same `FormField error` contract.
 
 ---
 

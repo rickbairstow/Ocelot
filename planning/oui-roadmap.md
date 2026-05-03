@@ -13,7 +13,7 @@
 
 **RTL visual pass:** Added `Patterns/RTL Layouts` as a right-to-left smoke-test composition covering NavigationBar, Breadcrumb, Banner, Stepper, Card, Badge, Button, and Pagination.
 
-**Validation decision recorded:** OUI keeps validation library logic out of scope for the current release line. `FormField` owns accessible structure and ARIA wiring; host apps or validation libraries own rules, touched/dirty state, async validation, and submission state. Vee-Validate is documented as the recommended first external integration for schema-driven Vue validation.
+**Validation decision recorded:** OUI keeps validation library logic out of scope for the current release line. `FormField` owns accessible structure and ARIA wiring; host apps or validation libraries own rules, touched/dirty state, async validation, server errors, and submission state. The docs show Vee-Validate/Zod as an optional consumer-app integration, not an OUI dependency or built-in strategy.
 
 **Dark mode coverage:** Added a forced-dark Storybook smoke-test composition covering common surfaces, navigation, form controls, status colours, and progress states.
 
@@ -118,7 +118,7 @@ All 256 tests passing.
 - NavigationBar now includes a built-in small-screen menu composition path via `#mobile-menu`.
 - Static/editorial callouts are now represented as `Banner` compositions; the standalone `Callout` primitive has been removed.
 - Product-level Storybook compositions now cover dashboard, settings, data-list, onboarding, and marketing examples.
-- Form validation strategy is documented: OUI provides accessible field structure and leaves validation state/rules to the host app, with Vee-Validate as the recommended external-library path.
+- Form validation strategy is documented: OUI provides accessible field structure and leaves validation state/rules to the host app, with Vee-Validate/Zod shown as an optional consumer-app integration.
 - Dark mode setup and expectations are documented, with a forced-dark Storybook coverage story for common surfaces and controls.
 - RTL guidance and a Storybook smoke-test composition are in place.
 
@@ -1399,7 +1399,7 @@ No longer planned as a separate component. OUI standardises on the term **Badge*
 
 ## 7. Forms & Inputs (Brief)
 
-> ⚠️ **Needs more thought before implementation.** Forms are on hold pending a validation strategy decision. The goal is to avoid reinventing the wheel — existing packages (Vee-Validate, FormKit, etc.) should be evaluated before building a custom validation layer. All components should stay as native as possible; avoid complex custom implementations where a styled native element will do.
+> **Current decision:** validation logic belongs in the consuming project. OUI should keep native attributes, accessible field structure, and error display polished, but it should not ship a form controller, schema API, or validation dependency.
 
 Forms are a significant workstream deserving their own detailed spec. Key gaps and architectural principles are noted here.
 
@@ -1424,16 +1424,18 @@ Forms are a significant workstream deserving their own detailed spec. Key gaps a
 | Combobox | 3 | Searchable select using Floating UI (already a dependency) |
 | OTP / Pin Input | 3 | Multi-cell code entry for 2FA screens |
 
-### Validation — decision needed
+### Validation - decision recorded
 
-Before any new form component is built, a validation strategy must be chosen. Options:
+This earlier planning section is superseded by the Session 7 decision: validation logic belongs in the consuming project. External validators can feed errors into `FormField`, and native/browser constraints remain available on the underlying input controls.
+
+Earlier options considered:
 
 1. **Vee-Validate** — schema-based (Zod/Yup), widely used in Vue ecosystem, composable API, no opinion on UI.
 2. **FormKit** — full-stack form framework with its own component layer; more opinionated, may conflict with OUI's own components.
 3. **Native HTML5 only** — leverage the browser's built-in constraint validation API; lowest complexity, but limited UX control.
 4. **Custom `provide/inject` context** — lightweight Form/FormField wrapper, no external dep. Most flexibility, most work.
 
-**Recommendation:** Evaluate Vee-Validate first. It integrates cleanly alongside existing component libraries without replacing them, and its schema validation story is strong.
+**Current recommendation:** Do not add a validation dependency to OUI. Document Vee-Validate/Zod as a consumer-app option for teams that want schema-backed validation.
 
 ### Form context via `provide/inject`
 
