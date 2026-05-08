@@ -94,7 +94,7 @@
     "@storybook/test-runner": "^0.24.3",
     "@storybook/vue3-vite": "^10.3.5",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@tailwindcss/vite": "^4.2.4",
+    "@tailwindcss/vite": "^4.3.0",
     "@tanstack/vue-table": "^8.21.3",
     "@types/qrcode": "^1.5.6",
     "@vitejs/plugin-vue": "^6.0.6",
@@ -111,7 +111,7 @@
     "photoswipe": "^5.4.4",
     "playwright": "^1.59.1",
     "plyr": "^3.8.4",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.14",
     "qrcode": "^1.5.4",
     "rollup-plugin-visualizer": "^7.0.1",
     "sass-embedded": "^1.99.0",
@@ -122,11 +122,11 @@
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.0",
-    "vite": "^8.0.10",
+    "vite": "^8.0.11",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.1.5",
-    "vue": "^3.5.33",
-    "vue-tsc": "^3.2.7"
+    "vue": "^3.5.34",
+    "vue-tsc": "^3.2.8"
   },
   "overrides": {
     "storybook": "$storybook"
