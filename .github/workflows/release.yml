@@ -58,15 +58,21 @@ jobs:
 
       - name: Prepare release PR
         if: steps.release-state.outputs.has_changesets == 'true'
-        id: changesets
-        uses: changesets/action@v1
+        run: npm run release:prepare
+
+      - name: Create or update release PR
+        if: steps.release-state.outputs.has_changesets == 'true'
+        uses: peter-evans/create-pull-request@v8
         with:
-          version: npm run release:prepare
-          publish: npm run release:publish
-          commit: 'Version packages'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: changeset-release/main
+          base: main
+          commit-message: 'Version packages'
           title: 'Version packages'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            This PR was opened by the release workflow.
+
+            Merge it when you are ready to publish the prepared package version to npm.
 
       - name: Publish release
         if: steps.release-state.outputs.has_changesets == 'false' && steps.release-state.outputs.version_published == 'false'
