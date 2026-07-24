@@ -119,23 +119,23 @@ This generates a treemap report at `dist/bundle-analysis.html`.
 
 ## Publishing to npm
 
-Changesets are used for release notes and version bumps.
+Releases are mostly automated through Changesets, GitHub Actions, npm Trusted Publishing, and GitHub Releases.
 
-For package-impacting changes, run:
+For package-impacting changes, add a changeset in the same PR:
 
 ```bash
 npm run changeset
 ```
 
-Keep the generated random-word filename, select `patch`, `minor`, or `major`, and make sure the package name is `ocelot-ui`.
+Keep the generated random-word filename, select `patch`, `minor`, or `major`, and make sure the package name is `ocelot-ui`. CI validates changeset filenames and package names.
 
-When ready to publish:
+When ready to release:
 
 1. Run `npm run release:prepare`
 2. Review and commit the generated version, lockfile, changelog, and consumed changesets
-3. Merge or push to `main`
+3. Merge or push that release-prep commit to `main`
 
-The `release.yml` workflow runs the release checks, publishes the prepared version to npm through Trusted Publishing, and creates the matching GitHub release.
+The `release.yml` workflow then runs the release checks, installs Playwright browsers, builds the package, publishes the prepared version to npm through Trusted Publishing, and creates the matching GitHub Release. If the package version already exists on npm, publish is skipped.
 
 ---
 
