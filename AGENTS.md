@@ -32,20 +32,14 @@ npm run test             # Run Vitest directly — faster for iteration; no buil
 # CI test workflow
 npm run build-storybook && npm run test-storybook
 
-# Changesets
-npm run changeset         # Add a random-word changeset for package-impacting changes
-npm run changeset:check   # Validate changesets and package names
-npm run release:prepare   # Used by release.yml to apply pending changesets
 ```
 
-## Changesets
+## Releases
 
-- Package-impacting changes under `src/`, `.build/`, build config, or package metadata must include a changeset.
-- Run `npm run changeset` rather than hand-writing changeset files where possible.
-- Leave the generated filename as random words, for example `quiet-dots-dance.md`.
-- Every changeset must reference the exact package name from `package.json`: `ocelot-ui`.
+- Releases are handled by manual GitHub Actions workflows on `main`: `Release Patch`, `Release Minor`, and `Release Major`.
+- Do not hand-edit `package.json` versions for normal releases. Let the selected release workflow bump `package.json` and `package-lock.json`.
 - Use `patch` for fixes and small compatible improvements, `minor` for new compatible components/features, and `major` for breaking changes.
-- Do not run `npm run release:prepare` unless the user explicitly asks to prepare a release locally; normally `release.yml` runs it in the automated `Version packages` PR.
+- Package-impacting changes do not need release note files.
 
 ## Architecture
 

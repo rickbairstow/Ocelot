@@ -119,27 +119,17 @@ This generates a treemap report at `dist/bundle-analysis.html`.
 
 ## Publishing to npm
 
-Releases are mostly automated through Changesets, GitHub Actions, npm Trusted Publishing, and GitHub Releases.
+Releases are manual GitHub Actions workflows. Use one of these actions from the `main` branch:
 
-Repository setup: add a `RELEASE_PR_TOKEN` repository secret from a fine-grained personal access token with `Contents: read/write` and `Pull requests: read/write`. The workflow falls back to `GITHUB_TOKEN`, but the secret is recommended so the generated `Version packages` PR can be created reliably and run normal PR checks.
+- `Release Patch` for fixes and small compatible improvements
+- `Release Minor` for new compatible components or features
+- `Release Major` for breaking changes
 
-For package-impacting changes, add a changeset in the same PR:
+Repository setup: add an `NPM_TOKEN` repository secret with npm publish access for `ocelot-ui`. The release workflows use that token because npm Trusted Publishing only supports one configured workflow filename per package, while this repo intentionally has three separate release actions.
 
-```bash
-npm run changeset
-```
+Each release workflow bumps `package.json` and `package-lock.json`, checks the version does not already exist on npm, installs Playwright, runs linting, runs tests, builds the package, publishes to npm, pushes the version commit and tag to `main`, and creates the matching GitHub Release.
 
-Keep the generated random-word filename, select `patch`, `minor`, or `major`, and make sure the package name is `ocelot-ui`. CI validates changeset filenames and package names.
-
-When changesets reach `main`, the `release.yml` workflow opens or updates a `Version packages` PR. That PR applies the pending changesets, bumps `package.json` and `package-lock.json`, updates `CHANGELOG.md`, and removes the consumed `.changeset/*.md` files.
-
-When ready to release:
-
-1. Review the `Version packages` PR
-2. Merge it to `main`
-3. Let `release.yml` run `npm run release:publish`, publish through npm Trusted Publishing, and create the matching GitHub Release
-
-If no changesets are present and the current package version already exists on npm, nothing is published.
+Do not manually bump the package version for normal releases. Let the patch, minor, or major release workflow do it.
 
 ---
 
