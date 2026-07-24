@@ -37,7 +37,7 @@ npm run build-storybook && npm run test-storybook
 ## Releases
 
 - Releases are handled by the manual `Release Package` GitHub Actions workflow on `main`.
-- Do not hand-edit `package.json` versions for normal releases. Let the release workflow bump `package.json` and `package-lock.json`.
+- Do not hand-edit `package.json` versions for normal releases. Let the release workflow open a release PR that bumps `package.json` and `package-lock.json`.
 - Use `patch` for fixes and small compatible improvements, `minor` for new compatible components/features, and `major` for breaking changes.
 - Package-impacting changes do not need release note files.
 

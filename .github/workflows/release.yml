@@ -1,6 +1,12 @@
 name: Release Package
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
+      - package-lock.json
   workflow_dispatch:
     inputs:
       version:
@@ -16,15 +22,75 @@ on:
 permissions:
   contents: write
   id-token: write
+  pull-requests: write
 
 concurrency:
   group: npm-release
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: Release ${{ inputs.version }}
-    if: github.ref == 'refs/heads/main'
+  prepare:
+    name: Prepare ${{ inputs.version }} release PR
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: npm-release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN || github.token }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        id: version
+        run: |
+          npm version "${{ inputs.version }}" --no-git-tag-version
+          version=$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Create release PR
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN || github.token }}
+        run: |
+          branch="release/${{ steps.version.outputs.tag }}"
+          git checkout -b "$branch"
+          git add package.json package-lock.json
+          git commit -m "Release ${{ steps.version.outputs.tag }}"
+          git fetch origin "$branch" || true
+          git push origin HEAD:"$branch" --force-with-lease
+
+          if gh pr view "$branch" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh pr edit "$branch" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Release ${{ steps.version.outputs.tag }}" \
+              --body "Bumps ocelot-ui to ${{ steps.version.outputs.tag }}. Merging this PR publishes the package through npm Trusted Publishing and creates the matching GitHub Release."
+          else
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base main \
+              --head "$branch" \
+              --title "Release ${{ steps.version.outputs.tag }}" \
+              --body "Bumps ocelot-ui to ${{ steps.version.outputs.tag }}. Merging this PR publishes the package through npm Trusted Publishing and creates the matching GitHub Release."
+          fi
+
+  publish:
+    name: Publish release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: npm-release
 
@@ -44,60 +110,59 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump version
+      - name: Read package version
         id: version
         run: |
-          npm version "${{ inputs.version }}" --no-git-tag-version
           version=$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version")
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
 
-      - name: Check npm version is new
-        run: |
-          if npm view "ocelot-ui@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
-            echo "ocelot-ui@${{ steps.version.outputs.version }} already exists on npm."
-            exit 1
-          fi
-
       - name: Check Git tag is new
+        id: tag
         run: |
           if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
-            echo "Tag ${{ steps.version.outputs.tag }} already exists."
-            exit 1
+            echo "Tag ${{ steps.version.outputs.tag }} already exists. Nothing to publish."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Install Playwright browsers
+        if: steps.tag.outputs.exists != 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Run lint
+        if: steps.tag.outputs.exists != 'true'
         run: npm run lint
 
       - name: Run tests
+        if: steps.tag.outputs.exists != 'true'
         run: npm run test:run
 
       - name: Build package
+        if: steps.tag.outputs.exists != 'true'
         run: npm run build
 
+      - name: Check npm version
+        if: steps.tag.outputs.exists != 'true'
+        id: npm
+        run: |
+          if npm view "ocelot-ui@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
+            echo "ocelot-ui@${{ steps.version.outputs.version }} already exists on npm. Skipping npm publish."
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish to npm
+        if: steps.tag.outputs.exists != 'true' && steps.npm.outputs.published != 'true'
         run: npm publish --access public --provenance
 
-      - name: Commit version
-        run: |
-          git add package.json package-lock.json
-          git commit -m "Release ${{ steps.version.outputs.tag }}"
-          git tag "${{ steps.version.outputs.tag }}"
-
-      - name: Push version
-        run: |
-          git push origin HEAD:main
-          git push origin "${{ steps.version.outputs.tag }}"
-
       - name: Create GitHub release
+        if: steps.tag.outputs.exists != 'true'
         env:
           GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN || github.token }}
-        run: gh release create "${{ steps.version.outputs.tag }}" --title "${{ steps.version.outputs.tag }}" --notes "Release ${{ steps.version.outputs.tag }}"
+        run: |
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+          gh release create "${{ steps.version.outputs.tag }}" --target "$GITHUB_SHA" --title "${{ steps.version.outputs.tag }}" --notes "Release ${{ steps.version.outputs.tag }}"

@@ -156,6 +156,8 @@ Repository setup:
 - Use the `npm-release` GitHub Environment for release approval protection
 - Add only trusted maintainers as required reviewers on that environment
 
-When running `Release Package`, choose `patch`, `minor`, or `major`. The workflow bumps `package.json` and `package-lock.json`, checks that version is not already on npm, installs Playwright, runs linting, runs tests, builds the package, publishes to npm through Trusted Publishing, pushes the version commit and tag to `main`, and creates the matching GitHub Release.
+When running `Release Package`, choose `patch`, `minor`, or `major`. The workflow opens or updates a release PR that bumps `package.json` and `package-lock.json`.
+
+When that release PR is merged to `main`, the same workflow installs Playwright, runs linting, runs tests, builds the package, publishes to npm through Trusted Publishing, pushes the release tag, and creates the matching GitHub Release. If the npm version already exists, the workflow skips npm publish and still creates the missing tag/release.
 
 Do not manually bump the package version for normal releases. Let the release workflow do it.
