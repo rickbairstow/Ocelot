@@ -148,20 +148,14 @@ See `ocelot-ui/tailwind.css` for the full list of available tokens.
 
 ## Maintainer release flow
 
-OUI uses Changesets for release notes and version bumps. For package-impacting changes, run:
+OUI releases are handled by manual GitHub Actions workflows on `main`:
 
-```bash
-npm run changeset
-```
+- `Release Patch` for fixes and small compatible improvements
+- `Release Minor` for new compatible components or features
+- `Release Major` for breaking changes
 
-Keep the generated random-word filename, select the semver bump, and make sure the package name is `ocelot-ui`.
+Repository setup: add an `NPM_TOKEN` repository secret with npm publish access for `ocelot-ui`.
 
-When changesets reach `main`, `release.yml` opens or updates a `Version packages` PR. That PR runs:
+When a release workflow runs, it bumps `package.json` and `package-lock.json`, checks that version is not already on npm, installs Playwright, runs linting, runs tests, builds the package, publishes to npm, pushes the version commit and tag to `main`, and creates the matching GitHub Release.
 
-```bash
-npm run release:prepare
-```
-
-This prepares the release by updating the version, lockfile, changelog, and consumed changesets.
-
-When ready to release, review and merge the `Version packages` PR. Once that commit lands on `main`, `release.yml` runs `npm run release:publish`, publishes through npm Trusted Publishing, and creates the matching GitHub Release.
+Do not manually bump the package version for normal releases. Let the selected release workflow do it.
