@@ -36,18 +36,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Run lint
-        run: npm run lint
-
-      - name: Run tests
-        run: npm run test:run
-
-      - name: Build package
-        run: npm run build
-
       - name: Check changesets
         run: npm run changeset:check
 
@@ -56,7 +44,7 @@ jobs:
         uses: changesets/action@v1
         with:
           version: npm run release:prepare
-          publish: npm run changeset:publish
+          publish: npm run lint && npx playwright install --with-deps chromium && npm run test:run && npm run build && npm run changeset:publish
           commit: 'Version packages'
           title: 'Version packages'
           createGithubReleases: true
