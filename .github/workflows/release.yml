@@ -62,6 +62,7 @@ jobs:
         uses: changesets/action@v1
         with:
           version: npm run release:prepare
+          publish: npm run release:publish
           commit: 'Version packages'
           title: 'Version packages'
         env:
