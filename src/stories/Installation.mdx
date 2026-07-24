@@ -156,6 +156,8 @@ npm run changeset
 
 Keep the generated random-word filename, select the semver bump, and make sure the package name is `ocelot-ui`.
 
+Repository setup: add a `RELEASE_PR_TOKEN` secret from a fine-grained personal access token with `Contents: read/write` and `Pull requests: read/write`. The workflow falls back to `GITHUB_TOKEN`, but the secret keeps release PR creation reliable and lets normal PR checks run.
+
 When changesets reach `main`, `release.yml` opens or updates a `Version packages` PR. That PR runs:
 
 ```bash

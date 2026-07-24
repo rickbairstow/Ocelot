@@ -121,6 +121,8 @@ This generates a treemap report at `dist/bundle-analysis.html`.
 
 Releases are mostly automated through Changesets, GitHub Actions, npm Trusted Publishing, and GitHub Releases.
 
+Repository setup: add a `RELEASE_PR_TOKEN` repository secret from a fine-grained personal access token with `Contents: read/write` and `Pull requests: read/write`. The workflow falls back to `GITHUB_TOKEN`, but the secret is recommended so the generated `Version packages` PR can be created reliably and run normal PR checks.
+
 For package-impacting changes, add a changeset in the same PR:
 
 ```bash

@@ -64,7 +64,8 @@ jobs:
         if: steps.release-state.outputs.has_changesets == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_PR_TOKEN || github.token }}
+          branch-token: ${{ secrets.RELEASE_PR_TOKEN || github.token }}
           branch: changeset-release/main
           base: main
           commit-message: 'Version packages'
