@@ -11,14 +11,15 @@ on:
 permissions:
   contents: write
   id-token: write
+  pull-requests: write
 
 concurrency:
   group: npm-release
   cancel-in-progress: false
 
 jobs:
-  publish:
-    name: 'Publish to npm'
+  release:
+    name: 'Release'
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -50,47 +51,14 @@ jobs:
       - name: Check changesets
         run: npm run changeset:check
 
-      - name: Check package version
-        id: package
-        shell: bash
-        run: |
-          PACKAGE_NAME="$(node -p "require('./package.json').name")"
-          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-
-          echo "name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
-          echo "version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
-
-          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version --registry=https://registry.npmjs.org >/dev/null 2>&1; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
-            echo "$PACKAGE_NAME@$PACKAGE_VERSION is already published; skipping npm publish."
-          else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-            echo "$PACKAGE_NAME@$PACKAGE_VERSION is not published yet."
-          fi
-
-          RELEASE_TAG="v$PACKAGE_VERSION"
-          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
-
-          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "release_exists=true" >> "$GITHUB_OUTPUT"
-            echo "GitHub release $RELEASE_TAG already exists."
-          else
-            echo "release_exists=false" >> "$GITHUB_OUTPUT"
-            echo "GitHub release $RELEASE_TAG does not exist yet."
-          fi
+      - name: Create release PR or publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: npm run release:prepare
+          publish: npm run changeset:publish
+          commit: 'Version packages'
+          title: 'Version packages'
+          createGithubReleases: true
         env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Publish package
-        if: steps.package.outputs.published == 'false'
-        run: npm run changeset:publish
-
-      - name: Create GitHub release
-        if: steps.package.outputs.release_exists == 'false'
-        run: |
-          gh release create "${{ steps.package.outputs.tag }}" \
-            --target "${{ github.sha }}" \
-            --title "${{ steps.package.outputs.tag }}" \
-            --notes "Published ${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }} to npm."
-        env:
-          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -129,13 +129,15 @@ npm run changeset
 
 Keep the generated random-word filename, select `patch`, `minor`, or `major`, and make sure the package name is `ocelot-ui`. CI validates changeset filenames and package names.
 
+When changesets reach `main`, the `release.yml` workflow opens or updates a `Version packages` PR. That PR applies the pending changesets, bumps `package.json` and `package-lock.json`, updates `CHANGELOG.md`, and removes the consumed `.changeset/*.md` files.
+
 When ready to release:
 
-1. Run `npm run release:prepare`
-2. Review and commit the generated version, lockfile, changelog, and consumed changesets
-3. Merge or push that release-prep commit to `main`
+1. Review the `Version packages` PR
+2. Merge it to `main`
+3. Let `release.yml` run the release checks, install Playwright browsers, build the package, publish through npm Trusted Publishing, and create the matching GitHub Release
 
-The `release.yml` workflow then runs the release checks, installs Playwright browsers, builds the package, publishes the prepared version to npm through Trusted Publishing, and creates the matching GitHub Release. If the package version already exists on npm, publish is skipped.
+If no changesets are present and the current package version already exists on npm, nothing is published.
 
 ---
 

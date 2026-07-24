@@ -35,7 +35,7 @@ npm run build-storybook && npm run test-storybook
 # Changesets
 npm run changeset         # Add a random-word changeset for package-impacting changes
 npm run changeset:check   # Validate changesets and package names
-npm run release:prepare   # Apply pending changesets to package/changelog before release
+npm run release:prepare   # Used by release.yml to apply pending changesets
 ```
 
 ## Changesets
@@ -45,7 +45,7 @@ npm run release:prepare   # Apply pending changesets to package/changelog before
 - Leave the generated filename as random words, for example `quiet-dots-dance.md`.
 - Every changeset must reference the exact package name from `package.json`: `ocelot-ui`.
 - Use `patch` for fixes and small compatible improvements, `minor` for new compatible components/features, and `major` for breaking changes.
-- Do not run `npm run release:prepare` unless the user explicitly asks to prepare a release.
+- Do not run `npm run release:prepare` unless the user explicitly asks to prepare a release locally; normally `release.yml` runs it in the automated `Version packages` PR.
 
 ## Architecture
 
