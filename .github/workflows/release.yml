@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 concurrency:
@@ -47,6 +47,9 @@ jobs:
       - name: Build package
         run: npm run build
 
+      - name: Check changesets
+        run: npm run changeset:check
+
       - name: Check package version
         id: package
         shell: bash
@@ -65,6 +68,29 @@ jobs:
             echo "$PACKAGE_NAME@$PACKAGE_VERSION is not published yet."
           fi
 
+          RELEASE_TAG="v$PACKAGE_VERSION"
+          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "release_exists=true" >> "$GITHUB_OUTPUT"
+            echo "GitHub release $RELEASE_TAG already exists."
+          else
+            echo "release_exists=false" >> "$GITHUB_OUTPUT"
+            echo "GitHub release $RELEASE_TAG does not exist yet."
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Publish package
         if: steps.package.outputs.published == 'false'
-        run: npm publish --access public
+        run: npm run changeset:publish
+
+      - name: Create GitHub release
+        if: steps.package.outputs.release_exists == 'false'
+        run: |
+          gh release create "${{ steps.package.outputs.tag }}" \
+            --target "${{ github.sha }}" \
+            --title "${{ steps.package.outputs.tag }}" \
+            --notes "Published ${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }} to npm."
+        env:
+          GH_TOKEN: ${{ github.token }}
