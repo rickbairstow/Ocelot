@@ -53,23 +53,26 @@ jobs:
             version_published=false
           fi
 
-          should_run=false
+          echo "has_changesets=$([ "$changeset_count" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          echo "version_published=$version_published" >> "$GITHUB_OUTPUT"
 
-          if [ "$changeset_count" -gt 0 ] || [ "$version_published" = "false" ]; then
-            should_run=true
-          fi
-
-          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
-
-      - name: Create release PR or publish
-        if: steps.release-state.outputs.should_run == 'true'
+      - name: Prepare release PR
+        if: steps.release-state.outputs.has_changesets == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
           version: npm run release:prepare
-          publish: npm run release:publish
           commit: 'Version packages'
           title: 'Version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish release
+        if: steps.release-state.outputs.has_changesets == 'false' && steps.release-state.outputs.version_published == 'false'
+        id: publish
+        uses: changesets/action@v1
+        with:
+          publish: npm run release:publish
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
