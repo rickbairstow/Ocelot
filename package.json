@@ -41,6 +41,7 @@
     "changeset:check": "node .build/check-changesets.mjs",
     "changeset:publish": "changeset publish",
     "release:prepare": "changeset version",
+    "release:publish": "npm run lint && npx playwright install --with-deps chromium && npm run test:run && npm run build && npm run changeset:publish",
     "preview": "vite preview",
     "lint": "npm run eslint && npm run stylelint",
     "lint:fix": "npm run eslint:fix && npm run stylelint:fix",

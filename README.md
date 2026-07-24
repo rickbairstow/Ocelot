@@ -135,7 +135,7 @@ When ready to release:
 
 1. Review the `Version packages` PR
 2. Merge it to `main`
-3. Let `release.yml` run the release checks, install Playwright browsers, build the package, publish through npm Trusted Publishing, and create the matching GitHub Release
+3. Let `release.yml` run `npm run release:publish`, publish through npm Trusted Publishing, and create the matching GitHub Release
 
 If no changesets are present and the current package version already exists on npm, nothing is published.
 

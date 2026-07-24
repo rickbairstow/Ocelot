@@ -164,4 +164,4 @@ npm run release:prepare
 
 This prepares the release by updating the version, lockfile, changelog, and consumed changesets.
 
-When ready to release, review and merge the `Version packages` PR. Once that commit lands on `main`, `release.yml` runs checks, builds the package, publishes through npm Trusted Publishing, and creates the matching GitHub Release.
+When ready to release, review and merge the `Version packages` PR. Once that commit lands on `main`, `release.yml` runs `npm run release:publish`, publishes through npm Trusted Publishing, and creates the matching GitHub Release.

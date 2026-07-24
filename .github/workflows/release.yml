@@ -39,12 +39,35 @@ jobs:
       - name: Check changesets
         run: npm run changeset:check
 
+      - name: Check release state
+        id: release-state
+        shell: bash
+        run: |
+          changeset_count=$(find .changeset -maxdepth 1 -type f -name '*.md' ! -name 'README.md' | wc -l | tr -d ' ')
+          package_name=$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).name")
+          package_version=$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version")
+
+          if npm view "$package_name@$package_version" version >/dev/null 2>&1; then
+            version_published=true
+          else
+            version_published=false
+          fi
+
+          should_run=false
+
+          if [ "$changeset_count" -gt 0 ] || [ "$version_published" = "false" ]; then
+            should_run=true
+          fi
+
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
       - name: Create release PR or publish
+        if: steps.release-state.outputs.should_run == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
           version: npm run release:prepare
-          publish: npm run lint && npx playwright install --with-deps chromium && npm run test:run && npm run build && npm run changeset:publish
+          publish: npm run release:publish
           commit: 'Version packages'
           title: 'Version packages'
           createGithubReleases: true
