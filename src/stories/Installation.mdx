@@ -143,3 +143,25 @@ Override OUI's CSS custom properties to customise appearance without a Tailwind 
 ```
 
 See `ocelot-ui/tailwind.css` for the full list of available tokens.
+
+---
+
+## Maintainer release flow
+
+OUI uses Changesets for release notes and version bumps. For package-impacting changes, run:
+
+```bash
+npm run changeset
+```
+
+Keep the generated random-word filename, select the semver bump, and make sure the package name is `ocelot-ui`.
+
+When changesets reach `main`, `release.yml` opens or updates a `Version packages` PR. That PR runs:
+
+```bash
+npm run release:prepare
+```
+
+This prepares the release by updating the version, lockfile, changelog, and consumed changesets.
+
+When ready to release, review and merge the `Version packages` PR. Once that commit lands on `main`, `release.yml` runs checks, builds the package, publishes through npm Trusted Publishing, and creates the matching GitHub Release.

@@ -119,12 +119,25 @@ This generates a treemap report at `dist/bundle-analysis.html`.
 
 ## Publishing to npm
 
-To publish a new version:
+Releases are mostly automated through Changesets, GitHub Actions, npm Trusted Publishing, and GitHub Releases.
 
-1. Ensure you are on `main` and up to date
-2. Run `npm run publish:npm`
-3. Select a bump type when prompted: `patch`, `minor`, or `major`
-4. The script will bump the version, commit, tag, push to GitHub, and publish to npm
+For package-impacting changes, add a changeset in the same PR:
+
+```bash
+npm run changeset
+```
+
+Keep the generated random-word filename, select `patch`, `minor`, or `major`, and make sure the package name is `ocelot-ui`. CI validates changeset filenames and package names.
+
+When changesets reach `main`, the `release.yml` workflow opens or updates a `Version packages` PR. That PR applies the pending changesets, bumps `package.json` and `package-lock.json`, updates `CHANGELOG.md`, and removes the consumed `.changeset/*.md` files.
+
+When ready to release:
+
+1. Review the `Version packages` PR
+2. Merge it to `main`
+3. Let `release.yml` run the release checks, install Playwright browsers, build the package, publish through npm Trusted Publishing, and create the matching GitHub Release
+
+If no changesets are present and the current package version already exists on npm, nothing is published.
 
 ---
 

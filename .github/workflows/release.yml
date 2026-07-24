@@ -9,16 +9,17 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
+  pull-requests: write
 
 concurrency:
   group: npm-release
   cancel-in-progress: false
 
 jobs:
-  publish:
-    name: 'Publish to npm'
+  release:
+    name: 'Release'
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -35,36 +36,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+      - name: Check changesets
+        run: npm run changeset:check
 
-      - name: Run lint
-        run: npm run lint
-
-      - name: Run tests
-        run: npm run test:run
-
-      - name: Build package
-        run: npm run build
-
-      - name: Check package version
-        id: package
-        shell: bash
-        run: |
-          PACKAGE_NAME="$(node -p "require('./package.json').name")"
-          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-
-          echo "name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
-          echo "version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
-
-          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version --registry=https://registry.npmjs.org >/dev/null 2>&1; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
-            echo "$PACKAGE_NAME@$PACKAGE_VERSION is already published; skipping npm publish."
-          else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-            echo "$PACKAGE_NAME@$PACKAGE_VERSION is not published yet."
-          fi
-
-      - name: Publish package
-        if: steps.package.outputs.published == 'false'
-        run: npm publish --access public
+      - name: Create release PR or publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: npm run release:prepare
+          publish: npm run lint && npx playwright install --with-deps chromium && npm run test:run && npm run build && npm run changeset:publish
+          commit: 'Version packages'
+          title: 'Version packages'
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

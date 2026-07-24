@@ -55,6 +55,12 @@ updates:
               update-types:
                   - 'minor'
                   - 'patch'
+          release-tooling:
+              patterns:
+                  - '@changesets/*'
+              update-types:
+                  - 'minor'
+                  - 'patch'
           ui-libs:
               patterns:
                   - '@tabler/*'
