@@ -148,14 +148,14 @@ See `ocelot-ui/tailwind.css` for the full list of available tokens.
 
 ## Maintainer release flow
 
-OUI releases are handled by manual GitHub Actions workflows on `main`:
+OUI releases are handled by the manual `Release Package` GitHub Actions workflow on `main`.
 
-- `Release Patch` for fixes and small compatible improvements
-- `Release Minor` for new compatible components or features
-- `Release Major` for breaking changes
+Repository setup:
 
-Repository setup: add an `NPM_TOKEN` repository secret with npm publish access for `ocelot-ui`.
+- Configure npm Trusted Publishing for `release.yml`
+- Use the `npm-release` GitHub Environment for release approval protection
+- Add only trusted maintainers as required reviewers on that environment
 
-When a release workflow runs, it bumps `package.json` and `package-lock.json`, checks that version is not already on npm, installs Playwright, runs linting, runs tests, builds the package, publishes to npm, pushes the version commit and tag to `main`, and creates the matching GitHub Release.
+When running `Release Package`, choose `patch`, `minor`, or `major`. The workflow bumps `package.json` and `package-lock.json`, checks that version is not already on npm, installs Playwright, runs linting, runs tests, builds the package, publishes to npm through Trusted Publishing, pushes the version commit and tag to `main`, and creates the matching GitHub Release.
 
-Do not manually bump the package version for normal releases. Let the selected release workflow do it.
+Do not manually bump the package version for normal releases. Let the release workflow do it.

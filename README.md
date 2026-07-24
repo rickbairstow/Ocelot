@@ -119,17 +119,17 @@ This generates a treemap report at `dist/bundle-analysis.html`.
 
 ## Publishing to npm
 
-Releases are manual GitHub Actions workflows. Use one of these actions from the `main` branch:
+Releases are handled by the manual `Release Package` GitHub Actions workflow on `main`.
 
-- `Release Patch` for fixes and small compatible improvements
-- `Release Minor` for new compatible components or features
-- `Release Major` for breaking changes
+Repository setup:
 
-Repository setup: add an `NPM_TOKEN` repository secret with npm publish access for `ocelot-ui`. The release workflows use that token because npm Trusted Publishing only supports one configured workflow filename per package, while this repo intentionally has three separate release actions.
+- Configure npm Trusted Publishing for `release.yml`
+- Use the `npm-release` GitHub Environment for release approval protection
+- Add only trusted maintainers as required reviewers on that environment
 
-Each release workflow bumps `package.json` and `package-lock.json`, checks the version does not already exist on npm, installs Playwright, runs linting, runs tests, builds the package, publishes to npm, pushes the version commit and tag to `main`, and creates the matching GitHub Release.
+When running `Release Package`, choose `patch`, `minor`, or `major`. The workflow bumps `package.json` and `package-lock.json`, checks the version does not already exist on npm, installs Playwright, runs linting, runs tests, builds the package, publishes to npm through Trusted Publishing, pushes the version commit and tag to `main`, and creates the matching GitHub Release.
 
-Do not manually bump the package version for normal releases. Let the patch, minor, or major release workflow do it.
+Do not manually bump the package version for normal releases. Let the release workflow do it.
 
 ---
 
