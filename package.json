@@ -109,7 +109,7 @@
     "eslint-plugin-vuejs-accessibility": "^2.5.0",
     "globals": "^17.7.0",
     "photoswipe": "^5.4.4",
-    "playwright": "^1.61.1",
+    "playwright": "^1.62.0",
     "plyr": "^3.8.4",
     "postcss": "^8.5.23",
     "qrcode": "^1.5.4",
