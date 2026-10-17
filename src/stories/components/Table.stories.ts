@@ -105,6 +105,20 @@ const columns = [
 const meta: Meta<typeof Table> = {
     title: 'Components/Table',
     component: Table,
+    // Production chunks can also export shared dependency symbols.
+    includeStories: [
+        'Default',
+        'AllFunctionality',
+        'WithPagination',
+        'WithColumnVisibility',
+        'WithColumnPinningControls',
+        'StickyPinnedAndResizable',
+        'ExpandableRows',
+        'HiddenColumnsPreset',
+        'LoadingState',
+        'EmptyStateSlot',
+        'ResponsiveCardsMobile'
+    ],
     argTypes: {
         mobileLayout: {
             control: 'inline-radio',
