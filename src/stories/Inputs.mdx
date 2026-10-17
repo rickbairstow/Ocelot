@@ -16,6 +16,9 @@ Use native controls for everyday forms. `Input` selects its behaviour through `t
 | Radio / RadioGroup | String |
 | CheckboxGroup | String array |
 | Range | Number |
+| NumberInput | Number or null (empty), with increment/decrement buttons |
+| TagsInput | Array of unique free-form strings |
+| Rating | Integer or null (unrated); whole-star radio choices |
 | FileInput | File array, including single-file selection |
 
 Input emits strings even for `type="number"`. Convert values in the consuming application when needed. Date and time values keep the browser's native string format; there is no timezone conversion. Browsers without a particular picker retain their native fallback. `tel` changes input semantics and mobile keyboards; it does not validate international telephone numbers or apply a mask.
@@ -57,7 +60,7 @@ A standalone control accepts `label` and `invalid`. If using a separate Label, s
 
 ## Disabled and read-only controls
 
-All controls support disabled state. Native `readonly` is supported for text-like Input types and Textarea; these remain focusable and submit their values. HTML does not support readonly for radio buttons, checkboxes, switches, select, range, color or file inputs. Use disabled state or display the saved value as text for those controls; disabled controls are excluded from native form submission. Combobox currently supports disabled state, not a separate read-only mode.
+All controls support disabled state. Native `readonly` is supported for text-like Input types, Textarea, NumberInput and the TagsInput editor; these remain focusable and submit their values. Rating has a readonly display mode with a spoken rating and a hidden submitted value. HTML does not support readonly for radio buttons, checkboxes, switches, select, range, color or file inputs. Use disabled state or display the saved value as text for those controls; disabled controls are excluded from native form submission. Combobox currently supports disabled state, not a separate read-only mode.
 
 ## Consumer-owned validation
 
@@ -126,6 +129,26 @@ The default load threshold is one menu-height from the bottom (`loadMoreThreshol
 Use `multiple` with a string-array model. `selectedOptions` supplies labels for selected values not present in the initial remote page; known selected labels are retained when pages change. `maxHeight` is 400px by default, always constrained to available space. Use `max-height="viewport"` for all available viewport height. The popup uses Floating UI to flip and follow the field, and is mounted only while open. Options are not virtualised.
 
 Combobox works within FormField, displays selected ticks, and supports Arrow keys, Home/End while navigating options, Enter, Escape and Tab. Its hidden native select submits model values and supports `required`, including multiple selection. Only confirmed options are submitted; typed search text is discarded when the menu closes. Reset the Vue model in the parent when resetting a form.
+
+## Numbers, tags and ratings
+
+`NumberInput` adds step buttons to a native number field. Its model is a number or `null` when empty; `min`, `max`, `step` and `required` use browser validation. Values outside the bounds can still be typed so the consumer can explain the error. Use the existing `Input type="number"` when step buttons are unnecessary.
+
+`TagsInput` accepts a unique string array. Enter, comma or Tab commits a trimmed tag; pasting supports comma/newline-separated lists. Backspace with an empty editor removes the last tag. `maxTags` limits additions. Repeated hidden inputs submit each committed value under `name`; the draft is not submitted. `required` requires a committed tag, with a configurable `requiredMessage`. Consumers validate individual values, such as email addresses.
+
+`Rating` uses a whole-number or `null` model and defaults to five native radio choices. Use `max` for another scale. A readonly rating is a static accessible description; disabled ratings cannot change and are excluded from submission. For a shared label, hint or error, use `FormField group` around Rating.
+
+```vue
+<FormField label="Quantity" hint="Choose 1 to 10." required>
+    <NumberInput v-model="quantity" name="quantity" :min="1" :max="10" />
+</FormField>
+<FormField label="Keywords" hint="Press Enter to add a keyword.">
+    <TagsInput v-model="keywords" name="keywords" />
+</FormField>
+<FormField group label="Your rating">
+    <Rating v-model="rating" name="rating" />
+</FormField>
+```
 
 ## Range and files
 

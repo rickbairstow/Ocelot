@@ -283,7 +283,7 @@ export const WithPlaceholder: Story = {
         await waitFor(() => expect(main).toHaveClass('opacity-100'))
         const placeholder = canvasElement.querySelector('img[aria-hidden="true"]')
         await expect(placeholder).toHaveClass('opacity-0')
-        await expect(main).toBeVisible()
+        await waitFor(() => expect(main).toBeVisible())
     }
 }
 

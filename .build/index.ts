@@ -78,6 +78,12 @@ export { default as Textarea } from '@Components/Textarea.vue'
 export { default as Toast } from '@Components/Toast.vue'
 export { default as Tooltip } from '@Components/Tooltip.vue'
 export { default as Video } from '@Components/Video.vue'
+export { default as DescriptionList } from '@Components/DescriptionList.vue'
+export { default as TagsInput } from '@Components/TagsInput.vue'
+export { default as TreeView } from '@Components/TreeView.vue'
+export { default as Rating } from '@Components/Rating.vue'
+export { default as Splitter } from '@Components/Splitter.vue'
+export { default as NumberInput } from '@Components/NumberInput.vue'
 
 /**
  * Component Type Exports
@@ -96,6 +102,8 @@ export type { RadioGroupContext } from '@Components/RadioGroup.vue'
 export type { StepItem } from '@Components/Stepper.vue'
 export type { TabsContext } from '@Components/Tabs.vue'
 export type { TimelineItem } from '@Components/Timeline.vue'
+export type { DescriptionListItem } from '@Components/DescriptionList.vue'
+export type { TreeNode } from '@Components/TreeView.vue'
 
 /**
  * Composable Exports
