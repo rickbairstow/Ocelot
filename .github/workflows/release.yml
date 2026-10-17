@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version bump'
+        description: 'Version bump (creates a PR; merge it to publish)'
         required: true
         default: 'patch'
         type: choice
@@ -87,6 +87,11 @@ jobs:
               --title "Release ${{ steps.version.outputs.tag }}" \
               --body "Bumps ocelot-ui to ${{ steps.version.outputs.tag }}. Merging this PR publishes the package through npm Trusted Publishing and creates the matching GitHub Release."
           fi
+
+          pr_url=$(gh pr view "$branch" --repo "$GITHUB_REPOSITORY" --json url --jq '.url')
+          echo "::notice title=Release PR ready::$pr_url"
+          printf '### Release %s prepared\n\n[Open the release pull request](%s)\n\nThe version bump is ready for review. **This run has not published to npm.**\n\nAfter the checks pass, merge the PR into `main` to trigger publishing and create the GitHub release.\n' \
+            "${{ steps.version.outputs.tag }}" "$pr_url" >> "$GITHUB_STEP_SUMMARY"
 
   publish:
     name: Publish release
