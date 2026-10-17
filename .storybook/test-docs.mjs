@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { chromium } from 'playwright'
 
-// Like test-storybook, this expects an already running Storybook server.
+// This expects an already running Storybook server.
 const baseUrl = new URL(process.argv[2] ?? 'http://127.0.0.1:6006/')
 
 test('Getting Started docs work after visiting a component story', async (t) => {

@@ -115,6 +115,14 @@ npm run build:analyse
 
 This generates a treemap report at `dist/bundle-analysis.html`.
 
+## Testing
+
+Run `npm run test:run` for component interactions, accessibility checks, and unit tests. No separate Storybook server is required. `npm run test-storybook` runs only the Storybook tests through the same Vitest setup.
+
+To check documentation navigation against the production build, run `npm run build-storybook`, serve it with `npm run preview -- --host 127.0.0.1 --port 6006 --outDir storybook-static`, then run `npm run test:docs` in another terminal. CI runs both the component suite and documentation navigation checks.
+
+See [the maintenance review](docs/maintenance-review.md) for bundle and dependency findings.
+
 ---
 
 ## Publishing to npm

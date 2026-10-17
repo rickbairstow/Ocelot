@@ -34,7 +34,6 @@ updates:
                   - 'vitest'
                   - '@vitest/*'
                   - 'playwright'
-                  - 'axe-playwright'
                   - '@faker-js/*'
               update-types:
                   - 'minor'

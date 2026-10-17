@@ -24,13 +24,17 @@ npm run prettier:fix     # Format src/ with Prettier
 # Storybook
 npm run storybook        # Start Storybook dev server on port 6006
 npm run build-storybook  # Build static Storybook
-npm run test-storybook   # Run Vitest + Playwright tests against built Storybook
+npm run test-storybook   # Run Storybook Vitest + Playwright tests (no server required)
 
 # Testing (no Storybook server required)
 npm run test             # Run Vitest directly — faster for iteration; no build step needed
 
-# CI test workflow
-npm run build-storybook && npm run test-storybook
+# Component CI tests
+npm run test:run
+
+# Documentation regression tests (serve the build on port 6006 first)
+npm run build-storybook
+npm run test:docs
 
 ```
 
@@ -80,7 +84,7 @@ Defined in `vite.config.ts` and `jsconfig.json`:
 
 ### Testing
 - Tests run through Storybook stories — each story can have a `play()` function for interaction testing.
-- Accessibility tested automatically via `axe-playwright` in `.storybook/test-runner.js` — violations at minor/moderate/serious/critical impact levels fail the test run.
+- Accessibility tested automatically via `@storybook/addon-a11y` in Vitest (`a11y.test: error` in `.storybook/preview.js`) — violations at minor/moderate/serious/critical impact levels fail the test run.
 - Vitest runs in-browser with Playwright/Chromium (configured in `vite.config.ts`).
 
 **Requirements for every change:**

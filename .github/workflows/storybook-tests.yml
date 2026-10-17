@@ -56,3 +56,20 @@ jobs:
 
       - name: Run tests
         run: npm run test:run
+
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      - name: Test documentation navigation
+        timeout-minutes: 3
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 6006 --strictPort --outDir storybook-static > storybook-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid"' EXIT
+          for attempt in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:6006/index.json > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npm run test:docs || { cat storybook-preview.log; exit 1; }

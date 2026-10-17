@@ -22,7 +22,7 @@ const config = {
     ],
     framework: {
         name: '@storybook/vue3-vite',
-        options: {}
+        options: { docgen: 'vue-component-meta' }
     },
     core: {
         disableTelemetry: true
