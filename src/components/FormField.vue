@@ -1,8 +1,12 @@
 <template>
-    <div class="flex flex-col gap-1.5">
-        <Label
+    <component
+        :is="group ? 'fieldset' : 'div'"
+        class="flex min-w-0 flex-col gap-1.5"
+    >
+        <component
+            :is="group ? 'legend' : Label"
             v-if="label"
-            :for="inputId"
+            :for="group ? undefined : inputId"
         >
             {{ label }}
             <span
@@ -14,7 +18,7 @@
                 v-if="optional"
                 class="ms-1 text-xs font-normal text-gray-500 dark:text-gray-400"
             >(optional)</span>
-        </Label>
+        </component>
 
         <slot />
 
@@ -27,24 +31,25 @@
             {{ error }}
         </p>
         <p
-            v-else-if="hint"
+            v-if="hint"
             :id="hintId"
-            aria-live="polite"
             class="text-sm text-gray-500 dark:text-gray-400"
         >
             {{ hint }}
         </p>
-    </div>
+    </component>
 </template>
 
 <script setup lang="ts">
-import { reactive, provide } from 'vue'
+import { reactive, provide, ref } from 'vue'
 import Label from '@Components/Label.vue'
 import { generateUuid } from '@Utils/uuid'
 import { FormFieldKey } from '@Composables/useFormField'
 import type { FormFieldContext } from '@Composables/useFormField'
 
 interface Props {
+    group?: boolean
+    invalid?: boolean
     label?: string
     hint?: string
     error?: string
@@ -53,6 +58,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    group: false,
+    invalid: false,
     label: undefined,
     hint: undefined,
     error: undefined,
@@ -60,19 +67,20 @@ const props = withDefaults(defineProps<Props>(), {
     optional: false
 })
 
-const inputId = generateUuid('field')
+const inputId = ref(generateUuid('field'))
 const hintId = generateUuid('hint')
 const errorId = generateUuid('error')
 
 provide(FormFieldKey, reactive({
-    inputId,
+    get inputId() { return inputId.value },
+    get required() { return props.required },
+    get grouped() { return props.group },
+    setInputId(id: string) { inputId.value = id },
     get describedBy(): string | undefined {
-        if (props.error) return errorId
-        if (props.hint) return hintId
-        return undefined
+        return [props.hint ? hintId : '', props.error ? errorId : ''].filter(Boolean).join(' ') || undefined
     },
     get hasError(): boolean {
-        return !!props.error
+        return props.invalid || !!props.error
     }
 }) as FormFieldContext)
 </script>

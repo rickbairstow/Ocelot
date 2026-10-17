@@ -90,21 +90,15 @@ app.mount('#app')
 
 ## Icons
 
-OUI uses [Tabler Icons](https://tabler.io/icons). A built-in set of common icons is bundled. To use additional icons, register them once at app startup:
-
-```js
-import { registerIcons } from 'ocelot-ui'
-import { IconBrandGithub, IconStarFilled } from '@tabler/icons-vue'
-
-registerIcons({ IconBrandGithub, IconStarFilled })
-```
-
-Then reference them by name (without the `Icon` prefix) or pass the component directly:
+OUI includes every icon from its installed [Tabler Icons](https://tabler.io/icons) catalogue, including brand icons and filled variants. No Tabler imports or registration are required. Use the export name without its `Icon` prefix:
 
 ```vue
 <Icon icon="BrandGithub" />
-<Button :icon="IconBrandGithub">GitHub</Button>
+<Icon icon="StarFilled" />
+<Button icon="BrandLinkedin">LinkedIn</Button>
 ```
+
+`registerIcons()` is still available for custom icons and overrides, and icon props still accept Vue components directly. The full catalogue is bundled locally; it does not fetch icons from a CDN. This increases bundle size compared with a small curated set.
 
 ---
 

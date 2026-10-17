@@ -1,3 +1,4 @@
+import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Quote from '@Components/Quote.vue'
 import { expect, within } from 'storybook/test'
@@ -25,7 +26,7 @@ const meta: Meta<typeof Quote> = {
     argTypes: {
         author: { control: 'text', description: 'Attribution name.' },
         avatar: { control: 'text', description: 'Avatar image URL.' },
-        icon: { control: 'text', description: 'Icon shown above the quote. Accepts any registry key or Vue component.' },
+        icon: iconControl,
         color: {
             control: 'select',
             options: ['blue', 'green', 'indigo', 'orange', 'pink', 'purple', 'red', 'teal'],

@@ -31,6 +31,7 @@ export { default as Dialog } from '@Components/Dialog.vue'
 export { default as Divider } from '@Components/Divider.vue'
 export { default as EmptyState } from '@Components/EmptyState.vue'
 export { default as FloatingPanel } from '@Components/FloatingPanel.vue'
+export { default as FileInput } from '@Components/FileInput.vue'
 export { default as FormField } from '@Components/FormField.vue'
 export { default as Heading } from '@Components/Heading.vue'
 export { default as Icon } from '@Components/Icon.vue'
@@ -49,6 +50,7 @@ export { default as QrCode } from '@Components/QrCode.vue'
 export { default as Quote } from '@Components/Quote.vue'
 export { default as Radio } from '@Components/Radio.vue'
 export { default as RadioGroup } from '@Components/RadioGroup.vue'
+export { default as Range } from '@Components/Range.vue'
 export { default as ReadMore } from '@Components/ReadMore.vue'
 export { default as Scrim } from '@Components/Scrim.vue'
 export { default as Select } from '@Components/Select.vue'
@@ -105,7 +107,7 @@ export type { ToastOptions, ToastItem, ToastType, ToastAction } from '@Composabl
 /**
  * Icon Utilities
  */
-export { registerIcons } from '@Composables/useIcons'
+export { availableIcons, availableSizes, registerIcons } from '@Composables/useIcons'
 
 /**
  * Icon Type Exports

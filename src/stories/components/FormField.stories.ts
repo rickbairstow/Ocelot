@@ -5,7 +5,7 @@ import FormField from '@Components/FormField.vue'
 import Input from '@Components/Input.vue'
 
 const meta: Meta<typeof FormField> = {
-    title: 'Components/Form Fields/FormField',
+    title: 'Components/Formfields/FormField',
     component: FormField,
     parameters: {
         docs: {
@@ -90,7 +90,7 @@ export const Required: Story = {
         setup() { return { value: ref('') } },
         template: `
             <FormField label="Full name" required>
-                <Input v-model="value" name="name" required />
+                <Input v-model="value" name="name" />
             </FormField>
         `
     }),
@@ -98,6 +98,7 @@ export const Required: Story = {
         const asterisk = canvasElement.querySelector('[aria-hidden="true"]')
         await expect(asterisk).toBeInTheDocument()
         await expect(asterisk).toHaveTextContent('*')
+        await expect(within(canvasElement).getByRole('textbox')).toBeRequired()
     }
 }
 
@@ -116,7 +117,7 @@ export const Optional: Story = {
     }
 }
 
-export const ErrorOverridesHint: Story = {
+export const ErrorWithHint: Story = {
     render: () => ({
         components: { FormField, Input },
         setup() { return { value: ref('') } },
@@ -129,7 +130,9 @@ export const ErrorOverridesHint: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('alert')).toBeInTheDocument()
-        await expect(canvas.queryByText('Enter your username.')).not.toBeInTheDocument()
+        await expect(canvas.getByText('Enter your username.')).toBeInTheDocument()
+        const input = canvas.getByRole('textbox')
+        await expect(input).toHaveAttribute('aria-describedby', `${canvas.getByText('Enter your username.').id} ${canvas.getByRole('alert').id}`)
     }
 }
 

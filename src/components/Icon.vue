@@ -30,7 +30,7 @@ const iconComponent = computed((): Component | null => {
     if (typeof icon !== 'string') return icon
     if (icon in availableIcons) return availableIcons[icon]
     if (import.meta.env.DEV) {
-        console.warn(`[OuiIcon] Icon "${icon}" not found in registry. Register it with registerIcons() or pass the component directly.`)
+        console.warn(`[OuiIcon] Icon "${icon}" not found. Check the Tabler name (without the Icon prefix), register a custom icon with registerIcons(), or pass a component directly.`)
     }
     return null
 })

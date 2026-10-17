@@ -1,3 +1,4 @@
+import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Loader from '@Components/Loader.vue'
 import { faker } from '@faker-js/faker'
@@ -26,11 +27,7 @@ const meta: Meta<typeof Loader> = {
             options: ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink', 'gray', 'default'],
             description: 'Color of the icon and text.'
         },
-        icon: {
-            control: 'select',
-            options: ['Loader', 'Loader2', 'Loader3'],
-            description: 'Icon to display.'
-        },
+        icon: iconControl,
         size: {
             control: 'select',
             options: ['xs', 'sm', 'base', 'lg', 'xl'],

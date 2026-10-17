@@ -1,3 +1,4 @@
+import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import EmptyState from '@Components/EmptyState.vue'
 import Button from '@Components/Button.vue'
@@ -18,7 +19,7 @@ const meta: Meta<typeof EmptyState> = {
 
     argTypes: {
         description: { control: 'text', description: 'Supporting description text.' },
-        icon: { control: 'text', description: 'Icon name or Vue component.' },
+        icon: iconControl,
         title: { control: 'text', description: 'Primary empty state message.' }
     },
 

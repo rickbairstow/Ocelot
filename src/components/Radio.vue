@@ -1,14 +1,17 @@
 <template>
     <div class="flex items-center gap-2">
         <input
+            v-bind="controlAttrs()"
             :id="effectiveId"
+            ref="element"
             class="size-4 shrink-0 appearance-none rounded-full border border-gray-300 bg-white cursor-pointer checked:border-transparent checked:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:checked:bg-blue-500"
             type="radio"
-            :aria-describedby="formField?.describedBy || undefined"
-            :aria-invalid="formField?.hasError ? 'true' : undefined"
+            :aria-invalid="isInvalid ? 'true' : undefined"
             :checked="isChecked"
+            :class="isInvalid ? '!border-red-600 dark:!border-red-400' : ''"
             :disabled="isDisabled"
             :name="effectiveName"
+            :required="isRequired || undefined"
             :value="value"
             @change="onChange"
         />
@@ -24,14 +27,18 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { computed, inject } from 'vue'
 import type { ComputedRef } from 'vue'
 import Label from '@Components/Label.vue'
 import { generateUuid } from '@Utils/uuid'
-import { useFormField } from '@Composables/useFormField'
+import { useFormControl } from '@Composables/useFormField'
 import type { RadioGroupContext } from '@Components/RadioGroup.vue'
 
 interface Props {
+    id?: string
+    invalid?: boolean
+    required?: boolean
     value: string
     name?: string
     label?: string
@@ -40,6 +47,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    id: undefined,
+    invalid: false,
+    required: false,
     name: undefined,
     label: undefined,
     disabled: false,
@@ -51,12 +61,15 @@ const emit = defineEmits<{
 }>()
 
 const uuid = generateUuid('radio')
-const formField = useFormField()
 
 const groupContext = inject<RadioGroupContext>('radioGroup', null as unknown as RadioGroupContext)
 const isInGroup = !!groupContext
+const { effectiveId, isInvalid: controlInvalid, isRequired: controlRequired, controlAttrs, element, focus } = useFormControl(props, uuid, isInGroup)
+defineExpose({ element, focus })
+const isInvalid = computed(() => controlInvalid.value || groupContext?.invalid.value || false)
+const isRequired = computed(() => controlRequired.value || groupContext?.required.value)
 
-const effectiveId = !isInGroup && formField?.inputId ? formField.inputId : uuid
+
 
 const isChecked = computed((): boolean => {
     if (isInGroup) {

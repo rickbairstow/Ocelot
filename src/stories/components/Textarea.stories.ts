@@ -5,7 +5,7 @@ import Textarea from '@Components/Textarea.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Textarea> = {
-    title: 'Components/Form Fields/Textarea',
+    title: 'Components/Formfields/Textarea',
     component: Textarea,
     parameters: {
         docs: {
@@ -111,5 +111,25 @@ export const WithFormField: Story = {
         const error = canvas.getByRole('alert')
         await expect(textarea.getAttribute('aria-describedby')).toContain(error.id)
         await expect(textarea).toHaveAttribute('aria-invalid', 'true')
+        await expect(textarea).toHaveClass('border-red-600')
+    }
+}
+
+
+export const StandaloneInvalid: Story = {
+    render: () => ({
+        components: { Textarea },
+        setup() { return { value: ref(''), changed: ref('') } },
+        template: '<div class="grid gap-3"><Textarea id="standalone-message" v-model="value" autocomplete="off" invalid label="Standalone message" name="message" required @change="changed = $event" /><p role="status">{{ changed }}</p></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const textarea = canvas.getByRole('textbox', { name: 'Standalone message' })
+        await expect(textarea).toHaveAttribute('id', 'standalone-message')
+        await expect(textarea).toHaveAttribute('aria-invalid', 'true')
+        await expect(textarea).toHaveAttribute('autocomplete', 'off')
+        await userEvent.type(textarea, 'A message')
+        await userEvent.tab()
+        await expect(canvas.getByRole('status')).toHaveTextContent('A message')
     }
 }

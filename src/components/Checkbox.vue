@@ -1,17 +1,18 @@
 <template>
     <div class="flex items-center gap-2">
         <input
+            v-bind="controlAttrs()"
             :id="effectiveId"
-            ref="inputRef"
+            ref="element"
             class="size-4 shrink-0 appearance-none rounded border border-gray-300 bg-white cursor-pointer checked:border-transparent checked:bg-blue-600 indeterminate:border-transparent indeterminate:bg-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:checked:bg-blue-500 dark:indeterminate:bg-blue-500"
             type="checkbox"
             :aria-checked="indeterminate ? 'mixed' : undefined"
-            :aria-describedby="formField?.describedBy || undefined"
-            :aria-invalid="formField?.hasError ? 'true' : undefined"
+            :aria-invalid="isInvalid ? 'true' : undefined"
             :checked="isChecked"
+            :class="isInvalid ? '!border-red-600 dark:!border-red-400' : ''"
             :disabled="isDisabled"
             :name="effectiveName"
-            :required="required || undefined"
+            :required="isRequired || undefined"
             :value="value"
             @change="onChange"
         />
@@ -27,14 +28,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, watch } from 'vue'
+defineOptions({ inheritAttrs: false })
+import { computed, inject, onMounted, watch } from 'vue'
 import type { ComputedRef } from 'vue'
 import Label from '@Components/Label.vue'
 import { generateUuid } from '@Utils/uuid'
-import { useFormField } from '@Composables/useFormField'
+import { useFormControl } from '@Composables/useFormField'
 import type { CheckboxGroupContext } from '@Components/CheckboxGroup.vue'
 
 interface Props {
+    id?: string
+    invalid?: boolean
     modelValue?: boolean
     value?: string
     name?: string
@@ -45,6 +49,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    id: undefined,
+    invalid: false,
     modelValue: false,
     value: undefined,
     name: undefined,
@@ -59,13 +65,14 @@ const emit = defineEmits<{
 }>()
 
 const uuid = generateUuid('checkbox')
-const formField = useFormField()
-const effectiveId = formField?.inputId ?? uuid
-const inputRef = ref<HTMLInputElement | null>(null)
 
 const groupContext = inject<CheckboxGroupContext>('checkboxGroup', null as unknown as CheckboxGroupContext)
 
 const isInGroup = !!groupContext
+const { effectiveId, isInvalid: controlInvalid, isRequired: controlRequired, controlAttrs, element, focus } = useFormControl(props, uuid, isInGroup)
+defineExpose({ element, focus })
+const isInvalid = computed(() => controlInvalid.value || groupContext?.invalid.value || false)
+const isRequired = computed(() => controlRequired.value)
 
 const isChecked = computed((): boolean => {
     if (isInGroup) {
@@ -84,11 +91,11 @@ const effectiveName = computed(() =>
 )
 
 onMounted(() => {
-    if (inputRef.value) inputRef.value.indeterminate = props.indeterminate ?? false
+    if (element.value) element.value.indeterminate = props.indeterminate ?? false
 })
 
 watch(() => props.indeterminate, (val) => {
-    if (inputRef.value) inputRef.value.indeterminate = val ?? false
+    if (element.value) element.value.indeterminate = val ?? false
 })
 
 const onChange = (e: Event) => {

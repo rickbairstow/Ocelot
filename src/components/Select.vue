@@ -8,20 +8,19 @@
         </Label>
         <div class="relative">
             <select
+                v-bind="controlAttrs()"
                 :id="effectiveId"
-                class="oui-select w-full appearance-none rounded-xl border bg-white pe-9 ps-3 py-2 text-sm transition-[border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 motion-reduce:transition-none dark:bg-gray-800"
-                :aria-describedby="formField?.describedBy || undefined"
-                :aria-invalid="formField?.hasError ? 'true' : undefined"
-                :class="stateClass"
+                ref="element"
+                v-model="selectedValue"
+                class="oui-select w-full appearance-none rounded-xl border bg-white ps-3 py-2 text-sm transition-[border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 motion-reduce:transition-none dark:bg-gray-800"
+                :class="[stateClass, multiple ? 'pe-3' : 'pe-9']"
                 :disabled="disabled"
                 :multiple="multiple"
                 :name="name"
-                :required="required || undefined"
-                :value="modelValue"
-                @change="onChange"
+                :required="isRequired || undefined"
             >
                 <option
-                    v-if="placeholder"
+                    v-if="placeholder && !multiple"
                     disabled
                     value=""
                 >
@@ -38,6 +37,7 @@
             </select>
             <!-- Custom chevron — hidden when ::picker is supported -->
             <div
+                v-if="!multiple"
                 aria-hidden="true"
                 class="oui-select-chevron pointer-events-none absolute inset-y-0 end-3 flex items-center"
             >
@@ -52,11 +52,12 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { computed } from 'vue'
 import Label from '@Components/Label.vue'
 import Icon from '@Components/Icon.vue'
 import { generateUuid } from '@Utils/uuid'
-import { useFormField } from '@Composables/useFormField'
+import { useFormControl } from '@Composables/useFormField'
 
 type SelectOption = string | { value: string; label: string; disabled?: boolean }
 
@@ -67,6 +68,8 @@ interface NormalizedOption {
 }
 
 interface Props {
+    id?: string
+    invalid?: boolean
     modelValue: string | string[]
     name: string
     options: SelectOption[]
@@ -78,6 +81,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    id: undefined,
+    invalid: false,
     label: undefined,
     placeholder: undefined,
     disabled: false,
@@ -91,8 +96,8 @@ const emit = defineEmits<{
 }>()
 
 const uuid = generateUuid('select')
-const formField = useFormField()
-const effectiveId = formField?.inputId ?? uuid
+const { formField, effectiveId, isInvalid, isRequired, controlAttrs, element, focus } = useFormControl<HTMLSelectElement>(props, uuid)
+defineExpose({ element, focus })
 
 const normalizedOptions = computed((): NormalizedOption[] =>
     props.options.map(opt =>
@@ -105,36 +110,71 @@ const normalizedOptions = computed((): NormalizedOption[] =>
 const stateClass = computed(() =>
     props.disabled
         ? 'border-gray-300 bg-gray-100 text-gray-600 cursor-not-allowed dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400'
-        : 'border-gray-500 text-gray-900 dark:border-gray-600 dark:text-gray-100'
+        : isInvalid.value
+            ? 'border-red-600 text-gray-900 dark:border-red-400 dark:text-gray-100'
+            : 'border-gray-500 text-gray-900 dark:border-gray-600 dark:text-gray-100'
 )
 
-const onChange = (e: Event) => {
-    const select = e.target as HTMLSelectElement
-    const value = props.multiple
-        ? Array.from(select.selectedOptions).map(o => o.value)
-        : select.value
-    emit('update:modelValue', value)
-    emit('change', value)
-}
+const selectedValue = computed({
+    get: () => props.modelValue,
+    set: (value: string | string[]) => {
+        emit('update:modelValue', value)
+        emit('change', value)
+    }
+})
 </script>
 
 <style scoped>
-/* Progressive enhancement: rounded dropdown panel in supporting browsers (Chrome 130+) */
+/* Keep native listboxes and progressively enhance single-select pickers. */
 @supports (appearance: base-select) {
-    .oui-select {
+    .oui-select:not([multiple]),
+    .oui-select:not([multiple])::picker(select) {
         appearance: base-select;
     }
 
-    .oui-select-chevron {
+    .oui-select:not([multiple]) + .oui-select-chevron {
         display: none;
     }
 
-    .oui-select::picker(select) {
+    .oui-select:not([multiple])::picker(select) {
         border-radius: 0.75rem;
         border: 1px solid #e5e7eb;
         box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        overflow: hidden;
+        max-height: min(20rem, 60vh);
+        overflow: auto;
+        background: white;
+        color: #111827;
         padding: 0.25rem;
+    }
+
+    .oui-select option {
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .oui-select option:checked {
+        background: #dbeafe;
+        color: #1e3a8a;
+    }
+
+    .oui-select option:focus-visible {
+        outline: 2px solid #2563eb;
+        outline-offset: -2px;
+    }
+
+    .oui-select option:disabled {
+        opacity: 0.5;
+    }
+
+    .dark .oui-select::picker(select) {
+        background: #1f2937;
+        border-color: #4b5563;
+        color: #f3f4f6;
+    }
+
+    .dark .oui-select option:checked {
+        background: #1e3a8a;
+        color: #dbeafe;
     }
 }
 </style>

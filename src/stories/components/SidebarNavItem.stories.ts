@@ -1,3 +1,4 @@
+import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import SidebarNavItem from '@Components/SidebarNavItem.vue'
 import { expect, within } from 'storybook/test'
@@ -19,7 +20,7 @@ const meta: Meta<typeof SidebarNavItem> = {
         badge: { control: 'text' },
         disabled: { control: 'boolean' },
         href: { control: 'text' },
-        icon: { control: 'text' }
+        icon: iconControl
     },
 
     args: {

@@ -1,25 +1,25 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, fireEvent, userEvent, within } from 'storybook/test'
 import { ref } from 'vue'
 import Input from '@Components/Input.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Input> = {
-    title: 'Components/Form Fields/Input',
+    title: 'Components/Formfields/Input',
     component: Input,
 
     parameters: {
         docs: {
             description: {
-                component: 'A text input supporting all standard HTML input types. Password type includes a built-in show/hide toggle; search type includes a clear button. Integrates with FormField for ARIA-linked labels, hints, and errors.'
+                component: 'A native input for text, email, password, search, tel, url, number, date, time, datetime-local, month, week and color. Values and input/change events are strings, including number/date inputs. Native browser pickers and unsupported-type fallbacks are preserved. Use Range, FileInput, Checkbox and Radio for their distinct value contracts. Supports invalid, explicit IDs, native attributes/events, element and focus().'
             }
         }
     },
 
     argTypes: {
         autoComplete: {
-            control: 'boolean',
-            description: 'Whether the input should allow browser autocomplete.'
+            control: 'text',
+            description: 'Legacy boolean or a native autocomplete token. Prefer autocomplete="email", "name", etc.'
         },
 
         disabled: {
@@ -264,5 +264,90 @@ export const WithFormField: Story = {
         const error = canvas.getByRole('alert')
         await expect(input).toHaveAttribute('aria-describedby', error.id)
         await expect(input).toHaveAttribute('aria-invalid', 'true')
+        await expect(input.parentElement).toHaveClass('border-red-600')
+    }
+}
+
+
+export const NativeTypes: Story = {
+    render: () => ({
+        components: { Input },
+        setup() {
+            return { colour: ref('#2563eb'), month: ref('2026-10'), week: ref('2026-W42'), number: ref('2') }
+        },
+        template: `
+            <div class="grid gap-4">
+                <Input v-model="colour" label="Brand colour" name="colour" type="color" />
+                <Input v-model="month" label="Billing month" name="month" type="month" />
+                <Input v-model="week" label="Delivery week" name="week" type="week" />
+                <Input v-model="number" label="Quantity" :max="10" :min="1" name="quantity" type="number" />
+                <p role="status">{{ colour }} / {{ month }} / {{ week }} / {{ number }}</p>
+            </div>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        for (const [label, type, value] of [
+            ['Brand colour', 'color', '#ff0000'],
+            ['Billing month', 'month', '2027-02'],
+            ['Delivery week', 'week', '2027-W04'],
+            ['Quantity', 'number', '4']
+        ]) {
+            const input = canvas.getByLabelText(label) as HTMLInputElement
+            await expect(input).toHaveAttribute('type', type)
+            input.value = value
+            await fireEvent.input(input)
+            await fireEvent.change(input)
+            await expect(canvas.getByRole('status')).toHaveTextContent(value)
+        }
+    }
+}
+
+export const NativeContract: Story = {
+    render: () => ({
+        components: { Input, FormField },
+        setup() {
+            return { value: ref(''), invalid: ref(true), input: ref(), blurred: ref(false) }
+        },
+        template: `
+            <div class="grid gap-3">
+                <p id="native-email-extra">Additional guidance.</p>
+                <FormField hint="Use your work email." label="Work email" required>
+                    <Input id="native-contract-email" ref="input" v-model="value" aria-describedby="native-email-extra" autocomplete="email" inputmode="email" :invalid="invalid" name="email" type="email" @blur="blurred = true" />
+                </FormField>
+                <button type="button" @click="input.focus()">Focus email</button>
+                <button type="button" @click="invalid = false">Clear invalid state</button>
+                <p role="status">{{ blurred ? 'Blurred' : 'Not blurred' }}</p>
+            </div>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const input = canvas.getByRole('textbox', { name: /work email/i })
+        await expect(input).toHaveAttribute('id', 'native-contract-email')
+        await expect(input).toHaveAttribute('autocomplete', 'email')
+        await expect(input).toHaveAttribute('inputmode', 'email')
+        await expect(input).toBeRequired()
+        await expect(input).toHaveAccessibleDescription('Additional guidance. Use your work email.')
+        await expect(input).toHaveAttribute('aria-invalid', 'true')
+        await userEvent.click(canvas.getByRole('button', { name: 'Focus email' }))
+        await expect(input).toHaveFocus()
+        await userEvent.tab()
+        await expect(canvas.getByRole('status')).toHaveTextContent('Blurred')
+        await userEvent.click(canvas.getByRole('button', { name: 'Clear invalid state' }))
+        await expect(input).not.toHaveAttribute('aria-invalid')
+    }
+}
+
+export const ReadonlyActions: Story = {
+    render: () => ({
+        components: { Input },
+        setup() { return { value: ref('Keep this value') } },
+        template: '<div class="grid gap-3"><Input v-model="value" label="Readonly search" name="readonly-search" readonly type="search" /><Input v-model="value" label="Readonly password" name="readonly-password" readonly type="password" /></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await expect(canvas.queryByRole('button')).not.toBeInTheDocument()
+        await expect(canvas.getByLabelText('Readonly search')).toHaveAttribute('readonly')
     }
 }

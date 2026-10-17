@@ -1,3 +1,4 @@
+import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import StatCard from '@Components/StatCard.vue'
 import { expect, within } from 'storybook/test'
@@ -22,7 +23,7 @@ const meta: Meta<typeof StatCard> = {
             description: 'Colour theme for the icon background.'
         },
         description: { control: 'text', description: 'Supporting text shown below the value.' },
-        icon: { control: 'text', description: 'Icon name or Vue component.' },
+        icon: iconControl,
         label: { control: 'text', description: 'Metric label.' },
         trend: { control: 'number', description: 'Trend percentage. Positive = green, negative = red.' },
         value: { control: 'text', description: 'Metric value.' }

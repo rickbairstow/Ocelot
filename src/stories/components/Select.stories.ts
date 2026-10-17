@@ -13,12 +13,12 @@ const COUNTRIES = [
 ]
 
 const meta: Meta<typeof Select> = {
-    title: 'Components/Form Fields/Select',
+    title: 'Components/Formfields/Select',
     component: Select,
     parameters: {
         docs: {
             description: {
-                component: 'A styled native <select> with appearance: none and a custom chevron. In Chrome 130+ the dropdown panel gains rounded corners via ::picker(select) as a progressive enhancement. Accepts string or object options and integrates with FormField.'
+                component: 'A native select with progressively enhanced picker styling in supporting browsers and a native fallback elsewhere. Multiple selection remains a native listbox. Supports invalid, required, explicit IDs and native attributes/events. v-model/change return a string for single selection or string[] for multiple selection.'
             }
         }
     }
@@ -84,10 +84,12 @@ export const WithFormField: Story = {
         const select = canvas.getByRole('combobox')
         const error = canvas.getByRole('alert')
         await expect(select).toHaveAttribute('aria-invalid', 'true')
+        await expect(select).toHaveClass('border-red-600')
         await expect(select).toHaveAttribute('aria-describedby', error.id)
         await userEvent.selectOptions(select, 'gb')
         await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
         await expect(select).not.toHaveAttribute('aria-invalid')
+        await expect(select).not.toHaveClass('border-red-600')
     }
 }
 
@@ -111,5 +113,48 @@ export const WithDisabledOption: Story = {
         const options = select.querySelectorAll('option')
         const enterpriseOption = Array.from(options).find(o => o.textContent?.includes('Enterprise'))
         await expect(enterpriseOption).toBeDisabled()
+    }
+}
+
+
+export const MultipleSelection: Story = {
+    render: () => ({
+        components: { Select },
+        setup() { return { values: ref(['Small', 'Large']), options: ['Small', 'Medium', 'Large'] } },
+        template: '<div class="grid gap-3"><Select v-model="values" id="multiple-sizes" invalid label="Sizes" multiple name="sizes" :options="options" :size="3" /><button type="button" @click="values = [\'Medium\']">Choose medium</button></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const select = canvas.getByRole('listbox', { name: 'Sizes' })
+        await expect(select).toHaveValue(['Small', 'Large'])
+        await expect(select).toHaveAttribute('aria-invalid', 'true')
+        await expect(select).toHaveAttribute('size', '3')
+        await userEvent.click(canvas.getByRole('button', { name: 'Choose medium' }))
+        await expect(select).toHaveValue(['Medium'])
+        await userEvent.selectOptions(select, 'Large')
+        await expect(select).toHaveValue(['Medium', 'Large'])
+    }
+}
+
+export const DarkPicker: Story = {
+    render: () => ({
+        components: { Select },
+        setup() { return { value: ref('Small') } },
+        template: `
+            <div class="rounded-xl bg-gray-950 p-4">
+                <div class="dark" data-testid="dark-select-panel">
+                    <Select v-model="value" label="Dark size" name="dark-size" :options="['Small', 'Medium', 'Large']" />
+                </div>
+            </div>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const select = canvas.getByRole('combobox', { name: 'Dark size' })
+        await userEvent.selectOptions(select, 'Medium')
+        await expect(select).toHaveValue('Medium')
+        // Scoped picker rules must never turn into a global .dark background rule.
+        await expect(getComputedStyle(canvas.getByTestId('dark-select-panel')).backgroundColor).toBe('rgba(0, 0, 0, 0)')
+        await expect(getComputedStyle(select).appearance).toBe(CSS.supports('appearance', 'base-select') ? 'base-select' : 'none')
     }
 }

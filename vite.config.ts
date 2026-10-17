@@ -29,7 +29,7 @@ export function createViteConfig(mode = ''): UserConfig {
                     'src/utilities'
                 ],
                 insertTypesEntry: true,
-                outDir: 'dist',
+                outDirs: 'dist',
                 tsconfigPath: './tsconfig.json'
             })
         ],

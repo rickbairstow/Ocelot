@@ -128,7 +128,7 @@ const resolvedIcon = computed((): Component | null => {
 
     if (import.meta.env.DEV) {
         console.warn(
-            `[OuiButton] Icon "${icon}" not found in registry. Register it with registerIcons() or pass the component directly.`
+            `[OuiButton] Icon "${icon}" not found. Check the Tabler name (without the Icon prefix), register a custom icon with registerIcons(), or pass a component directly.`
         )
     }
 

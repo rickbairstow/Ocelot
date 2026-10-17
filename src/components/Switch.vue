@@ -2,24 +2,24 @@
     <div class="flex items-center gap-3">
         <!-- sr-only native checkbox — form serialization + keyboard/AT semantics -->
         <input
+            v-bind="controlAttrs()"
             :id="effectiveId"
-            ref="inputRef"
-            class="sr-only"
+            ref="element"
+            class="peer sr-only"
             role="switch"
             type="checkbox"
-            :aria-describedby="formField?.describedBy || undefined"
-            :aria-invalid="formField?.hasError ? 'true' : undefined"
-            :aria-label="!label ? ariaLabel : undefined"
+            :aria-label="ariaLabel || undefined"
             :checked="modelValue"
             :disabled="disabled"
             :name="name"
+            :required="isRequired || undefined"
             @change="onChange"
         />
         <!-- Visual track — aria-hidden div; clicks forwarded to the real checkbox -->
         <div
             aria-hidden="true"
-            class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors motion-reduce:transition-none"
-            :class="[modelValue ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700', disabled ? 'opacity-50 cursor-not-allowed' : '']"
+            class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors motion-reduce:transition-none peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-blue-500"
+            :class="[isInvalid ? 'ring-2 ring-red-600 dark:ring-red-400' : '', modelValue ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700', disabled ? 'opacity-50 cursor-not-allowed' : '']"
             @click="onTrackClick"
         >
             <span
@@ -38,11 +38,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+defineOptions({ inheritAttrs: false })
+import { computed } from 'vue'
 import { generateUuid } from '@Utils/uuid'
-import { useFormField } from '@Composables/useFormField'
+import { useFormControl } from '@Composables/useFormField'
 
 interface Props {
+    id?: string
+    invalid?: boolean
+    required?: boolean
     modelValue: boolean
     name?: string
     label?: string
@@ -51,6 +55,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    id: undefined,
+    invalid: false,
+    required: false,
     name: undefined,
     label: undefined,
     ariaLabel: undefined,
@@ -69,12 +76,13 @@ const emit = defineEmits<{
 }>()
 
 const uuid = generateUuid('switch')
-const formField = useFormField()
-const effectiveId = formField?.inputId ?? uuid
-const inputRef = ref<HTMLInputElement | null>(null)
+const { effectiveId, isInvalid, isRequired, controlAttrs, element, focus } = useFormControl(props, uuid)
+defineExpose({ element, focus })
 
 const onTrackClick = () => {
-    if (!props.disabled) inputRef.value?.click()
+    if (props.disabled) return
+    element.value?.focus()
+    element.value?.click()
 }
 
 const onChange = (e: Event) => {

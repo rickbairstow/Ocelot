@@ -7,20 +7,21 @@
             {{ label }}
         </Label>
         <textarea
+            v-bind="controlAttrs()"
             :id="effectiveId"
-            ref="textareaRef"
+            ref="element"
             class="w-full rounded-xl border bg-white px-3 py-2 text-sm transition-[border-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 motion-reduce:transition-none dark:bg-gray-800 dark:placeholder-gray-500"
-            :aria-describedby="ariaDescribedBy || undefined"
-            :aria-invalid="formField?.hasError ? 'true' : undefined"
+            :aria-describedby="[controlAttrs()['aria-describedby'], showCount ? countId : ''].filter(Boolean).join(' ') || undefined"
             :class="[resizeClass, stateClass]"
             :disabled="disabled"
             :maxlength="maxlength"
             :name="name"
             :placeholder="placeholder ?? undefined"
             :readonly="readonly"
-            :required="required || undefined"
+            :required="isRequired || undefined"
             :rows="resize === 'auto' ? undefined : rows"
             :value="modelValue"
+            @change="emit('change', ($event.target as HTMLTextAreaElement).value)"
             @input="onInput"
         />
         <div
@@ -36,12 +37,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+defineOptions({ inheritAttrs: false })
+import { computed, onMounted, watch } from 'vue'
 import Label from '@Components/Label.vue'
 import { generateUuid } from '@Utils/uuid'
-import { useFormField } from '@Composables/useFormField'
+import { useFormControl } from '@Composables/useFormField'
 
 interface Props {
+    id?: string
+    invalid?: boolean
     modelValue?: string
     name: string
     label?: string
@@ -56,6 +60,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+    id: undefined,
+    invalid: false,
     modelValue: '',
     label: undefined,
     placeholder: undefined,
@@ -76,16 +82,8 @@ const emit = defineEmits<{
 
 const uuid = generateUuid('textarea')
 const countId = generateUuid('count')
-const formField = useFormField()
-const effectiveId = formField?.inputId ?? uuid
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
-
-const ariaDescribedBy = computed(() => {
-    const parts: string[] = []
-    if (formField?.describedBy) parts.push(formField.describedBy)
-    if (props.showCount) parts.push(countId)
-    return parts.length ? parts.join(' ') : undefined
-})
+const { formField, effectiveId, isInvalid, isRequired, controlAttrs, element, focus } = useFormControl<HTMLTextAreaElement>(props, uuid)
+defineExpose({ element, focus })
 
 const resizeMap: Record<string, string> = {
     none: 'resize-none',
@@ -100,7 +98,9 @@ const resizeClass = computed(() => resizeMap[props.resize] ?? 'resize-y')
 const stateClass = computed(() =>
     props.disabled
         ? 'border-gray-300 bg-gray-100 text-gray-600 cursor-not-allowed dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400'
-        : 'border-gray-500 text-gray-900 placeholder-gray-400 dark:border-gray-600 dark:text-gray-100'
+        : isInvalid.value
+            ? 'border-red-600 text-gray-900 placeholder-gray-400 dark:border-red-400 dark:text-gray-100'
+            : 'border-gray-500 text-gray-900 placeholder-gray-400 dark:border-gray-600 dark:text-gray-100'
 )
 
 const currentLength = computed(() => (props.modelValue ?? '').length)
@@ -113,9 +113,9 @@ const countClass = computed(() => {
 })
 
 const recalcHeight = () => {
-    if (props.resize !== 'auto' || !textareaRef.value) return
-    textareaRef.value.style.height = 'auto'
-    textareaRef.value.style.height = `${textareaRef.value.scrollHeight}px`
+    if (props.resize !== 'auto' || !element.value) return
+    element.value.style.height = 'auto'
+    element.value.style.height = `${element.value.scrollHeight}px`
 }
 
 onMounted(recalcHeight)

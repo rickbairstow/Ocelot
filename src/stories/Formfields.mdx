@@ -1,0 +1,78 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Components/Formfields/Overview" />
+
+# Formfields
+
+Use native controls for everyday forms. `Input` selects its behaviour through `type`; use the separate components when the value or interaction differs.
+
+| Component | Values |
+| --- | --- |
+| Input | Strings; text, email, password, search, tel, url, number, date, time, datetime-local, month, week, color |
+| Textarea | String |
+| Select | String, or string array with `multiple` |
+| Checkbox / Switch | Boolean |
+| Radio / RadioGroup | String |
+| CheckboxGroup | String array |
+| Range | Number |
+| FileInput | File array, including single-file selection |
+
+Input emits strings even for `type="number"`. Convert values in the consuming application when needed. Date and time values keep the browser's native string format; there is no timezone conversion. Browsers without a particular picker retain their native fallback. `tel` changes input semantics and mobile keyboards; it does not validate international telephone numbers or apply a mask.
+
+## Labels, help and errors
+
+```vue
+<FormField
+    :error="errors.email"
+    hint="We will use this to reply."
+    label="Email address"
+    required
+>
+    <Input
+        v-model="email"
+        autocomplete="email"
+        name="email"
+        type="email"
+    />
+</FormField>
+```
+
+FormField links its label, hint and error to the control. Help remains available when an error appears. `required` reaches the control automatically. An error marks the control invalid and changes its visual state; `invalid` can also mark a field without supplying an inline error.
+
+A standalone control accepts `label` and `invalid`. If using a separate Label, supply matching `for` and `id` values. An explicit control ID also updates its FormField label. Each field should contain one control or one choice group. Supply an accessible name through a label, `aria-label` or `aria-labelledby`; a placeholder is not a label.
+
+## Consumer-owned validation
+
+The application decides the rules, when to validate and when to display errors. FormField does not track touched/dirty state or submit forms. Pass an error string from handwritten validation, server responses or a form library.
+
+Native constraints (`required`, `pattern`, `min`, `max`, `minlength`, `maxlength`, `step`) continue to work. A form can use browser validation, or `novalidate` with consumer-managed error messages. Controls expose `element` and `focus()` so the application can inspect native `validity`, call `checkValidity()`, `reportValidity()` or `setCustomValidity()`, and focus an invalid field.
+
+Other native attributes and listeners reach the native control, including `autocomplete`, `inputmode`, `form`, `aria-*`, focus, blur and invalid events. Existing value-based input/change events retain their documented payloads. Input's older `autoComplete` boolean remains supported; prefer standard `autocomplete` tokens for new forms.
+
+See **Patterns → Forms → Contact Form** for submit-time validation, sections, focusing the first error, a success message and reset. Reset the Vue models and validation state together; native form reset alone does not reset application state.
+
+## Choice groups
+
+```vue
+<FormField
+    :error="errors.contactMethod"
+    group
+    label="Preferred contact method"
+    required
+>
+    <RadioGroup v-model="contactMethod" name="contactMethod">
+        <Radio label="Email" value="email" />
+        <Radio label="Phone" value="phone" />
+    </RadioGroup>
+</FormField>
+```
+
+`group` renders a fieldset and legend. Options retain unique IDs and their own labels. RadioGroup inherits required state: the user must choose one option. CheckboxGroup deliberately does not put `required` on every checkbox, which would require every option; the consumer validates minimum/maximum selection counts. Disabled groups disable all their choices.
+
+## Select, range and files
+
+Select uses a native select. Supporting browsers receive enhanced picker styling; other browsers retain their native picker. Multiple selection remains a native listbox. Use unique string values for options. Search, filtering and combobox interactions belong in a separate component.
+
+Range preserves native keyboard behaviour and emits numbers. It always has a value, so required does not apply. Use `aria-valuetext` when a numeric value needs a more descriptive spoken equivalent.
+
+FileInput returns `File[]`. Set the model to `[]` or call `clear()` to clear it; browsers do not allow preselecting files. `accept` guides the chooser but does not validate file contents. The application validates file type, size and count and handles uploads. No upload, preview or drag-and-drop workflow is included.

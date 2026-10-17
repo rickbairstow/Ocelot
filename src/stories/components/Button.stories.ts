@@ -1,3 +1,4 @@
+import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
@@ -36,10 +37,7 @@ const meta: Meta<typeof Button> = {
             control: 'text',
             description: 'Renders as an anchor tag.'
         },
-        icon: {
-            control: 'text',
-            description: 'Icon registry key or Vue component.'
-        },
+        icon: iconControl,
         iconOnly: {
             control: 'boolean',
             description: 'Square icon-only button. Requires aria-label.'

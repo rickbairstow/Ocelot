@@ -6,7 +6,7 @@ import CheckboxGroup from '@Components/CheckboxGroup.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Checkbox> = {
-    title: 'Components/Form Fields/Checkbox',
+    title: 'Components/Formfields/Checkbox',
     component: Checkbox,
     parameters: {
         docs: {
@@ -141,5 +141,25 @@ export const GroupHorizontal: Story = {
         await expect(checkboxes[0]).toBeChecked()
         await expect(checkboxes[2]).toBeChecked()
         await expect(checkboxes[1]).not.toBeChecked()
+    }
+}
+
+
+export const StandaloneValidation: Story = {
+    render: () => ({
+        components: { Checkbox },
+        setup() { return { value: ref(false), invalid: ref(true) } },
+        template: '<div class="grid gap-3"><Checkbox id="standalone-checkbox" v-model="value" :invalid="invalid" label="Confirm choice" name="choice" required  /><button type="button" @click="invalid = false">Clear error</button></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const control = canvas.getByRole('checkbox', { name: 'Confirm choice' })
+        await expect(control).toHaveAttribute('id', 'standalone-checkbox')
+        await expect(control).toBeRequired()
+        await expect(control).toHaveAttribute('aria-invalid', 'true')
+        await userEvent.click(canvas.getByText('Confirm choice', { selector: 'label' }))
+        await expect(control).toBeChecked()
+        await userEvent.click(canvas.getByRole('button', { name: 'Clear error' }))
+        await expect(control).not.toHaveAttribute('aria-invalid')
     }
 }
