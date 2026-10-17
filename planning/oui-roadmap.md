@@ -1,7 +1,19 @@
 # Ocelot UI — Component Library Roadmap
 
-> **Status:** Planning document · April 2026  
-> **Current version:** 0.0.22 · 66 components · ~115 registered icons
+> **Status:** Refreshed 17 October 2026; earlier session logs and proposals below are historical.
+>
+> **Repository package version:** 0.0.28 · full Tabler icon catalogue with OUI aliases and custom registration. Component exports are maintained in `.build/index.ts`; package metadata in `package.json` is authoritative.
+
+## Current maintenance baseline
+
+- Development and CI use Node.js 26.12.0 from `.nvmrc`. Consumer projects use the Node.js version supported by their own build tools; OUI declares no package-wide Node.js engine requirement.
+- Vue 3.5 and Tailwind CSS 4 remain consumer peer dependencies. Table uses the optional TanStack Vue Table 9 peer; PhotoSwipe, Plyr, and QRCode are optional peers for their respective components.
+- The build uses explicit named exports and generates public TypeScript declarations. Consumers import both `ocelot-ui/tailwind.css` and `ocelot-ui/style.css`.
+- Tests use Vitest with Playwright and Storybook's accessibility addon, alongside Node-based unit tests. Type checking runs in PR checks and before release publication.
+- Releases use the manual `Release Package` workflow to prepare a version-bump PR, then publish on merge. The former local publishing script has been retired.
+- The Markdown roadmap is the maintained planning source. The HTML companion is an archived planning snapshot, not a current inventory or completion report.
+
+Historical counts and test totals below describe their original sessions, not the current checkout. New work should be checked against the current source and Storybook before treating an old proposal as outstanding.
 
 ---
 

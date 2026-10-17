@@ -6,8 +6,13 @@ Thanks for your interest in contributing 👍
 
 - Fork the repository
 - Clone your fork locally
-- Install dependencies
+- Select the contributor Node.js version from `.nvmrc` (currently 26.12.0)
+- Install dependencies with `npm ci`
 - Create a new branch
+
+Use `nvm install` and `nvm use`, or `nvm install 26.12.0` and `nvm use 26.12.0` with nvm-windows. This version is for working on OUI; consumers use the Node.js version supported by their own build tools.
+
+Start the component documentation with `npm run storybook`.
 
 ## Before You Start
 
@@ -26,6 +31,22 @@ Thanks for your interest in contributing 👍
 - All changes must be fully tested in **Storybook**
 - A Storybook story must be **created or updated for every component**
 - Ensure all states and variants are covered where applicable
+
+Before submitting a PR, run:
+
+```bash
+npm run lint
+npm run check-types
+npm run test:run
+```
+
+`npm test` runs Vitest in watch mode; `npm run test:run` runs unit and Storybook interaction/accessibility tests once, without a separate Storybook server. PR checks run lint, type checking, tests, and a Storybook build with documentation navigation checks.
+
+For library/export changes, also run `npm run build` to verify the package and generated TypeScript declarations. For documentation navigation changes, build Storybook, serve it on port 6006, and run `npm run test:docs` as described in the README.
+
+## Releases
+
+Use the manual `Release Package` GitHub Actions workflow on `main`. Choose `patch`, `minor`, or `major`; the workflow prepares a version-bump PR, and merging it publishes through npm Trusted Publishing. Do not bump versions or publish locally for normal releases. See the README for repository credentials and environment setup.
 
 ## Commits
 

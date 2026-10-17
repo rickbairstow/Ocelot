@@ -36,10 +36,19 @@ jobs:
     environment: npm-release
 
     steps:
+      - name: Check release automation token
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN }}
+        run: |
+          if [ -z "$RELEASE_TOKEN" ]; then
+            echo "::error::Configure RELEASE_GITHUB_TOKEN (or RELEASE_PR_TOKEN) with Contents and Pull requests read/write access to this repository. The built-in GITHUB_TOKEN requires approval for release PR checks, so it cannot be used for unattended release preparation."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN || github.token }}
+          token: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -65,7 +74,7 @@ jobs:
 
       - name: Create release PR
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN || github.token }}
+          GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN }}
         run: |
           branch="release/${{ steps.version.outputs.tag }}"
           git checkout -b "$branch"
@@ -143,6 +152,10 @@ jobs:
       - name: Run tests
         if: steps.tag.outputs.exists != 'true'
         run: npm run test:run
+
+      - name: Check Vue and TypeScript types
+        if: steps.tag.outputs.exists != 'true'
+        run: npm run check-types
 
       - name: Build package
         if: steps.tag.outputs.exists != 'true'

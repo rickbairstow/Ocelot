@@ -146,7 +146,7 @@ const handleClick = () => {
 
 onMounted(() => {
     if (props.lightboxGroup) {
-        entry = { getSlide }
+        entry = { getSlide, getElement: () => rootRef.value }
         registerInGroup(props.lightboxGroup, entry)
     }
 })

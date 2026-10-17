@@ -11,6 +11,7 @@ Use native controls for everyday forms. `Input` selects its behaviour through `t
 | Input | Strings; text, email, password, search, tel, url, number, date, time, datetime-local, month, week, color |
 | Textarea | String |
 | Select | String, or string array with `multiple` |
+| Combobox | String or null; string array with `multiple`. Local filtering or parent-managed remote search and pagination. |
 | Checkbox / Switch | Boolean |
 | Radio / RadioGroup | String |
 | CheckboxGroup | String array |
@@ -38,6 +39,19 @@ Input emits strings even for `type="number"`. Convert values in the consuming ap
 ```
 
 FormField links its label, hint and error to the control. Help remains available when an error appears. `required` reaches the control automatically. An error marks the control invalid and changes its visual state; `invalid` can also mark a field without supplying an inline error.
+
+`HelpText` and `ErrorText` are also available separately for custom field layouts. FormField uses these same components internally. Give standalone messages an ID and link them through the control's `aria-describedby`; also pass `invalid` to the control when showing an error. ErrorText announces newly displayed messages by default. Set `:announce="false"` when another live region already announces the error or the message is static.
+
+```vue
+<Input
+    aria-describedby="email-help email-error"
+    invalid
+    label="Email"
+    type="email"
+/>
+<HelpText id="email-help">Use your work email address.</HelpText>
+<ErrorText id="email-error">Enter a valid email address.</ErrorText>
+```
 
 A standalone control accepts `label` and `invalid`. If using a separate Label, supply matching `for` and `id` values. An explicit control ID also updates its FormField label. Each field should contain one control or one choice group. Supply an accessible name through a label, `aria-label` or `aria-labelledby`; a placeholder is not a label.
 
@@ -71,7 +85,43 @@ See **Patterns → Forms → Contact Form** for submit-time validation, sections
 
 ## Select, range and files
 
-Select uses a native select. Supporting browsers receive enhanced picker styling; other browsers retain their native picker. Multiple selection remains a native listbox. Use unique string values for options. Search, filtering and combobox interactions belong in a separate component.
+Select uses a native select. Supporting browsers receive enhanced picker styling; other browsers retain their native picker. Multiple selection remains a native listbox. Use unique string values for options. Use Combobox when users need to search the options.
+
+## Searchable selection
+
+Combobox filters its supplied options locally by default. Set `mode="remote"` to receive debounced `search` events and provide the matching options yourself. The component does not make API calls. Use unique, non-empty string values and supply an accessible label.
+
+```vue
+<Combobox
+    v-model="country"
+    label="Country"
+    name="country"
+    :options="countries"
+/>
+```
+
+For remote data, the parent handles initial search, pagination, loading/error state and cancellation of stale requests:
+
+```vue
+<Combobox
+    v-model="project"
+    :has-more="hasMore"
+    label="Project"
+    :loading="loading"
+    mode="remote"
+    :options="projects"
+    @load-more="loadNextPage"
+    @search="searchProjects"
+/>
+```
+
+`searchProjects(query)` replaces the results and resets the parent's page number; it also receives an empty query when the popup opens. `loadNextPage({ search })` appends results for that query. Replace or append `options` after receiving a page, and set `hasMore=false` at the end. Search is debounced by `searchDelay` (250ms); local filtering remains immediate. If local options are loaded only after opening, use `@open` to populate them once.
+
+The default load threshold is one menu-height from the bottom (`loadMoreThreshold=1`). Short menus may ask for another page immediately. The component emits at most one request per options update/query; toggling `loading` off without supplying updated options does not automatically retry. Parent-owned error UI can call `retryLoadMore()` on the open combobox to explicitly retry. Ignore responses from older search requests so stale pages cannot replace the current query.
+
+Use `multiple` with a string-array model. `selectedOptions` supplies labels for selected values not present in the initial remote page; known selected labels are retained when pages change. `maxHeight` is 400px by default, always constrained to available space. Use `max-height="viewport"` for all available viewport height. The popup uses Floating UI to flip and follow the field, and is mounted only while open. Options are not virtualised.
+
+Combobox works within FormField, displays selected ticks, and supports Arrow keys, Home/End while navigating options, Enter, Escape and Tab. Its hidden native select submits model values and supports `required`, including multiple selection. Only confirmed options are submitted; typed search text is discarded when the menu closes. Reset the Vue model in the parent when resetting a form.
 
 Range preserves native keyboard behaviour and emits numbers. It always has a value, so required does not apply. Use `aria-valuetext` when a numeric value needs a more descriptive spoken equivalent.
 

@@ -51,8 +51,7 @@
     "test-storybook": "vitest run --project=storybook",
     "test:docs": "node .storybook/test-docs.mjs",
     "test": "vitest",
-    "test:run": "vitest run",
-    "publish:npm": "node .build/publish.mjs"
+    "test:run": "vitest run"
   },
   "peerDependencies": {
     "@tanstack/vue-table": "^9.3.1",

@@ -42,3 +42,6 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
+
+      - name: Check Vue and TypeScript types
+        run: npm run check-types

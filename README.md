@@ -16,7 +16,7 @@ Head to [OcelotUI on Netlify](https://ocelotui.netlify.app) for the Storybook si
 npm install ocelot-ui
 ```
 
-**Prerequisites:** Vue 3.5+, Tailwind CSS v4, Node.js 20+
+**Consumer prerequisites:** Vue 3.5+ and Tailwind CSS v4. Use the Node.js version supported by your application's build tools. OUI's development Node.js version is not a requirement for consuming the published package.
 
 Optional feature dependencies:
 
@@ -25,13 +25,13 @@ Optional feature dependencies:
 npm install @tanstack/vue-table@^9.3.1
 
 # LightboxImage
-npm install photoswipe
+npm install photoswipe@^5.4.4
 
 # Video
-npm install plyr
+npm install plyr@^3.8.5
 
 # QrCode
-npm install qrcode
+npm install qrcode@^1.5.4
 ```
 
 Install only the packages for the components you actually use. OUI will warn in development if `Table`, `LightboxImage`, `Video`, or `QrCode` is mounted without its matching dependency.
@@ -71,6 +71,8 @@ Use named imports directly in your components:
 import { Button, Dialog, Sidebar } from 'ocelot-ui'
 ```
 
+TypeScript declarations are included. Composables such as `useToast`, `useCommandPalette`, and `useFormField` are also available as named imports.
+
 ### 4. Portal targets
 
 `Dialog`, `Toast`, and `CommandPalette` use Vue Teleport. OUI creates `#portal-target` automatically after mount when it is missing, or you can provide one yourself in `index.html`.
@@ -105,7 +107,46 @@ Toggle dark mode via the `.dark` class on `<html>`:
 
 All components and product pattern stories should be checked under the Storybook dark theme before release. New component stories should use semantic Tailwind colours with `dark:` variants for any text, border, or background colour they introduce.
 
+### Design tokens
+
+The `ocelot-ui/tailwind.css` import also provides CSS custom properties for shared styling. Override them in your application's CSS to customise OUI:
+
+```css
+:root {
+    --oui-radius-lg: 0.75rem;
+    --oui-transition-duration: 200ms;
+}
+```
+
 ---
+
+## Local development
+
+This repository uses Node.js **26.12.0**, pinned in `.nvmrc`. GitHub Actions and Netlify use that pin for builds. This is a contributor toolchain setting; the published package does not declare a Node.js engine requirement.
+
+With nvm installed, select the pinned version, install dependencies, and start Storybook:
+
+```bash
+nvm install
+nvm use
+npm ci
+npm run storybook
+```
+
+On Windows with nvm-windows, use `nvm install 26.12.0` and `nvm use 26.12.0` explicitly.
+
+The development stack currently uses Vue 3.5, Tailwind CSS 4, Vite 8, Storybook 10, Vitest 5, and TypeScript 6. Consumer peer dependency ranges are defined separately in `package.json`.
+
+Before submitting changes, run:
+
+```bash
+npm run lint
+npm run check-types
+npm run test:run
+npm run build
+```
+
+`npm test` starts Vitest in watch mode for local iteration. Component changes also require relevant Storybook stories and interaction tests.
 
 ## Bundle analysis
 
@@ -123,8 +164,6 @@ Run `npm run test:run` for component interactions, accessibility checks, and uni
 
 To check documentation navigation against the production build, run `npm run build-storybook`, serve it with `npm run preview -- --host 127.0.0.1 --port 6006 --outDir storybook-static`, then run `npm run test:docs` in another terminal. CI runs both the component suite and documentation navigation checks.
 
-See [the maintenance review](docs/maintenance-review.md) for bundle and dependency findings.
-
 ---
 
 ## Publishing to npm
@@ -136,10 +175,11 @@ Repository setup:
 - Configure npm Trusted Publishing for `release.yml`
 - Use the `npm-release` GitHub Environment for release approval protection
 - Add only trusted maintainers as required reviewers on that environment
+- Configure `RELEASE_GITHUB_TOKEN` (or `RELEASE_PR_TOKEN`) with repository Contents and Pull requests read/write access so release PR checks can run automatically
 
 When running `Release Package`, choose `patch`, `minor`, or `major`. The workflow opens or updates a release PR that bumps `package.json` and `package-lock.json`.
 
-When that release PR is merged to `main`, the same workflow installs Playwright, runs linting, runs tests, builds the package, publishes to npm through Trusted Publishing, pushes the release tag, and creates the matching GitHub Release. If the npm version already exists, the workflow skips npm publish and still creates the missing tag/release.
+When that release PR is merged to `main`, the same workflow installs Playwright, runs linting, type checking, and tests, builds the package, publishes to npm through Trusted Publishing, pushes the release tag, and creates the matching GitHub Release. If the npm version already exists, the workflow skips npm publish and still creates the missing tag/release.
 
 Do not manually bump the package version for normal releases. Let the release workflow do it.
 

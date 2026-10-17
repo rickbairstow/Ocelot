@@ -10,6 +10,7 @@ export interface LightboxSlide {
 
 export interface LightboxEntry {
     getSlide: () => LightboxSlide
+    getElement?: () => HTMLElement | null
 }
 
 const registry = new Map<string, LightboxEntry[]>()
@@ -217,7 +218,16 @@ export function unregisterFromGroup(group: string, entry: LightboxEntry): void {
 }
 
 export async function openGroup(group: string, clickedEntry: LightboxEntry): Promise<void> {
-    const entries = registry.get(group) ?? []
+    const entries = [...(registry.get(group) ?? [])].sort((a, b) => {
+        const first = a.getElement?.()
+        const second = b.getElement?.()
+        if (!first || !second) return 0
+        const position = first.compareDocumentPosition(second)
+        if (position & Node.DOCUMENT_POSITION_DISCONNECTED) return 0
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) return -1
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) return 1
+        return 0
+    })
     const index = entries.indexOf(clickedEntry)
     const slides = entries.map(e => e.getSlide())
     const instance = await initLightbox()

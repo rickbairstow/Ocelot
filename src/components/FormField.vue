@@ -22,27 +22,26 @@
 
         <slot />
 
-        <p
+        <ErrorText
             v-if="error"
             :id="errorId"
-            class="text-sm text-red-600 dark:text-red-400"
-            role="alert"
         >
             {{ error }}
-        </p>
-        <p
+        </ErrorText>
+        <HelpText
             v-if="hint"
             :id="hintId"
-            class="text-sm text-gray-500 dark:text-gray-400"
         >
             {{ hint }}
-        </p>
+        </HelpText>
     </component>
 </template>
 
 <script setup lang="ts">
 import { reactive, provide, ref } from 'vue'
 import Label from '@Components/Label.vue'
+import ErrorText from '@Components/ErrorText.vue'
+import HelpText from '@Components/HelpText.vue'
 import { generateUuid } from '@Utils/uuid'
 import { FormFieldKey } from '@Composables/useFormField'
 import type { FormFieldContext } from '@Composables/useFormField'
