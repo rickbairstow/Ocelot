@@ -64,6 +64,62 @@ const meta: Meta<typeof NavigationBar> = {
 
 type Story = StoryObj<typeof meta>
 
+export const Default: Story = {
+    render: (args) => ({
+        components: { Avatar, Button, NavigationBar },
+        setup() {
+            return { args, navLinks }
+        },
+        template: `
+            <NavigationBar v-bind="args">
+                <template #brand>
+                    <div class="flex items-center gap-3">
+                        <div class="flex size-10 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white">
+                            OUI
+                        </div>
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-semibold text-gray-950 dark:text-gray-50">Ocelot Workspace</p>
+                            <p class="truncate text-xs text-gray-500 dark:text-gray-400">Operations</p>
+                        </div>
+                    </div>
+                </template>
+
+                <template #nav>
+                    <a
+                        v-for="(item, index) in navLinks"
+                        :key="item"
+                        href="#"
+                        class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                        :aria-current="index === 0 ? 'page' : undefined"
+                    >
+                        {{ item }}
+                    </a>
+                </template>
+
+                <template #actions>
+                    <Button
+                        aria-label="Open notifications"
+                        color="gray"
+                        icon="Bell"
+                        variant="tertiary"
+                    />
+                    <Avatar
+                        initials="OU"
+                        label="Ocelot user"
+                        size="sm"
+                    />
+                </template>
+            </NavigationBar>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await expect(canvas.getByRole('navigation', { name: /primary navigation/i })).toBeVisible()
+        await expect(canvas.getByRole('link', { name: navLinks[0] })).toHaveAttribute('aria-current', 'page')
+        await expect(canvas.getByText('OU')).toBeVisible()
+    }
+}
+
 export const WithSubmenu: Story = {
     render: (args) => ({
         components: { NavigationBar, NavigationBarSubmenu },
@@ -122,61 +178,7 @@ export const WithSubmenu: Story = {
 
 export default meta
 
-export const Default: Story = {
-    render: (args) => ({
-        components: { Avatar, Button, NavigationBar },
-        setup() {
-            return { args, navLinks }
-        },
-        template: `
-            <NavigationBar v-bind="args">
-                <template #brand>
-                    <div class="flex items-center gap-3">
-                        <div class="flex size-10 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white">
-                            OUI
-                        </div>
-                        <div class="min-w-0">
-                            <p class="truncate text-sm font-semibold text-gray-950 dark:text-gray-50">Ocelot Workspace</p>
-                            <p class="truncate text-xs text-gray-500 dark:text-gray-400">Operations</p>
-                        </div>
-                    </div>
-                </template>
 
-                <template #nav>
-                    <a
-                        v-for="(item, index) in navLinks"
-                        :key="item"
-                        href="#"
-                        class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-                        :aria-current="index === 0 ? 'page' : undefined"
-                    >
-                        {{ item }}
-                    </a>
-                </template>
-
-                <template #actions>
-                    <Button
-                        aria-label="Open notifications"
-                        color="gray"
-                        icon="Bell"
-                        variant="tertiary"
-                    />
-                    <Avatar
-                        initials="OU"
-                        label="Ocelot user"
-                        size="sm"
-                    />
-                </template>
-            </NavigationBar>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        await expect(canvas.getByRole('navigation', { name: /primary navigation/i })).toBeVisible()
-        await expect(canvas.getByRole('link', { name: navLinks[0] })).toHaveAttribute('aria-current', 'page')
-        await expect(canvas.getByText('OU')).toBeVisible()
-    }
-}
 
 export const WithMenuToggle: Story = {
     name: 'Mobile Menu Toggle',

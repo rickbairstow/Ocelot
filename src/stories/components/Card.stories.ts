@@ -58,20 +58,7 @@ const meta: Meta<typeof Card> = {
         }
     },
 
-    args: {
-        badges: [
-            { text: faker.lorem.word(), type: 'info' },
-            { text: faker.lorem.word(), type: 'success' }
-        ],
-        clickable: false,
-        imageAlt: faker.commerce.productName(),
-        imageSrc: 'https://picsum.photos/seed/oui-card/400/300',
-        selected: false,
-        size: 'base',
-        title: faker.commerce.productName(),
-        variant: 'default',
-        vertical: false
-    },
+    args: {},
 
     render: (args) => ({
         components: { Card },
@@ -99,10 +86,17 @@ const meta: Meta<typeof Card> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+export const WithBadges: Story = {
+    args: { title: 'Weekend escape', badges: [{ text: 'Available', type: 'success' }] },
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByText('Available')).toBeVisible()
+    }
+}
+
 export const Default: Story = {}
 
 export const Horizontal: Story = {
-    args: { vertical: false }
+    args: { imageSrc: 'https://picsum.photos/seed/oui-card/400/300', imageAlt: 'Mountain landscape', title: 'Weekend escape' }
 }
 
 export const Vertical: Story = {
@@ -225,6 +219,4 @@ export const WithNamedSlots: Story = {
     })
 }
 
-export const NoImage: Story = {
-    args: { imageSrc: null, badges: [] }
-}
+

@@ -23,11 +23,7 @@ const meta: Meta<typeof EmptyState> = {
         title: { control: 'text', description: 'Primary empty state message.' }
     },
 
-    args: {
-        description: faker.lorem.sentence(10),
-        icon: 'FolderOpen',
-        title: 'No results found'
-    }
+    args: { title: 'No results found' }
 }
 
 export default meta
@@ -89,7 +85,7 @@ export const WithMultipleCTAs: Story = {
     }
 }
 
-export const NoIcon: Story = {
+export const WithDescription: Story = {
     args: {
         icon: undefined,
         title: 'Nothing here yet',
@@ -104,7 +100,7 @@ export const NoIcon: Story = {
     }
 }
 
-export const NoDescription: Story = {
+export const WithIcon: Story = {
     args: {
         description: undefined,
         icon: 'Search',

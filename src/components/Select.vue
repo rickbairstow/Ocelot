@@ -125,6 +125,28 @@ const selectedValue = computed({
 </script>
 
 <style scoped>
+.oui-select option:disabled {
+    background: #fff;
+    color: #4b5563;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.oui-select option:disabled:checked {
+    background: #dbeafe;
+    color: #1e3a8a;
+}
+
+.dark .oui-select option:disabled {
+    background: #1f2937;
+    color: #d1d5db;
+}
+
+.dark .oui-select option:disabled:checked {
+    background: #1e3a8a;
+    color: #dbeafe;
+}
+
 /* Keep native listboxes and progressively enhance single-select pickers. */
 @supports (appearance: base-select) {
     .oui-select:not([multiple]),
@@ -160,10 +182,6 @@ const selectedValue = computed({
     .oui-select option:focus-visible {
         outline: 2px solid #2563eb;
         outline-offset: -2px;
-    }
-
-    .oui-select option:disabled {
-        opacity: 0.5;
     }
 
     .dark .oui-select::picker(select) {

@@ -13,7 +13,7 @@ const COUNTRIES = [
 ]
 
 const meta: Meta<typeof Select> = {
-    title: 'Components/Formfields/Select',
+    title: 'Components/Inputs/Select',
     component: Select,
     parameters: {
         docs: {
@@ -121,7 +121,7 @@ export const MultipleSelection: Story = {
     render: () => ({
         components: { Select },
         setup() { return { values: ref(['Small', 'Large']), options: ['Small', 'Medium', 'Large'] } },
-        template: '<div class="grid gap-3"><Select v-model="values" id="multiple-sizes" invalid label="Sizes" multiple name="sizes" :options="options" :size="3" /><button type="button" @click="values = [\'Medium\']">Choose medium</button></div>'
+        template: '<div class="grid gap-3"><Select v-model="values" id="multiple-sizes" invalid label="Sizes" multiple name="sizes" :options="options" :size="3" /></div>'
     }),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -129,14 +129,15 @@ export const MultipleSelection: Story = {
         await expect(select).toHaveValue(['Small', 'Large'])
         await expect(select).toHaveAttribute('aria-invalid', 'true')
         await expect(select).toHaveAttribute('size', '3')
-        await userEvent.click(canvas.getByRole('button', { name: 'Choose medium' }))
+        await userEvent.deselectOptions(select, ['Small', 'Large'])
+        await userEvent.selectOptions(select, 'Medium')
         await expect(select).toHaveValue(['Medium'])
         await userEvent.selectOptions(select, 'Large')
         await expect(select).toHaveValue(['Medium', 'Large'])
     }
 }
 
-export const DarkPicker: Story = {
+export const DarkTheme: Story = {
     render: () => ({
         components: { Select },
         setup() { return { value: ref('Small') } },
@@ -156,5 +157,56 @@ export const DarkPicker: Story = {
         // Scoped picker rules must never turn into a global .dark background rule.
         await expect(getComputedStyle(canvas.getByTestId('dark-select-panel')).backgroundColor).toBe('rgba(0, 0, 0, 0)')
         await expect(getComputedStyle(select).appearance).toBe(CSS.supports('appearance', 'base-select') ? 'base-select' : 'none')
+    }
+}
+
+export const DisabledSelectedOption: Story = {
+    render: () => ({
+        components: { Select },
+        setup() {
+            return {
+                placeholder: ref(''),
+                selected: ref('retired'),
+                options: [
+                    { value: 'current', label: 'Available plan' },
+                    { value: 'retired', label: 'Retired plan (unavailable)', disabled: true },
+                    { value: 'future', label: 'Future plan (unavailable)', disabled: true }
+                ]
+            }
+        },
+        template: `
+            <div class="grid gap-4">
+                <div v-for="theme in ['light', 'dark']" :key="theme" :class="theme === 'dark' ? 'dark bg-gray-950 p-4' : 'bg-white p-4'">
+                    <Select v-model="placeholder" :label="theme + ' placeholder'" :name="theme + '-placeholder'" :options="options" placeholder="Choose a plan..." />
+                    <Select v-model="selected" :label="theme + ' selected disabled option'" :name="theme + '-selected'" :options="options" />
+                </div>
+            </div>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const luminance = (color: string) => {
+            const channels = color.match(/[\d.]+/g)!.slice(0, 3).map(Number).map(value => {
+                const channel = value / 255
+                return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+            })
+            return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722
+        }
+        for (const theme of ['light', 'dark']) {
+            for (const label of ['placeholder', 'selected disabled option']) {
+                const select = canvas.getByRole('combobox', { name: `${theme} ${label}` })
+                for (const option of select.querySelectorAll<HTMLOptionElement>('option:disabled')) {
+                    const style = getComputedStyle(option)
+                    await expect(style.opacity).toBe('1')
+                    const foreground = luminance(style.color)
+                    const background = luminance(style.backgroundColor)
+                    const contrast = (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05)
+                    await expect(contrast).toBeGreaterThanOrEqual(4.5)
+                }
+                const unavailable = within(select).getByRole('option', { name: 'Future plan (unavailable)' })
+                await userEvent.selectOptions(select, unavailable)
+                await expect(select).toHaveValue(label === 'placeholder' ? '' : 'retired')
+            }
+        }
     }
 }

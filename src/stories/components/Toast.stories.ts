@@ -1,8 +1,10 @@
+import Button from '@Components/Button.vue'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Toast from '@Components/Toast.vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { useToast } from '@Composables/useToast'
 import type { ToastType } from '@Composables/useToast'
+import { ref } from 'vue'
 
 const placements = ['top-right', 'top-left', 'bottom-right', 'bottom-left'] as const
 const types: ToastType[] = ['default', 'success', 'error', 'warning', 'info']
@@ -14,7 +16,7 @@ const meta: Meta<typeof Toast> = {
     parameters: {
         docs: {
             description: {
-                component: 'A non-blocking notification that appears temporarily at the screen edge. Managed via the `useToast` composable — call `useToast().show()` from anywhere to trigger a toast. Supports success, error, warning, and info types with optional actions.'
+                component: 'A non-blocking notification that appears temporarily at the screen edge. Managed via the `useToast` composable — call `useToast().add()` from anywhere to trigger a toast. Supports success, error, warning, and info types with optional actions.'
             }
         }
     },
@@ -32,7 +34,7 @@ const meta: Meta<typeof Toast> = {
     },
 
     render: (args) => ({
-        components: { Toast },
+        components: { Toast, Button },
         setup() {
             const { add, clear } = useToast()
             return { args, add, clear }
@@ -40,9 +42,9 @@ const meta: Meta<typeof Toast> = {
         template: `
             <div id="portal-target"></div>
 
-            <button @click="add('Your changes have been saved.')">
+            <Button @click="add('Your changes have been saved.')">
                 Add toast
-            </button>
+            </Button>
 
             <Toast :placement="args.placement" />
         `
@@ -73,7 +75,7 @@ export const Default: Story = {
 
 export const AllTypes: Story = {
     render: () => ({
-        components: { Toast },
+        components: { Toast, Button },
         setup() {
             const { add, clear } = useToast()
             return { types, add, clear }
@@ -81,15 +83,15 @@ export const AllTypes: Story = {
         template: `
             <div id="portal-target"></div>
 
-            <div class="flex flex-col gap-2">
-                <button
+            <div class="flex flex-wrap gap-2">
+                <Button
                     v-for="type in types"
                     :key="type"
                     class="capitalize"
                     @click="add(\`This is a \${type} notification.\`, { type })"
                 >
                     {{ type }}
-                </button>
+                </Button>
             </div>
 
             <Toast placement="top-right" />
@@ -116,19 +118,25 @@ export const AllTypes: Story = {
 
 export const WithAction: Story = {
     render: () => ({
-        components: { Toast },
+        components: { Toast, Button },
         setup() {
             const { add, clear } = useToast()
-            const addWithAction = () => add('File deleted.', {
-                type: 'default',
-                action: { label: 'Undo', onClick: () => console.log('Undo clicked') }
-            })
-            return { addWithAction, clear }
+            const deleted = ref(false)
+            const addWithAction = () => {
+                deleted.value = true
+                add('Receipt deleted.', {
+                    action: { label: 'Undo', onClick: () => { deleted.value = false } }
+                })
+            }
+            return { addWithAction, clear, deleted }
         },
         template: `
             <div id="portal-target"></div>
 
-            <button @click="addWithAction">Add toast with action</button>
+            <div class="grid max-w-sm gap-3">
+                <p class="text-gray-900 dark:text-gray-100">{{ deleted ? 'Receipt removed.' : 'receipt.pdf' }}</p>
+                <Button :disabled="deleted" @click="addWithAction">Delete receipt</Button>
+            </div>
 
             <Toast placement="top-right" />
         `
@@ -138,7 +146,8 @@ export const WithAction: Story = {
         clear()
 
         const canvas = within(canvasElement)
-        await userEvent.click(canvas.getByRole('button', { name: /add toast with action/i }))
+        await userEvent.click(canvas.getByRole('button', { name: /delete receipt/i }))
+        await expect(canvas.getByText('Receipt removed.')).toBeVisible()
 
         const toast = await canvas.findByRole('status')
         await waitFor(() => expect(toast).toBeVisible())
@@ -146,6 +155,7 @@ export const WithAction: Story = {
         const actionBtn = canvas.getByRole('button', { name: /undo/i })
         await expect(actionBtn).toBeVisible()
         await userEvent.click(actionBtn)
+        await expect(canvas.getByText('receipt.pdf')).toBeVisible()
 
         await waitFor(() => expect(canvas.queryByRole('status')).not.toBeInTheDocument())
     }
@@ -153,7 +163,7 @@ export const WithAction: Story = {
 
 export const WithCustomIcon: Story = {
     render: () => ({
-        components: { Toast },
+        components: { Toast, Button },
         setup() {
             const { add, clear } = useToast()
             const addWithIcon = () => add('Custom icon toast.', { icon: 'Stars', type: 'info' })
@@ -162,7 +172,7 @@ export const WithCustomIcon: Story = {
         template: `
             <div id="portal-target"></div>
 
-            <button @click="addWithIcon">Add custom icon toast</button>
+            <Button @click="addWithIcon">Add custom icon toast</Button>
 
             <Toast placement="top-right" />
         `
@@ -179,21 +189,27 @@ export const WithCustomIcon: Story = {
     }
 }
 
-export const WithOnClose: Story = {
+export const OnDismiss: Story = {
     render: () => ({
-        components: { Toast },
+        components: { Toast, Button },
         setup() {
             const { add, clear } = useToast()
-            const log = (msg: string) => console.log(msg)
-            const addWithClose = () => add('Closing will trigger callback.', {
-                onClose: () => log('Toast closed!')
-            })
-            return { addWithClose, clear }
+            const saved = ref(false)
+            const addWithClose = () => {
+                saved.value = false
+                add('Your preferences have been saved.', {
+                    onClose: () => { saved.value = true }
+                })
+            }
+            return { addWithClose, clear, saved }
         },
         template: `
             <div id="portal-target"></div>
 
-            <button @click="addWithClose">Add toast with onClose</button>
+            <div class="grid max-w-sm gap-3">
+                <div><Button @click="addWithClose">Save preferences</Button></div>
+                <p v-if="saved" role="status" class="text-gray-900 dark:text-gray-100">Preferences saved. Notification dismissed.</p>
+            </div>
 
             <Toast placement="top-right" />
         `
@@ -203,7 +219,7 @@ export const WithOnClose: Story = {
         clear()
 
         const canvas = within(canvasElement)
-        await userEvent.click(canvas.getByRole('button', { name: /add toast with onclose/i }))
+        await userEvent.click(canvas.getByRole('button', { name: /save preferences/i }))
 
         const toast = await canvas.findByRole('status')
         await waitFor(() => expect(toast).toBeVisible())
@@ -211,7 +227,8 @@ export const WithOnClose: Story = {
         const dismiss = canvas.getByRole('button', { name: /dismiss notification/i })
         await userEvent.click(dismiss)
 
-        await waitFor(() => expect(canvas.queryByRole('status')).not.toBeInTheDocument())
+        await waitFor(() => expect(toast).not.toBeInTheDocument())
+        await expect(canvas.getByRole('status')).toHaveTextContent('Preferences saved. Notification dismissed.')
     }
 }
 
@@ -273,7 +290,7 @@ export const BottomLeft: Story = {
 
 export const Permanent: Story = {
     render: () => ({
-        components: { Toast },
+        components: { Toast, Button },
         setup() {
             const { add, clear } = useToast()
             return { add, clear }
@@ -281,9 +298,9 @@ export const Permanent: Story = {
         template: `
             <div id="portal-target"></div>
 
-            <button @click="add('This notification will not auto-dismiss.', { permanent: true })">
+            <Button @click="add('This notification will not auto-dismiss.', { permanent: true })">
                 Add permanent toast
-            </button>
+            </Button>
 
             <Toast placement="top-right" />
         `
@@ -303,9 +320,9 @@ export const Permanent: Story = {
     }
 }
 
-export const StackingDemo: Story = {
+export const Stacking: Story = {
     render: () => ({
-        components: { Toast },
+        components: { Toast, Button },
         setup() {
             const { add, clear } = useToast()
 
@@ -325,8 +342,8 @@ export const StackingDemo: Story = {
             <div id="portal-target"></div>
 
             <div class="flex gap-2">
-                <button @click="addMany">Add 6 toasts</button>
-                <button @click="clear()">Clear all</button>
+                <Button @click="addMany">Add 6 toasts</Button>
+                <Button @click="clear()">Clear all</Button>
             </div>
 
             <Toast placement="top-right" />

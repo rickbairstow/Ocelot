@@ -26,6 +26,44 @@ const meta: Meta<typeof DropdownMenu> = {
 
 type Story = StoryObj<typeof meta>
 
+export const Default: Story = {
+    render: () => ({
+        components: { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, Button },
+        template: `
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <Button variant="secondary">Options</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem label="Edit" />
+                    <DropdownMenuItem label="Duplicate" />
+                    <DropdownMenuItem label="Archive" />
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem label="Delete" destructive />
+                </DropdownMenuContent>
+            </DropdownMenu>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        // Menu is closed initially
+        await expect(canvas.queryByRole('menu')).not.toBeInTheDocument()
+
+        // Open via click
+        await userEvent.click(canvas.getByRole('button', { name: 'Options' }))
+        await canvas.findByRole('menu')
+
+        // All items present and visible (waits for enter transition to complete)
+        await waitFor(() => expect(canvas.getByRole('menuitem', { name: 'Edit' })).toBeVisible())
+        await expect(canvas.getByRole('menuitem', { name: 'Delete' })).toBeVisible()
+
+        // Click item closes menu
+        await userEvent.click(canvas.getByRole('menuitem', { name: 'Edit' }))
+        await waitFor(() => expect(canvas.queryByRole('menu')).not.toBeInTheDocument())
+    }
+}
+
 export const WithSubmenu: Story = {
     render: () => ({
         components: { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuSubmenu, Button },
@@ -71,43 +109,7 @@ export const WithSubmenu: Story = {
 
 export default meta
 
-export const Default: Story = {
-    render: () => ({
-        components: { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, Button },
-        template: `
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    <Button variant="secondary">Options</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuItem label="Edit" />
-                    <DropdownMenuItem label="Duplicate" />
-                    <DropdownMenuItem label="Archive" />
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem label="Delete" destructive />
-                </DropdownMenuContent>
-            </DropdownMenu>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
 
-        // Menu is closed initially
-        await expect(canvas.queryByRole('menu')).not.toBeInTheDocument()
-
-        // Open via click
-        await userEvent.click(canvas.getByRole('button', { name: 'Options' }))
-        await canvas.findByRole('menu')
-
-        // All items present and visible (waits for enter transition to complete)
-        await waitFor(() => expect(canvas.getByRole('menuitem', { name: 'Edit' })).toBeVisible())
-        await expect(canvas.getByRole('menuitem', { name: 'Delete' })).toBeVisible()
-
-        // Click item closes menu
-        await userEvent.click(canvas.getByRole('menuitem', { name: 'Edit' }))
-        await waitFor(() => expect(canvas.queryByRole('menu')).not.toBeInTheDocument())
-    }
-}
 
 export const AllVariations: Story = {
     render: () => ({

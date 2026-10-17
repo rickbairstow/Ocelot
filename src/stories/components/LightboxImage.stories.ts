@@ -62,14 +62,7 @@ const meta: Meta<typeof LightboxImage> = {
         width: { control: 'text' }
     },
 
-    args: {
-        src: faker.image.url({ width: 1200, height: 800 }),
-        alt: faker.lorem.words(4),
-        width: '400',
-        height: '267',
-        fit: 'cover',
-        loading: 'lazy'
-    },
+    args: { alt: 'Mountain landscape', src: 'https://picsum.photos/seed/oui-lightbox/1200/800' },
 
     render: (args) => ({
         components: { LightboxImage },

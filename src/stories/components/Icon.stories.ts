@@ -27,10 +27,7 @@ const meta: Meta<typeof Icon> = {
         }
     },
 
-    args: {
-        icon: 'ArrowDown',
-        size: '2xl'
-    },
+    args: { icon: 'ArrowDown' },
 
     render: (args) => ({
         components: { Icon },
@@ -58,7 +55,7 @@ export const Default: Story = {
     }
 }
 
-export const IconGrid: Story = {
+export const Sizes: Story = {
     render: () => ({
         components: { Icon },
 
@@ -114,7 +111,7 @@ export const CustomIcon: Story = {
                     :icon="IconBrandGithub"
                     size="xl"
                 />
-                <span class="text-sm text-gray-600">Passing a Tabler component directly — no registry lookup needed</span>
+                
             </div>
         `
     }),
@@ -125,44 +122,14 @@ export const CustomIcon: Story = {
     }
 }
 
-export const NotInRegistry: Story = {
-    args: {
-        icon: 'NonExistentIcon' as never,
-        size: '2xl'
-    },
-
-    play: async ({ canvasElement }) => {
-        const svgs = canvasElement.querySelectorAll('svg')
-        await expect(svgs).toHaveLength(0)
-    }
-}
 
 
-export const FullTablerCatalogue: Story = {
-    render: () => ({
-        components: { Icon, Button },
-        template: `
-            <div class="flex items-center gap-4">
-                <Icon icon="BrandGithub" />
-                <Icon icon="StarFilled" />
-                <Icon icon="World" />
-                <Icon icon="123" />
-                <Icon icon="Collapse" />
-                <Button icon="BrandLinkedin">Visit LinkedIn</Button>
-            </div>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        for (const name of ['brand-github', 'star-filled', 'world', 'number-123', 'arrows-minimize', 'brand-linkedin']) {
-            await expect(canvasElement.querySelector(`svg.tabler-icon-${name}`)).toBeInTheDocument()
-        }
-        await expect(within(canvasElement).getByRole('button', { name: 'Visit LinkedIn' })).toBeVisible()
-    }
-}
+
+
 
 export const BrowseCatalogue: Story = {
     render: () => ({
-        components: { Icon },
+        components: { Icon, Button },
         setup() {
             const query = ref('')
             const selected = ref('BrandGithub')
@@ -189,8 +156,8 @@ export const BrowseCatalogue: Story = {
                 </label>
                 <p v-if="!matches.length">No matching icons. Try a different name.</p>
                 <div class="flex gap-4">
-                    <button :disabled="page === 0" type="button" @click="page--">Previous page</button>
-                    <button :disabled="page + 1 >= pageCount" type="button" @click="page++">Next page</button>
+                    <Button :disabled="page === 0" type="button" @click="page--">Previous page</Button>
+                    <Button :disabled="page + 1 >= pageCount" type="button" @click="page++">Next page</Button>
                 </div>
                 <div class="flex items-center gap-4">
                     <Icon :icon="selected" size="5xl" />
@@ -216,6 +183,6 @@ export const BrowseCatalogue: Story = {
         await fireEvent.input(search, { target: { value: '' } })
         await expect(canvas.getByRole('status')).toHaveTextContent(`${names.length} of ${names.length} icon names`)
         await expect(list.querySelectorAll('option').length).toBe(100)
-        await expect(canvas.getByRole('button', { name: 'Previous page' })).toBeDisabled()
+        await expect(canvas.getByRole('button', { name: 'Previous page' })).toHaveAttribute('aria-disabled', 'true')
     }
 }

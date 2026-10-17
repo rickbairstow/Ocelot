@@ -40,13 +40,7 @@ const meta: Meta<typeof Quote> = {
         }
     },
 
-    args: {
-        author,
-        avatar: undefined,
-        color: 'blue',
-        source,
-        variant: 'bordered'
-    },
+    args: {},
 
     render: (args) => ({
         components: { Quote },
@@ -63,10 +57,9 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    async play({ canvasElement }) {
-        const canvas = within(canvasElement)
-        await expect(canvas.getByText(author)).toBeVisible()
-        await expect(canvasElement.querySelector('blockquote')).not.toBeNull()
+    play: async ({ canvasElement }) => {
+        await expect(canvasElement.querySelector('blockquote')).toBeVisible()
+        await expect(canvasElement.querySelector('figcaption')).not.toBeInTheDocument()
     }
 }
 
@@ -79,7 +72,7 @@ export const Card: Story = {
 }
 
 export const WithAvatar: Story = {
-    args: { avatar, variant: 'card', color: 'indigo' },
+    args: { author, source, avatar, variant: 'card', color: 'indigo' },
 
     async play({ canvasElement }) {
         const canvas = within(canvasElement)
@@ -89,11 +82,11 @@ export const WithAvatar: Story = {
     }
 }
 
-export const NoAttribution: Story = {
-    args: { author: undefined, source: undefined },
+export const WithAttribution: Story = {
+    args: { author, source },
 
     async play({ canvasElement }) {
         const figcaption = canvasElement.querySelector('figcaption')
-        await expect(figcaption).toBeNull()
+        await expect(figcaption).toBeVisible()
     }
 }

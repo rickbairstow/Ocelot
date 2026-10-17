@@ -159,9 +159,7 @@ const createRender = (itemsFactory?: (result: { value: string }) => CommandPalet
     `
 })
 
-export const Default: Story = {
-    render: createRender(),
-    play: async ({ canvasElement }) => {
+const checkDefault: NonNullable<Story['play']> = async ({ canvasElement }) => {
         const canvas = within(canvasElement)
 
         await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
@@ -175,6 +173,25 @@ export const Default: Story = {
 
         await userEvent.keyboard('{Escape}')
         await waitFor(() => expect(canvas.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument())
+    }
+
+const checkKeyboard: NonNullable<Story['play']> = async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
+
+        await canvas.findByRole('combobox')
+        await userEvent.keyboard('{ArrowDown}{Enter}')
+
+        await waitFor(() => expect(canvas.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument())
+        await expect(canvas.getByTestId('result')).toHaveTextContent('Opened Projects')
+    }
+
+export const Default: Story = {
+    render: createRender(),
+    play: async (context) => {
+        await checkDefault(context)
+        await checkKeyboard(context)
     }
 }
 
@@ -213,17 +230,4 @@ export const EmptyState: Story = {
     }
 }
 
-export const KeyboardNavigation: Story = {
-    render: createRender(),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
 
-        await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
-
-        await canvas.findByRole('combobox')
-        await userEvent.keyboard('{ArrowDown}{Enter}')
-
-        await waitFor(() => expect(canvas.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument())
-        await expect(canvas.getByTestId('result')).toHaveTextContent('Opened Projects')
-    }
-}

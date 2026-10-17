@@ -108,6 +108,7 @@ const meta: Meta<typeof Table> = {
     // Production chunks can also export shared dependency symbols.
     includeStories: [
         'Default',
+        'SearchAndSorting',
         'AllFunctionality',
         'WithPagination',
         'WithColumnVisibility',
@@ -131,15 +132,7 @@ const meta: Meta<typeof Table> = {
             options: ['sm', 'md', 'lg']
         }
     },
-    args: {
-        caption: 'Customer success roster',
-        columns,
-        data: users,
-        hoverable: true,
-        pageSize: 10,
-        pagination: true,
-        striped: true
-    },
+    args: { columns, data: users },
     parameters: {
         docs: {
             description: {
@@ -161,6 +154,15 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await waitFor(() => expect(canvas.getByRole('table')).toBeVisible())
+        await expect(canvas.queryByRole('searchbox')).not.toBeInTheDocument()
+        await expect(canvas.getAllByRole('row')).toHaveLength(11)
+    }
+}
+
+export const SearchAndSorting: Story = {
     args: {
         columnVisibility: true,
         columnSizing: {

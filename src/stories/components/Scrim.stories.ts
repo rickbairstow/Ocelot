@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Scrim from '@Components/Scrim.vue'
+import Button from '@Components/Button.vue'
+import { ref } from 'vue'
 import { expect, userEvent, within } from 'storybook/test'
 
 const meta: Meta<typeof Scrim> = {
@@ -31,25 +33,24 @@ const meta: Meta<typeof Scrim> = {
     },
 
     args: {
-        absolute: false,
-        ariaLabel: 'My scrim',
+        absolute: true,
+        ariaLabel: 'Dismiss overlay',
         clickable: true
     },
 
     render: (args) => ({
-        components: { Scrim },
+        components: { Scrim, Button },
         setup() {
-            const scrimEvent = () => {
-                console.log('Scrim clicked.')
-            }
-            return { args, scrimEvent }
+            return { args, visible: ref(true) }
         },
         template: `
-            <Scrim
-                :aria-label="args.ariaLabel"
-                :clickable="args.clickable"
-                @click="scrimEvent"
-            />
+            <div class="grid max-w-lg gap-4">
+                <div class="relative grid h-48 place-items-center overflow-hidden rounded-xl bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
+                    <p>Page content beneath the overlay</p>
+                    <Scrim v-if="visible" v-bind="args" @click="visible = false" />
+                </div>
+                <div v-if="!visible"><Button @click="visible = true">Show overlay</Button></div>
+            </div>
         `
     })
 }
@@ -58,16 +59,19 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // ✅ Test: scrim emits click when clickable
-export const Clickable: Story = {
+export const Default: Story = {
     args: {
         clickable: true
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
-        const scrim = await canvas.getByRole('button', { name: 'My scrim' })
+        const scrim = await canvas.getByRole('button', { name: 'Dismiss overlay' })
 
         await expect(scrim).not.toHaveAttribute('aria-disabled', 'true')
         await userEvent.click(scrim)
+        await expect(canvas.queryByRole('button', { name: 'Dismiss overlay' })).not.toBeInTheDocument()
+        await userEvent.click(canvas.getByRole('button', { name: 'Show overlay' }))
+        await expect(canvas.getByRole('button', { name: 'Dismiss overlay' })).toBeVisible()
     }
 }
 

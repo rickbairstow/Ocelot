@@ -43,14 +43,7 @@ const meta: Meta<typeof QrCode> = {
         }
     },
 
-    args: {
-        background: '#ffffff',
-        errorCorrectionLevel: 'M',
-        foreground: '#000000',
-        margin: 4,
-        size: 256,
-        value: faker.internet.url()
-    },
+    args: { value: 'https://ocelotui.netlify.app' },
 
     render: (args) => ({
         components: { QrCode },

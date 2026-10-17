@@ -68,21 +68,24 @@ const meta: Meta<typeof AppShell> = {
             description: 'Width applied to the sidebar column.'
         }
     },
-    args: {
-        fixedHeader: true,
-        hasSidebar: true,
-        mainId: 'main',
-        sidebarBreakpoint: 'lg',
-        sidebarLabel: 'Workspace navigation',
-        sidebarPosition: 'left',
-        sidebarWidth: '18rem'
-    }
+    args: {}
 }
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+    render: (args) => ({
+        components: { AppShell },
+        setup: () => ({ args }),
+        template: '<AppShell v-bind="args"><template #header>Workspace</template><template #sidebar>Navigation</template><p>Main content</p></AppShell>'
+    }),
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByRole('main')).toHaveTextContent('Main content')
+    }
+}
+
+export const WorkspaceLayout: Story = {
     parameters: {
         viewport: {
             defaultViewport: 'desktop'
@@ -247,7 +250,7 @@ export const MobileSidebar: Story = {
             defaultViewport: 'mobile1'
         }
     },
-    render: Default.render,
+    render: WorkspaceLayout.render,
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
         const openButtonElement = canvasElement.querySelector('[aria-label="Open navigation"]') as HTMLElement | null

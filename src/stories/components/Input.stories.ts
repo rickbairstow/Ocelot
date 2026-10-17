@@ -5,7 +5,7 @@ import Input from '@Components/Input.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Input> = {
-    title: 'Components/Formfields/Input',
+    title: 'Components/Inputs/Input',
     component: Input,
 
     parameters: {
@@ -80,17 +80,7 @@ const meta: Meta<typeof Input> = {
         }
     },
 
-    args: {
-        autoComplete: true,
-        disabled: false,
-        label: 'First name',
-        maxlength: 255,
-        modelValue: null,
-        name: 'input_firstname',
-        placeholder: 'Please enter your name...',
-        readonly: false,
-        type: 'text'
-    },
+    args: { label: 'First name', modelValue: '', name: 'first-name' },
 
     render: (args, { updateArgs }) => ({
         components: { Input },
@@ -120,7 +110,7 @@ const meta: Meta<typeof Input> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const TextInput: Story = {}
+export const Default: Story = {}
 
 export const EmailInput: Story = {
     render: () => ({
@@ -269,7 +259,7 @@ export const WithFormField: Story = {
 }
 
 
-export const NativeTypes: Story = {
+export const AdditionalTypes: Story = {
     render: () => ({
         components: { Input },
         setup() {
@@ -281,7 +271,6 @@ export const NativeTypes: Story = {
                 <Input v-model="month" label="Billing month" name="month" type="month" />
                 <Input v-model="week" label="Delivery week" name="week" type="week" />
                 <Input v-model="number" label="Quantity" :max="10" :min="1" name="quantity" type="number" />
-                <p role="status">{{ colour }} / {{ month }} / {{ week }} / {{ number }}</p>
             </div>
         `
     }),
@@ -298,26 +287,24 @@ export const NativeTypes: Story = {
             input.value = value
             await fireEvent.input(input)
             await fireEvent.change(input)
-            await expect(canvas.getByRole('status')).toHaveTextContent(value)
+            await expect(input).toHaveValue(type === 'number' ? Number(value) : value)
         }
     }
 }
 
-export const NativeContract: Story = {
+export const NativeAttributes: Story = {
     render: () => ({
         components: { Input, FormField },
         setup() {
-            return { value: ref(''), invalid: ref(true), input: ref(), blurred: ref(false) }
+            return { value: ref('') }
         },
         template: `
             <div class="grid gap-3">
                 <p id="native-email-extra">Additional guidance.</p>
                 <FormField hint="Use your work email." label="Work email" required>
-                    <Input id="native-contract-email" ref="input" v-model="value" aria-describedby="native-email-extra" autocomplete="email" inputmode="email" :invalid="invalid" name="email" type="email" @blur="blurred = true" />
+                    <Input id="native-contract-email" v-model="value" aria-describedby="native-email-extra" autocomplete="email" inputmode="email" :invalid="!value" name="email" type="email" />
                 </FormField>
-                <button type="button" @click="input.focus()">Focus email</button>
-                <button type="button" @click="invalid = false">Clear invalid state</button>
-                <p role="status">{{ blurred ? 'Blurred' : 'Not blurred' }}</p>
+
             </div>
         `
     }),
@@ -330,16 +317,16 @@ export const NativeContract: Story = {
         await expect(input).toBeRequired()
         await expect(input).toHaveAccessibleDescription('Additional guidance. Use your work email.')
         await expect(input).toHaveAttribute('aria-invalid', 'true')
-        await userEvent.click(canvas.getByRole('button', { name: 'Focus email' }))
+        await userEvent.click(input)
         await expect(input).toHaveFocus()
         await userEvent.tab()
-        await expect(canvas.getByRole('status')).toHaveTextContent('Blurred')
-        await userEvent.click(canvas.getByRole('button', { name: 'Clear invalid state' }))
+        await expect(input).not.toHaveFocus()
+        await userEvent.type(input, 'person@example.com')
         await expect(input).not.toHaveAttribute('aria-invalid')
     }
 }
 
-export const ReadonlyActions: Story = {
+export const Readonly: Story = {
     render: () => ({
         components: { Input },
         setup() { return { value: ref('Keep this value') } },

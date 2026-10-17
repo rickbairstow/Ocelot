@@ -94,7 +94,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // ✅ Interaction test for focus behavior
-export const Left: Story = {
+export const Default: Story = {
     args: { side: 'left' },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -130,7 +130,7 @@ export const Left: Story = {
 
 export const Right: Story = {
     args: { side: 'right' },
-    play: Left.play // same test logic
+    play: Default.play // same test logic
 }
 
 export const WithNav: Story = {

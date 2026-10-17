@@ -29,14 +29,7 @@ const meta: Meta<typeof StatCard> = {
         value: { control: 'text', description: 'Metric value.' }
     },
 
-    args: {
-        color: 'blue',
-        description: faker.lorem.words(4),
-        icon: 'User',
-        label: 'Total Users',
-        trend: 12,
-        value: '24,521'
-    }
+    args: { label: 'Total Users', value: '24,521' }
 }
 
 export default meta
@@ -84,7 +77,7 @@ export const NegativeTrend: Story = {
     }
 }
 
-export const NoIcon: Story = {
+export const WithDescription: Story = {
     args: {
         description: 'across all regions',
         icon: undefined,
@@ -99,7 +92,7 @@ export const NoIcon: Story = {
     }
 }
 
-export const NoTrend: Story = {
+export const WithIcon: Story = {
     args: {
         description: undefined,
         icon: 'ChartBar',

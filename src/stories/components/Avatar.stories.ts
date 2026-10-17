@@ -49,14 +49,7 @@ const meta: Meta<typeof Avatar> = {
         }
     },
 
-    args: {
-        alt: 'Jane Doe',
-        color: 'blue',
-        initials: 'JD',
-        shape: 'circle',
-        size: 'base',
-        src: null
-    },
+    args: {},
 
     render: (args) => ({
         components: { Avatar },
@@ -79,6 +72,14 @@ const meta: Meta<typeof Avatar> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+export const Default: Story = {
+    args: { src: null, initials: undefined },
+    play: async ({ canvasElement }) => {
+        const svg = canvasElement.querySelector('svg')
+        await expect(svg).not.toBeNull()
+    }
+}
+
 export const WithInitials: Story = {
     args: { initials: 'JD', src: null },
     play: async ({ canvasElement }) => {
@@ -95,13 +96,7 @@ export const WithImage: Story = {
     }
 }
 
-export const IconFallback: Story = {
-    args: { src: null, initials: undefined },
-    play: async ({ canvasElement }) => {
-        const svg = canvasElement.querySelector('svg')
-        await expect(svg).not.toBeNull()
-    }
-}
+
 
 export const AllColors: Story = {
     render: () => ({

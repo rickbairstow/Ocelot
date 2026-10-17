@@ -1,3 +1,4 @@
+import { expect, within } from 'storybook/test'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Heading from '@Components/Heading.vue'
 
@@ -33,10 +34,7 @@ const meta: Meta<typeof Heading> = {
         }
     },
 
-    args: {
-        default: 'Heading title',
-        level: '1'
-    },
+    args: { default: 'Heading title' },
 
     render: (args) => ({
         components: { Heading },
@@ -59,33 +57,34 @@ const meta: Meta<typeof Heading> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Heading1: Story = {
-    args: {
-        level: '1'
+export const Levels: Story = {
+    render: () => ({
+        components: { Heading },
+        template: '<div class="grid gap-4"><Heading v-for="level in 6" :key="level" :level="level">Heading {{ level }}</Heading></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        for (const level of [1, 2, 3, 4, 5, 6]) {
+            await expect(within(canvasElement).getByRole('heading', { level })).toBeVisible()
+        }
     }
 }
-export const Heading2: Story = {
-    args: {
-        level: '2'
+
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByRole('heading', { level: 1 })).toBeVisible()
     }
 }
-export const Heading3: Story = {
-    args: {
-        level: '3'
+
+export const VisualLevel: Story = {
+    args: { level: '2', styleLevel: '4' },
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByRole('heading', { level: 2 })).toHaveClass('text-xl')
     }
 }
-export const Heading4: Story = {
-    args: {
-        level: '4'
-    }
-}
-export const Heading5: Story = {
-    args: {
-        level: '5'
-    }
-}
-export const Heading6: Story = {
-    args: {
-        level: '6'
-    }
-}
+
+
+
+
+
+
+

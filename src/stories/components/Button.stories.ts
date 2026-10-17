@@ -68,17 +68,7 @@ const meta: Meta<typeof Button> = {
         }
     },
 
-    args: {
-        color: 'blue',
-        default: faker.lorem.word(),
-        disabled: false,
-        loading: false,
-        loadingIcon: 'Loader2',
-        size: 'base',
-        variant: 'primary',
-        href: null,
-        iconPosition: 'start'
-    },
+    args: { default: 'Continue' },
 
     render: (args) => ({
         components: { Button },

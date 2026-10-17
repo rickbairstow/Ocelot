@@ -71,8 +71,7 @@ const meta: Meta<typeof Tabs> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-    async play({ canvasElement }) {
+const checkDefault: NonNullable<Story['play']> = async ({ canvasElement }) {
         const canvas = within(canvasElement)
         const tabList = canvas.getByRole('tablist')
         await expect(tabList).toHaveAttribute('aria-orientation', 'horizontal')
@@ -102,6 +101,44 @@ export const Default: Story = {
         await expect(tab1).toHaveAttribute('aria-selected', 'false')
         await expect(panels[0]).not.toBeVisible()
         await expect(panels[1]).toBeVisible()
+    }
+
+const checkKeyboard: NonNullable<Story['play']> = async ({ canvasElement }) {
+        const canvas = within(canvasElement)
+        const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
+
+        // Focus first tab and navigate right
+        await userEvent.click(tab1)
+        await userEvent.keyboard('{ArrowRight}')
+        await expect(tab2).toHaveFocus()
+
+        // Navigate right again
+        await userEvent.keyboard('{ArrowRight}')
+        await expect(tab3).toHaveFocus()
+
+        // Wraps around to first
+        await userEvent.keyboard('{ArrowRight}')
+        await expect(tab1).toHaveFocus()
+
+        // Home goes to first
+        await userEvent.click(tab3)
+        await userEvent.keyboard('{Home}')
+        await expect(tab1).toHaveFocus()
+
+        // End goes to last
+        await userEvent.keyboard('{End}')
+        await expect(tab3).toHaveFocus()
+
+        // ArrowLeft wraps to last from first
+        await userEvent.click(tab1)
+        await userEvent.keyboard('{ArrowLeft}')
+        await expect(tab3).toHaveFocus()
+    }
+
+export const Default: Story = {
+    play: async (context) => {
+        await checkDefault(context)
+        await checkKeyboard(context)
     }
 }
 
@@ -203,39 +240,7 @@ export const WithDisabledTab: Story = {
     }
 }
 
-export const KeyboardNavigation: Story = {
-    async play({ canvasElement }) {
-        const canvas = within(canvasElement)
-        const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
 
-        // Focus first tab and navigate right
-        await userEvent.click(tab1)
-        await userEvent.keyboard('{ArrowRight}')
-        await expect(tab2).toHaveFocus()
-
-        // Navigate right again
-        await userEvent.keyboard('{ArrowRight}')
-        await expect(tab3).toHaveFocus()
-
-        // Wraps around to first
-        await userEvent.keyboard('{ArrowRight}')
-        await expect(tab1).toHaveFocus()
-
-        // Home goes to first
-        await userEvent.click(tab3)
-        await userEvent.keyboard('{Home}')
-        await expect(tab1).toHaveFocus()
-
-        // End goes to last
-        await userEvent.keyboard('{End}')
-        await expect(tab3).toHaveFocus()
-
-        // ArrowLeft wraps to last from first
-        await userEvent.click(tab1)
-        await userEvent.keyboard('{ArrowLeft}')
-        await expect(tab3).toHaveFocus()
-    }
-}
 
 export const LongContent: Story = {
     render: () => ({

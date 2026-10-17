@@ -33,12 +33,7 @@ const meta: Meta<typeof Tooltip> = {
         }
     },
 
-    args: {
-        content: faker.lorem.sentence(6),
-        delay: 0,
-        disabled: false,
-        placement: 'top'
-    },
+    args: { content: 'Additional information' },
 
     render: (args) => ({
         components: { Tooltip, Button },

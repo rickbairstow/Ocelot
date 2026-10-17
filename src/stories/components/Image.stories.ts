@@ -81,17 +81,7 @@ const meta: Meta<typeof Image> = {
         }
     },
 
-    args: {
-        alt: faker.lorem.words(3),
-        src: faker.image.url({ width: 400, height: 300 }),
-        width: '400',
-        height: '300',
-        fit: 'cover',
-        position: 'center',
-        loading: 'lazy',
-        decoding: 'async',
-        fetchpriority: 'auto'
-    },
+    args: { alt: 'Mountain landscape', src: 'https://picsum.photos/seed/oui-image/400/300' },
 
     render: (args) => ({
         components: { Image },
@@ -199,7 +189,7 @@ export const EagerHighPriority: Story = {
 
 // Covers the toCssSize branch where the value is a CSS unit string (not a bare
 // number), e.g. "50%" and "20rem" pass through unchanged rather than getting "px" appended.
-export const CssUnitDimensions: Story = {
+export const CustomDimensions: Story = {
     args: {
         src: faker.image.url({ width: 400, height: 300 }),
         width: '50%',

@@ -5,7 +5,7 @@ import Range from '@Components/Range.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Range> = {
-    title: 'Components/Formfields/Range',
+    title: 'Components/Inputs/Range',
     component: Range,
     parameters: {
         docs: { description: { component: 'A native range input. v-model and input/change events return numbers. Supports native min, max, step, disabled, keyboard interaction and FormField. Range always has a value, so required does not apply.' } }
@@ -15,6 +15,21 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+    render: () => ({
+        components: { Range },
+        setup: () => ({ value: ref(50) }),
+        template: '<Range v-model="value" label="Volume" name="volume" />'
+    }),
+    play: async ({ canvasElement }) => {
+        const slider = within(canvasElement).getByRole('slider', { name: 'Volume' })
+        await expect(slider).toHaveValue('50')
+        await expect(slider).toHaveAttribute('min', '0')
+        await expect(slider).toHaveAttribute('max', '100')
+        await expect(slider).toHaveAttribute('step', '1')
+    }
+}
+
+export const WithFormField: Story = {
     render: () => ({
         components: { Range, FormField },
         setup() { return { value: ref(40) } },

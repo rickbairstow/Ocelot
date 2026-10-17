@@ -6,6 +6,7 @@ export default {
     parameters: {
         options: {
             storySort: {
+                method: 'alphabetical',
                 order: ['Getting Started', ['Introduction', 'Installation'], '*']
             }
         },

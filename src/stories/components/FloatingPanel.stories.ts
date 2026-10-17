@@ -90,7 +90,7 @@ const meta: Meta<typeof FloatingPanel> = {
                     :role="args.role"
                 >
                     <template #trigger>
-                        <button type="button">{{ args.trigger }}</button>
+                        <button class="rounded-lg border border-gray-500 bg-white px-3 py-2 text-sm text-gray-900 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700" type="button">{{ args.trigger }}</button>
                     </template>
                     <template #content>
                         <span>{{ args.content }}</span>
@@ -252,7 +252,7 @@ export const Menu: Story = {
                     :role="args.role"
                 >
                     <template #trigger>
-                        <button type="button">{{ args.trigger }}</button>
+                        <button class="rounded-lg border border-gray-500 bg-white px-3 py-2 text-sm text-gray-900 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700" type="button">{{ args.trigger }}</button>
                     </template>
                     <template #content>
                         <div class="py-1">
@@ -331,7 +331,7 @@ export const Listbox: Story = {
                     :role="args.role"
                 >
                     <template #trigger>
-                        <button type="button">{{ args.trigger }}</button>
+                        <button class="rounded-lg border border-gray-500 bg-white px-3 py-2 text-sm text-gray-900 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700" type="button">{{ args.trigger }}</button>
                     </template>
                     <template #content>
                         <div

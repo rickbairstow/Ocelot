@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import Textarea from '@Components/Textarea.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Textarea> = {
-    title: 'Components/Formfields/Textarea',
+    title: 'Components/Inputs/Textarea',
     component: Textarea,
     parameters: {
         docs: {
@@ -23,7 +23,7 @@ export const Default: Story = {
     render: () => ({
         components: { Textarea },
         setup() { return { value: ref('') } },
-        template: '<Textarea v-model="value" label="Message" name="message" placeholder="Write something..." />'
+        template: '<Textarea v-model="value" label="Message" name="message" />'
     }),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -98,9 +98,13 @@ export const CountNearLimit: Story = {
 export const WithFormField: Story = {
     render: () => ({
         components: { Textarea, FormField },
-        setup() { return { value: ref('') } },
+        setup() {
+            const value = ref('')
+            const error = computed(() => value.value.length < 10 ? 'Message must be at least 10 characters.' : '')
+            return { value, error }
+        },
         template: `
-            <FormField error="Message must be at least 10 characters." hint="Max 255 characters." label="Message" required>
+            <FormField :error="error" hint="Max 255 characters." label="Message" required>
                 <Textarea v-model="value" name="message" show-count />
             </FormField>
         `
@@ -112,15 +116,18 @@ export const WithFormField: Story = {
         await expect(textarea.getAttribute('aria-describedby')).toContain(error.id)
         await expect(textarea).toHaveAttribute('aria-invalid', 'true')
         await expect(textarea).toHaveClass('border-red-600')
+        await userEvent.type(textarea, 'Please send me more information.')
+        await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
+        await expect(textarea).not.toHaveAttribute('aria-invalid')
     }
 }
 
 
-export const StandaloneInvalid: Story = {
+export const Invalid: Story = {
     render: () => ({
         components: { Textarea },
-        setup() { return { value: ref(''), changed: ref('') } },
-        template: '<div class="grid gap-3"><Textarea id="standalone-message" v-model="value" autocomplete="off" invalid label="Standalone message" name="message" required @change="changed = $event" /><p role="status">{{ changed }}</p></div>'
+        setup() { return { value: ref('') } },
+        template: '<div class="grid gap-3"><Textarea id="standalone-message" v-model="value" autocomplete="off" invalid label="Standalone message" name="message" required /></div>'
     }),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -130,6 +137,6 @@ export const StandaloneInvalid: Story = {
         await expect(textarea).toHaveAttribute('autocomplete', 'off')
         await userEvent.type(textarea, 'A message')
         await userEvent.tab()
-        await expect(canvas.getByRole('status')).toHaveTextContent('A message')
+        await expect(textarea).toHaveValue('A message')
     }
 }

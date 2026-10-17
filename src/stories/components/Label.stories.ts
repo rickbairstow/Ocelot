@@ -5,7 +5,7 @@ import Label from '@Components/Label.vue'
 import Input from '@Components/Input.vue'
 
 const meta: Meta<typeof Label> = {
-    title: 'Components/Formfields/Label',
+    title: 'Components/Label',
     component: Label,
 
     parameters: {

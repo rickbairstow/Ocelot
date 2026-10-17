@@ -48,15 +48,7 @@ const meta: Meta<typeof Loader> = {
         }
     },
 
-    args: {
-        animation: 'spin',
-        color: 'default',
-        icon: 'Loader2',
-        size: 'base',
-        text: `${faker.lorem.sentence(2)}...`,
-        variant: 'inline',
-        vertical: false
-    },
+    args: {},
 
     render: (args) => ({
         components: { Loader },
@@ -80,6 +72,13 @@ const meta: Meta<typeof Loader> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+export const WithText: Story = {
+    args: { text: 'Loading your workspace…' },
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByRole('status')).toHaveTextContent('Loading your workspace…')
+    }
+}
+
 export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -96,13 +95,10 @@ export const Fixed: Story = {
     args: { variant: 'fixed' }
 }
 
-export const Inline: Story = {
-    args: { variant: 'inline' },
-    play: Default.play
-}
+
 
 export const Vertical: Story = {
-    args: { vertical: true },
+    args: { vertical: true, text: 'Loading your workspace…' },
     play: Default.play
 }
 

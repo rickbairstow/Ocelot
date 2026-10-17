@@ -62,19 +62,7 @@ const meta: Meta<typeof Video> = {
         }
     },
 
-    args: {
-        src: 'https://www.youtube.com/watch?v=vHcAPrKwhVI',
-        title: 'Me at the zoo',
-        ratio: '16:9',
-        poster: '',
-        autoplay: false,
-        muted: false,
-        loop: false,
-        controls: true,
-        playsinline: true,
-        captions: [],
-        width: ''
-    },
+    args: { src: '/media/sample.mp4', title: 'Sample video' },
 
     render: (args) => ({
         components: { Video },
@@ -102,7 +90,7 @@ const meta: Meta<typeof Video> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Youtube: Story = {}
+export const Default: Story = {}
 
 export const Vimeo: Story = {
     args: {
@@ -112,8 +100,8 @@ export const Vimeo: Story = {
 }
 
 // Requires public/sample.mp4 — drop any short MP4 into the public/ folder.
-export const NativeVideo: Story = {
-    name: 'Native MP4',
+export const YouTube: Story = {
+    name: 'YouTube',
     args: {
         src: '/media/sample.mp4',
         title: 'Sample video'

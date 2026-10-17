@@ -37,15 +37,10 @@ const meta: Meta<typeof Dialog> = {
         }
     },
 
-    args: {
-        ariaLabel: 'My dialog',
-        focusFrom: 'dialogTrigger',
-        focusTo: '',
-        size: 'md'
-    },
+    args: { ariaLabel: 'Example dialog' },
 
     render: (args) => ({
-        components: { Dialog },
+        components: { Dialog, Button },
         setup() {
             const dialog = ref<{ open(): void } | null>(null)
             const openDialog = () => dialog.value?.open()
@@ -54,13 +49,13 @@ const meta: Meta<typeof Dialog> = {
         template: `
             <div id="portal-target"></div>
 
-            <button
+            <Button
                 id="dialogTrigger"
                 class="focus:outline-1"
                 @click="openDialog"
             >
                 Click to open the Dialog
-            </button>
+            </Button>
 
             <Dialog
                 ref="dialog"
@@ -75,7 +70,7 @@ const meta: Meta<typeof Dialog> = {
                 </template>
                 Dialog content goes here.
                 <template #footer>
-                    <button @click="dialog.close()">Close</button>
+                    <Button @click="dialog.close()">Close</Button>
                 </template>
             </Dialog>
         `
@@ -140,22 +135,22 @@ export const Fullscreen: Story = {
 
 export const WithScrollingContent: Story = {
     render: () => ({
-        components: { Dialog },
+        components: { Dialog, Button },
         setup() {
             const dialog = ref<InstanceType<typeof Dialog> | null>(null)
             return { dialog, body: faker.lorem.paragraphs(12) }
         },
         template: `
             <div id="portal-target"></div>
-            <button id="dialogTrigger" @click="dialog.open()">Open dialog</button>
+            <Button id="dialogTrigger" @click="dialog.open()">Open dialog</Button>
             <Dialog ref="dialog" aria-label="Long content" focus-from="dialogTrigger">
                 <template #title>Long content dialog</template>
                 <template #description>
-                    <p class="text-gray-700 dark:text-gray-300">This dialog contains enough copy to verify scrolling content and description linkage.</p>
+                    <p class="text-gray-700 dark:text-gray-300">Review the full details below before continuing.</p>
                 </template>
                 <p class="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{{ body }}</p>
                 <template #footer>
-                    <button @click="dialog.close()">Close</button>
+                    <Button @click="dialog.close()">Close</Button>
                 </template>
             </Dialog>
         `
@@ -170,14 +165,14 @@ export const WithScrollingContent: Story = {
 
 export const WithForm: Story = {
     render: () => ({
-        components: { Dialog },
+        components: { Dialog, Button },
         setup() {
             const dialog = ref<InstanceType<typeof Dialog> | null>(null)
             return { dialog }
         },
         template: `
             <div id="portal-target"></div>
-            <button id="dialogTrigger" @click="dialog.open()">Open form dialog</button>
+            <Button id="dialogTrigger" @click="dialog.open()">Open form dialog</Button>
             <Dialog ref="dialog" aria-label="Edit profile" focus-from="dialogTrigger">
                 <template #title>Edit profile</template>
                 <template #description>
@@ -194,8 +189,8 @@ export const WithForm: Story = {
                     </label>
                 </form>
                 <template #footer>
-                    <button @click="dialog.close()">Cancel</button>
-                    <button @click="dialog.close()">Save</button>
+                    <Button @click="dialog.close()">Cancel</Button>
+                    <Button @click="dialog.close()">Save</Button>
                 </template>
             </Dialog>
         `

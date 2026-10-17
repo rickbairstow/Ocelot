@@ -53,15 +53,7 @@ const meta: Meta<typeof Badge> = {
         }
     },
 
-    args: {
-        color: 'blue',
-        default: faker.lorem.word(),
-        dot: false,
-        removable: false,
-        size: 'lg',
-        truncate: false,
-        variant: 'primary'
-    },
+    args: { default: 'New' },
 
     render: (args) => ({
         components: { Badge },

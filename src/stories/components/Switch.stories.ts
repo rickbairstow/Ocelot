@@ -5,7 +5,7 @@ import Switch from '@Components/Switch.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Switch> = {
-    title: 'Components/Formfields/Switch',
+    title: 'Components/Inputs/Switch',
     component: Switch,
     parameters: {
         docs: {
@@ -118,11 +118,11 @@ export const SettingsPanel: Story = {
 }
 
 
-export const StandaloneValidation: Story = {
+export const RequiredAndInvalid: Story = {
     render: () => ({
         components: { Switch },
-        setup() { return { value: ref(false), invalid: ref(true) } },
-        template: '<div class="grid gap-3"><Switch id="standalone-switch" v-model="value" :invalid="invalid" label="Confirm choice" name="choice" required  /><button type="button" @click="invalid = false">Clear error</button></div>'
+        setup() { return { value: ref(false) } },
+        template: '<div class="grid gap-3"><Switch id="standalone-switch" v-model="value" :invalid="!value" label="Confirm choice" name="choice" required  /></div>'
     }),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -132,7 +132,6 @@ export const StandaloneValidation: Story = {
         await expect(control).toHaveAttribute('aria-invalid', 'true')
         await userEvent.click(canvas.getByText('Confirm choice', { selector: 'label' }))
         await expect(control).toBeChecked()
-        await userEvent.click(canvas.getByRole('button', { name: 'Clear error' }))
         await expect(control).not.toHaveAttribute('aria-invalid')
     }
 }

@@ -31,21 +31,25 @@ const meta: Meta<typeof Progress> = {
         }
     },
 
-    args: {
-        color: 'blue',
-        label: faker.lorem.words(3),
-        max: 100,
-        showValue: true,
-        size: 'base',
-        value: 65,
-        variant: 'bar'
-    }
+    args: { value: 65, label: 'Progress' }
 }
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+    args: { value: undefined, label: 'Progress' },
+
+    async play({ canvasElement }) {
+        const bar = within(canvasElement).getByRole('progressbar')
+        await expect(bar).not.toHaveAttribute('aria-valuenow')
+        await expect(bar).toHaveAttribute('aria-busy', 'true')
+        await expect(bar).toHaveAttribute('aria-valuetext', 'Loading progress')
+    }
+}
+
+export const WithValue: Story = {
+    args: { value: 65, showValue: true, max: 100, label: 'Upload progress' },
     async play({ canvasElement, args }) {
         const canvas = within(canvasElement)
         const bar = canvas.getByRole('progressbar')
@@ -58,16 +62,7 @@ export const Default: Story = {
     }
 }
 
-export const Indeterminate: Story = {
-    args: { value: undefined, showValue: false },
 
-    async play({ canvasElement }) {
-        const bar = within(canvasElement).getByRole('progressbar')
-        await expect(bar).not.toHaveAttribute('aria-valuenow')
-        await expect(bar).toHaveAttribute('aria-busy', 'true')
-        await expect(bar).toHaveAttribute('aria-valuetext', 'Loading progress')
-    }
-}
 
 export const Sizes: Story = {
     render: (args) => ({

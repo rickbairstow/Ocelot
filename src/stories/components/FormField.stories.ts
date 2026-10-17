@@ -5,7 +5,7 @@ import FormField from '@Components/FormField.vue'
 import Input from '@Components/Input.vue'
 
 const meta: Meta<typeof FormField> = {
-    title: 'Components/Formfields/FormField',
+    title: 'Components/FormField',
     component: FormField,
     parameters: {
         docs: {
@@ -136,7 +136,7 @@ export const ErrorWithHint: Story = {
     }
 }
 
-export const ConsumerValidationContract: Story = {
+export const Validation: Story = {
     render: () => ({
         components: { FormField, Input },
         setup() {

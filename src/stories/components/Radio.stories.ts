@@ -6,7 +6,7 @@ import RadioGroup from '@Components/RadioGroup.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Radio> = {
-    title: 'Components/Formfields/Radio',
+    title: 'Components/Inputs/Radio',
     component: Radio,
     parameters: {
         docs: {
@@ -19,6 +19,20 @@ const meta: Meta<typeof Radio> = {
 
 export default meta
 type Story = StoryObj<typeof Radio>
+
+export const Default: Story = {
+    render: () => ({
+        components: { Radio },
+        setup: () => ({ value: ref('') }),
+        template: '<Radio v-model="value" label="Standard delivery" name="delivery" value="standard" />'
+    }),
+    play: async ({ canvasElement }) => {
+        const control = within(canvasElement).getByRole('radio', { name: 'Standard delivery' })
+        await expect(control).not.toBeChecked()
+        await userEvent.click(control)
+        await expect(control).toBeChecked()
+    }
+}
 
 export const Group: Story = {
     render: () => ({
@@ -130,11 +144,11 @@ export const IndividualStandalone: Story = {
 }
 
 
-export const StandaloneValidation: Story = {
+export const RequiredAndInvalid: Story = {
     render: () => ({
         components: { Radio },
-        setup() { return { value: ref(''), invalid: ref(true) } },
-        template: '<div class="grid gap-3"><Radio id="standalone-radio" v-model="value" :invalid="invalid" label="Confirm choice" name="choice" required value="choice" /><button type="button" @click="invalid = false">Clear error</button></div>'
+        setup() { return { value: ref('') } },
+        template: '<div class="grid gap-3"><Radio id="standalone-radio" v-model="value" :invalid="!value" label="Confirm choice" name="choice" required value="choice" /></div>'
     }),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -144,7 +158,6 @@ export const StandaloneValidation: Story = {
         await expect(control).toHaveAttribute('aria-invalid', 'true')
         await userEvent.click(canvas.getByText('Confirm choice', { selector: 'label' }))
         await expect(control).toBeChecked()
-        await userEvent.click(canvas.getByRole('button', { name: 'Clear error' }))
         await expect(control).not.toHaveAttribute('aria-invalid')
     }
 }
