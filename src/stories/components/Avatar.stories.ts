@@ -14,7 +14,7 @@ const meta: Meta<typeof Avatar> = {
     parameters: {
         docs: {
             description: {
-                component: 'Displays a user\'s profile image, initials, or fallback icon. Supports multiple sizes, shapes, and colours. Group multiple avatars together with AvatarGroup to show a stacked collection with an overflow count.'
+                component: 'Displays a user\'s profile image, initials, or fallback icon. Supports multiple sizes, shapes, and colours. Group multiple avatars together with AvatarGroup to show a stacked collection with an overflow count.\n\nWith no image or initials, the default is a decorative fallback icon. Supply alt text for a meaningful image or ariaLabel when the fallback identifies a person. Initials, size, shape, colour and links are separate features.'
             }
         }
     },

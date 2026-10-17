@@ -18,7 +18,7 @@ const meta: Meta<typeof Quote> = {
     parameters: {
         docs: {
             description: {
-                component: 'A styled blockquote for pull quotes, testimonials, and editorial content. Supports bordered, card, and plain variants with optional author, source, and avatar attribution.'
+                component: 'A styled blockquote for pull quotes, testimonials, and editorial content. Supports bordered, card, and plain variants with optional author, source, and avatar attribution.\n\nDefault contains only the quotation text using the component styling. With Attribution adds the author and source. With Avatar adds a profile image; Card changes the container style.'
             }
         }
     },

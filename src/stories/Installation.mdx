@@ -20,7 +20,7 @@ Optional feature dependencies:
 
 ```bash
 # Table
-npm install @tanstack/vue-table
+npm install @tanstack/vue-table@^9.3.1
 
 # LightboxImage
 npm install photoswipe
@@ -80,7 +80,7 @@ app.mount('#app')
 
 ### Table notes
 
-`Table` depends on `@tanstack/vue-table` and includes a built-in settings menu for density, column visibility, and pinning. On smaller screens, you can keep the table scrollable or switch to stacked cards with `mobileLayout="card"`.
+`Table` depends on `@tanstack/vue-table` version 9 and includes a built-in settings menu for density, column visibility, and pinning. Consumers upgrading from version 8 must update this peer dependency. Typed column helpers now use `createColumnHelper<StockFeatures, YourRow>()`; import both from `@tanstack/vue-table`. On smaller screens, you can keep the table scrollable or switch to stacked cards with `mobileLayout="card"`.
 
 ### CommandPalette notes
 

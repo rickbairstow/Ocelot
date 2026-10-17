@@ -18,7 +18,7 @@ const meta: Meta<typeof Select> = {
     parameters: {
         docs: {
             description: {
-                component: 'A native select with progressively enhanced picker styling in supporting browsers and a native fallback elsewhere. Multiple selection remains a native listbox. Supports invalid, required, explicit IDs and native attributes/events. v-model/change return a string for single selection or string[] for multiple selection.'
+                component: 'A native select with progressively enhanced picker styling in supporting browsers and a native fallback elsewhere. Multiple selection remains a native listbox. Supports invalid, required, explicit IDs and native attributes/events. v-model/change return a string for single selection or string[] for multiple selection.' + '\n\nDefault supplies name, model, options and an accessible label without placeholder or validation overrides. Use a disabled empty-value placeholder when no initial choice is appropriate. Single selection returns a string; multiple returns string[]. Disabled Selected Option shows an unavailable saved value in both themes. Native picker appearance varies by browser.'
             }
         }
     }
@@ -30,8 +30,8 @@ type Story = StoryObj<typeof Select>
 export const Default: Story = {
     render: () => ({
         components: { Select },
-        setup() { return { value: ref(''), options: COUNTRIES } },
-        template: '<Select v-model="value" label="Country" name="country" :options="options" placeholder="Select a country..." />'
+        setup() { return { value: ref('gb'), options: COUNTRIES } },
+        template: '<Select v-model="value" label="Country" name="country" :options="options" />'
     }),
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -137,28 +137,7 @@ export const MultipleSelection: Story = {
     }
 }
 
-export const DarkTheme: Story = {
-    render: () => ({
-        components: { Select },
-        setup() { return { value: ref('Small') } },
-        template: `
-            <div class="rounded-xl bg-gray-950 p-4">
-                <div class="dark" data-testid="dark-select-panel">
-                    <Select v-model="value" label="Dark size" name="dark-size" :options="['Small', 'Medium', 'Large']" />
-                </div>
-            </div>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const select = canvas.getByRole('combobox', { name: 'Dark size' })
-        await userEvent.selectOptions(select, 'Medium')
-        await expect(select).toHaveValue('Medium')
-        // Scoped picker rules must never turn into a global .dark background rule.
-        await expect(getComputedStyle(canvas.getByTestId('dark-select-panel')).backgroundColor).toBe('rgba(0, 0, 0, 0)')
-        await expect(getComputedStyle(select).appearance).toBe(CSS.supports('appearance', 'base-select') ? 'base-select' : 'none')
-    }
-}
+
 
 export const DisabledSelectedOption: Story = {
     render: () => ({

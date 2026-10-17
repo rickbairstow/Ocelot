@@ -620,7 +620,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useSlots, watch } from 'vue'
+import { computed, defineComponent, effectScope, h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useSlots, watch } from 'vue'
 import type { Component, CSSProperties, FunctionalComponent, Slots } from 'vue'
 import Button from '@Components/Button.vue'
 import EmptyState from '@Components/EmptyState.vue'
@@ -704,10 +704,14 @@ type TableInstance = {
     setPageSize: (pageSize: number) => void
 }
 type InternalTableModule = typeof import('@tanstack/vue-table')
-type InternalColumnDef = import('@tanstack/vue-table').ColumnDef<GenericRecord, unknown>
-type InternalColumn = import('@tanstack/vue-table').Column<GenericRecord, unknown>
-type InternalCell = import('@tanstack/vue-table').Cell<GenericRecord, unknown>
-type InternalRow = import('@tanstack/vue-table').Row<GenericRecord>
+type InternalTableFeatures = Pick<import('@tanstack/vue-table').StockFeatures,
+    'columnFilteringFeature' | 'columnResizingFeature' | 'columnSizingFeature' | 'columnVisibilityFeature'
+    | 'globalFilteringFeature' | 'rowPaginationFeature' | 'rowSelectionFeature' | 'rowSortingFeature'
+>
+type InternalColumnDef = import('@tanstack/vue-table').ColumnDef<InternalTableFeatures, GenericRecord, unknown>
+type InternalColumn = import('@tanstack/vue-table').Column<InternalTableFeatures, GenericRecord, unknown>
+type InternalCell = import('@tanstack/vue-table').Cell<InternalTableFeatures, GenericRecord, unknown>
+type InternalRow = import('@tanstack/vue-table').Row<InternalTableFeatures, GenericRecord>
 
 interface Props {
     bordered?: boolean
@@ -811,7 +815,7 @@ const paginationState = ref<PageState>({
     pageIndex: 0,
     pageSize: props.pageSize
 })
-const rowSelectionState = ref<RowSelectionState>({})
+const rowSelectionState = ref<import('@tanstack/vue-table').RowSelectionState>({})
 const sizeState = ref<TableSize>(props.size)
 const sortingState = ref<SortState>([])
 const table = shallowRef<TableInstance | null>(null)
@@ -960,7 +964,7 @@ const resolvedColumns = computed((): InternalColumnDef[] => {
             enableHiding: false,
             enableResizing: false,
             enableSorting: false,
-            header: ({ table: tanstackTable }: { table: import('@tanstack/vue-table').Table<GenericRecord> }) => h(SelectionCheckbox, {
+            header: ({ table: tanstackTable }: { table: import('@tanstack/vue-table').Table<InternalTableFeatures, GenericRecord> }) => h(SelectionCheckbox, {
                 ariaLabel: 'Select visible rows',
                 checked: tanstackTable.getIsAllPageRowsSelected(),
                 indeterminate: tanstackTable.getIsSomePageRowsSelected() && !tanstackTable.getIsAllPageRowsSelected(),
@@ -1014,7 +1018,7 @@ const resolvedColumns = computed((): InternalColumnDef[] => {
 
     const actionsColumn: InternalColumnDef[] = hasRowActionsSlot.value
         ? [{
-            cell: ({ row }: { row: InternalRow }) => slots['row-actions']?.({ row }),
+            cell: ({ row }: { row: InternalRow }) => h('div', slots['row-actions']?.({ row })),
             enableHiding: false,
             enableResizing: false,
             enableSorting: false,
@@ -1119,11 +1123,28 @@ const resolveUpdater = <T>(updater: T | ((previous: T) => T), previous: T): T =>
         ? (updater as (value: T) => T)(previous)
         : updater
 
+const tableScope = effectScope()
+
 const initializeTable = async () => {
     const loadedModule = await loadTanStackTable()
-    if (!loadedModule) return
+    if (!loadedModule || !tableScope.active) return
 
-    table.value = loadedModule.useVueTable({
+    table.value = tableScope.run(() => loadedModule.useTable({
+        features: loadedModule.tableFeatures({
+            columnFilteringFeature: loadedModule.columnFilteringFeature,
+            columnResizingFeature: loadedModule.columnResizingFeature,
+            columnSizingFeature: loadedModule.columnSizingFeature,
+            columnVisibilityFeature: loadedModule.columnVisibilityFeature,
+            globalFilteringFeature: loadedModule.globalFilteringFeature,
+            rowPaginationFeature: loadedModule.rowPaginationFeature,
+            rowSelectionFeature: loadedModule.rowSelectionFeature,
+            rowSortingFeature: loadedModule.rowSortingFeature,
+            filteredRowModel: loadedModule.createFilteredRowModel(),
+            paginatedRowModel: loadedModule.createPaginatedRowModel(),
+            sortedRowModel: loadedModule.createSortedRowModel(),
+            filterFns: loadedModule.filterFns,
+            sortFns: loadedModule.sortFns
+        }),
         columnResizeMode: 'onChange',
         enableColumnResizing: props.resizableColumns,
         get columns() {
@@ -1134,13 +1155,9 @@ const initializeTable = async () => {
         },
         enableMultiRowSelection: props.rowSelection === 'multi',
         enableRowSelection: props.rowSelection !== 'none',
-        getCoreRowModel: loadedModule.getCoreRowModel(),
-        getFilteredRowModel: props.manualFiltering ? undefined : loadedModule.getFilteredRowModel(),
-        getPaginationRowModel: props.manualPagination ? undefined : loadedModule.getPaginationRowModel(),
         getRowId: props.getRowId
             ? (row: GenericRecord, index: number) => props.getRowId?.(row) ?? String(index)
             : undefined,
-        getSortedRowModel: props.manualSorting ? undefined : loadedModule.getSortedRowModel(),
         manualFiltering: props.manualFiltering,
         manualPagination: props.manualPagination,
         manualSorting: props.manualSorting,
@@ -1156,7 +1173,7 @@ const initializeTable = async () => {
             paginationState.value = resolveUpdater(updater, paginationState.value)
             emit('page-change', paginationState.value)
         },
-        onRowSelectionChange: (updater: RowSelectionState | ((previous: RowSelectionState) => RowSelectionState)) => {
+        onRowSelectionChange: (updater: import('@tanstack/vue-table').Updater<import('@tanstack/vue-table').RowSelectionState>) => {
             rowSelectionState.value = resolveUpdater(updater, rowSelectionState.value)
             emit('row-selection-change', rowSelectionState.value)
         },
@@ -1185,7 +1202,7 @@ const initializeTable = async () => {
                 return sortingState.value
             }
         }
-    }) as unknown as TableInstance
+    })) as unknown as TableInstance
 }
 
 const getAriaSort = (header: TableHeader) => {
@@ -1645,6 +1662,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+    tableScope.stop()
     if (filterDebounce.value) window.clearTimeout(filterDebounce.value)
     overflowResizeObserver?.disconnect()
 })

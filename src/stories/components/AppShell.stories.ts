@@ -32,7 +32,7 @@ const meta: Meta<typeof AppShell> = {
     parameters: {
         docs: {
             description: {
-                component: 'An application layout wrapper that coordinates a responsive sidebar with header, main content, and footer slots. Exposes sidebar state and controls through slot props for use with NavigationBar.'
+                component: 'An application layout wrapper that coordinates a responsive sidebar with header, main content, and footer slots. Exposes sidebar state and controls through slot props for use with NavigationBar.' + '\n\nDefault demonstrates the header, sidebar and main slots with the component layout defaults. Workspace Layout composes navigation and content; Mobile Sidebar demonstrates the responsive drawer. Without Sidebar provides a full-width main area.'
             }
         }
     },

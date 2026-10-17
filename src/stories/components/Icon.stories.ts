@@ -14,7 +14,7 @@ const meta: Meta<typeof Icon> = {
     parameters: {
         docs: {
             description: {
-                component: 'Every icon from the installed Tabler catalogue is available by name without imports or registration, including brands and filled variants. Use names without the Icon prefix, such as BrandGithub or StarFilled. registerIcons() remains available for custom icons and overrides. Supports xs through 9xl sizes.'
+                component: 'Every icon from the installed Tabler catalogue is available by name without imports or registration, including brands and filled variants. Use names without the Icon prefix, such as BrandGithub or StarFilled. registerIcons() remains available for custom icons and overrides. Supports xs through 9xl sizes.\n\nThe default passes an icon name and uses the component size. Icons are decorative (aria-hidden); place the accessible label on the surrounding button or text. Browse Catalogue is a searchable reference of all available names. Unknown names render nothing; registerIcons() supports custom names and overrides.'
             }
         }
     },

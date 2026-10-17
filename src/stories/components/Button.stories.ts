@@ -2,7 +2,6 @@ import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
-import { faker } from '@faker-js/faker'
 
 const colors = ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink']
 const variants = ['primary', 'secondary', 'tertiary', 'text', 'none'] as const
@@ -14,7 +13,7 @@ const meta: Meta<typeof Button> = {
     parameters: {
         docs: {
             description: {
-                component: 'Triggers an action or navigates to a URL. Supports multiple variants, colours, and sizes, leading and trailing icons, a loading state that disables interaction and shows a spinner, and renders as an anchor when an href is provided.'
+                component: 'Triggers an action or navigates to a URL. Supports multiple variants, colours, and sizes, leading and trailing icons, a loading state that disables interaction and shows a spinner, and renders as an anchor when an href is provided.\n\nThe default uses the component styling without colour, size or variant overrides. Supply visible button text, or aria-label for an icon-only action. Use href for navigation and a button for actions.'
             }
         }
     },

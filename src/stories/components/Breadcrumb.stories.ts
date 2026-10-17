@@ -30,10 +30,7 @@ const meta: Meta<typeof Breadcrumb> = {
         }
     },
 
-    args: {
-        items: makeItems(),
-        separator: 'chevron'
-    }
+    args: { items: makeItems() }
 }
 
 export default meta

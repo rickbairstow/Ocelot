@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+    <rect width="640" height="360" fill="#172554"/>
+    <circle cx="320" cy="150" r="46" fill="#dbeafe"/>
+    <path d="M308 126v48l36-24z" fill="#1e3a8a"/>
+    <text x="320" y="245" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#ffffff">Ocelot UI video example</text>
+</svg>

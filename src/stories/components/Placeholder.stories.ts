@@ -1,3 +1,4 @@
+import { expect } from 'storybook/test'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Placeholder from '@Components/Placeholder.vue'
 
@@ -46,4 +47,19 @@ const meta: Meta<typeof Placeholder> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        await expect(canvasElement.querySelector('.animate-pulse')).toBeVisible()
+    }
+}
+
+export const Variants: Story = {
+    render: () => ({
+        components: { Placeholder },
+        setup: () => ({ variants: ['badge', 'button', 'heading', 'image', 'input', 'paragraph', 'text'] }),
+        template: '<div class="grid gap-6"><div v-for="variant in variants" :key="variant"><p class="mb-2 text-sm text-gray-700 dark:text-gray-300">{{ variant }}</p><Placeholder :variant="variant" /></div></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        await expect(canvasElement.querySelectorAll('.animate-pulse')).toHaveLength(7)
+    }
+}

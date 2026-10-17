@@ -76,7 +76,11 @@ const meta: Meta<typeof Badge> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByText('New')).toBeVisible()
+    }
+}
 
 export const Dot: Story = {
     render: () => ({

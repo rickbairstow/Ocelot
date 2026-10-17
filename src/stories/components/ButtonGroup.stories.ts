@@ -45,10 +45,7 @@ const meta: Meta<typeof ButtonGroup> = {
         }
     },
 
-    args: {
-        ariaLabel: 'View options',
-        orientation: 'horizontal'
-    }
+    args: { ariaLabel: 'View options' }
 }
 
 export default meta

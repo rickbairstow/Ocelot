@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Video from '@Components/Video.vue'
+import { expect } from 'storybook/test'
 
 const meta: Meta<typeof Video> = {
     title: 'Components/Video',
@@ -9,7 +10,7 @@ const meta: Meta<typeof Video> = {
         docs: {
             description: {
                 component:
-                    'A video player component powered by [Plyr](https://plyr.io). Supports YouTube, Vimeo, and native HTML5 video (MP4, WebM, HLS, DASH) — the provider is detected automatically from the `src` URL. Accessible by default with full keyboard navigation and ARIA support.'
+                    'A video player component powered by [Plyr](https://plyr.io). Supports YouTube, Vimeo, and native HTML5 video (MP4, WebM, HLS, DASH) — the provider is detected automatically from the `src` URL. Accessible by default with full keyboard navigation and ARIA support.' + '\n\nDefault supplies a local video src and the required accessible title. YouTube and Vimeo demonstrate hosted sources. With Poster adds a preview; Muted Autoplay enables muted looping, subject to browser policy. Install the optional plyr peer dependency.'
             }
         }
     },
@@ -90,7 +91,14 @@ const meta: Meta<typeof Video> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+    play: async ({ canvasElement, args }) => {
+        const video = canvasElement.querySelector('video')
+        await expect(video).toHaveAttribute('title', args.title)
+        await expect(video?.querySelector('source')).toHaveAttribute('src', args.src)
+        await expect(video).toHaveAttribute('playsinline')
+    }
+}
 
 export const Vimeo: Story = {
     args: {
@@ -103,8 +111,8 @@ export const Vimeo: Story = {
 export const YouTube: Story = {
     name: 'YouTube',
     args: {
-        src: '/media/sample.mp4',
-        title: 'Sample video'
+        src: 'https://www.youtube.com/watch?v=vHcAPrKwhVI',
+        title: 'YouTube video'
     }
 }
 
@@ -112,7 +120,7 @@ export const WithPoster: Story = {
     args: {
         src: '/media/sample.mp4',
         title: 'Sample video with poster',
-        poster: '/favicon.ico'
+        poster: '/media/video-poster.svg'
     }
 }
 

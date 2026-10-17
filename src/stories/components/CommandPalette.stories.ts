@@ -160,32 +160,32 @@ const createRender = (itemsFactory?: (result: { value: string }) => CommandPalet
 })
 
 const checkDefault: NonNullable<Story['play']> = async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
+    const canvas = within(canvasElement)
 
-        await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
+    await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
 
-        const dialog = await canvas.findByRole('dialog', { name: /command palette/i })
-        await waitFor(() => expect(dialog).toBeVisible())
+    const dialog = await canvas.findByRole('dialog', { name: /command palette/i })
+    await waitFor(() => expect(dialog).toBeVisible())
 
-        await expect(canvas.getByRole('option', { name: /overview/i })).toBeVisible()
-        await expect(canvas.getByText('Navigate')).toBeVisible()
-        await expect(canvas.getByText('Actions')).toBeVisible()
+    await expect(canvas.getByRole('option', { name: /overview/i })).toBeVisible()
+    await expect(canvas.getByText('Navigate')).toBeVisible()
+    await expect(canvas.getByText('Actions')).toBeVisible()
 
-        await userEvent.keyboard('{Escape}')
-        await waitFor(() => expect(canvas.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument())
-    }
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(canvas.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument())
+}
 
 const checkKeyboard: NonNullable<Story['play']> = async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
+    const canvas = within(canvasElement)
 
-        await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
+    await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
 
-        await canvas.findByRole('combobox')
-        await userEvent.keyboard('{ArrowDown}{Enter}')
+    await canvas.findByRole('combobox')
+    await userEvent.keyboard('{ArrowDown}{Enter}')
 
-        await waitFor(() => expect(canvas.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument())
-        await expect(canvas.getByTestId('result')).toHaveTextContent('Opened Projects')
-    }
+    await waitFor(() => expect(canvas.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument())
+    await expect(canvas.getByTestId('result')).toHaveTextContent('Opened Projects')
+}
 
 export const Default: Story = {
     render: createRender(),

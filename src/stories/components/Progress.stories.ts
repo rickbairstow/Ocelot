@@ -10,7 +10,7 @@ const meta: Meta<typeof Progress> = {
     parameters: {
         docs: {
             description: {
-                component: 'A bar or circle indicator showing task completion. Supports determinate values with a visible label and percentage, and an indeterminate animated mode for tasks of unknown duration.'
+                component: 'A bar or circle indicator showing task completion. Supports determinate values with a visible label and percentage, and an indeterminate animated mode for tasks of unknown duration.\n\nDefault is an indeterminate bar with an accessible label; no value, colour, size or variant is supplied. With Value enables determinate progress and the optional visible percentage. Always give the progressbar a meaningful label. Circle and size comparisons document the alternate visual forms.'
             }
         }
     },

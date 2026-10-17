@@ -27,6 +27,7 @@ interface PswpUiController {
 }
 
 interface PhotoSwipeInstance {
+    element?: HTMLElement
     currIndex: number
     currSlide?: {
         data?: unknown
@@ -77,6 +78,8 @@ async function initLightbox(): Promise<PhotoSwipeLightboxInstance | null> {
 
             lightbox.on('uiRegister', () => {
                 const pswp = lightbox!.pswp!
+                pswp.element?.setAttribute('aria-label', 'Image viewer')
+                pswp.element?.setAttribute('aria-modal', 'true')
                 const slides = (pswp.options.dataSource as LightboxSlide[]) ?? []
                 const isGallery = slides.length > 1
 

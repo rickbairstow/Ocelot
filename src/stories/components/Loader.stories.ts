@@ -1,7 +1,6 @@
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Loader from '@Components/Loader.vue'
-import { faker } from '@faker-js/faker'
 import { expect, within } from 'storybook/test'
 
 const meta: Meta<typeof Loader> = {
@@ -11,7 +10,7 @@ const meta: Meta<typeof Loader> = {
     parameters: {
         docs: {
             description: {
-                component: 'An animated loading indicator. Supports inline, absolute overlay (fills a relative-positioned container), and fixed full-screen variants. Icon, animation style, and colour are all configurable.'
+                component: 'An animated loading indicator. Supports inline, absolute overlay (fills a relative-positioned container), and fixed full-screen variants. Icon, animation style, and colour are all configurable.\n\nDefault renders the inline spinner without custom text, icon, size, colour or animation. With Text adds visible loading copy. Absolute requires a positioned parent; Fixed overlays the viewport. Use a concise accessible label when the surrounding context does not explain the pending action.'
             }
         }
     },
@@ -72,13 +71,6 @@ const meta: Meta<typeof Loader> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const WithText: Story = {
-    args: { text: 'Loading your workspace…' },
-    play: async ({ canvasElement }) => {
-        await expect(within(canvasElement).getByRole('status')).toHaveTextContent('Loading your workspace…')
-    }
-}
-
 export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -87,8 +79,21 @@ export const Default: Story = {
     }
 }
 
+export const WithText: Story = {
+    args: { text: 'Loading your workspace…' },
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByRole('status')).toHaveTextContent('Loading your workspace…')
+    }
+}
+
+
+
 export const Absolute: Story = {
-    args: { variant: 'absolute' }
+    render: () => ({
+        components: { Loader },
+        template: '<div class="relative h-48 rounded-xl border border-gray-300 dark:border-gray-700"><Loader variant="absolute" /></div>'
+    }),
+    play: Default.play
 }
 
 export const Fixed: Story = {

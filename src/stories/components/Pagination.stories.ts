@@ -21,11 +21,7 @@ const meta: Meta<typeof Pagination> = {
         total: { control: 'number', description: 'Total number of pages.' }
     },
 
-    args: {
-        modelValue: 1,
-        siblings: 1,
-        total: 10
-    }
+    args: { modelValue: 1, total: 10 }
 }
 
 meta.render = (args, { updateArgs }) => ({

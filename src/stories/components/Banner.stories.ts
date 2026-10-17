@@ -39,12 +39,7 @@ const meta: Meta<typeof Banner> = {
         }
     },
 
-    args: {
-        dismissible: false,
-        title: '',
-        type: 'info',
-        variant: 'subtle'
-    },
+    args: {},
 
     render: (args) => ({
         components: { Banner },
@@ -65,7 +60,11 @@ const meta: Meta<typeof Banner> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        await expect(canvasElement.querySelector('svg')).toBeInTheDocument()
+    }
+}
 
 export const WithTitle: Story = {
     args: { title: 'Something to note' }

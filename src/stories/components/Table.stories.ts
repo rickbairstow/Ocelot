@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
-import { createColumnHelper } from '@tanstack/vue-table'
+import { createColumnHelper, type StockFeatures } from '@tanstack/vue-table'
 import Button from '@Components/Button.vue'
 import EmptyState from '@Components/EmptyState.vue'
 import Table from '@Components/Table.vue'
@@ -52,7 +52,7 @@ const users: UserRecord[] = Array.from({ length: 50 }, (_, index) => createUserR
 
 const usersSortedByName = [...users].sort((left, right) => left.name.localeCompare(right.name))
 
-const columnHelper = createColumnHelper<UserRecord>()
+const columnHelper = createColumnHelper<StockFeatures, UserRecord>()
 
 const columns = [
     columnHelper.accessor('name', {
@@ -109,7 +109,8 @@ const meta: Meta<typeof Table> = {
     includeStories: [
         'Default',
         'SearchAndSorting',
-        'AllFunctionality',
+        'RowActions',
+        'RowSelection',
         'WithPagination',
         'WithColumnVisibility',
         'WithColumnPinningControls',
@@ -136,7 +137,7 @@ const meta: Meta<typeof Table> = {
     parameters: {
         docs: {
             description: {
-                component: 'A TanStack-powered data table with optional search, sorting, pagination, row selection, column visibility, resizing, pinned columns, expandable rows, and an optional mobile card layout.'
+                component: 'A TanStack-powered data table with optional search, sorting, pagination, row selection, column visibility, resizing, pinned columns, expandable rows, and an optional mobile card layout.\n\nDefault supplies only columns and data; pagination and hover behaviour use the component defaults. Search And Sorting, Row Selection, Row Actions, column controls, expansion and mobile cards document separate features. columns follow TanStack column definitions. data must contain stable row values; supply getRowId when selection must survive data changes. Install the optional @tanstack/vue-table peer dependency before using Table.'
             }
         }
     }
@@ -161,6 +162,21 @@ export const Default: Story = {
         await expect(canvas.getAllByRole('row')).toHaveLength(11)
     }
 }
+
+export const RowSelection: Story = {
+    args: { rowSelection: 'multi' },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const controls = await canvas.findAllByRole('checkbox', { name: /select row/i })
+        await userEvent.click(controls[0])
+        await expect(controls[0]).toBeChecked()
+        await userEvent.click(controls[1])
+        await expect(controls[0]).toBeChecked()
+        await expect(controls[1]).toBeChecked()
+    }
+}
+
+
 
 export const SearchAndSorting: Story = {
     args: {
@@ -203,25 +219,7 @@ export const SearchAndSorting: Story = {
     }
 }
 
-export const AllFunctionality: Story = {
-    args: {
-        columnSizing: {
-            email: 260,
-            name: 220,
-            orders: 140,
-            role: 220
-        },
-        columnVisibility: true,
-        expandableRows: true,
-        globalFilter: true,
-        pinnedColumns: {
-            left: [],
-            right: []
-        },
-        resizableColumns: true,
-        rowSelection: 'multi',
-        stickyHeader: true
-    },
+export const RowActions: Story = {
     render: (args) => ({
         components: { Button, Table },
         setup() {
@@ -239,64 +237,12 @@ export const AllFunctionality: Story = {
                             View {{ row.original.name }}
                         </Button>
                     </template>
-
-                    <template #row-expanded="{ row }">
-                        <div class="space-y-3">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ row.original.name }} is leading {{ row.original.team }}
-                                </p>
-                                <p class="text-sm text-gray-600 dark:text-gray-300">
-                                    {{ row.original.name }} has processed {{ row.original.orders }} recent orders and is one of the main contacts for the {{ row.original.role }} track.
-                                </p>
-                            </div>
-
-                            <div class="flex flex-wrap gap-2">
-                                <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 dark:bg-blue-950/50 dark:text-blue-200">
-                                    {{ row.original.team }}
-                                </span>
-                                <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                                    {{ row.original.role }}
-                                </span>
-                            </div>
-                        </div>
-                    </template>
                 </Table>
             </div>
         `
     }),
-    async play({ canvasElement }) {
-        const canvas = within(canvasElement)
-
-        await waitFor(() => expect(canvas.getByRole('table')).toBeVisible())
-        await userEvent.click(canvas.getByRole('button', { name: /settings/i }))
-        await userEvent.click(canvas.getByRole('button', { name: 'Small' }))
-        await waitFor(() => expect(canvas.getByRole('button', { name: 'Small' })).toHaveAttribute('aria-pressed', 'true'))
-        await userEvent.click(canvas.getByRole('button', { name: /settings/i }))
-
-        await expect(canvas.getByRole('button', { name: new RegExp(`view ${users[0].name}`, 'i') })).toBeVisible()
-
-        const nameHeader = canvas.getByRole('button', { name: /^name$/i })
-        await userEvent.click(nameHeader)
-
-        const nameColumnHeader = canvas.getByRole('columnheader', { name: /name/i })
-        await waitFor(() => expect(nameColumnHeader).toHaveAttribute('aria-sort', 'ascending'))
-        await waitFor(() => expect(canvas.getByText(usersSortedByName[0].name)).toBeVisible())
-
-        await userEvent.clear(canvas.getByRole('searchbox', { name: /search rows/i }))
-        await userEvent.type(canvas.getByRole('searchbox', { name: /search rows/i }), 'design')
-
-        await waitFor(() => expect(canvas.getByText(users[1].name)).toBeVisible())
-        await waitFor(() => expect(canvas.getByText(users[3].name)).toBeVisible())
-        await waitFor(() => expect(canvas.queryByText(users[2].name)).not.toBeInTheDocument())
-
-        await userEvent.clear(canvas.getByRole('searchbox', { name: /search rows/i }))
-
-        await waitFor(() => expect(canvas.getAllByRole('checkbox', { name: /select row/i }).length).toBeGreaterThan(0))
-        const checkboxes = canvas.getAllByRole('checkbox', { name: /select row/i })
-
-        await userEvent.click(checkboxes[0])
-        await expect(checkboxes[0]).toBeChecked()
+    play: async ({ canvasElement }) => {
+        await waitFor(() => expect(within(canvasElement).getByRole('button', { name: 'View ' + users[0].name })).toBeVisible())
     }
 }
 

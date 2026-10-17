@@ -101,3 +101,9 @@ Defined in `vite.config.ts` and `jsconfig.json`:
 - Strict equality (`===`) enforced by ESLint
 - Vue attributes in alphabetical order (ESLint rule)
 - Accessibility enforced via `eslint-plugin-vuejs-accessibility`
+
+### Story documentation
+
+- Every component page starts with a `Default` story using component defaults, required props, meaningful slot content and the attributes needed for accessibility.
+- Add a focused story for each key feature; avoid duplicate canvases that exist only for a test or a Storybook workaround. Put behavioural assertions in the relevant story play function and implementation-only cases in unit tests.
+- Explain model types, required setup, accessibility and consumer responsibilities in the autodocs description. Keep composed application examples in Patterns.

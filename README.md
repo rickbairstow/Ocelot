@@ -22,7 +22,7 @@ Optional feature dependencies:
 
 ```bash
 # Table
-npm install @tanstack/vue-table
+npm install @tanstack/vue-table@^9.3.1
 
 # LightboxImage
 npm install photoswipe
@@ -76,6 +76,8 @@ import { Button, Dialog, Sidebar } from 'ocelot-ui'
 `Dialog`, `Toast`, and `CommandPalette` use Vue Teleport. OUI creates `#portal-target` automatically after mount when it is missing, or you can provide one yourself in `index.html`.
 
 ### Table notes
+
+`Table` requires TanStack Table 9. Existing consumers on version 8 must update the optional peer dependency. When using TanStack's typed column helper, v9 takes the feature type before the row type: `createColumnHelper<StockFeatures, YourRow>()`. See the [Vue migration guide](https://tanstack.com/table/latest/docs/framework/vue/guide/migrating).
 
 `Table` includes a built-in settings menu for density, column visibility, and pinning. On small screens it can either stay horizontally scrollable or switch rows into stacked cards with `mobileLayout="card"`.
 

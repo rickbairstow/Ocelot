@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { ref } from 'vue'
 import Checkbox from '@Components/Checkbox.vue'
-import CheckboxGroup from '@Components/CheckboxGroup.vue'
 import FormField from '@Components/FormField.vue'
 
 const meta: Meta<typeof Checkbox> = {
@@ -93,56 +92,9 @@ export const WithFormField: Story = {
     }
 }
 
-export const GroupVertical: Story = {
-    render: () => ({
-        components: { Checkbox, CheckboxGroup },
-        setup() { return { selected: ref(['vue']) } },
-        template: `
-            <CheckboxGroup v-model="selected" name="frameworks">
-                <Checkbox value="vue" label="Vue" />
-                <Checkbox value="react" label="React" />
-                <Checkbox value="svelte" label="Svelte" />
-                <Checkbox value="angular" label="Angular" />
-            </CheckboxGroup>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const checkboxes = canvas.getAllByRole('checkbox')
-        await expect(checkboxes[0]).toBeChecked()
-        await expect(checkboxes[1]).not.toBeChecked()
-        await userEvent.click(checkboxes[1])
-        await expect(checkboxes[1]).toBeChecked()
-        await userEvent.click(checkboxes[0])
-        await expect(checkboxes[0]).not.toBeChecked()
-    }
-}
 
-export const GroupHorizontal: Story = {
-    render: () => ({
-        components: { Checkbox, CheckboxGroup, FormField },
-        setup() { return { selected: ref([]) } },
-        template: `
-            <FormField hint="Select your interests.">
-                <CheckboxGroup v-model="selected" label="Interests" name="interests" orientation="horizontal">
-                    <Checkbox value="design" label="Design" />
-                    <Checkbox value="development" label="Development" />
-                    <Checkbox value="marketing" label="Marketing" />
-                </CheckboxGroup>
-            </FormField>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const checkboxes = canvas.getAllByRole('checkbox')
-        await expect(checkboxes).toHaveLength(3)
-        await userEvent.click(checkboxes[0])
-        await userEvent.click(checkboxes[2])
-        await expect(checkboxes[0]).toBeChecked()
-        await expect(checkboxes[2]).toBeChecked()
-        await expect(checkboxes[1]).not.toBeChecked()
-    }
-}
+
+
 
 
 export const RequiredAndInvalid: Story = {

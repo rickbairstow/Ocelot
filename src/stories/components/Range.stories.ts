@@ -8,7 +8,7 @@ const meta: Meta<typeof Range> = {
     title: 'Components/Inputs/Range',
     component: Range,
     parameters: {
-        docs: { description: { component: 'A native range input. v-model and input/change events return numbers. Supports native min, max, step, disabled, keyboard interaction and FormField. Range always has a value, so required does not apply.' } }
+        docs: { description: { component: 'A native range input. v-model and input/change events return numbers. Supports native min, max, step, disabled, keyboard interaction and FormField. Range always has a value, so required does not apply.\n\nDefault uses the native 0–100 range, step 1, and initial value 50. With Form Field demonstrates custom step, shared guidance and a displayed value. The model and input/change payloads are numbers. Supply aria-valuetext for values that need a spoken description.' } }
     }
 }
 export default meta

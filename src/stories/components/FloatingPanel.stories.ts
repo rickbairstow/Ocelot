@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import FloatingPanel from '@Components/FloatingPanel.vue'
-import { faker } from '@faker-js/faker'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 const meta: Meta<typeof FloatingPanel> = {
@@ -61,17 +60,7 @@ const meta: Meta<typeof FloatingPanel> = {
         }
     },
 
-    args: {
-        ariaLabel: undefined,
-        content: faker.lorem.sentence(),
-        disabled: false,
-        flush: false,
-        interaction: 'all',
-        maxWidth: '260px',
-        placement: 'bottom',
-        role: null,
-        trigger: faker.lorem.words(2)
-    },
+    args: { content: 'More information about this action.', trigger: 'More information' },
 
     render: (args) => ({
         components: { FloatingPanel },
@@ -105,11 +94,13 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    name: 'All interactions (default)',
-    args: {
-        interaction: 'all',
-        trigger: 'Hover, click, or focus me',
-        content: faker.lorem.sentence()
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const trigger = canvas.getByRole('button', { name: 'More information' })
+        await userEvent.hover(trigger)
+        await waitFor(() => expect(canvas.getByText('More information about this action.')).toBeVisible())
+        await userEvent.unhover(trigger)
+        await userEvent.keyboard('{Escape}')
     }
 }
 

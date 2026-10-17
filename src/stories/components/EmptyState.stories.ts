@@ -12,7 +12,7 @@ const meta: Meta<typeof EmptyState> = {
     parameters: {
         docs: {
             description: {
-                component: 'A placeholder for screens or sections with no content. Supports an optional icon, title, description, and a flexible action slot for CTAs.'
+                component: 'A placeholder for screens or sections with no content. Supports an optional icon, title, description, and a flexible action slot for CTAs.\n\nDefault supplies only the required title. Add supporting copy, an icon or an action when it helps the user recover. Use titleTag to fit the surrounding document hierarchy.'
             }
         }
     },

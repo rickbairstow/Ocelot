@@ -88,7 +88,7 @@ const meta: Meta<typeof CodeBlock> = {
     parameters: {
         docs: {
             description: {
-                component: 'A syntax-highlighted code block powered by Shiki. Supports all major languages and themes, with a language label and one-click copy button. Automatically adapts between light and dark themes.'
+                component: 'A syntax-highlighted code block powered by Shiki. Supports all major languages and themes, with a language label and one-click copy button. Automatically adapts between light and dark themes.' + '\n\nDefault supplies only code and uses TypeScript and the built-in light/dark syntax themes. Language examples change code and language together. Theme controls choose a syntax palette independently of the application theme.'
             }
         },
         a11y: {
@@ -125,12 +125,7 @@ const meta: Meta<typeof CodeBlock> = {
         }
     },
 
-    args: {
-        code: codeExamples.typescript,
-        darkTheme: 'github-dark',
-        language: 'typescript',
-        theme: 'github-light'
-    }
+    args: { code: codeExamples.typescript }
 }
 
 export default meta

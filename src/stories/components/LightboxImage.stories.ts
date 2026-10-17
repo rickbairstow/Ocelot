@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import LightboxImage from '@Components/LightboxImage.vue'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
 
 faker.seed(99)
@@ -15,7 +16,7 @@ const meta: Meta<typeof LightboxImage> = {
                     'An image that opens full-screen in a [PhotoSwipe](https://photoswipe.com) lightbox on click. ' +
                     'Give multiple `LightboxImage` components the same `lightbox-group` and they form a gallery — ' +
                     'clicking any one opens at that position with a thumbnail strip and arrow navigation. ' +
-                    'Fully keyboard accessible: Tab to focus, Enter/Space to open, arrow keys to navigate, Escape to close.'
+                    'Fully keyboard accessible: Tab to focus, Enter/Space to open, arrow keys to navigate, Escape to close.' + '\n\nDefault supplies only src and alt text. With Caption adds lightbox copy; Gallery joins images with the same lightboxGroup. Install the optional photoswipe peer dependency.'
             }
         }
     },
@@ -92,7 +93,20 @@ const meta: Meta<typeof LightboxImage> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+    play: async ({ canvasElement, args }) => {
+        const canvas = within(canvasElement)
+        const page = within(canvasElement.ownerDocument.body)
+        const trigger = canvas.getByRole('button', { name: `Open ${args.alt} in lightbox` })
+        await userEvent.click(trigger)
+        const close = await page.findByRole('button', { name: /close/i }, { timeout: 5000 })
+        await expect(close).toBeVisible()
+        // PhotoSwipe enables its controls when the opening transition finishes.
+        await waitFor(() => expect(page.getByRole('dialog', { name: 'Image viewer' })).toHaveFocus())
+        await userEvent.click(close)
+        await waitFor(() => expect(page.queryByRole('dialog')).not.toBeInTheDocument())
+    }
+}
 
 export const WithCaption: Story = {
     args: {

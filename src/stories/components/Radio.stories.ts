@@ -11,7 +11,7 @@ const meta: Meta<typeof Radio> = {
     parameters: {
         docs: {
             description: {
-                component: 'A styled native radio button. Use RadioGroup for mutually exclusive option sets — it renders a fieldset/legend for correct group semantics and manages state via provide/inject.'
+                component: 'A styled native radio button. Use RadioGroup for mutually exclusive option sets — it renders a fieldset/legend for correct group semantics and manages state via provide/inject.\n\nDefault renders one unchecked radio with a value and an accessible label. Use RadioGroup for an option set; Shared Name shows native grouping without RadioGroup. A radio cannot be toggled off by clicking it again.'
             }
         }
     }
@@ -34,70 +34,11 @@ export const Default: Story = {
     }
 }
 
-export const Group: Story = {
-    render: () => ({
-        components: { Radio, RadioGroup },
-        setup() { return { selected: ref('monthly') } },
-        template: `
-            <RadioGroup v-model="selected" label="Billing cycle" name="billing">
-                <Radio value="monthly" label="Monthly" />
-                <Radio value="yearly" label="Yearly (save 20%)" />
-                <Radio value="lifetime" label="Lifetime" />
-            </RadioGroup>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const radios = canvas.getAllByRole('radio')
-        await expect(radios[0]).toBeChecked()
-        await expect(radios[1]).not.toBeChecked()
-        await userEvent.click(radios[1])
-        await expect(radios[1]).toBeChecked()
-        await expect(radios[0]).not.toBeChecked()
-    }
-}
 
-export const GroupHorizontal: Story = {
-    render: () => ({
-        components: { Radio, RadioGroup },
-        setup() { return { selected: ref('sm') } },
-        template: `
-            <RadioGroup v-model="selected" label="Size" name="size" orientation="horizontal">
-                <Radio value="sm" label="Small" />
-                <Radio value="md" label="Medium" />
-                <Radio value="lg" label="Large" />
-            </RadioGroup>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const radios = canvas.getAllByRole('radio')
-        await expect(radios[0]).toBeChecked()
-        await userEvent.click(radios[2])
-        await expect(radios[2]).toBeChecked()
-        await expect(radios[0]).not.toBeChecked()
-    }
-}
 
-export const GroupDisabled: Story = {
-    render: () => ({
-        components: { Radio, RadioGroup },
-        setup() { return { selected: ref('pro') } },
-        template: `
-            <RadioGroup v-model="selected" disabled label="Plan" name="plan">
-                <Radio value="free" label="Free" />
-                <Radio value="pro" label="Pro" />
-                <Radio value="enterprise" label="Enterprise" />
-            </RadioGroup>
-        `
-    }),
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        for (const radio of canvas.getAllByRole('radio')) {
-            await expect(radio).toBeDisabled()
-        }
-    }
-}
+
+
+
 
 export const WithFormField: Story = {
     render: () => ({
@@ -121,7 +62,7 @@ export const WithFormField: Story = {
     }
 }
 
-export const IndividualStandalone: Story = {
+export const SharedName: Story = {
     render: () => ({
         components: { Radio },
         setup() { return { selected: ref('b') } },

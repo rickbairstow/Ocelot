@@ -10,7 +10,7 @@ const meta: Meta<typeof Textarea> = {
     parameters: {
         docs: {
             description: {
-                component: 'A native textarea with consistent styling. Supports auto-resize mode that grows with content, optional character count, and integrates with FormField for label, hint, and error wiring.'
+                component: 'A native textarea with consistent styling. Supports auto-resize mode that grows with content, optional character count, and integrates with FormField for label, hint, and error wiring.' + '\n\nDefault is an empty labelled textarea with native rows, resize and length defaults. Auto Resize, With Count, Readonly and Disabled isolate those features. With Form Field shows a consumer-owned error that clears when the message is corrected.'
             }
         }
     }

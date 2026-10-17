@@ -21,7 +21,7 @@ const meta: Meta<typeof NavigationBar> = {
     parameters: {
         docs: {
             description: {
-                component: 'A layout-focused top navigation wrapper with brand, nav, actions, and mobile-menu slots. Supports sticky positioning and an optional first-class mobile menu path below the configured breakpoint.'
+                component: 'A layout-focused top navigation wrapper with brand, nav, actions, and mobile-menu slots. Supports sticky positioning and an optional first-class mobile menu path below the configured breakpoint.' + '\n\nDefault contains a brand and navigation links without layout overrides. With Actions adds actions; With Submenu adds grouped destinations. Mobile Menu Toggle documents the responsive toggle and mobile-menu slot. The host application can control open state.'
             }
         }
     },
@@ -52,19 +52,24 @@ const meta: Meta<typeof NavigationBar> = {
             description: 'Makes the navigation bar sticky to the top of the viewport.'
         }
     },
-    args: {
-        bordered: true,
-        menuToggleBreakpoint: 'lg',
-        menuToggleLabel: 'Open navigation',
-        navLabel: 'Primary navigation',
-        showMenuToggle: false,
-        sticky: false
-    }
+    args: {}
 }
 
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+    render: (args) => ({
+        components: { NavigationBar },
+        setup: () => ({ args }),
+        template: '<NavigationBar v-bind="args"><template #brand>Ocelot</template><template #nav><a href="#overview">Overview</a><a href="#settings">Settings</a></template></NavigationBar>'
+    }),
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByRole('navigation', { name: 'Primary navigation' })).toBeVisible()
+        await expect(within(canvasElement).getByRole('link', { name: 'Overview' })).toBeVisible()
+    }
+}
+
+export const WithActions: Story = {
     render: (args) => ({
         components: { Avatar, Button, NavigationBar },
         setup() {

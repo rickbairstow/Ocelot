@@ -31,11 +31,7 @@ const meta: Meta<typeof Popover> = {
         }
     },
 
-    args: {
-        disabled: false,
-        flush: false,
-        placement: 'bottom'
-    }
+    args: {}
 }
 
 export default meta

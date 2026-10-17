@@ -31,6 +31,9 @@ export default mergeConfig(
                             configDir: path.join(dirname, '.storybook')
                         })
                     ],
+                    optimizeDeps: {
+                        include: ['photoswipe', 'photoswipe/lightbox', 'plyr', 'qrcode', 'shiki']
+                    },
                     test: {
                         name: 'storybook',
                         browser: {

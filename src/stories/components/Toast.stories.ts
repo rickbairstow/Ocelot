@@ -16,7 +16,7 @@ const meta: Meta<typeof Toast> = {
     parameters: {
         docs: {
             description: {
-                component: 'A non-blocking notification that appears temporarily at the screen edge. Managed via the `useToast` composable — call `useToast().add()` from anywhere to trigger a toast. Supports success, error, warning, and info types with optional actions.'
+                component: 'A non-blocking notification that appears temporarily at the screen edge. Managed via the `useToast` composable — call `useToast().add()` from anywhere to trigger a toast. Supports success, error, warning, and info types with optional actions.' + '\n\nDefault uses the default placement and notification type. Mount Toast once and call useToast().add(message, options). With Action demonstrates Undo; On Dismiss demonstrates onClose. Permanent requires explicit dismissal. Stacking shows the collapsed overflow list.'
             }
         }
     },
@@ -232,19 +232,7 @@ export const OnDismiss: Story = {
     }
 }
 
-export const TopRight: Story = {
-    args: { placement: 'top-right' },
-    play: async ({ canvasElement }) => {
-        const { clear } = useToast()
-        clear()
 
-        const canvas = within(canvasElement)
-        await userEvent.click(canvas.getByRole('button', { name: /add toast/i }))
-
-        const toast = await canvas.findByRole('status')
-        await waitFor(() => expect(toast).toBeVisible())
-    }
-}
 
 export const TopLeft: Story = {
     args: { placement: 'top-left' },

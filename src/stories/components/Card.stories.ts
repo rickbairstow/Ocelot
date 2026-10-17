@@ -12,7 +12,7 @@ const meta: Meta<typeof Card> = {
     parameters: {
         docs: {
             description: {
-                component: 'A flexible content container with named slots for header, body, footer, and actions. Supports an image, badge list, clickable state (renders as a button), and a selected/highlighted variant.'
+                component: 'A flexible content container with named slots for header, body, footer, and actions. Supports an image, badge list, clickable state (renders as a button), and a selected/highlighted variant.\n\nDefault contains only body content. Add a title, image, badges, named slots or selection behaviour only when needed. Interactive cards should have an accessible name; avoid nesting other interactive elements inside a clickable card.'
             }
         }
     },
@@ -86,6 +86,14 @@ const meta: Meta<typeof Card> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        await expect(canvasElement.querySelector('img')).not.toBeInTheDocument()
+        await expect(canvasElement.querySelector('button')).not.toBeInTheDocument()
+        await expect(canvasElement.textContent?.trim()).not.toBe('')
+    }
+}
+
 export const WithBadges: Story = {
     args: { title: 'Weekend escape', badges: [{ text: 'Available', type: 'success' }] },
     play: async ({ canvasElement }) => {
@@ -93,7 +101,7 @@ export const WithBadges: Story = {
     }
 }
 
-export const Default: Story = {}
+
 
 export const Horizontal: Story = {
     args: { imageSrc: 'https://picsum.photos/seed/oui-card/400/300', imageAlt: 'Mountain landscape', title: 'Weekend escape' }

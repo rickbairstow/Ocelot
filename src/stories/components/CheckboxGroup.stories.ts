@@ -8,7 +8,7 @@ import FormField from '@Components/FormField.vue'
 const meta: Meta<typeof CheckboxGroup> = {
     title: 'Components/Inputs/CheckboxGroup',
     component: CheckboxGroup,
-    parameters: { docs: { description: { component: 'A group of independent checkboxes. Consumers validate selection counts; required is never applied to every checkbox automatically. Use FormField group for a shared legend, guidance and errors. Each option retains its own label and unique ID.' } } }
+    parameters: { docs: { description: { component: 'A group of independent checkboxes. Consumers validate selection counts; required is never applied to every checkbox automatically. Use FormField group for a shared legend, guidance and errors. Each option retains its own label and unique ID.\n\nDefault is a labelled group with an empty string-array model and named options. Horizontal changes the layout. With Form Field demonstrates a consumer-owned minimum-selection rule; checking one option clears the error and clearing all options restores it. Put group-level examples here rather than on the individual Checkbox page.' } } }
 }
 export default meta
 type Story = StoryObj<typeof meta>
@@ -75,5 +75,32 @@ export const Disabled: Story = {
     }),
     play: async ({ canvasElement }) => {
         for (const control of within(canvasElement).getAllByRole('checkbox')) await expect(control).toBeDisabled()
+    }
+}
+
+
+export const Horizontal: Story = {
+    render: () => ({
+        components: { Checkbox, CheckboxGroup, FormField },
+        setup() { return { selected: ref([]) } },
+        template: `
+            <FormField hint="Select your interests.">
+                <CheckboxGroup v-model="selected" label="Interests" name="interests" orientation="horizontal">
+                    <Checkbox value="design" label="Design" />
+                    <Checkbox value="development" label="Development" />
+                    <Checkbox value="marketing" label="Marketing" />
+                </CheckboxGroup>
+            </FormField>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const checkboxes = canvas.getAllByRole('checkbox')
+        await expect(checkboxes).toHaveLength(3)
+        await userEvent.click(checkboxes[0])
+        await userEvent.click(checkboxes[2])
+        await expect(checkboxes[0]).toBeChecked()
+        await expect(checkboxes[2]).toBeChecked()
+        await expect(checkboxes[1]).not.toBeChecked()
     }
 }

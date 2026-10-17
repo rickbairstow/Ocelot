@@ -11,7 +11,7 @@ const meta: Meta<typeof StatCard> = {
     parameters: {
         docs: {
             description: {
-                component: 'A metric display card for dashboards. Shows a value and label with an optional icon, trend indicator (positive/negative percentage), and supporting description text.'
+                component: 'A metric display card for dashboards. Shows a value and label with an optional icon, trend indicator (positive/negative percentage), and supporting description text.\n\nDefault supplies only the required label and value. Positive Trend and Negative Trend add directional comparisons; With Description and With Icon isolate those optional features.'
             }
         }
     },
@@ -82,7 +82,6 @@ export const WithDescription: Story = {
         description: 'across all regions',
         icon: undefined,
         label: 'Revenue',
-        trend: 5,
         value: '$92,400'
     },
 

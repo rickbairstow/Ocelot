@@ -36,12 +36,7 @@ const meta: Meta<typeof Accordion> = {
         }
     },
 
-    args: {
-        default: faker.lorem.paragraphs(2),
-        startOpen: false,
-        title: faker.lorem.sentence(4),
-        variant: 'default'
-    },
+    args: { default: 'Accordion content', title: 'Delivery information' },
 
     render: (args) => ({
         components: { Accordion },

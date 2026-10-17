@@ -11,7 +11,7 @@ const meta: Meta<typeof Input> = {
     parameters: {
         docs: {
             description: {
-                component: 'A native input for text, email, password, search, tel, url, number, date, time, datetime-local, month, week and color. Values and input/change events are strings, including number/date inputs. Native browser pickers and unsupported-type fallbacks are preserved. Use Range, FileInput, Checkbox and Radio for their distinct value contracts. Supports invalid, explicit IDs, native attributes/events, element and focus().'
+                component: 'A native input for text, email, password, search, tel, url, number, date, time, datetime-local, month, week and color. Values and input/change events are strings, including number/date inputs. Native browser pickers and unsupported-type fallbacks are preserved. Use Range, FileInput, Checkbox and Radio for their distinct value contracts. Supports invalid, explicit IDs, native attributes/events, element and focus().\n\nDefault passes only a name, an empty model and an accessible label. Use type for native input behaviour. Number values remain strings. Prefix and suffix slots provide surrounding content; they do not format or validate the value. Native attributes such as autocomplete, inputmode, min and pattern reach the control. Validation rules and error timing belong to the consuming application.'
             }
         }
     },
@@ -65,7 +65,7 @@ const meta: Meta<typeof Input> = {
 
         type: {
             control: 'select',
-            options: ['text', 'email', 'number', 'password', 'search', 'tel', 'url'],
+            options: ['text', 'email', 'number', 'password', 'search', 'tel', 'url', 'color', 'date', 'time', 'datetime-local', 'month', 'week'],
             description: 'The input type.'
         },
 
@@ -110,7 +110,33 @@ const meta: Meta<typeof Input> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        const input = within(canvasElement).getByRole('textbox', { name: 'First name' })
+        await expect(input).toHaveAttribute('type', 'text')
+        await expect(input).not.toBeRequired()
+        await userEvent.type(input, 'Jane')
+        await expect(input).toHaveValue('Jane')
+        await userEvent.clear(input)
+    }
+}
+
+export const PrefixAndSuffix: Story = {
+    render: () => ({
+        components: { Input },
+        setup: () => ({ value: ref('') }),
+        template: '<Input v-model="value" label="Amount" name="amount" type="number"><template #prefix>£</template><template #suffix>GBP</template></Input>'
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        await expect(canvas.getByText('£')).toBeVisible()
+        await expect(canvas.getByText('GBP')).toBeVisible()
+        await userEvent.type(canvas.getByRole('spinbutton'), '25')
+        await expect(canvas.getByRole('spinbutton')).toHaveValue(25)
+    }
+}
+
+
 
 export const EmailInput: Story = {
     render: () => ({
@@ -300,7 +326,7 @@ export const NativeAttributes: Story = {
         },
         template: `
             <div class="grid gap-3">
-                <p id="native-email-extra">Additional guidance.</p>
+                <p id="native-email-extra" class="text-sm text-gray-700 dark:text-gray-300">We only use this address to reply.</p>
                 <FormField hint="Use your work email." label="Work email" required>
                     <Input id="native-contract-email" v-model="value" aria-describedby="native-email-extra" autocomplete="email" inputmode="email" :invalid="!value" name="email" type="email" />
                 </FormField>
@@ -315,7 +341,7 @@ export const NativeAttributes: Story = {
         await expect(input).toHaveAttribute('autocomplete', 'email')
         await expect(input).toHaveAttribute('inputmode', 'email')
         await expect(input).toBeRequired()
-        await expect(input).toHaveAccessibleDescription('Additional guidance. Use your work email.')
+        await expect(input).toHaveAccessibleDescription('We only use this address to reply. Use your work email.')
         await expect(input).toHaveAttribute('aria-invalid', 'true')
         await userEvent.click(input)
         await expect(input).toHaveFocus()

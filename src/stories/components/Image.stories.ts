@@ -17,7 +17,7 @@ const meta: Meta<typeof Image> = {
     parameters: {
         docs: {
             description: {
-                component: 'An enhanced image with LQIP blur-up loading, lazy loading, and configurable aspect ratio. Shows a skeleton placeholder while loading and gracefully handles load errors.'
+                component: 'An enhanced image with LQIP blur-up loading, lazy loading, and configurable aspect ratio. Shows a skeleton placeholder while loading and gracefully handles load errors.\n\nDefault supplies src and meaningful alt text, using the component loading and sizing defaults. Responsive documents srcset/sizes; Custom Dimensions demonstrates CSS units. Use empty alt text only for a decorative image. Error State documents the fallback when a source cannot load.'
             }
         }
     },

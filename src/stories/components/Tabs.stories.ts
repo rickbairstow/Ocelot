@@ -37,10 +37,7 @@ const meta: Meta<typeof Tabs> = {
         }
     },
 
-    args: {
-        defaultValue: 'tab1',
-        variant: 'line'
-    },
+    args: { defaultValue: 'tab1' },
 
     render: (args) => ({
         components: { Tabs, TabList, Tab, TabPanel },
@@ -71,69 +68,69 @@ const meta: Meta<typeof Tabs> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const checkDefault: NonNullable<Story['play']> = async ({ canvasElement }) {
-        const canvas = within(canvasElement)
-        const tabList = canvas.getByRole('tablist')
-        await expect(tabList).toHaveAttribute('aria-orientation', 'horizontal')
-        const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
+const checkDefault: NonNullable<Story['play']> = async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const tabList = canvas.getByRole('tablist')
+    await expect(tabList).toHaveAttribute('aria-orientation', 'horizontal')
+    const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
 
-        // Initial state: first tab active
-        await expect(tab1).toHaveAttribute('aria-selected', 'true')
-        await expect(tab2).toHaveAttribute('aria-selected', 'false')
-        await expect(tab3).toHaveAttribute('aria-selected', 'false')
+    // Initial state: first tab active
+    await expect(tab1).toHaveAttribute('aria-selected', 'true')
+    await expect(tab2).toHaveAttribute('aria-selected', 'false')
+    await expect(tab3).toHaveAttribute('aria-selected', 'false')
 
-        // Roving tabindex
-        await expect(tab1).toHaveAttribute('tabindex', '0')
-        await expect(tab2).toHaveAttribute('tabindex', '-1')
+    // Roving tabindex
+    await expect(tab1).toHaveAttribute('tabindex', '0')
+    await expect(tab2).toHaveAttribute('tabindex', '-1')
 
-        // First panel visible, others hidden
-        const panels = canvasElement.querySelectorAll('[role="tabpanel"]')
-        await expect(panels[0]).toBeVisible()
-        await expect(panels[1]).not.toBeVisible()
-        await expect(panels[2]).not.toBeVisible()
+    // First panel visible, others hidden
+    const panels = canvasElement.querySelectorAll('[role="tabpanel"]')
+    await expect(panels[0]).toBeVisible()
+    await expect(panels[1]).not.toBeVisible()
+    await expect(panels[2]).not.toBeVisible()
 
-        // ARIA linkage
-        await expect(tab1).toHaveAttribute('aria-controls', panels[0].getAttribute('id'))
+    // ARIA linkage
+    await expect(tab1).toHaveAttribute('aria-controls', panels[0].getAttribute('id'))
 
-        // Click second tab — panel switches
-        await userEvent.click(tab2)
-        await expect(tab2).toHaveAttribute('aria-selected', 'true')
-        await expect(tab1).toHaveAttribute('aria-selected', 'false')
-        await expect(panels[0]).not.toBeVisible()
-        await expect(panels[1]).toBeVisible()
-    }
+    // Click second tab — panel switches
+    await userEvent.click(tab2)
+    await expect(tab2).toHaveAttribute('aria-selected', 'true')
+    await expect(tab1).toHaveAttribute('aria-selected', 'false')
+    await expect(panels[0]).not.toBeVisible()
+    await expect(panels[1]).toBeVisible()
+}
 
-const checkKeyboard: NonNullable<Story['play']> = async ({ canvasElement }) {
-        const canvas = within(canvasElement)
-        const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
+const checkKeyboard: NonNullable<Story['play']> = async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
 
-        // Focus first tab and navigate right
-        await userEvent.click(tab1)
-        await userEvent.keyboard('{ArrowRight}')
-        await expect(tab2).toHaveFocus()
+    // Focus first tab and navigate right
+    await userEvent.click(tab1)
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(tab2).toHaveFocus()
 
-        // Navigate right again
-        await userEvent.keyboard('{ArrowRight}')
-        await expect(tab3).toHaveFocus()
+    // Navigate right again
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(tab3).toHaveFocus()
 
-        // Wraps around to first
-        await userEvent.keyboard('{ArrowRight}')
-        await expect(tab1).toHaveFocus()
+    // Wraps around to first
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(tab1).toHaveFocus()
 
-        // Home goes to first
-        await userEvent.click(tab3)
-        await userEvent.keyboard('{Home}')
-        await expect(tab1).toHaveFocus()
+    // Home goes to first
+    await userEvent.click(tab3)
+    await userEvent.keyboard('{Home}')
+    await expect(tab1).toHaveFocus()
 
-        // End goes to last
-        await userEvent.keyboard('{End}')
-        await expect(tab3).toHaveFocus()
+    // End goes to last
+    await userEvent.keyboard('{End}')
+    await expect(tab3).toHaveFocus()
 
-        // ArrowLeft wraps to last from first
-        await userEvent.click(tab1)
-        await userEvent.keyboard('{ArrowLeft}')
-        await expect(tab3).toHaveFocus()
-    }
+    // ArrowLeft wraps to last from first
+    await userEvent.click(tab1)
+    await userEvent.keyboard('{ArrowLeft}')
+    await expect(tab3).toHaveFocus()
+}
 
 export const Default: Story = {
     play: async (context) => {

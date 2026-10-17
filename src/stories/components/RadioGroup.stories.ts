@@ -8,7 +8,7 @@ import FormField from '@Components/FormField.vue'
 const meta: Meta<typeof RadioGroup> = {
     title: 'Components/Inputs/RadioGroup',
     component: RadioGroup,
-    parameters: { docs: { description: { component: 'A native radio group. required applies to the choice as a whole. Use FormField group for a shared legend, guidance and errors. Each option retains its own label and unique ID.' } } }
+    parameters: { docs: { description: { component: 'A native radio group. required applies to the choice as a whole. Use FormField group for a shared legend, guidance and errors. Each option retains its own label and unique ID.\n\nDefault is a labelled group with an initially empty string model. All options share the group name. The native required constraint applies to the whole choice, rather than requiring every option. Use FormField group to link a shared hint or error.' } } }
 }
 export default meta
 type Story = StoryObj<typeof meta>
@@ -71,5 +71,49 @@ export const Disabled: Story = {
     }),
     play: async ({ canvasElement }) => {
         for (const control of within(canvasElement).getAllByRole('radio')) await expect(control).toBeDisabled()
+    }
+}
+
+
+export const Horizontal: Story = {
+    render: () => ({
+        components: { Radio, RadioGroup },
+        setup() { return { selected: ref('sm') } },
+        template: `
+            <RadioGroup v-model="selected" label="Size" name="size" orientation="horizontal">
+                <Radio value="sm" label="Small" />
+                <Radio value="md" label="Medium" />
+                <Radio value="lg" label="Large" />
+            </RadioGroup>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const radios = canvas.getAllByRole('radio')
+        await expect(radios[0]).toBeChecked()
+        await userEvent.click(radios[2])
+        await expect(radios[2]).toBeChecked()
+        await expect(radios[0]).not.toBeChecked()
+    }
+}
+
+
+export const WithDisabledSelection: Story = {
+    render: () => ({
+        components: { Radio, RadioGroup },
+        setup() { return { selected: ref('pro') } },
+        template: `
+            <RadioGroup v-model="selected" disabled label="Plan" name="plan">
+                <Radio value="free" label="Free" />
+                <Radio value="pro" label="Pro" />
+                <Radio value="enterprise" label="Enterprise" />
+            </RadioGroup>
+        `
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        for (const radio of canvas.getAllByRole('radio')) {
+            await expect(radio).toBeDisabled()
+        }
     }
 }

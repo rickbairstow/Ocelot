@@ -9,7 +9,7 @@ const meta: Meta<typeof FileInput> = {
     title: 'Components/Inputs/FileInput',
     component: FileInput,
     parameters: {
-        docs: { description: { component: 'A native file chooser with accept, multiple, required and disabled support. v-model/change return File[] even for a single file. Set the model to [] or call clear() to clear it; browsers do not allow preselecting files. Consumers validate type and size and handle uploads. accept is a chooser hint, not validation.' } }
+        docs: { description: { component: 'A native file chooser with accept, multiple, required and disabled support. v-model/change return File[] even for a single file. Set the model to [] or call clear() to clear it; browsers do not allow preselecting files. Consumers validate type and size and handle uploads. accept is a chooser hint, not validation.\n\nDefault is a native chooser with a name, label and empty File[] model. With Form Field adds a required PDF attachment example; Multiple and Disabled demonstrate independent features. The browser displays the chosen filename. Removable Attachment adds an optional consumer-owned removal action. accept is a chooser hint, not file validation.' } }
     }
 }
 export default meta

@@ -41,13 +41,7 @@ const meta: Meta<typeof Sidebar> = {
         }
     },
 
-    args: {
-        default: 'Sidebar content',
-        footer: 'Sidebar footer',
-        showScrim: true,
-        side: 'left',
-        title: 'Sidebar title'
-    },
+    args: { default: 'Sidebar content', title: 'Navigation' },
 
     render: (args) => ({
         components: { Sidebar },

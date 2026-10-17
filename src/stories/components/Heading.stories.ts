@@ -9,7 +9,7 @@ const meta: Meta<typeof Heading> = {
     parameters: {
         docs: {
             description: {
-                component: 'Semantic heading element (h1–h6) with consistent typographic styles. The visual size can be decoupled from the semantic level using styleLevel, allowing correct document hierarchy without sacrificing design.'
+                component: 'Semantic heading element (h1–h6) with consistent typographic styles. The visual size can be decoupled from the semantic level using styleLevel, allowing correct document hierarchy without sacrificing design.\n\nDefault uses an h1 with the default visual style. Levels compares h1–h6. Visual Level keeps an h2 in the document outline while applying the h4 appearance. Choose level for document structure and styleLevel only for visual size.'
             }
         }
     },
@@ -57,6 +57,12 @@ const meta: Meta<typeof Heading> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+export const Default: Story = {
+    play: async ({ canvasElement }) => {
+        await expect(within(canvasElement).getByRole('heading', { level: 1 })).toBeVisible()
+    }
+}
+
 export const Levels: Story = {
     render: () => ({
         components: { Heading },
@@ -69,11 +75,7 @@ export const Levels: Story = {
     }
 }
 
-export const Default: Story = {
-    play: async ({ canvasElement }) => {
-        await expect(within(canvasElement).getByRole('heading', { level: 1 })).toBeVisible()
-    }
-}
+
 
 export const VisualLevel: Story = {
     args: { level: '2', styleLevel: '4' },

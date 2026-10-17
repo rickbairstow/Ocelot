@@ -29,10 +29,7 @@ const meta: Meta<typeof ReadMore> = {
         }
     },
 
-    args: {
-        default: faker.lorem.paragraphs(8, '\n\n'),
-        lines: 4
-    },
+    args: { default: faker.lorem.paragraphs(8, '\n\n') },
 
     render: (args) => ({
         components: { ReadMore },
