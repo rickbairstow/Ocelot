@@ -77,14 +77,21 @@ jobs:
           GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN }}
         run: |
           branch="release/${{ steps.version.outputs.tag }}"
+          pr_number=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$branch" --base main --state open --json number --jq '.[0].number // empty')
+          if [ -z "$pr_number" ]; then
+            previous_pr=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$branch" --state all --json number --jq '.[0].number // empty')
+            if [ -n "$previous_pr" ]; then
+              branch="$branch-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            fi
+          fi
           git checkout -b "$branch"
           git add package.json package-lock.json
           git commit -m "Release ${{ steps.version.outputs.tag }}"
           git fetch origin "$branch" || true
           git push origin HEAD:"$branch" --force-with-lease
 
-          if gh pr view "$branch" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh pr edit "$branch" \
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" \
               --repo "$GITHUB_REPOSITORY" \
               --title "Release ${{ steps.version.outputs.tag }}" \
               --body "Bumps ocelot-ui to ${{ steps.version.outputs.tag }}. Merging this PR publishes the package through npm Trusted Publishing and creates the matching GitHub Release."
@@ -97,7 +104,11 @@ jobs:
               --body "Bumps ocelot-ui to ${{ steps.version.outputs.tag }}. Merging this PR publishes the package through npm Trusted Publishing and creates the matching GitHub Release."
           fi
 
-          pr_url=$(gh pr view "$branch" --repo "$GITHUB_REPOSITORY" --json url --jq '.url')
+          pr_url=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$branch" --base main --state open --json url --jq '.[0].url // empty')
+          if [ -z "$pr_url" ]; then
+            echo "::error::Release preparation did not produce an open pull request."
+            exit 1
+          fi
           echo "::notice title=Release PR ready::$pr_url"
           printf '### Release %s prepared\n\n[Open the release pull request](%s)\n\nThe version bump is ready for review. **This run has not published to npm.**\n\nAfter the checks pass, merge the PR into `main` to trigger publishing and create the GitHub release.\n' \
             "${{ steps.version.outputs.tag }}" "$pr_url" >> "$GITHUB_STEP_SUMMARY"
