@@ -18,6 +18,25 @@
             :required="isRequired || undefined"
             @change="onChange"
         />
+        <p
+            v-if="multiple"
+            class="mt-2 text-sm text-gray-600 dark:text-gray-300"
+        >
+            Select multiple files in one selection.
+        </p>
+        <ul
+            v-if="multiple && modelValue.length"
+            aria-label="Selected files"
+            class="mt-2 space-y-1 text-sm text-gray-700 dark:text-gray-200"
+        >
+            <li
+                v-for="(file, index) in modelValue"
+                :key="`${file.name}-${index}`"
+                class="break-all"
+            >
+                {{ file.name }}
+            </li>
+        </ul>
     </div>
 </template>
 

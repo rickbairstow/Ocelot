@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, fireEvent, fn, userEvent, waitFor, within } from 'storybook/test'
 import { computed, ref } from 'vue'
@@ -51,6 +52,8 @@ export const Default: Story = {
         template: '<Combobox v-model="value" label="Country" name="country" :options="options" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('combobox', { name: 'Country' })
         await expect(input).toHaveAttribute('placeholder', 'Select an option…')
@@ -98,6 +101,8 @@ export const Multiple: Story = {
         template: '<Combobox v-model="values" label="Countries" multiple name="countries" :options="options" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
         await expect(getPopup(input)).toHaveAttribute('aria-multiselectable', 'true')
@@ -117,9 +122,11 @@ export const DisabledOptions: Story = {
     render: () => ({
         components: { Combobox },
         setup: () => ({ value: ref(null), saved: ref('old'), options: [{ value: 'old', label: 'Archived project', disabled: true }, ...options] }),
-        template: '<div class="grid gap-4"><Combobox v-model="value" label="Destination" :options="options" /><div class="dark rounded-xl bg-gray-950 p-4"><Combobox v-model="saved" label="Saved project" :options="options" /></div></div>'
+        template: '<div class="grid gap-4"><Combobox v-model="value" label="Destination" :options="options" /><Combobox v-model="saved" label="Saved project" :options="options" /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox', { name: 'Destination' })
         await userEvent.click(input)
         const disabled = within(getPopup(input)).getByRole('option', { name: 'Archived project' })
@@ -134,7 +141,6 @@ export const DisabledOptions: Story = {
         await userEvent.click(darkInput)
         const saved = within(getPopup(darkInput)).getByRole('option', { name: 'Archived project' })
         await expect(saved).toHaveAttribute('aria-selected', 'true')
-        await expect(getPopup(darkInput).closest('.dark')).not.toBeNull()
         await expect(getComputedStyle(saved).opacity).toBe('1')
 
     }
@@ -147,6 +153,8 @@ export const Disabled: Story = {
         template: '<Combobox disabled label="Country" :options="options" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('combobox')).toBeDisabled()
         await expect(canvas.getByRole('button', { name: 'Open options' })).toBeDisabled()
@@ -159,6 +167,8 @@ export const Empty: Story = {
         template: '<Combobox label="Project" :options="[]" placeholder="Choose a project…" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
         await expect(await within(document.body).findByText('No results found')).toBeVisible()
@@ -174,6 +184,8 @@ export const Loading: Story = {
         template: '<Combobox label="Project" loading :options="[]" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
         await expect(getPopup(input)).toHaveAttribute('aria-busy', 'true')
@@ -200,6 +212,8 @@ export const LazyOptions: Story = {
         template: '<Combobox v-model="value" label="Country" :loading="loading" :options="items" @open="load" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
         await waitFor(() => expect(within(getPopup(input)).getAllByRole('option')).toHaveLength(4))
@@ -233,6 +247,8 @@ export const RemoteSearch: Story = {
         template: '<Combobox v-model="value" label="Country" :loading="loading" mode="remote" :options="items" :search-delay="40" @search="search" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         searched.mockClear()
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
@@ -280,6 +296,8 @@ export const InfiniteLoading: Story = {
         template: '<Combobox v-model="value" :has-more="page < 2" label="Project" :loading="loading" :max-height="180" :options="items" @load-more="loadMore" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         loaded.mockClear()
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
@@ -317,6 +335,8 @@ export const WithFormField: Story = {
         template: '<form novalidate @submit.prevent="submit"><FormField :error="error" hint="Choose your delivery country." label="Country" required><Combobox v-model="value" name="country" :options="options" /></FormField><div class="mt-4"><Button type="submit">Continue</Button></div></form>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('combobox', { name: /country/i })
         await userEvent.click(canvas.getByRole('button', { name: 'Continue' }))
@@ -337,6 +357,8 @@ export const ViewportHeight: Story = {
         template: '<Combobox v-model="value" label="Project" max-height="viewport" :options="options" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
         const panel = getPopup(input).parentElement!
@@ -354,6 +376,8 @@ export const SelectedRemoteValue: Story = {
         template: '<Combobox v-model="value" label="Country" mode="remote" :options="items" :selected-options="selected" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox')
         await expect(input).toHaveValue('United Kingdom')
         await userEvent.click(input)
@@ -390,6 +414,8 @@ export const RetryLoading: Story = {
         template: '<div class="grid gap-3"><Combobox ref="combo" v-model="value" :has-more="items.length < 40" label="Project" :loading="loading" :max-height="180" :options="items" @load-more="loadMore" /><div v-if="error"><p class="mb-2 text-sm text-red-600 dark:text-red-400" role="alert">{{ error }}</p><Button variant="secondary" @click="retry">Retry loading projects</Button></div></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         retried.mockClear()
         const canvas = within(canvasElement)
         const input = canvas.getByRole('combobox')
@@ -441,6 +467,8 @@ export const RemotePages: Story = {
         template: '<Combobox v-model="value" :has-more="hasMore" label="Project" :loading="loading" :max-height="180" mode="remote" :options="items" :search-delay="30" @load-more="nextPage" @search="search" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('combobox')
         await userEvent.click(input)
         await waitFor(() => expect(within(getPopup(input)).getAllByRole('option')).toHaveLength(20))
@@ -462,6 +490,8 @@ export const NativeForm: Story = {
         template: '<form><Combobox v-model="values" :clearable="false" label="Countries" multiple name="countries" :options="options" required /><div class="mt-3"><Button type="submit">Continue</Button></div></form>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const form = canvasElement.querySelector('form')!
         const input = canvas.getByRole('combobox')

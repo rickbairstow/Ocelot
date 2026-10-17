@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import Button from '@Components/Button.vue'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Toast from '@Components/Toast.vue'
@@ -56,6 +57,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -98,6 +101,8 @@ export const AllTypes: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -142,6 +147,8 @@ export const WithAction: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -178,6 +185,8 @@ export const WithCustomIcon: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -215,6 +224,8 @@ export const OnDismiss: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -237,6 +248,8 @@ export const OnDismiss: Story = {
 export const TopLeft: Story = {
     args: { placement: 'top-left' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -251,6 +264,8 @@ export const TopLeft: Story = {
 export const BottomRight: Story = {
     args: { placement: 'bottom-right' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -265,6 +280,8 @@ export const BottomRight: Story = {
 export const BottomLeft: Story = {
     args: { placement: 'bottom-left' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -294,6 +311,8 @@ export const Permanent: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -315,7 +334,6 @@ export const Stacking: Story = {
             const { add, clear } = useToast()
 
             const addMany = () => {
-                clear()
                 add('First notification — info', { type: 'info', duration: 30000 })
                 add('Second notification — success', { type: 'success', duration: 30000 })
                 add('Third notification — warning', { type: 'warning', duration: 30000 })
@@ -338,6 +356,8 @@ export const Stacking: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const { clear } = useToast()
         clear()
 
@@ -360,5 +380,8 @@ export const Stacking: Story = {
             const alerts = canvas.queryAllByRole('alert')
             expect(statuses.length + alerts.length).toBe(6)
         })
+        await userEvent.click(canvas.getByRole('button', { name: /add 6 toasts/i }))
+        await waitFor(() => expect(canvas.queryAllByRole('status').length + canvas.queryAllByRole('alert').length).toBe(12))
+        clear()
     }
 }

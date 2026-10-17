@@ -1,5 +1,8 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Banner from '@Components/Banner.vue'
+import Button from '@Components/Button.vue'
+import { ref } from 'vue'
 import type { BannerType, BannerVariant } from '@Components/Banner.vue'
 import { expect, userEvent, within } from 'storybook/test'
 
@@ -39,15 +42,24 @@ const meta: Meta<typeof Banner> = {
         }
     },
 
-    args: {},
+    args: {
+        announce: false,
+        dismissible: false,
+        title: undefined,
+        titleTag: 'p',
+        type: 'info',
+        variant: 'subtle'
+    },
 
     render: (args) => ({
         components: { Banner },
         setup() { return { args } },
         template: `
             <Banner
+                :announce="args.announce"
                 :dismissible="args.dismissible"
                 :title="args.title || undefined"
+                :title-tag="args.titleTag"
                 :type="args.type"
                 :variant="args.variant"
             >
@@ -62,6 +74,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(canvasElement.querySelector('svg')).toBeInTheDocument()
     }
 }
@@ -103,23 +117,25 @@ export const AllVariants: Story = {
 export const Dismissible: Story = {
     args: { dismissible: true, title: 'Dismiss me', type: 'info' },
     render: (args) => ({
-        components: { Banner },
-        setup() { return { args } },
+        components: { Banner, Button },
+        setup() { return { args, dismissed: ref(false) } },
         template: `
             <Banner
+                v-if="!dismissed"
                 :dismissible="args.dismissible"
                 :title="args.title"
                 :type="args.type"
+                @dismiss="dismissed = true"
             >
                 <p>Click the × button to dismiss this banner.</p>
             </Banner>
+            <Button v-else @click="dismissed = false">Show banner again</Button>
         `
     }),
     play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
+        if (!runInteractionTests) return
 
-        const banner = canvasElement.querySelector('[role="status"], [role="alert"]') ?? canvasElement.querySelector('.rounded-xl')
-        await expect(banner).not.toBeNull()
+        const canvas = within(canvasElement)
 
         const dismissBtn = canvas.getByRole('button', { name: /dismiss/i })
         await expect(dismissBtn).toBeVisible()
@@ -127,6 +143,9 @@ export const Dismissible: Story = {
         await userEvent.click(dismissBtn)
 
         await expect(canvas.queryByRole('button', { name: /dismiss/i })).not.toBeInTheDocument()
+        await userEvent.click(canvas.getByRole('button', { name: 'Show banner again' }))
+        await expect(canvas.getByRole('button', { name: /dismiss/i })).toBeVisible()
+        await expect(canvas.getByText('Click the × button to dismiss this banner.')).toBeVisible()
     }
 }
 
@@ -137,10 +156,10 @@ export const WithActions: Story = {
             <Banner type="warning" title="Your trial ends in 3 days">
                 <p>Upgrade your plan to keep access to all features.</p>
                 <template #actions>
-                    <button class="text-sm font-semibold text-amber-900 dark:text-amber-100 underline hover:no-underline">
+                    <button class="cursor-pointer text-sm font-semibold text-amber-900 dark:text-amber-100 underline hover:no-underline">
                         Upgrade now
                     </button>
-                    <button class="text-sm text-amber-900 dark:text-amber-200 hover:underline">
+                    <button class="cursor-pointer text-sm text-amber-900 dark:text-amber-200 hover:underline">
                         Remind me later
                     </button>
                 </template>
@@ -148,6 +167,8 @@ export const WithActions: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const upgradeBtn = canvas.getByRole('button', { name: /upgrade now/i })
         await expect(upgradeBtn).toBeVisible()
@@ -176,6 +197,8 @@ export const Tip: Story = {
         template: '<Banner type="tip" title="Pro tip">You can press Cmd+K to open the command palette from anywhere.</Banner>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('Pro tip')).toBeInTheDocument()
         await expect(canvasElement.querySelector('[role="status"], [role="alert"]')).toBeNull()
@@ -218,6 +241,8 @@ export const EditorialCallouts: Story = {
         }
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await expect(canvas.getByText('Implementation note')).toBeVisible()
@@ -238,6 +263,8 @@ export const ErrorRole: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const alert = canvasElement.querySelector('[role="alert"]')
         await expect(alert).not.toBeNull()
     }

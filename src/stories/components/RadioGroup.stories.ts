@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { computed, ref } from 'vue'
@@ -20,6 +21,8 @@ export const Default: Story = {
         template: '<RadioGroup v-model="value" label="Preferences" name="preferences"><Radio label="News" value="news" /><Radio label="Offers" value="offers" /></RadioGroup>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const controls = within(canvasElement).getAllByRole('radio')
         await expect(controls[0]).not.toBeChecked()
         await userEvent.click(controls[0])
@@ -47,6 +50,8 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const first = canvas.getByRole('radio', { name: 'Email' }) as HTMLInputElement
         const second = canvas.getByRole('radio', { name: 'Phone' }) as HTMLInputElement
@@ -70,6 +75,8 @@ export const Disabled: Story = {
         template: '<RadioGroup v-model="value" disabled label="Disabled preferences" name="disabled-preferences"><Radio label="Email" value="email" /><Radio label="Phone" value="phone" /></RadioGroup>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         for (const control of within(canvasElement).getAllByRole('radio')) await expect(control).toBeDisabled()
     }
 }
@@ -88,6 +95,8 @@ export const Horizontal: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const radios = canvas.getAllByRole('radio')
         await expect(radios[0]).toBeChecked()
@@ -111,6 +120,8 @@ export const WithDisabledSelection: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         for (const radio of canvas.getAllByRole('radio')) {
             await expect(radio).toBeDisabled()

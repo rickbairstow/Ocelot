@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import ReadMore from '@Components/ReadMore.vue'
 import { userEvent, within, expect, waitFor } from 'storybook/test'
@@ -51,6 +52,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         const button = await canvas.findByRole('button', { name: /show more/i })

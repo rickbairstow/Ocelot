@@ -1,8 +1,9 @@
+import { runInteractionTests } from '../interactionMode'
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, fireEvent, userEvent, within } from 'storybook/test'
 import { computed, ref, watch } from 'vue'
-import { IconBrandGithub } from '@tabler/icons-vue'
+import BrandMark from '../fixtures/BrandMark.vue'
 import { availableIcons, availableSizes } from '@Composables/useIcons'
 import Icon from '@Components/Icon.vue'
 import Button from '@Components/Button.vue'
@@ -27,7 +28,7 @@ const meta: Meta<typeof Icon> = {
         }
     },
 
-    args: { icon: 'ArrowDown' },
+    args: { icon: 'ArrowDown', size: '2xl' },
 
     render: (args) => ({
         components: { Icon },
@@ -50,6 +51,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const svg = canvasElement.querySelector('svg')
         await expect(svg).toBeInTheDocument()
     }
@@ -92,33 +95,61 @@ export const Sizes: Story = {
     }),
 
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const svgs = canvasElement.querySelectorAll('svg')
         await expect(svgs.length).toBeGreaterThan(0)
     }
 }
 
 export const CustomIcon: Story = {
-    render: () => ({
+    args: { icon: undefined, size: '2xl' },
+    argTypes: { icon: { control: false, table: { disable: true } } },
+    parameters: {
+        docs: {
+            description: {
+                story: 'Custom means an SVG component supplied by your application, such as a brand mark that is not in Tabler. This example passes BrandMark.vue directly to the icon prop. Its SVG uses viewBox="0 0 24 24" and stroke="currentColor", allowing OUI to set its size and inherit text colour. Keep the SVG root free of fixed width/height and allow attributes to reach it. The size control still applies; the Tabler-name selector is hidden because this example uses a component. Alternatively, call registerIcons({ BrandMark }) once and use icon="BrandMark".'
+            },
+            source: {
+                code: `<script setup>
+import { Icon } from 'ocelot-ui'
+import BrandMark from './BrandMark.vue'
+</script>
+
+<template>
+    <Icon :icon="BrandMark" size="2xl" />
+</template>`
+            }
+        }
+    },
+    render: args => ({
         components: { Icon },
 
         setup() {
-            return { IconBrandGithub }
+            return { args, BrandMark }
         },
 
         template: `
-            <div class="flex items-center gap-4">
-                <Icon
-                    :icon="IconBrandGithub"
-                    size="xl"
-                />
-                
+            <div class="space-y-3 text-gray-900 dark:text-gray-100">
+                <p>Your own SVG, supplied as a Vue component.</p>
+                <div class="flex items-center gap-3">
+                    <Icon :icon="BrandMark" :size="args.size" />
+                    <span>Brand mark</span>
+                </div>
             </div>
         `
     }),
 
-    play: async ({ canvasElement }) => {
+    play: async ({ canvasElement, args }) => {
+        if (!runInteractionTests) return
+
         const svg = canvasElement.querySelector('svg')
         await expect(svg).toBeInTheDocument()
+        await expect(svg).toHaveAttribute('viewBox', '0 0 24 24')
+        await expect(svg).toHaveAttribute('stroke', 'currentColor')
+        await expect(svg).toHaveAttribute('width', String(availableSizes[args.size ?? '2xl']))
+        await expect(svg).toHaveAttribute('aria-hidden', 'true')
+        await expect(within(canvasElement).getByText('Brand mark')).toBeVisible()
     }
 }
 
@@ -167,6 +198,8 @@ export const BrowseCatalogue: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const search = canvas.getByLabelText('Search icon names')
         const list = canvas.getByLabelText('All available icons')

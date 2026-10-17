@@ -18,22 +18,23 @@
 
         <button
             v-if="removable"
-            class="shrink-0 -me-0.5 ms-0.5 inline-flex items-center justify-center rounded-full opacity-60 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1"
+            class="size-6 shrink-0 -me-0.5 ms-0.5 inline-flex cursor-pointer items-center justify-center self-center rounded-full text-inherit hover:bg-black/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 dark:hover:bg-white/10"
             type="button"
             :aria-label="`Remove ${label ?? 'badge'}`"
             @click="emit('remove')"
         >
             <svg
                 aria-hidden="true"
+                class="block shrink-0"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2.5"
-                viewBox="0 0 8 8"
+                stroke-width="2"
+                viewBox="0 0 24 24"
                 :height="removeIconSize"
                 :width="removeIconSize"
             >
                 <path
-                    d="M1 1l6 6M7 1l-6 6"
+                    d="M6 6l12 12M18 6 6 18"
                     stroke-linecap="round"
                 />
             </svg>
@@ -76,8 +77,8 @@ const dotSizeMap: Record<string, string> = {
 }
 
 // Remove button icon size scales with badge size
-const removeIconSizeMap: Record<string, number> = { sm: 6, md: 7, lg: 8 }
-const removeIconSize = computed(() => removeIconSizeMap[props.size] ?? 8)
+const removeIconSizeMap: Record<string, number> = { sm: 12, md: 14, lg: 16 }
+const removeIconSize = computed(() => removeIconSizeMap[props.size] ?? 16)
 
 const sizeClasses: Record<string, string> = {
     sm: 'min-h-6 gap-x-1 px-2 text-sm',

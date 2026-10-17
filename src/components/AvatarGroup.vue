@@ -5,6 +5,7 @@
             :key="i"
             class="ring-2 ring-white dark:ring-gray-900 -ml-2 first:ml-0"
             :alt="avatar.alt"
+            :aria-label="avatar.ariaLabel"
             :color="avatar.color"
             :initials="avatar.initials"
             :shape="avatar.shape"
@@ -16,10 +17,10 @@
         <span
             v-if="overflow > 0"
             class="inline-flex items-center justify-center shrink-0 ring-2 ring-white dark:ring-gray-900 -ml-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold select-none"
-            :aria-label="`${overflow} more`"
             :class="[overflowSizeMap[resolvedSize], shapeClass]"
         >
-            +{{ overflow }}
+            <span aria-hidden="true">+{{ overflow }}</span>
+            <span class="sr-only">{{ overflow }} more</span>
         </span>
     </div>
 </template>
@@ -31,6 +32,7 @@ import type { AvatarSize, AvatarColor, AvatarShape } from '@Components/Avatar.vu
 
 interface AvatarItem {
     alt?: string
+    ariaLabel?: string
     color?: AvatarColor
     initials?: string
     shape?: AvatarShape

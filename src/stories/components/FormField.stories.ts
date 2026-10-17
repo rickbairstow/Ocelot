@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { computed, ref } from 'vue'
@@ -37,6 +38,8 @@ export const Default: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const label = canvas.getByText('Email address')
         const input = canvas.getByRole('textbox')
@@ -56,6 +59,8 @@ export const WithHint: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('textbox')
         const hint = canvas.getByText('We will never share your email.')
@@ -75,6 +80,8 @@ export const WithError: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('textbox')
         const error = canvas.getByRole('alert')
@@ -95,6 +102,8 @@ export const Required: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const asterisk = canvasElement.querySelector('[aria-hidden="true"]')
         await expect(asterisk).toBeInTheDocument()
         await expect(asterisk).toHaveTextContent('*')
@@ -113,6 +122,8 @@ export const Optional: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('(optional)')).toBeInTheDocument()
     }
 }
@@ -128,6 +139,8 @@ export const ErrorWithHint: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('alert')).toBeInTheDocument()
         await expect(canvas.getByText('Enter your username.')).toBeInTheDocument()
@@ -193,6 +206,8 @@ export const Validation: Story = {
         }
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('textbox')
 
@@ -209,5 +224,10 @@ export const Validation: Story = {
         await userEvent.tab()
         await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
         await expect(input).not.toHaveAttribute('aria-invalid')
+        await userEvent.clear(input)
+        await userEvent.click(canvas.getByRole('button', { name: /continue/i }))
+        await expect(input).toHaveValue('')
+        await expect(canvas.getByRole('alert')).toHaveTextContent('Email is required.')
+        await expect(input).toHaveAttribute('aria-invalid', 'true')
     }
 }

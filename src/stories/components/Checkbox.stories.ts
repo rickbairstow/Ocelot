@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { ref } from 'vue'
@@ -26,6 +27,8 @@ export const Default: Story = {
         template: '<Checkbox v-model="checked" label="Accept terms and conditions" name="terms" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const checkbox = canvas.getByRole('checkbox')
         await expect(checkbox).not.toBeChecked()
@@ -43,6 +46,8 @@ export const Checked: Story = {
         template: '<Checkbox v-model="checked" label="Subscribe to newsletter" name="newsletter" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('checkbox')).toBeChecked()
     }
 }
@@ -54,6 +59,8 @@ export const Indeterminate: Story = {
         template: '<Checkbox v-model="checked" indeterminate label="Select all" name="select-all" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const checkbox = within(canvasElement).getByRole('checkbox') as HTMLInputElement
         await expect(checkbox.indeterminate).toBe(true)
     }
@@ -66,6 +73,8 @@ export const Disabled: Story = {
         template: '<Checkbox v-model="checked" disabled label="Disabled option" name="opt" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const checkbox = within(canvasElement).getByRole('checkbox')
         await expect(checkbox).toBeDisabled()
         await userEvent.click(checkbox)
@@ -84,6 +93,8 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const checkbox = canvas.getByRole('checkbox')
         const error = canvas.getByRole('alert')
@@ -104,6 +115,8 @@ export const RequiredAndInvalid: Story = {
         template: '<div class="grid gap-3"><Checkbox id="standalone-checkbox" v-model="value" :invalid="!value" label="Confirm choice" name="choice" required  /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const control = canvas.getByRole('checkbox', { name: 'Confirm choice' })
         await expect(control).toHaveAttribute('id', 'standalone-checkbox')

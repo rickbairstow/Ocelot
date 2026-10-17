@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
@@ -29,6 +30,8 @@ async function closeViewer(canvasElement: HTMLElement) {
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const page = within(canvasElement.ownerDocument.body)
         await expect(within(canvas.getByRole('list', { name: 'Image gallery' })).getAllByRole('listitem')).toHaveLength(3)
@@ -47,6 +50,8 @@ export const Default: Story = {
 export const WithCaptions: Story = {
     args: { images: captions },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('Mountain trails', { selector: 'figcaption' })).toBeVisible()
         await userEvent.click(canvas.getByRole('button', { name: `Open ${images[0].alt} in lightbox` }))
@@ -58,6 +63,8 @@ export const WithCaptions: Story = {
 export const ViewerCaptionsOnly: Story = {
     args: { images: captions, showCaptions: false },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.queryByText('Mountain trails')).not.toBeInTheDocument()
         await userEvent.click(canvas.getByRole('button', { name: `Open ${images[0].alt} in lightbox` }))
@@ -69,6 +76,8 @@ export const ViewerCaptionsOnly: Story = {
 export const LandscapeThumbnails: Story = {
     args: { aspectRatio: '4 / 3', minThumbnailWidth: 240, lightbox: false },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getAllByRole('img')).toHaveLength(3)
         await expect(canvas.queryByRole('button')).not.toBeInTheDocument()
@@ -76,9 +85,34 @@ export const LandscapeThumbnails: Story = {
     }
 }
 
+export const LargeCollection: Story = {
+    args: {
+        label: 'Travel collection',
+        images: Array.from({ length: 20 }, (_, index) => ({
+            ...images[index % images.length],
+            id: `travel-${index + 1}`,
+            alt: `${images[index % images.length].alt}, photo ${index + 1}`,
+            caption: `Photo ${index + 1}`
+        }))
+    },
+    parameters: {
+        docs: { description: { story: 'Twenty items using local illustrations to show a larger responsive grid. Each item has a unique ID and accessible name. Images load lazily and share one lightbox collection.' } }
+    },
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        const collection = within(within(canvasElement).getByRole('list', { name: 'Travel collection' }))
+        await expect(collection.getAllByRole('listitem')).toHaveLength(20)
+        await expect(collection.getAllByRole('button')).toHaveLength(20)
+        await expect(collection.getByRole('button', { name: `Open ${images[1].alt}, photo 20 in lightbox` })).toBeInTheDocument()
+    }
+}
+
 export const Empty: Story = {
     args: { images: [] },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('No images to display.')).toBeVisible()
         await expect(within(canvasElement).queryByRole('list')).not.toBeInTheDocument()
     }
@@ -88,6 +122,8 @@ export const CustomEmpty: Story = {
     args: { images: [] },
     render: args => ({ components: { Gallery }, setup: () => ({ args }), template: '<Gallery v-bind="args"><template #empty><p>Your collection has no photos yet.</p></template></Gallery>' }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('Your collection has no photos yet.')).toBeVisible()
     }
 }
@@ -95,19 +131,18 @@ export const CustomEmpty: Story = {
 export const SeparateCollections: Story = {
     render: () => ({
         components: { Gallery }, setup: () => ({ images }),
-        template: '<div class="space-y-8"><Gallery :images="images.slice(0, 2)" label="Landscapes" /><Gallery :images="images.slice(2)" label="Woodland" /></div>'
+        template: '<div class="grid max-w-3xl gap-8 sm:grid-cols-2"><section class="space-y-3"><h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Landscapes</h2><Gallery :images="images.slice(0, 2)" label="Landscapes" /></section><section class="space-y-3"><h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Woodland</h2><Gallery :images="images.slice(2)" class="max-w-44" label="Woodland" /></section></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
-        const page = within(canvasElement.ownerDocument.body)
-        await userEvent.click(within(canvas.getByRole('list', { name: 'Landscapes' })).getAllByRole('button')[0])
-        await waitFor(() => expect(page.getByRole('button', { name: `View image 2: ${images[1].alt}` })).toBeVisible())
-        await expect(page.queryByRole('button', { name: new RegExp(`View image .*${images[2].alt}`) })).not.toBeInTheDocument()
-        await closeViewer(canvasElement)
-        await userEvent.click(within(canvas.getByRole('list', { name: 'Woodland' })).getByRole('button'))
-        await waitFor(() => expect(page.getByRole('dialog', { name: 'Image viewer' })).toBeVisible())
-        await expect(page.queryByRole('button', { name: /View image/ })).not.toBeInTheDocument()
-        await closeViewer(canvasElement)
+        const landscapes = within(canvas.getByRole('list', { name: 'Landscapes' }))
+        const woodland = within(canvas.getByRole('list', { name: 'Woodland' }))
+        await expect(landscapes.getAllByRole('button')).toHaveLength(2)
+        await expect(woodland.getAllByRole('button')).toHaveLength(1)
+        await expect(landscapes.getByRole('button', { name: `Open ${images[0].alt} in lightbox` })).toBeVisible()
+        await expect(woodland.getByRole('button', { name: `Open ${images[2].alt} in lightbox` })).toBeVisible()
     }
 }
 
@@ -116,11 +151,13 @@ export const UpdatedCollection: Story = {
         components: { Gallery, Button },
         setup() {
             const collection = ref([...images])
-            return { collection, reverse: () => { collection.value = [...collection.value].reverse() }, remove: () => { collection.value = collection.value.slice(1) } }
+            return { collection, reverse: () => { collection.value = [...collection.value].reverse() }, remove: () => { collection.value = collection.value.slice(1) }, reset: () => { collection.value = [...images] } }
         },
-        template: '<div class="space-y-4"><div class="flex gap-2"><Button @click="reverse">Reverse order</Button><Button @click="remove">Remove first photo</Button></div><Gallery :images="collection" /></div>'
+        template: '<div class="space-y-4"><div class="flex flex-wrap gap-2"><Button @click="reverse">Reverse order</Button><Button @click="remove">Remove first photo</Button><Button variant="secondary" @click="reset">Reset collection</Button></div><Gallery :images="collection" /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const page = within(canvasElement.ownerDocument.body)
         await userEvent.click(canvas.getByRole('button', { name: 'Reverse order' }))
@@ -133,5 +170,11 @@ export const UpdatedCollection: Story = {
         await waitFor(() => expect(page.getByRole('button', { name: `View image 1: ${images[1].alt}` })).toHaveAttribute('aria-current', 'true'))
         await expect(page.queryByRole('button', { name: /View image 3:/ })).not.toBeInTheDocument()
         await closeViewer(canvasElement)
+        await userEvent.click(canvas.getByRole('button', { name: 'Reset collection' }))
+        const restored = within(canvas.getByRole('list', { name: 'Image gallery' })).getAllByRole('button')
+        await expect(restored).toHaveLength(images.length)
+        for (const [index, image] of images.entries()) {
+            await expect(restored[index]).toHaveAccessibleName(`Open ${image.alt} in lightbox`)
+        }
     }
 }

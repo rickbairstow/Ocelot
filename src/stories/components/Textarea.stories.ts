@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { computed, ref } from 'vue'
@@ -26,6 +27,8 @@ export const Default: Story = {
         template: '<Textarea v-model="value" label="Message" name="message" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const textarea = canvas.getByRole('textbox')
         await userEvent.type(textarea, 'Hello world')
@@ -40,6 +43,8 @@ export const Disabled: Story = {
         template: '<Textarea v-model="value" disabled label="Notes" name="notes" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('textbox')).toBeDisabled()
     }
 }
@@ -51,6 +56,8 @@ export const Readonly: Story = {
         template: '<Textarea v-model="value" label="Terms" name="terms" readonly />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('textbox')).toHaveAttribute('readonly')
     }
 }
@@ -62,6 +69,8 @@ export const AutoResize: Story = {
         template: '<Textarea v-model="value" label="Bio" name="bio" placeholder="Start typing..." resize="auto" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const textarea = canvas.getByRole('textbox')
         const initialHeight = (textarea as HTMLTextAreaElement).style.height
@@ -78,6 +87,8 @@ export const WithCount: Story = {
         template: '<Textarea v-model="value" :maxlength="100" label="Bio" name="bio" show-count />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('5/100')).toBeInTheDocument()
     }
 }
@@ -89,6 +100,8 @@ export const CountNearLimit: Story = {
         template: '<Textarea v-model="value" :maxlength="100" label="Message" name="message" show-count />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const counter = within(canvasElement).getByText('95/100')
         await expect(counter).toBeInTheDocument()
         await expect(counter).toHaveClass('text-amber-700')
@@ -110,6 +123,8 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const textarea = canvas.getByRole('textbox')
         const error = canvas.getByRole('alert')
@@ -130,6 +145,8 @@ export const Invalid: Story = {
         template: '<div class="grid gap-3"><Textarea id="standalone-message" v-model="value" autocomplete="off" invalid label="Standalone message" name="message" required /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const textarea = canvas.getByRole('textbox', { name: 'Standalone message' })
         await expect(textarea).toHaveAttribute('id', 'standalone-message')

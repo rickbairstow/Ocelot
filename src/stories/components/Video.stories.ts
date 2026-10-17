@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Video from '@Components/Video.vue'
 import { expect } from 'storybook/test'
@@ -93,6 +94,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement, args }) => {
+        if (!runInteractionTests) return
+
         const video = canvasElement.querySelector('video')
         await expect(video).toHaveAttribute('title', args.title)
         await expect(video?.querySelector('source')).toHaveAttribute('src', args.src)
@@ -102,8 +105,8 @@ export const Default: Story = {
 
 export const Vimeo: Story = {
     args: {
-        src: 'https://vimeo.com/347119375',
-        title: 'Vimeo demo'
+        src: 'https://vimeo.com/1084537',
+        title: 'Big Buck Bunny — Blender'
     }
 }
 

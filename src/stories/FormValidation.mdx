@@ -6,7 +6,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 OUI keeps validation logic outside the component library. Components expose the structure that validators need: labels, ids, `aria-describedby`, `aria-invalid`, native input attributes, and alert text.
 
-Use whichever validation system fits the consuming app. Vee-Validate and Zod are good options when that app needs schema-backed frontend validation, native HTML constraint validation remains a good lightweight option, and server-returned errors should map into the same `FormField error` contract.
+Use whichever validation system fits the consuming app: native HTML constraints, application-owned rules, or a validation library. Server-returned field errors map into the same `FormField error` contract. OUI does not require a validation dependency.
 
 ## Recommended Pattern
 
@@ -14,22 +14,31 @@ Use `FormField` as the accessibility wrapper and pass the current error message 
 
 ```vue
 <script setup>
-import { ref, computed } from 'vue'
+import { nextTick, ref } from 'vue'
 import { FormField, Input, Button } from 'ocelot-ui'
 
 const email = ref('')
-const submitted = ref(false)
+const emailError = ref('')
+const form = ref(null)
 
-const emailError = computed(() => {
-    if (!submitted.value) return ''
-    if (!email.value) return 'Email is required.'
-    if (!email.value.includes('@')) return 'Enter a valid email address.'
-    return ''
-})
+async function submit() {
+    const control = form.value.elements.namedItem('email')
+    emailError.value = control.validity.valueMissing
+        ? 'Email is required.'
+        : control.validity.typeMismatch ? 'Enter a valid email address.' : ''
+
+    await nextTick()
+    if (emailError.value) {
+        control.focus()
+        return
+    }
+
+    // Submit valid data using your application's API.
+}
 </script>
 
 <template>
-    <form @submit.prevent="submitted = true">
+    <form ref="form" novalidate @submit.prevent="submit">
         <FormField
             :error="emailError"
             hint="Use your work email address."
@@ -39,7 +48,6 @@ const emailError = computed(() => {
             <Input
                 v-model="email"
                 name="email"
-                required
                 type="email"
             />
         </FormField>
@@ -49,14 +57,18 @@ const emailError = computed(() => {
 </template>
 ```
 
-When `error` is present, `FormField` hides the hint, renders the error with `role="alert"`, and child inputs that use `useFormField()` receive `aria-invalid="true"` plus the matching `aria-describedby`.
+This example validates on submit. `novalidate` disables the browser's blocking validation popup, so the submit handler can display inline messages. The native control's `validity` properties still work. FormField passes `required` to its child control, so it does not need to be repeated on Input.
+
+When `error` is present, FormField keeps the hint visible, renders ErrorText with `role="alert"`, and marks the control invalid with red highlighting. Its `aria-describedby` includes both help and error IDs. The label is linked to the control automatically. `invalid` can also mark a field invalid without supplying an error message.
+
+See **Patterns → Forms → Contact Form** for a complete example with multiple fields, submit-time validation, focus management and reset. Reset the Vue models and validation state together; a native reset does not reset application state.
 
 ## External Library Pattern
 
-Install Vee-Validate and your schema library in the consumer app, not in OUI:
+Install the validation library in the consumer app, not in OUI. This example uses Vee-Validate's composition API with a simple required-name rule; a schema library is not needed:
 
 ```bash
-npm install vee-validate zod @vee-validate/zod
+npm install vee-validate
 ```
 
 Bind `errors.<field>` into `FormField error`, and keep the OUI input as the rendered control:
@@ -64,33 +76,37 @@ Bind `errors.<field>` into `FormField error`, and keep the OUI input as the rend
 ```vue
 <script setup>
 import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
-import { z } from 'zod'
 import { FormField, Input, Button } from 'ocelot-ui'
 
 const { defineField, errors, handleSubmit } = useForm({
-    validationSchema: toTypedSchema(z.object({
-        email: z.string().email('Enter a valid email address.')
-    }))
+    initialValues: { name: '' },
+    validationSchema: {
+        name: value => typeof value === 'string' && value.trim()
+            ? true
+            : 'Enter your name.'
+    }
 })
 
-const [email] = defineField('email')
+const [name, nameAttrs] = defineField('name', {
+    validateOnModelUpdate: false
+})
 const submit = handleSubmit((values) => {
     console.log(values)
 })
 </script>
 
 <template>
-    <form @submit.prevent="submit">
+    <form novalidate @submit="submit">
         <FormField
-            :error="errors.email"
-            label="Email"
+            :error="errors.name"
+            label="Name"
             required
         >
             <Input
-                v-model="email"
-                name="email"
-                type="email"
+                v-bind="nameAttrs"
+                v-model="name"
+                autocomplete="name"
+                name="name"
             />
         </FormField>
 
@@ -99,11 +115,13 @@ const submit = handleSubmit((values) => {
 </template>
 ```
 
-The validation library owns rules, touched state, and submit handling. OUI owns the accessible field structure.
+The validation library owns rules, touched state, and submit handling. The field bindings forward blur/change events to the native control. `validateOnModelUpdate: false` avoids validation on every keystroke; configure other validation triggers to fit the application. `handleSubmit` prevents the native submission and calls its success handler only for valid values. OUI owns the accessible field structure.
+
+For schema-backed validation, follow the [Vee-Validate documentation for your installed version](https://vee-validate.logaretm.com/). Schema integrations differ between major versions; the OUI binding remains a model plus the error passed to FormField.
 
 ## Native Validation
 
-Native attributes should still be passed to the actual input component:
+For browser-owned validation, leave `novalidate` off the form. The browser applies native constraints before allowing submission. Pass constraints to the input; FormField also forwards its `required` state:
 
 ```vue
 <FormField label="Password" required>
@@ -111,13 +129,36 @@ Native attributes should still be passed to the actual input component:
         v-model="password"
         minlength="12"
         name="password"
-        required
         type="password"
     />
 </FormField>
 ```
 
-This gives browsers the correct form semantics while allowing the app to control when custom messages appear.
+Native invalidity alone does not populate FormField's error or its invalid highlighting. For custom presentation, pass `error` or `invalid` from your application. Controls expose `element` and `focus()` for native `validity`, `checkValidity()`, `reportValidity()` and `setCustomValidity()` access. Clear a custom validity message with `setCustomValidity('')` when the error is resolved.
+
+## Standalone help and errors
+
+FormField uses HelpText and ErrorText internally. Use them directly when building a custom layout, with matching IDs and `aria-describedby` on the control:
+
+```vue
+<Input
+    v-model="email"
+    :aria-describedby="emailError ? 'email-help email-error' : 'email-help'"
+    :invalid="!!emailError"
+    label="Email"
+    type="email"
+/>
+<HelpText id="email-help">Use your work email address.</HelpText>
+<ErrorText v-if="emailError" id="email-error">{{ emailError }}</ErrorText>
+```
+
+ErrorText announces newly displayed errors by default. Set `:announce="false"` for static text or when another live region already announces the same message. HelpText does not announce changes or set control validity.
+
+## Choice groups and searchable selection
+
+Use `FormField group` for a RadioGroup or CheckboxGroup so the label becomes a legend. RadioGroup inherits required state; validate minimum/maximum checkbox selection counts in the consumer rather than marking every checkbox required.
+
+Combobox uses the same FormField error contract for single or multiple selection. It submits confirmed option values and supports native `required`. Its search query is not the selected value; the parent owns remote requests and any request-error messages. FileInput exposes selected files, while the parent validates their type, size and count and performs uploads.
 
 ## Server Errors
 
@@ -139,6 +180,7 @@ Map server-returned field errors into `FormField error` props. Keep summary erro
 OUI does not ship a form controller, validation schema API, or cross-field validation primitive. That is intentional for the current release line. The stable contract is:
 
 - `FormField` owns label, hint, error, required, and optional text.
+- HelpText and ErrorText provide the same message styling outside FormField; the consumer links their IDs to the control.
 - Form inputs consume the `FormField` context for ids and ARIA state.
 - Validation libraries own rules, touched/dirty state, submission state, and async validation.
 - Page-level failures use `Banner`.

@@ -122,7 +122,7 @@
                             tabindex="-1"
                             :aria-disabled="option.disabled || undefined"
                             :aria-selected="selectedValues.includes(option.value)"
-                            :class="option.disabled ? 'cursor-not-allowed text-gray-600 dark:text-gray-300' : activeIndex === index ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100' : 'hover:bg-gray-100 dark:hover:bg-gray-700'"
+                            :class="option.disabled ? 'cursor-not-allowed bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' : activeIndex === index ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100' : 'hover:bg-gray-100 dark:hover:bg-gray-700'"
                             @click="choose(option)"
                             @keydown.enter.prevent="choose(option)"
                             @keydown.space.prevent="choose(option)"

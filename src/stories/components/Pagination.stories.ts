@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Pagination from '@Components/Pagination.vue'
 import { userEvent, expect, within } from 'storybook/test'
@@ -37,6 +38,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         const nav = canvas.getByRole('navigation', { name: 'Pagination' })
@@ -59,6 +62,8 @@ export const MiddlePage: Story = {
     args: { modelValue: 5 },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await expect(canvas.getByRole('button', { name: 'Previous page' })).not.toBeDisabled()
@@ -78,6 +83,8 @@ export const LastPage: Story = {
     args: { modelValue: 10 },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await expect(canvas.getByRole('button', { name: 'Next page' })).toBeDisabled()
@@ -92,6 +99,8 @@ export const FewPages: Story = {
     args: { modelValue: 1, total: 4 },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         // All pages shown, no ellipsis
@@ -119,6 +128,8 @@ export const Controlled: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await expect(canvas.getByText('Current page: 1')).toBeVisible()

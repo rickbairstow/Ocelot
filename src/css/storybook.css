@@ -4,6 +4,12 @@
 @source "../";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@layer base {
+    body {
+        @apply text-gray-900 dark:text-gray-100;
+    }
+}
+
 /* OUI design tokens — must mirror tailwind.css */
 :root {
     --oui-radius-sm: 0.125rem;

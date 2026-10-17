@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { faker } from '@faker-js/faker'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
@@ -52,7 +53,15 @@ const meta: Meta<typeof NavigationBar> = {
             description: 'Makes the navigation bar sticky to the top of the viewport.'
         }
     },
-    args: {}
+    args: {
+        bordered: true,
+        mobileMenuOpen: undefined,
+        menuToggleBreakpoint: 'lg',
+        menuToggleLabel: 'Open navigation',
+        navLabel: 'Primary navigation',
+        sticky: false,
+        showMenuToggle: false
+    }
 }
 
 type Story = StoryObj<typeof meta>
@@ -61,9 +70,11 @@ export const Default: Story = {
     render: (args) => ({
         components: { NavigationBar },
         setup: () => ({ args }),
-        template: '<NavigationBar v-bind="args"><template #brand>Ocelot</template><template #nav><a href="#overview">Overview</a><a href="#settings">Settings</a></template></NavigationBar>'
+        template: '<NavigationBar v-bind="args"><template #brand>Ocelot</template><template #nav><a @click.prevent href="#overview">Overview</a><a @click.prevent href="#settings">Settings</a></template></NavigationBar>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('navigation', { name: 'Primary navigation' })).toBeVisible()
         await expect(within(canvasElement).getByRole('link', { name: 'Overview' })).toBeVisible()
     }
@@ -118,6 +129,8 @@ export const WithActions: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('navigation', { name: /primary navigation/i })).toBeVisible()
         await expect(canvas.getByRole('link', { name: navLinks[0] })).toHaveAttribute('aria-current', 'page')
@@ -151,12 +164,12 @@ export const WithSubmenu: Story = {
                 </template>
 
                 <template #nav>
-                    <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Home</a>
+                    <a @click.prevent href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Home</a>
                     <NavigationBarSubmenu
                         label="Product"
                         :items="productItems"
                     />
-                    <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Pricing</a>
+                    <a @click.prevent href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Pricing</a>
                 </template>
             </NavigationBar>
         `
@@ -169,6 +182,8 @@ export const WithSubmenu: Story = {
         }
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: /product/i })
 
@@ -211,8 +226,8 @@ export const WithMenuToggle: Story = {
                     </template>
 
                     <template #nav>
-                        <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Overview</a>
-                        <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Projects</a>
+                        <a @click.prevent href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Overview</a>
+                        <a @click.prevent href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Projects</a>
                     </template>
 
                     <template #mobile-menu>
@@ -220,8 +235,8 @@ export const WithMenuToggle: Story = {
                             aria-label="Mobile navigation"
                             class="grid gap-1"
                         >
-                            <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Overview</a>
-                            <a href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Projects</a>
+                            <a @click.prevent href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Overview</a>
+                            <a @click.prevent href="#" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">Projects</a>
                         </nav>
                     </template>
                 </NavigationBar>
@@ -236,6 +251,8 @@ export const WithMenuToggle: Story = {
         }
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const toggleElement = canvasElement.querySelector('[aria-label="Open navigation"]') as HTMLElement | null
 

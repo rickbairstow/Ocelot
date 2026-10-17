@@ -1,8 +1,9 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Avatar from '@Components/Avatar.vue'
 import AvatarGroup from '@Components/AvatarGroup.vue'
 import type { AvatarColor, AvatarSize } from '@Components/Avatar.vue'
-import { expect } from 'storybook/test'
+import { expect, userEvent, within } from 'storybook/test'
 
 const colors: AvatarColor[] = ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink', 'gray']
 const sizes: AvatarSize[] = ['xs', 'sm', 'base', 'lg', 'xl', '2xl']
@@ -49,7 +50,16 @@ const meta: Meta<typeof Avatar> = {
         }
     },
 
-    args: {},
+    args: {
+        alt: '',
+        ariaLabel: undefined,
+        color: 'blue',
+        href: null,
+        initials: undefined,
+        shape: 'circle',
+        size: 'base',
+        src: null
+    },
 
     render: (args) => ({
         components: { Avatar },
@@ -64,6 +74,7 @@ const meta: Meta<typeof Avatar> = {
                 :shape="args.shape"
                 :size="args.size"
                 :src="args.src"
+                @click.prevent
             />
         `
     })
@@ -75,6 +86,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
     args: { src: null, initials: undefined },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const svg = canvasElement.querySelector('svg')
         await expect(svg).not.toBeNull()
     }
@@ -83,14 +96,24 @@ export const Default: Story = {
 export const WithInitials: Story = {
     args: { initials: 'JD', src: null },
     play: async ({ canvasElement }) => {
-        const avatar = canvasElement.querySelector('span')
-        await expect(avatar).not.toBeNull()
+        if (!runInteractionTests) return
+
+        await expect(within(canvasElement).getByRole('img', { name: 'JD' })).toBeVisible()
+    }
+}
+
+export const NamedFallback: Story = {
+    args: { ariaLabel: 'Jane Doe' },
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        await expect(within(canvasElement).getByRole('img', { name: 'Jane Doe' })).toBeVisible()
     }
 }
 
 export const WithImage: Story = {
     args: {
-        src: 'https://i.pravatar.cc/150?img=3',
+        src: '/media/avatar-person.svg',
         alt: 'Jane Doe',
         initials: undefined
     }
@@ -142,10 +165,23 @@ export const LinkAvatar: Story = {
         alt: 'Jane Doe profile',
         initials: 'JD'
     },
+    render: args => ({
+        components: { Avatar },
+        setup: () => ({ args }),
+        template: '<Avatar v-bind="args" @click.prevent />'
+    }),
     play: async ({ canvasElement }) => {
-        const link = canvasElement.querySelector('a')
-        await expect(link).not.toBeNull()
-        await expect(link).toHaveAccessibleName('Jane Doe profile')
+        if (!runInteractionTests) return
+
+        const link = within(canvasElement).getByRole('link', { name: 'Jane Doe profile' })
+        const location = canvasElement.ownerDocument.location
+        const originalUrl = location.href
+        await expect(link).toHaveAttribute('href', '#profile')
+        await userEvent.click(link)
+        await expect(location.href).toBe(originalUrl)
+        link.focus()
+        await userEvent.keyboard('{Enter}')
+        await expect(location.href).toBe(originalUrl)
     }
 }
 
@@ -154,13 +190,15 @@ export const FallbackStates: Story = {
         components: { Avatar },
         template: `
             <div class="flex flex-wrap items-center gap-4">
-                <Avatar src="https://i.pravatar.cc/150?img=3" alt="With image" initials="JD" />
+                <Avatar src="/media/avatar-person.svg" alt="With image" initials="JD" />
                 <Avatar initials="JD" color="blue" />
                 <Avatar color="purple" />
             </div>
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const avatars = canvasElement.querySelectorAll('span, a')
         await expect(avatars.length).toBeGreaterThan(0)
     }
@@ -185,8 +223,12 @@ export const Group: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
-        const overflow = canvasElement.querySelector('[aria-label="2 more"]')
-        await expect(overflow).not.toBeNull()
+        if (!runInteractionTests) return
+
+        const canvas = within(canvasElement)
+        await expect(canvas.getByText('2 more')).toBeInTheDocument()
+        await expect(canvas.getAllByRole('img')).toHaveLength(5)
+        await expect(canvasElement.querySelector('span[aria-label]:not([role])')).toBeNull()
     }
 }
 

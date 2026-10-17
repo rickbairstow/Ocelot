@@ -1,8 +1,10 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import CodeBlock from '@Components/CodeBlock.vue'
 import { expect, waitFor, within } from 'storybook/test'
 
 const lightThemes = [
+    'github-light-high-contrast',
     'catppuccin-latte',
     'github-light',
     'material-theme-lighter',
@@ -16,6 +18,7 @@ const lightThemes = [
 ] as const
 
 const darkThemes = [
+    'github-dark-high-contrast',
     'catppuccin-mocha',
     'dracula',
     'github-dark',
@@ -90,16 +93,6 @@ const meta: Meta<typeof CodeBlock> = {
             description: {
                 component: 'A syntax-highlighted code block powered by Shiki. Supports all major languages and themes, with a language label and one-click copy button. Automatically adapts between light and dark themes.' + '\n\nDefault supplies only code and uses TypeScript and the built-in light/dark syntax themes. Language examples change code and language together. Theme controls choose a syntax palette independently of the application theme.'
             }
-        },
-        a11y: {
-            config: {
-                rules: [
-                    {
-                        id: 'color-contrast',
-                        enabled: false
-                    }
-                ]
-            }
         }
     },
 
@@ -125,7 +118,7 @@ const meta: Meta<typeof CodeBlock> = {
         }
     },
 
-    args: { code: codeExamples.typescript }
+    args: { code: codeExamples.typescript, language: 'typescript', theme: 'github-light-high-contrast', darkTheme: 'github-dark-high-contrast' }
 }
 
 export default meta
@@ -133,6 +126,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await waitFor(() => {
             expect(canvasElement.querySelector('pre')).not.toBeNull()
@@ -148,6 +143,8 @@ export const JavaScript: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         await waitFor(() => {
             expect(canvasElement.querySelector('pre')).not.toBeNull()
         })
@@ -161,6 +158,8 @@ export const Vue: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         await waitFor(() => {
             expect(canvasElement.querySelector('pre')).not.toBeNull()
         })
@@ -174,6 +173,8 @@ export const JSON: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         await waitFor(() => {
             expect(canvasElement.querySelector('pre')).not.toBeNull()
         })
@@ -187,6 +188,8 @@ export const Markdown: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         await waitFor(() => {
             expect(canvasElement.querySelector('pre')).not.toBeNull()
         })

@@ -1,15 +1,24 @@
 <template>
     <section
-        class="rounded-xl bg-gray-100 px-6 py-10 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+        class="relative isolate overflow-hidden rounded-2xl border border-blue-200 bg-linear-to-br from-blue-50 via-indigo-50 to-white px-6 py-10 text-gray-900 shadow-sm dark:border-blue-800 dark:from-blue-950 dark:via-gray-900 dark:to-indigo-950 dark:text-gray-100 sm:px-10"
         :aria-labelledby="headingId"
     >
         <div
-            class="mx-auto flex max-w-6xl flex-col gap-6"
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500"
+        />
+        <div
+            aria-hidden="true"
+            class="pointer-events-none absolute -end-16 -top-24 -z-10 size-72 rounded-full bg-blue-200/50 blur-3xl dark:bg-blue-500/15"
+        />
+        <div
+            class="mx-auto flex max-w-6xl flex-col gap-8"
             :class="inline ? 'sm:flex-row sm:items-center sm:justify-between' : 'items-center text-center'"
         >
-            <div class="min-w-0 space-y-3">
+            <div class="min-w-0 space-y-4">
                 <Heading
                     :id="headingId"
+                    class="text-balance"
                     :level="headingLevel"
                     :style-level="2"
                 >
@@ -17,7 +26,7 @@
                 </Heading>
                 <div
                     v-if="description || $slots.default"
-                    class="max-w-prose text-gray-600 dark:text-gray-300"
+                    class="max-w-prose text-pretty text-gray-600 dark:text-gray-300"
                 >
                     <slot><p>{{ description }}</p></slot>
                 </div>

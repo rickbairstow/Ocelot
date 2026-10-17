@@ -4,47 +4,49 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 # RTL Support
 
-OUI uses logical Tailwind utilities and logical inline styles where practical, so most layout primitives adapt naturally inside `dir="rtl"`.
-
-## Current Status
-
-RTL support is improved and documented, but not yet certified as a full release guarantee. Known physical positioning leftovers from the roadmap have been cleaned up in `Toast`, `Sidebar`, `Card`, `FloatingPanel`, `DropdownMenuContent`, and `DropdownMenuSubmenu`.
-
-Use the `Patterns/RTL Layouts` stories as the visual smoke test for common primitives.
+OUI has partial right-to-left support. Text and many layouts inherit the document direction, but some keyboard interactions and directional styling still assume left-to-right. Setting `dir="rtl"` does not make every component fully RTL-aware.
 
 ## App Setup
 
 Set direction at the document or page boundary:
 
 ```html
-<html dir="rtl">
+<html lang="ar" dir="rtl">
     ...
 </html>
 ```
 
-Or scope it to a region:
+Set both language and direction for the page. Language identifies the content for assistive technology; it does not set its direction automatically. For a right-to-left region within a left-to-right page:
 
 ```vue
-<section dir="rtl">
+<section lang="ar" dir="rtl">
     <Banner title="تم الحفظ" type="success">
         تم تحديث الإعدادات بنجاح.
     </Banner>
 </section>
 ```
 
-## Component Guidance
+Document-level direction is the most reliable setup for overlays. Content teleported outside a regional `dir="rtl"` container inherits direction from its actual DOM ancestors, so check popups as well as their triggers. A regional direction setting alone does not reach every overlay.
 
-- Prefer `start` / `end` alignment props when a component offers them.
-- Avoid custom classes such as `ml-*`, `mr-*`, `left-*`, and `right-*` in app-level slots unless the direction is fixed.
-- Use logical utilities such as `ms-*`, `me-*`, `start-*`, `end-*`, `text-start`, and `text-end`.
-- Test dropdowns, tooltips, sidebars, toasts, and selected indicators in both LTR and RTL.
+## Consumer content
 
-## Release Checklist
+- Use logical utilities such as `ms-*`, `me-*`, `start-*`, `end-*`, `text-start`, and `text-end` in slots and surrounding layouts. Physical `left` / `right` utilities remain fixed.
+- Translate visible copy and accessible labels. Direction does not translate built-in English labels; use supported attributes, props and slots where available.
+- Isolate mixed-direction values such as account names and identifiers with `bdi`. Set `dir="ltr"` on fields that intentionally display left-to-right values, such as an email address, while keeping their surrounding labels in the page direction.
 
-Before declaring official RTL support:
+```vue
+<p>المستخدم: <bdi>{{ accountName }}</bdi></p>
+<Input dir="ltr" label="البريد الإلكتروني" type="email" />
+```
 
-- Add Storybook viewport snapshots for representative RTL pages.
-- Exercise keyboard navigation in menus, tabs, forms, and pagination.
-- Check overlay positioning for `start` and `end` placements.
-- Verify mixed-language content does not break truncation or icon spacing.
+## Current limitations
+
+- **Tabs and nested dropdown menus:** horizontal arrow-key handling currently uses left-to-right rules.
+- **Breadcrumb and Pagination:** directional chevrons do not automatically mirror.
+- **ButtonGroup:** horizontal joined corners and border overlap use physical left/right styling.
+- **Regional overlays:** popup direction can differ from the trigger when content is teleported outside the region.
+
+The <a href="./?path=/docs/patterns-rtl-layouts--docs" target="_top">RTL Layouts pattern</a> shows a composed Arabic interface. It demonstrates inherited layout direction; it is not comprehensive RTL keyboard or localisation coverage. Check these limitations before choosing the affected components for an RTL application.
+
+See the HTML guidance for [direction](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir) and [mixed-direction text isolation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/bdi).
 

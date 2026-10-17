@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import SidebarNavItem from '@Components/SidebarNavItem.vue'
@@ -55,6 +56,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const item = canvas.getByRole('button', { name: /dashboard/i })
         await expect(item).toBeVisible()
@@ -65,6 +68,8 @@ export const Default: Story = {
 export const AsLink: Story = {
     args: { href: '#' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const item = canvas.getByRole('link', { name: /dashboard/i })
         await expect(item).toBeVisible()
@@ -75,6 +80,8 @@ export const AsLink: Story = {
 export const Active: Story = {
     args: { href: '#', active: true },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const item = canvas.getByRole('link', { name: /dashboard/i })
         await expect(item).toHaveAttribute('aria-current', 'page')
@@ -96,6 +103,8 @@ export const ActiveWithBadge: Story = {
 export const Disabled: Story = {
     args: { icon: 'Lock', disabled: true },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const item = canvas.getByRole('button', { name: /dashboard/i })
         await expect(item).toBeDisabled()

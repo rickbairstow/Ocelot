@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import DropdownMenu from '@Components/DropdownMenu.vue'
@@ -51,6 +52,8 @@ export const Default: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await userEvent.click(canvas.getByRole('button', { name: 'View' }))

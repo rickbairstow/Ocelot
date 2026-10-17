@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import LightboxImage from '@Components/LightboxImage.vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
@@ -14,9 +15,8 @@ const meta: Meta<typeof LightboxImage> = {
             description: {
                 component:
                     'An image that opens full-screen in a [PhotoSwipe](https://photoswipe.com) lightbox on click. ' +
-                    'Give multiple `LightboxImage` components the same `lightbox-group` and they form a gallery — ' +
-                    'clicking any one opens at that position with a thumbnail strip and arrow navigation. ' +
-                    'Fully keyboard accessible: Tab to focus, Enter/Space to open, arrow keys to navigate, Escape to close.' + '\n\nDefault supplies only src and alt text. With Caption adds lightbox copy; Gallery joins images with the same lightboxGroup. Install the optional photoswipe peer dependency.'
+                    'Use Gallery for collections; it composes LightboxImage and manages the shared viewer. ' +
+                    'Fully keyboard accessible: Tab to focus, Enter/Space to open, arrow keys to navigate, Escape to close.' + '\n\nDefault supplies only src and alt text. With Caption adds lightbox copy. Use the Gallery component for thumbnail collections; it reuses this viewer. Install the optional photoswipe peer dependency.'
             }
         }
     },
@@ -63,7 +63,7 @@ const meta: Meta<typeof LightboxImage> = {
         width: { control: 'text' }
     },
 
-    args: { alt: 'Mountain landscape', src: 'https://picsum.photos/seed/oui-lightbox/1200/800' },
+    args: { alt: 'Mountain landscape', src: '/media/gallery-mountains.svg' },
 
     render: (args) => ({
         components: { LightboxImage },
@@ -95,9 +95,16 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement, args }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const page = within(canvasElement.ownerDocument.body)
         const trigger = canvas.getByRole('button', { name: `Open ${args.alt} in lightbox` })
+        const image = canvasElement.querySelector('img') as HTMLImageElement
+        await waitFor(() => expect(image.naturalWidth).toBeGreaterThan(0))
+        const bounds = trigger.getBoundingClientRect()
+        await expect(bounds.height).toBeGreaterThan(64)
+        await expect(Math.abs(bounds.width / bounds.height - image.naturalWidth / image.naturalHeight)).toBeLessThan(0.01)
         await userEvent.click(trigger)
         const close = await page.findByRole('button', { name: /close/i }, { timeout: 5000 })
         await expect(close).toBeVisible()
@@ -112,39 +119,4 @@ export const WithCaption: Story = {
     args: {
         lightboxCaption: faker.lorem.sentence()
     }
-}
-
-export const Gallery: Story = {
-    parameters: {
-        docs: {
-            description: {
-                story: 'Images sharing the same `lightbox-group` form a gallery. Click any thumbnail to open at that position — use arrows or keyboard to navigate, and click the thumbnail strip to jump to any slide.'
-            }
-        }
-    },
-    render: () => ({
-        components: { LightboxImage },
-        setup() {
-            const images = Array.from({ length: 6 }, () => ({
-                src: faker.image.url({ width: 1200, height: 800 }),
-                alt: faker.lorem.words(3),
-                caption: faker.lorem.sentence()
-            }))
-            return { images }
-        },
-        template: `
-            <div class="grid grid-cols-3 gap-2 max-w-xl">
-                <LightboxImage
-                    v-for="(img, i) in images"
-                    :key="i"
-                    :alt="img.alt"
-                    :lightbox-caption="img.caption"
-                    :src="img.src"
-                    aspect-ratio="4/3"
-                    fit="cover"
-                    lightbox-group="story-gallery"
-                />
-            </div>
-        `
-    })
 }

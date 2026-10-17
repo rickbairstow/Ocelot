@@ -54,3 +54,35 @@ test('Getting Started docs work after visiting a component story', async (t) => 
         await browser.close()
     }
 })
+
+test('Browsing component stories preserves their initial state', async () => {
+    const browser = await chromium.launch()
+    try {
+        const page = await browser.newPage()
+        const open = async id => {
+            await page.goto(new URL(`iframe.html?id=${id}&viewMode=story`, baseUrl).href)
+            await page.locator('#storybook-root > *').first().waitFor({ state: 'attached' })
+        }
+        await open('components-inputs-input--email-input')
+        const email = page.getByRole('textbox')
+        await email.waitFor()
+        assert.equal(await email.inputValue(), '', 'Email must start empty')
+        assert.ok(await email.getAttribute('placeholder'))
+        await open('components-inputs-switch--required-and-invalid')
+        await page.getByRole('switch').waitFor()
+        assert.equal(await page.getByRole('switch').isChecked(), false)
+        for (const id of ['infinite-loading', 'retry-loading']) {
+            await open(`components-inputs-combobox--${id}`)
+            const input = page.getByRole('combobox')
+            await input.waitFor()
+            assert.equal(await input.getAttribute('aria-expanded'), 'false', `${id} must wait for the user`)
+            assert.equal(await page.getByRole('alert').count(), 0)
+        }
+        await open('components-gallery--updated-collection')
+        await page.getByRole('list', { name: 'Image gallery' }).waitFor()
+        assert.equal(await page.getByRole('listitem').count(), 3)
+        assert.equal(await page.getByRole('dialog').count(), 0)
+    } finally {
+        await browser.close()
+    }
+})

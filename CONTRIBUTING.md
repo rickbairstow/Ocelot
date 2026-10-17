@@ -44,6 +44,10 @@ npm run test:run
 
 For library/export changes, also run `npm run build` to verify the package and generated TypeScript declarations. For documentation navigation changes, build Storybook, serve it on port 6006, and run `npm run test:docs` as described in the README.
 
+## Story interactions
+
+Story interaction tests run only in Vitest (`MODE=test`). Component stories use `runInteractionTests` from `src/stories/interactionMode.ts` to keep normal Storybook browsing at the initial state. Keep mutating play functions behind that guard so consumers can try forms, pagination and loading themselves. Test the complete behaviour in Vitest, and make the initial canvas meaningful without running its play function.
+
 ## Releases
 
 Use the manual `Release Package` GitHub Actions workflow on `main`. Choose `patch`, `minor`, or `major`; the workflow prepares a version-bump PR, and merging it publishes through npm Trusted Publishing. Do not bump versions or publish locally for normal releases. See the README for repository credentials and environment setup.

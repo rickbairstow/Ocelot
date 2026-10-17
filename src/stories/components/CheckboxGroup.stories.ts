@@ -1,9 +1,11 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { computed, ref } from 'vue'
 import CheckboxGroup from '@Components/CheckboxGroup.vue'
 import Checkbox from '@Components/Checkbox.vue'
 import FormField from '@Components/FormField.vue'
+import Button from '@Components/Button.vue'
 
 const meta: Meta<typeof CheckboxGroup> = {
     title: 'Components/Inputs/CheckboxGroup',
@@ -20,6 +22,8 @@ export const Default: Story = {
         template: '<CheckboxGroup v-model="value" label="Preferences" name="preferences"><Checkbox label="News" value="news" /><Checkbox label="Offers" value="offers" /></CheckboxGroup>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const controls = within(canvasElement).getAllByRole('checkbox')
         await expect(controls[0]).not.toBeChecked()
         await userEvent.click(controls[0])
@@ -29,28 +33,34 @@ export const Default: Story = {
 
 export const WithFormField: Story = {
     render: () => ({
-        components: { CheckboxGroup, Checkbox, FormField },
+        components: { CheckboxGroup, Checkbox, FormField, Button },
         setup() {
             const value = ref<string[]>([])
-            const error = computed(() => value.value.length ? '' : 'Choose an option.')
-            return { value, error }
+            const submitted = ref(false)
+            const error = computed(() => submitted.value && !value.value.length ? 'Choose an option.' : '')
+            return { value, error, submitted }
         },
         template: `
-            <div class="grid gap-4">
+            <form class="grid gap-4" novalidate @submit.prevent="submitted = true">
                 <FormField :error="error" group hint="Choose your preferences." label="Preferences" required>
                     <CheckboxGroup v-model="value" name="preferences">
                         <Checkbox label="News" value="news" />
                         <Checkbox label="Offers" value="offers" />
                     </CheckboxGroup>
                 </FormField>
-            </div>
+                <div><Button type="submit">Continue</Button></div>
+            </form>
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const first = canvas.getByRole('checkbox', { name: 'News' }) as HTMLInputElement
         const second = canvas.getByRole('checkbox', { name: 'Offers' }) as HTMLInputElement
         await expect(first.id).not.toBe(second.id)
+        await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
+        await userEvent.click(canvas.getByRole('button', { name: 'Continue' }))
         await expect(first).toHaveAttribute('aria-invalid', 'true')
         await expect(first).not.toBeRequired()
         await userEvent.click(canvas.getByText('News', { selector: 'label' }))
@@ -74,6 +84,8 @@ export const Disabled: Story = {
         template: '<CheckboxGroup v-model="value" disabled label="Disabled preferences" name="disabled-preferences"><Checkbox label="News" value="news" /><Checkbox label="Offers" value="offers" /></CheckboxGroup>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         for (const control of within(canvasElement).getAllByRole('checkbox')) await expect(control).toBeDisabled()
     }
 }
@@ -94,6 +106,8 @@ export const Horizontal: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const checkboxes = canvas.getAllByRole('checkbox')
         await expect(checkboxes).toHaveLength(3)

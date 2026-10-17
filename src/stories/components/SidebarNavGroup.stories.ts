@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import SidebarNavGroup from '@Components/SidebarNavGroup.vue'
 import SidebarNavItem from '@Components/SidebarNavItem.vue'
@@ -51,6 +52,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('Main')).toBeVisible()
         await expect(canvas.getByRole('link', { name: /dashboard/i })).toBeVisible()
@@ -64,6 +67,8 @@ export const NoLabel: Story = {
 export const Collapsible: Story = {
     args: { collapsible: true },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const toggle = canvas.getByRole('button', { name: /main/i })
 
@@ -82,6 +87,8 @@ export const Collapsible: Story = {
 export const StartCollapsed: Story = {
     args: { collapsible: true, startCollapsed: true },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const toggle = canvas.getByRole('button', { name: /main/i })
         await expect(toggle).toHaveAttribute('aria-expanded', 'false')

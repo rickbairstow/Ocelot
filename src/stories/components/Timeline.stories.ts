@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Timeline from '@Components/Timeline.vue'
 import type { TimelineItem } from '@Components/Timeline.vue'
@@ -40,6 +41,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const items = args.items as TimelineItem[]
         const timeline = canvas.getByRole('list', { name: /timeline/i })
@@ -61,6 +64,8 @@ export const WithoutIcons: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const icons = canvasElement.querySelectorAll('[aria-hidden="true"]')
         await expect(icons.length).toBe(0)
     }
@@ -72,6 +77,8 @@ export const WithoutTimestamps: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const times = canvasElement.querySelectorAll('time')
         await expect(times.length).toBe(0)
     }
@@ -85,6 +92,8 @@ export const Minimal: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         await expect(canvasElement.querySelectorAll('li').length).toBe(3)
     }
 }

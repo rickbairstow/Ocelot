@@ -3,7 +3,7 @@
         :class="containerCss"
     >
         <button
-            class="flex w-full justify-between gap-4 border-0 p-4 text-start font-medium transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:hover:bg-gray-700"
+            class="flex w-full cursor-pointer justify-between gap-4 border-0 p-4 text-start font-medium transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:hover:bg-gray-700"
             type="button"
             :aria-controls="contentId"
             :aria-expanded="isOpen"

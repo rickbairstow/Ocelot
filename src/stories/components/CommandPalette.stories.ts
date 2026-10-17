@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { faker } from '@faker-js/faker'
 import { onUnmounted, ref } from 'vue'
@@ -190,6 +191,8 @@ const checkKeyboard: NonNullable<Story['play']> = async ({ canvasElement }) => {
 export const Default: Story = {
     render: createRender(),
     play: async (context) => {
+        if (!runInteractionTests) return
+
         await checkDefault(context)
         await checkKeyboard(context)
     }
@@ -199,6 +202,8 @@ export const WithIconsAndShortcuts: Story = {
     name: 'With Icons and Shortcuts',
     render: createRender(),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))
@@ -217,6 +222,8 @@ export const WithIconsAndShortcuts: Story = {
 export const EmptyState: Story = {
     render: createRender(),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await userEvent.click(canvas.getByRole('button', { name: /open command palette/i }))

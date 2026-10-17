@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { faker } from '@faker-js/faker'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
@@ -81,6 +82,8 @@ export const Default: Story = {
         template: '<AppShell v-bind="args"><template #header>Workspace</template><template #sidebar>Navigation</template><p>Main content</p></AppShell>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('main')).toHaveTextContent('Main content')
     }
 }
@@ -233,6 +236,8 @@ export const WorkspaceLayout: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('banner')).toBeVisible()
         await expect(canvas.getByRole('main')).toBeVisible()
@@ -252,6 +257,8 @@ export const MobileSidebar: Story = {
     },
     render: WorkspaceLayout.render,
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const openButtonElement = canvasElement.querySelector('[aria-label="Open navigation"]') as HTMLElement | null
 
@@ -312,6 +319,8 @@ export const WithoutSidebar: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.queryByRole('complementary')).not.toBeInTheDocument()
         await expect(canvas.getByRole('main')).toBeVisible()

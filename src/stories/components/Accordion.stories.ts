@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Accordion from '@Components/Accordion.vue'
 import AccordionGroup from '@Components/AccordionGroup.vue'
@@ -60,6 +61,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         const summary = canvas.getByRole('button', { name: args.title as string })
@@ -140,6 +143,8 @@ export const Group: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const summaries = canvasElement.querySelectorAll('button[aria-controls]')
         await expect(summaries.length).toBe(3)
 
@@ -204,6 +209,8 @@ export const GroupContained: Story = {
         `
     }),
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const firstDetails = canvasElement.querySelectorAll('button[aria-controls]')[0]
         await expect(firstDetails).toHaveAttribute('aria-expanded', 'true')
     }
@@ -233,6 +240,8 @@ export const GroupNonExclusive: Story = {
         `
     }),
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const summaries = canvasElement.querySelectorAll('button[aria-controls]')
 
         await userEvent.click(summaries[0])

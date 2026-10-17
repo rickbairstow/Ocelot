@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Dialog from '@Components/Dialog.vue'
 import Button from '@Components/Button.vue'
@@ -82,6 +83,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         const openButton = await canvas.findByRole('button', { name: /click to open the dialog/i })
@@ -106,6 +109,8 @@ export const Default: Story = {
 export const Small: Story = {
     args: { size: 'sm' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /click to open/i }))
         const dialog = await canvas.findByRole('dialog')
@@ -116,6 +121,8 @@ export const Small: Story = {
 export const Large: Story = {
     args: { size: 'lg' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /click to open/i }))
         const dialog = await canvas.findByRole('dialog')
@@ -126,6 +133,8 @@ export const Large: Story = {
 export const Fullscreen: Story = {
     args: { size: 'fullscreen' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /click to open/i }))
         const dialog = await canvas.findByRole('dialog')
@@ -156,6 +165,8 @@ export const WithScrollingContent: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /open dialog/i }))
         const dialog = await canvas.findByRole('dialog')
@@ -196,6 +207,8 @@ export const WithForm: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /open form dialog/i }))
         const dialog = await canvas.findByRole('dialog')
@@ -253,6 +266,8 @@ export const ConfirmPattern: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await userEvent.click(canvas.getByRole('button', { name: /delete item/i }))

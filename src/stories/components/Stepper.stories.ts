@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Stepper from '@Components/Stepper.vue'
 import type { StepItem } from '@Components/Stepper.vue'
@@ -52,6 +53,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const steps = args.steps as StepItem[]
         const items = canvasElement.querySelectorAll('li')
         const list = canvasElement.querySelector('ol')
@@ -79,6 +82,8 @@ export const FirstStep: Story = {
     args: { modelValue: 1 },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const current = canvasElement.querySelector('[aria-current="step"]')
         await expect(current).not.toBeNull()
 
@@ -94,6 +99,8 @@ export const LastStep: Story = {
     args: { modelValue: 4 },
 
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const steps = args.steps as StepItem[]
         const lastIndex = steps.length - 1
 
@@ -113,6 +120,8 @@ export const Vertical: Story = {
     args: { orientation: 'vertical' },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const current = canvasElement.querySelector('[aria-current="step"]')
         await expect(current).not.toBeNull()
     }
@@ -129,6 +138,8 @@ export const WithIcons: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const current = canvasElement.querySelector('[aria-current="step"]')
         await expect(current).not.toBeNull()
     }
@@ -162,6 +173,8 @@ export const Interactive: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         // Start at step 1

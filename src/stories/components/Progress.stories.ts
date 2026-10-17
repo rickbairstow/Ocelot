@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Progress from '@Components/Progress.vue'
 import { expect, within } from 'storybook/test'
@@ -25,13 +26,20 @@ const meta: Meta<typeof Progress> = {
             options: ['sm', 'base', 'lg']
         },
         value: { control: 'number' },
+        showValue: { control: 'boolean', description: 'Show the percentage for a determinate value.' },
+        max: { control: 'number' },
         variant: {
             control: 'select',
             options: ['bar', 'circle']
         }
     },
 
-    args: { value: 65, label: 'Progress' }
+    args: { value: 65, label: 'Progress', showValue: false, max: 100 },
+    render: args => ({
+        components: { Progress },
+        setup: () => ({ args }),
+        template: '<Progress v-bind="args" />'
+    })
 }
 
 export default meta
@@ -41,6 +49,8 @@ export const Default: Story = {
     args: { value: undefined, label: 'Progress' },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const bar = within(canvasElement).getByRole('progressbar')
         await expect(bar).not.toHaveAttribute('aria-valuenow')
         await expect(bar).toHaveAttribute('aria-busy', 'true')
@@ -51,6 +61,8 @@ export const Default: Story = {
 export const WithValue: Story = {
     args: { value: 65, showValue: true, max: 100, label: 'Upload progress' },
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const bar = canvas.getByRole('progressbar')
 
@@ -83,6 +95,8 @@ export const Sizes: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const bars = within(canvasElement).getAllByRole('progressbar')
         await expect(bars).toHaveLength(3)
         for (const bar of bars) {
@@ -113,6 +127,8 @@ export const Colors: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const bars = within(canvasElement).getAllByRole('progressbar')
         await expect(bars).toHaveLength(6)
     }
@@ -122,6 +138,8 @@ export const Circle: Story = {
     args: { variant: 'circle', showValue: true },
 
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const bar = canvas.getByRole('progressbar')
 
@@ -144,6 +162,8 @@ export const CircleSizes: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const bars = within(canvasElement).getAllByRole('progressbar')
         await expect(bars).toHaveLength(3)
         for (const bar of bars) {

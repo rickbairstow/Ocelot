@@ -6,31 +6,49 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 Ocelot UI (OUI) is a Vue 3 component library built with Tailwind CSS v4. It provides accessible, themeable components optimised for modern web applications.
 
+Start with <a href="./?path=/docs/getting-started-installation--docs" target="_top">Installation</a> for dependencies and CSS setup. Each component page includes its props, slots and focused examples; **Default** shows the base component with its required content and accessible naming.
+
+## Choosing components
+
+- **Forms:** use Input for native input types, Select for ordinary choices, and Combobox for searchable single or multiple selection. FormField connects labels, help and errors; HelpText and ErrorText are available for custom layouts. The consumer owns validation, fetching and submission. See the <a href="./?path=/docs/components-inputs-overview--docs" target="_top">Inputs guide</a>.
+- **Pages:** Hero introduces a page, CallToAction presents a next step, and Footer holds closing content and navigation. Supply your own copy, media, buttons and links through their props and slots.
+- **Images:** Image handles individual images; LightboxImage adds a viewer. Gallery arranges a responsive thumbnail collection with optional captions and a shared viewer for that collection.
+
+The **Patterns** group contains composed examples: <a href="./?path=/docs/patterns-marketing-page--docs" target="_top">Marketing Page</a>, <a href="./?path=/docs/patterns-forms--docs" target="_top">Forms</a>, product screens and RTL layouts. Use these as starting points for your own pages.
+
 ## Components
 
 | Component | Description |
 |-----------|-------------|
 | Accordion / AccordionGroup | Collapsible content panels with exclusive-open group mode |
+| AppShell | Application layout for navigation, sidebar and main content |
 | Avatar / AvatarGroup | User avatars with image, initials, and icon fallbacks |
 | Badge | Inline status labels with colour and size variants |
 | Banner | Inline feedback messages and static editorial callouts |
 | Breadcrumb | Navigation breadcrumb trail |
 | Button | Action buttons with variants, icons, loading state |
 | ButtonGroup | Grouped set of related buttons |
+| CallToAction | Section with a heading, supporting copy and action slot |
 | Card | Content containers with optional image, actions, badges |
 | CodeBlock | Syntax-highlighted code display |
+| Combobox | Searchable single/multiple selection with local filtering or parent-managed remote results and pagination |
+| CommandPalette | Searchable command menu controlled through `useCommandPalette` |
 | Dialog | Accessible modal with focus trapping and portal rendering |
 | Divider | Horizontal/vertical separators with optional label |
-| DropdownMenu / DropdownMenuTrigger / DropdownMenuContent / DropdownMenuItem / DropdownMenuCheckboxItem / DropdownMenuLabel / DropdownMenuSeparator | Composable dropdown menu with keyboard navigation |
+| DropdownMenu and its trigger, content, item, checkbox item, label, separator and submenu components | Composable dropdown menu with keyboard navigation |
 | EmptyState | Placeholder UI for empty data states |
 | FloatingPanel | Positioned overlay panel |
+| Footer | Page footer with branding, navigation and closing content slots |
+| Gallery | Responsive thumbnail collection with captions and optional grouped lightbox |
 | Heading | Semantic heading with size control |
+| Hero | Page introduction with optional media and actions |
 | Icon | Complete installed Tabler catalogue, available by name |
 | Image / LightboxImage | Responsive image with optional lightbox |
 | Input / Textarea / Select | Native form controls with labels, help text and invalid states |
 | Checkbox / CheckboxGroup / Radio / RadioGroup / Switch | Boolean values and grouped choices |
 | Range / FileInput | Native slider and file chooser |
 | FormField | Label, help and consumer-owned validation presentation |
+| HelpText / ErrorText | Standalone supporting and error messages, also used by FormField |
 | Label | Form label |
 | Loader | Animated loading indicator |
 | NavigationBar / NavigationBarSubmenu | Top navigation with desktop links, mobile menu slot, and two-level submenu support |
@@ -42,9 +60,11 @@ Ocelot UI (OUI) is a Vue 3 component library built with Tailwind CSS v4. It prov
 | Quote | Styled blockquote |
 | ReadMore | Truncated text with expand toggle |
 | Scrim | Overlay backdrop |
-| Sidebar | Collapsible navigation sidebar |
+| Sidebar / SidebarNavGroup / SidebarNavItem | Collapsible navigation sidebar with grouped links |
+| SkipLink | Keyboard shortcut link to the main content |
 | StatCard | Key metric display card |
 | Stepper | Multi-step process indicator |
+| Table | Data table with sorting, filtering, selection and pagination |
 | Tabs / Tab / TabList / TabPanel | Accessible tabbed interface |
 | Timeline | Vertical chronological event list |
 | Toast | Notification toasts via `useToast` composable |

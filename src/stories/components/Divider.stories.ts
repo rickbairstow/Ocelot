@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { expect, within } from 'storybook/test'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Divider from '@Components/Divider.vue'
@@ -45,7 +46,13 @@ const meta: Meta<typeof Divider> = {
         }
     },
 
-    args: {},
+    args: {
+        color: 'default',
+        label: undefined,
+        labelAlign: 'center',
+        orientation: 'horizontal',
+        variant: 'solid'
+    },
 
     render: (args) => ({
         components: { Divider },
@@ -71,6 +78,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('separator')).toBeVisible()
     }
 }

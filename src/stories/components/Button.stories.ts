@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Button from '@Components/Button.vue'
@@ -13,7 +14,7 @@ const meta: Meta<typeof Button> = {
     parameters: {
         docs: {
             description: {
-                component: 'Triggers an action or navigates to a URL. Supports multiple variants, colours, and sizes, leading and trailing icons, a loading state that disables interaction and shows a spinner, and renders as an anchor when an href is provided.\n\nThe default uses the component styling without colour, size or variant overrides. Supply visible button text, or aria-label for an icon-only action. Use href for navigation and a button for actions.'
+                component: 'Triggers an action or navigates to a URL. Supports multiple variants, colours, and sizes, leading and trailing icons, a loading state that disables interaction and shows a spinner, and renders as an anchor when an href is provided.\n\nDefaults to blue, base size and the primary variant, with no icon, link, loading or disabled state. Within ButtonGroup, omitted colour, size and variant inherit the group settings before falling back to these defaults. Supply visible button text, or aria-label for an icon-only action. Use href for navigation and a button for actions.'
             }
         }
     },
@@ -22,7 +23,8 @@ const meta: Meta<typeof Button> = {
         color: {
             control: 'select',
             options: colors,
-            description: 'Base theme color.'
+            description: 'Base theme color. Inherits ButtonGroup colour when omitted.',
+            table: { defaultValue: { summary: 'blue (or ButtonGroup colour)' } }
         },
         default: {
             control: 'text',
@@ -58,16 +60,30 @@ const meta: Meta<typeof Button> = {
         size: {
             control: 'select',
             options: ['small', 'base', 'large'],
-            description: 'Button size.'
+            description: 'Button size. Inherits ButtonGroup size when omitted.',
+            table: { defaultValue: { summary: 'base (or ButtonGroup size)' } }
         },
         variant: {
             control: 'select',
             options: [...variants],
-            description: 'Visual style.'
+            description: 'Visual style. Inherits ButtonGroup variant when omitted.',
+            table: { defaultValue: { summary: 'primary (or ButtonGroup variant)' } }
         }
     },
 
-    args: { default: 'Continue' },
+    args: {
+        default: 'Continue',
+        color: 'blue',
+        disabled: false,
+        href: null,
+        icon: undefined,
+        iconOnly: false,
+        iconPosition: 'start',
+        loading: false,
+        loadingIcon: 'Loader2',
+        size: 'base',
+        variant: 'primary'
+    },
 
     render: (args) => ({
         components: { Button },
@@ -84,6 +100,7 @@ const meta: Meta<typeof Button> = {
                 :loading-icon="args.loadingIcon"
                 :size="args.size"
                 :variant="args.variant"
+                @click="args.href ? $event.preventDefault() : undefined"
             >
                 {{ args.default }}
             </Button>
@@ -96,6 +113,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button'))
     }
@@ -104,6 +123,8 @@ export const Default: Story = {
 export const Disabled: Story = {
     args: { disabled: true },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const button = canvas.getByRole('button')
         await expect(button).toHaveAttribute('aria-disabled', 'true')
@@ -113,6 +134,8 @@ export const Disabled: Story = {
 export const Loading: Story = {
     args: { loading: true },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const button = canvas.getByRole('button')
         await expect(button).toHaveAttribute('aria-busy', 'true')
@@ -134,6 +157,8 @@ export const Icons: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         for (const button of within(canvasElement).getAllByRole('button')) {
             await expect(button.querySelector('svg')).toBeInTheDocument()
         }

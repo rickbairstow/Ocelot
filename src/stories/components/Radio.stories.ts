@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { ref } from 'vue'
@@ -27,6 +28,8 @@ export const Default: Story = {
         template: '<Radio v-model="value" label="Standard delivery" name="delivery" value="standard" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const control = within(canvasElement).getByRole('radio', { name: 'Standard delivery' })
         await expect(control).not.toBeChecked()
         await userEvent.click(control)
@@ -45,7 +48,7 @@ export const WithFormField: Story = {
         components: { Radio, RadioGroup, FormField },
         setup() { return { selected: ref('') } },
         template: `
-            <FormField error="Please select a plan." required>
+            <FormField group hint="Choose the plan that suits you." label="Plan" required>
                 <RadioGroup v-model="selected" name="plan">
                     <Radio value="free" label="Free" />
                     <Radio value="pro" label="Pro — $9/mo" />
@@ -54,8 +57,10 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
-        await expect(canvas.getByRole('alert')).toBeInTheDocument()
+        await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
         const radios = canvas.getAllByRole('radio')
         await userEvent.click(radios[1])
         await expect(radios[1]).toBeChecked()
@@ -74,6 +79,8 @@ export const SharedName: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const radios = canvas.getAllByRole('radio')
         await expect(radios[1]).toBeChecked()
@@ -92,6 +99,8 @@ export const RequiredAndInvalid: Story = {
         template: '<div class="grid gap-3"><Radio id="standalone-radio" v-model="value" :invalid="!value" label="Confirm choice" name="choice" required value="choice" /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const control = canvas.getByRole('radio', { name: 'Confirm choice' })
         await expect(control).toHaveAttribute('id', 'standalone-radio')
@@ -100,5 +109,19 @@ export const RequiredAndInvalid: Story = {
         await userEvent.click(canvas.getByText('Confirm choice', { selector: 'label' }))
         await expect(control).toBeChecked()
         await expect(control).not.toHaveAttribute('aria-invalid')
+    }
+}
+
+export const Disabled: Story = {
+    render: () => ({
+        components: { Radio },
+        template: '<Radio disabled label="Unavailable plan" name="disabled-plan" value="archived" />'
+    }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+        const radio = within(canvasElement).getByRole('radio', { name: 'Unavailable plan' })
+        await expect(radio).toBeDisabled()
+        await userEvent.click(radio)
+        await expect(radio).not.toBeChecked()
     }
 }

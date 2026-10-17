@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Card from '@Components/Card.vue'
 import Badge from '@Components/Badge.vue'
@@ -58,7 +59,17 @@ const meta: Meta<typeof Card> = {
         }
     },
 
-    args: {},
+    args: {
+        badges: [],
+        clickable: false,
+        imageAlt: '',
+        imageSrc: null,
+        selected: false,
+        size: 'base',
+        title: undefined,
+        variant: 'default',
+        vertical: false
+    },
 
     render: (args) => ({
         components: { Card },
@@ -88,6 +99,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(canvasElement.querySelector('img')).not.toBeInTheDocument()
         await expect(canvasElement.querySelector('button')).not.toBeInTheDocument()
         await expect(canvasElement.textContent?.trim()).not.toBe('')
@@ -97,6 +110,8 @@ export const Default: Story = {
 export const WithBadges: Story = {
     args: { title: 'Weekend escape', badges: [{ text: 'Available', type: 'success' }] },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('Available')).toBeVisible()
     }
 }
@@ -104,13 +119,13 @@ export const WithBadges: Story = {
 
 
 export const Horizontal: Story = {
-    args: { imageSrc: 'https://picsum.photos/seed/oui-card/400/300', imageAlt: 'Mountain landscape', title: 'Weekend escape' }
+    args: { imageSrc: '/media/gallery-mountains.svg', imageAlt: 'Mountain landscape', title: 'Weekend escape' }
 }
 
 export const Vertical: Story = {
     args: {
         vertical: true,
-        imageSrc: 'https://picsum.photos/seed/oui-card-v/600/240'
+        imageSrc: '/media/gallery-mountains.svg'
     }
 }
 
@@ -125,6 +140,8 @@ export const Flat: Story = {
 export const Clickable: Story = {
     args: { clickable: true, imageSrc: null },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const card = canvas.getByRole('button')
         await expect(card).toBeVisible()
@@ -136,6 +153,8 @@ export const Clickable: Story = {
 export const Selected: Story = {
     args: { selected: true, clickable: true, imageSrc: null },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const card = canvas.getByRole('button')
         await expect(card).toHaveAttribute('aria-pressed', 'true')
@@ -164,6 +183,8 @@ export const SelectableToggle: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const card = canvas.getByRole('button')
 
@@ -185,7 +206,7 @@ export const CardGrid: Story = {
             items: Array.from({ length: 6 }, () => ({
                 title: faker.commerce.productName(),
                 body: faker.lorem.sentence(),
-                img: `https://picsum.photos/seed/${faker.string.alphanumeric(6)}/400/300`
+                img: '/media/gallery-coast.svg'
             }))
         }),
         template: `

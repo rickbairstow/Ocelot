@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import SkipLink from '@Components/SkipLink.vue'
@@ -23,14 +24,16 @@ export const Default: Story = {
         template: `
             <div>
                 <SkipLink />
-                <p class="mt-16 text-sm text-gray-500">Tab into this story to reveal the skip link.</p>
-                <main id="main" class="mt-4 rounded-xl border border-dashed border-gray-300 p-6 text-sm text-gray-600">
+                <p class="mt-16 text-sm text-gray-500 dark:text-gray-400">Tab into this story to reveal the skip link.</p>
+                <main id="main" class="mt-4 rounded-xl border border-dashed border-gray-300 p-6 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300">
                     Main content area
                 </main>
             </div>
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const link = canvas.getByRole('link', { name: 'Skip to main content' })
 
@@ -48,13 +51,15 @@ export const CustomTarget: Story = {
         template: `
             <div>
                 <SkipLink target="content" label="Skip to content" />
-                <section id="content" class="mt-16 rounded-xl border border-dashed border-gray-300 p-6 text-sm text-gray-600">
+                <section id="content" class="mt-16 rounded-xl border border-dashed border-gray-300 p-6 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300">
                     Content section
                 </section>
             </div>
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const link = within(canvasElement).getByRole('link', { name: 'Skip to content' })
         await expect(link).toHaveAttribute('href', '#content')
     }

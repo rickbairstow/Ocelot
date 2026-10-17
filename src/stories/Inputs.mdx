@@ -55,6 +55,10 @@ FormField links its label, hint and error to the control. Help remains available
 
 A standalone control accepts `label` and `invalid`. If using a separate Label, supply matching `for` and `id` values. An explicit control ID also updates its FormField label. Each field should contain one control or one choice group. Supply an accessible name through a label, `aria-label` or `aria-labelledby`; a placeholder is not a label.
 
+## Disabled and read-only controls
+
+All controls support disabled state. Native `readonly` is supported for text-like Input types and Textarea; these remain focusable and submit their values. HTML does not support readonly for radio buttons, checkboxes, switches, select, range, color or file inputs. Use disabled state or display the saved value as text for those controls; disabled controls are excluded from native form submission. Combobox currently supports disabled state, not a separate read-only mode.
+
 ## Consumer-owned validation
 
 The application decides the rules, when to validate and when to display errors. FormField does not track touched/dirty state or submit forms. Pass an error string from handwritten validation, server responses or a form library.
@@ -83,7 +87,7 @@ See **Patterns → Forms → Contact Form** for submit-time validation, sections
 
 `group` renders a fieldset and legend. Options retain unique IDs and their own labels. RadioGroup inherits required state: the user must choose one option. CheckboxGroup deliberately does not put `required` on every checkbox, which would require every option; the consumer validates minimum/maximum selection counts. Disabled groups disable all their choices.
 
-## Select, range and files
+## Select
 
 Select uses a native select. Supporting browsers receive enhanced picker styling; other browsers retain their native picker. Multiple selection remains a native listbox. Use unique string values for options. Use Combobox when users need to search the options.
 
@@ -122,6 +126,8 @@ The default load threshold is one menu-height from the bottom (`loadMoreThreshol
 Use `multiple` with a string-array model. `selectedOptions` supplies labels for selected values not present in the initial remote page; known selected labels are retained when pages change. `maxHeight` is 400px by default, always constrained to available space. Use `max-height="viewport"` for all available viewport height. The popup uses Floating UI to flip and follow the field, and is mounted only while open. Options are not virtualised.
 
 Combobox works within FormField, displays selected ticks, and supports Arrow keys, Home/End while navigating options, Enter, Escape and Tab. Its hidden native select submits model values and supports `required`, including multiple selection. Only confirmed options are submitted; typed search text is discarded when the menu closes. Reset the Vue model in the parent when resetting a form.
+
+## Range and files
 
 Range preserves native keyboard behaviour and emits numbers. It always has a value, so required does not apply. Use `aria-valuetext` when a numeric value needs a more descriptive spoken equivalent.
 

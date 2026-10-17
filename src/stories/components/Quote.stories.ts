@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Quote from '@Components/Quote.vue'
@@ -9,7 +10,7 @@ faker.seed(42)
 const quote = faker.lorem.sentences(2)
 const author = faker.person.fullName()
 const source = faker.person.jobTitle() + ', ' + faker.company.name()
-const avatar = 'https://i.pravatar.cc/80?img=12'
+const avatar = '/media/avatar-person.svg'
 
 const meta: Meta<typeof Quote> = {
     title: 'Components/Quote',
@@ -40,7 +41,14 @@ const meta: Meta<typeof Quote> = {
         }
     },
 
-    args: {},
+    args: {
+        author: undefined,
+        avatar: undefined,
+        color: 'blue',
+        icon: 'QuoteFilled',
+        source: undefined,
+        variant: 'bordered'
+    },
 
     render: (args) => ({
         components: { Quote },
@@ -58,6 +66,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(canvasElement.querySelector('blockquote')).toBeVisible()
         await expect(canvasElement.querySelector('figcaption')).not.toBeInTheDocument()
     }
@@ -67,6 +77,8 @@ export const Card: Story = {
     args: { color: 'purple', variant: 'card' },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         await expect(canvasElement.querySelector('blockquote')).not.toBeNull()
     }
 }
@@ -75,6 +87,8 @@ export const WithAvatar: Story = {
     args: { author, source, avatar, variant: 'card', color: 'indigo' },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const img = canvasElement.querySelector('img')
         await expect(img).not.toBeNull()
@@ -86,6 +100,8 @@ export const WithAttribution: Story = {
     args: { author, source },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const figcaption = canvasElement.querySelector('figcaption')
         await expect(figcaption).toBeVisible()
     }

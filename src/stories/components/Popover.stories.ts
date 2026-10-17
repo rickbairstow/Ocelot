@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Popover from '@Components/Popover.vue'
 import Button from '@Components/Button.vue'
@@ -31,7 +32,12 @@ const meta: Meta<typeof Popover> = {
         }
     },
 
-    args: {}
+    args: {
+        disabled: false,
+        flush: false,
+        maxWidth: '320px',
+        placement: 'bottom'
+    }
 }
 
 export default meta
@@ -65,6 +71,8 @@ export const Default: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'Open popover' })
 
@@ -109,6 +117,8 @@ export const WithActions: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'Options' })
 
@@ -144,6 +154,8 @@ export const Disabled: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'Open popover' })
 

@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, fireEvent, userEvent, within } from 'storybook/test'
 import { ref } from 'vue'
@@ -21,6 +22,8 @@ export const Default: Story = {
         template: '<Range v-model="value" label="Volume" name="volume" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const slider = within(canvasElement).getByRole('slider', { name: 'Volume' })
         await expect(slider).toHaveValue('50')
         await expect(slider).toHaveAttribute('min', '0')
@@ -41,6 +44,8 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const slider = canvas.getByRole('slider', { name: 'Volume' }) as HTMLInputElement
         await userEvent.click(canvas.getByText('Volume'))
@@ -54,20 +59,18 @@ export const WithFormField: Story = {
     }
 }
 
-export const States: Story = {
-    render: () => ({
-        components: { Range },
-        setup() { return { value: ref(20) } },
-        template: `
-            <div class="grid gap-6">
-                <Range v-model="value" disabled label="Disabled volume" name="disabled-volume" />
-                <Range v-model="value" invalid label="Invalid volume" name="invalid-volume" />
-            </div>
-        `
-    }),
+export const Disabled: Story = {
+    render: () => ({ components: { Range }, template: '<Range disabled label="Disabled volume" name="disabled-volume" />' }),
     play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        await expect(canvas.getByRole('slider', { name: 'Disabled volume' })).toBeDisabled()
-        await expect(canvas.getByRole('slider', { name: 'Invalid volume' })).toHaveAttribute('aria-invalid', 'true')
+        if (!runInteractionTests) return
+        await expect(within(canvasElement).getByRole('slider')).toBeDisabled()
+    }
+}
+
+export const Invalid: Story = {
+    render: () => ({ components: { Range }, template: '<Range invalid label="Volume" name="invalid-volume" />' }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+        await expect(within(canvasElement).getByRole('slider')).toHaveAttribute('aria-invalid', 'true')
     }
 }

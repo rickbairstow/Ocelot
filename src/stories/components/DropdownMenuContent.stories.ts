@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import DropdownMenu from '@Components/DropdownMenu.vue'
 import DropdownMenuTrigger from '@Components/DropdownMenuTrigger.vue'
@@ -41,6 +42,8 @@ export const Default: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'Actions' })
 

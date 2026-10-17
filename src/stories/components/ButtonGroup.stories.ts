@@ -1,9 +1,11 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import ButtonGroup from '@Components/ButtonGroup.vue'
 import Button from '@Components/Button.vue'
 import { userEvent, expect, within } from 'storybook/test'
 
-const variants = ['primary', 'secondary', 'tertiary'] as const
+const colors = ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink']
+const variants = ['primary', 'secondary', 'tertiary', 'text', 'none'] as const
 const sizes = ['small', 'base', 'large'] as const
 
 const meta: Meta<typeof ButtonGroup> = {
@@ -13,7 +15,7 @@ const meta: Meta<typeof ButtonGroup> = {
     parameters: {
         docs: {
             description: {
-                component: 'Groups related buttons into a cohesive control. Collapses borders between buttons and removes inner border radii. Cascades size, variant, and color to child buttons.'
+                component: 'Visually joins related action buttons and shares colour, size and variant with children that do not supply their own. Defaults to horizontal layout; unconfigured Buttons use blue, base size and primary styling. Supply an accessible group name through ariaLabel or aria-labelledby. Each button remains an independent action in the normal Tab order; this is not a radio group, segmented selection control or toolbar with arrow-key navigation. Disabled/loading state belongs to individual Buttons.'
             }
         }
     },
@@ -21,7 +23,7 @@ const meta: Meta<typeof ButtonGroup> = {
     argTypes: {
         ariaLabel: {
             control: 'text',
-            description: 'Accessible label for the group. Required for screen readers.'
+            description: 'Accessible group name. Alternatively, supply aria-labelledby.'
         },
         color: {
             control: 'select',
@@ -45,7 +47,7 @@ const meta: Meta<typeof ButtonGroup> = {
         }
     },
 
-    args: { ariaLabel: 'View options' }
+    args: { ariaLabel: 'Document actions' }
 }
 
 export default meta
@@ -56,96 +58,158 @@ export const Default: Story = {
         components: { ButtonGroup, Button },
         setup() { return { args } },
         template: `
-            <ButtonGroup :aria-label="args.ariaLabel" :orientation="args.orientation">
-                <Button>Day</Button>
-                <Button>Week</Button>
-                <Button>Month</Button>
+            <ButtonGroup :aria-label="args.ariaLabel" :color="args.color" :orientation="args.orientation" :size="args.size" :variant="args.variant">
+                <Button>Save</Button>
+                <Button>Save and close</Button>
+                <Button>Print</Button>
             </ButtonGroup>
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const buttons = canvas.getAllByRole('button')
         await expect(buttons).toHaveLength(3)
-        await expect(canvas.getByRole('group')).toHaveAttribute('aria-label', 'View options')
-        await userEvent.click(buttons[0])
-        await userEvent.click(buttons[1])
-        await userEvent.click(buttons[2])
+        await expect(canvas.getByRole('group')).toHaveAttribute('aria-label', 'Document actions')
+        buttons[0].focus()
+        await userEvent.tab()
+        await expect(buttons[1]).toHaveFocus()
+        await userEvent.tab()
+        await expect(buttons[2]).toHaveFocus()
     }
 }
 
-export const AllVariations: Story = {
-    render: () => ({
+export const Vertical: Story = {
+    args: { orientation: 'vertical' },
+    render: args => ({
         components: { ButtonGroup, Button },
-        setup: () => ({ variants, sizes }),
-        template: `
-            <div class="flex flex-col gap-10">
-                <div>
-                    <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">Variants</p>
-                    <div class="flex flex-col gap-3">
-                        <ButtonGroup v-for="variant in variants" :key="variant" :aria-label="variant" :variant="variant">
-                            <Button>Option A</Button>
-                            <Button>Option B</Button>
-                            <Button>Option C</Button>
-                        </ButtonGroup>
-                    </div>
-                </div>
-
-                <div>
-                    <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">Sizes</p>
-                    <div class="flex flex-col gap-3">
-                        <ButtonGroup v-for="size in sizes" :key="size" :aria-label="size" :size="size" variant="secondary">
-                            <Button>Small</Button>
-                            <Button>Medium</Button>
-                            <Button>Large</Button>
-                        </ButtonGroup>
-                    </div>
-                </div>
-
-                <div>
-                    <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">Vertical orientation</p>
-                    <ButtonGroup aria-label="Vertical example" orientation="vertical" variant="secondary">
-                        <Button>Top</Button>
-                        <Button>Middle</Button>
-                        <Button>Bottom</Button>
-                    </ButtonGroup>
-                </div>
-
-                <div>
-                    <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">Icon-only groups</p>
-                    <div class="flex flex-wrap gap-4">
-                        <ButtonGroup aria-label="View toggle" variant="secondary">
-                            <Button icon="LayoutGrid" icon-only aria-label="Grid view" />
-                            <Button icon="LayoutList" icon-only aria-label="List view" />
-                        </ButtonGroup>
-                        <ButtonGroup aria-label="Sort order" variant="secondary">
-                            <Button icon="SortAscending" icon-only aria-label="Sort ascending" />
-                            <Button icon="SortDescending" icon-only aria-label="Sort descending" />
-                        </ButtonGroup>
-                        <ButtonGroup aria-label="Navigate pages" variant="secondary">
-                            <Button icon="ChevronLeft" icon-only aria-label="Previous" />
-                            <Button icon="ChevronRight" icon-only aria-label="Next" />
-                        </ButtonGroup>
-                    </div>
-                </div>
-
-                <div>
-                    <p class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">Individual override — last button overrides cascade</p>
-                    <ButtonGroup aria-label="Actions" variant="secondary" color="blue">
-                        <Button>Save</Button>
-                        <Button>Save &amp; Close</Button>
-                        <Button variant="primary" color="red">Delete</Button>
-                    </ButtonGroup>
-                </div>
-            </div>
-        `
+        setup: () => ({ args }),
+        template: '<ButtonGroup :aria-label="args.ariaLabel" :orientation="args.orientation"><Button>Save</Button><Button>Print</Button><Button>Download</Button></ButtonGroup>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        const buttons = within(canvasElement).getAllByRole('button')
+        const first = buttons[0].getBoundingClientRect()
+        const second = buttons[1].getBoundingClientRect()
+        await expect(second.top).toBeGreaterThan(first.top)
+        await expect(Math.abs(second.left - first.left)).toBeLessThan(1)
+        buttons[0].focus()
+        await userEvent.tab()
+        await expect(buttons[1]).toHaveFocus()
+    }
+}
+
+export const Variants: Story = {
+    render: () => ({
+        components: { ButtonGroup, Button },
+        setup: () => ({ variants }),
+        template: '<div class="flex flex-col items-start gap-4"><div v-for="variant in variants" :key="variant" class="space-y-2"><p class="text-sm text-gray-600 dark:text-gray-400">{{ variant }}</p><ButtonGroup :aria-label="variant + \' actions\'" :variant="variant"><Button>Save</Button><Button>Print</Button></ButtonGroup></div></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
-        const groups = canvas.getAllByRole('group')
-        await expect(groups.length).toBeGreaterThan(0)
-        for (const button of canvas.getAllByRole('button')) {
-            await expect(button).toBeVisible()
+        for (const variant of variants) {
+            const buttons = within(canvas.getByRole('group', { name: `${variant} actions` })).getAllByRole('button')
+            await expect(buttons).toHaveLength(2)
+            await expect(getComputedStyle(buttons[0]).backgroundColor).toBe(getComputedStyle(buttons[1]).backgroundColor)
         }
+        await expect(within(canvas.getByRole('group', { name: 'primary actions' })).getByRole('button', { name: 'Save' })).toHaveClass('bg-blue-800')
+        await expect(within(canvas.getByRole('group', { name: 'secondary actions' })).getByRole('button', { name: 'Save' })).toHaveClass('bg-white')
+        await expect(within(canvas.getByRole('group', { name: 'none actions' })).getByRole('button', { name: 'Save' })).toHaveClass('bg-transparent')
+    }
+}
+
+export const Sizes: Story = {
+    render: () => ({
+        components: { ButtonGroup, Button },
+        setup: () => ({ sizes }),
+        template: '<div class="flex flex-col items-start gap-4"><ButtonGroup v-for="size in sizes" :key="size" :aria-label="size + \' actions\'" :size="size"><Button>Save</Button><Button>Print</Button></ButtonGroup></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        const heights = sizes.map(size => {
+            const buttons = within(within(canvasElement).getByRole('group', { name: `${size} actions` })).getAllByRole('button')
+            return buttons.map(button => button.getBoundingClientRect().height)
+        })
+        for (const [first, second] of heights) await expect(first).toBe(second)
+        await expect(heights[0][0]).toBeLessThan(heights[1][0])
+        await expect(heights[1][0]).toBeLessThan(heights[2][0])
+    }
+}
+
+export const Colours: Story = {
+    render: () => ({
+        components: { ButtonGroup, Button },
+        setup: () => ({ colors }),
+        template: '<div class="flex flex-wrap gap-4"><ButtonGroup v-for="color in colors" :key="color" :aria-label="color + \' actions\'" :color="color"><Button>Save</Button><Button>Print</Button></ButtonGroup></div>'
+    }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        const backgrounds = new Set<string>()
+        for (const color of colors) {
+            const buttons = within(within(canvasElement).getByRole('group', { name: `${color} actions` })).getAllByRole('button')
+            const background = getComputedStyle(buttons[0]).backgroundColor
+            backgrounds.add(background)
+            await expect(getComputedStyle(buttons[1]).backgroundColor).toBe(background)
+        }
+        await expect(backgrounds.size).toBe(colors.length)
+    }
+}
+
+export const IconOnly: Story = {
+    render: () => ({
+        components: { ButtonGroup, Button },
+        template: '<ButtonGroup aria-label="Document actions" variant="secondary"><Button aria-label="Save document" icon="DeviceFloppy" icon-only /><Button aria-label="Print document" icon="Printer" icon-only /><Button aria-label="Download document" icon="Download" icon-only /></ButtonGroup>'
+    }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        const canvas = within(canvasElement)
+        const save = canvas.getByRole('button', { name: 'Save document' })
+        await expect(save.querySelector('svg')).toBeInTheDocument()
+        save.focus()
+        await userEvent.tab()
+        await expect(canvas.getByRole('button', { name: 'Print document' })).toHaveFocus()
+        await userEvent.tab()
+        await expect(canvas.getByRole('button', { name: 'Download document' })).toHaveFocus()
+    }
+}
+
+export const IndividualOverrides: Story = {
+    args: { color: 'green', size: 'large', variant: 'secondary' },
+    render: args => ({
+        components: { ButtonGroup, Button },
+        setup: () => ({ args }),
+        template: '<ButtonGroup :aria-label="args.ariaLabel" :color="args.color" :size="args.size" :variant="args.variant"><Button>Save</Button><Button color="red" variant="primary">Delete</Button><Button size="small">Quick save</Button></ButtonGroup>'
+    }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        const canvas = within(canvasElement)
+        await expect(canvas.getByRole('button', { name: 'Save' })).toHaveClass('text-green-800', 'py-3')
+        await expect(canvas.getByRole('button', { name: 'Delete' })).toHaveClass('bg-red-800', 'py-3')
+        await expect(canvas.getByRole('button', { name: 'Quick save' })).toHaveClass('text-green-800', 'py-1')
+    }
+}
+
+export const DisabledAndLoading: Story = {
+    render: () => ({
+        components: { ButtonGroup, Button },
+        template: '<ButtonGroup aria-label="Save actions"><Button>Save draft</Button><Button disabled>Publish</Button><Button loading>Saving</Button></ButtonGroup>'
+    }),
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
+        const canvas = within(canvasElement)
+        await expect(canvas.getByRole('button', { name: 'Save draft' })).not.toHaveAttribute('aria-disabled')
+        await expect(canvas.getByRole('button', { name: 'Publish' })).toHaveAttribute('aria-disabled', 'true')
+        const loading = canvas.getByRole('button', { name: 'Saving' })
+        await expect(loading).toHaveAttribute('aria-disabled', 'true')
+        await expect(loading).toHaveAttribute('aria-busy', 'true')
     }
 }

@@ -57,6 +57,7 @@
                         <Badge
                             v-for="badge in badges"
                             :key="badge.text"
+                            size="sm"
                         >
                             {{ badge.text }}
                         </Badge>

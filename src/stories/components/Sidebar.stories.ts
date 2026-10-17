@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Sidebar from '@Components/Sidebar.vue'
 import SidebarNavGroup from '@Components/SidebarNavGroup.vue'
@@ -91,6 +92,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
     args: { side: 'left' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         const openButton = await canvas.getByRole('button', {
@@ -163,6 +166,8 @@ export const WithNav: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /open sidebar/i }))
 

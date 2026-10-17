@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import EmptyState from '@Components/EmptyState.vue'
@@ -31,6 +32,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('No results found')).toBeVisible()
     }
@@ -52,6 +55,8 @@ export const WithCTA: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('No results found')).toBeVisible()
         const cta = canvas.getByRole('button', { name: 'Create your first item' })
@@ -79,6 +84,8 @@ export const WithMultipleCTAs: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('button', { name: 'Get started' })).toBeVisible()
         await expect(canvas.getByRole('button', { name: 'Learn more' })).toBeVisible()
@@ -93,6 +100,8 @@ export const WithDescription: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('Nothing here yet')).toBeVisible()
         const icon = canvasElement.querySelector('[aria-hidden="true"]')
@@ -122,6 +131,8 @@ export const WithIcon: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('No results for your search')).toBeVisible()
         await expect(canvas.getByRole('button', { name: 'Clear filters' })).toBeVisible()
@@ -134,6 +145,8 @@ export const WithHeadingTag: Story = {
         titleTag: 'h2'
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const heading = canvasElement.querySelector('h2')
         await expect(heading).not.toBeNull()
         await expect(heading).toHaveTextContent('Section empty')

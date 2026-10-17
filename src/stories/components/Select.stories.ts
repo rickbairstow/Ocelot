@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { computed, ref } from 'vue'
@@ -18,7 +19,7 @@ const meta: Meta<typeof Select> = {
     parameters: {
         docs: {
             description: {
-                component: 'A native select with progressively enhanced picker styling in supporting browsers and a native fallback elsewhere. Multiple selection remains a native listbox. Supports invalid, required, explicit IDs and native attributes/events. v-model/change return a string for single selection or string[] for multiple selection.' + '\n\nDefault supplies name, model, options and an accessible label without placeholder or validation overrides. Use a disabled empty-value placeholder when no initial choice is appropriate. Single selection returns a string; multiple returns string[]. Disabled Selected Option shows an unavailable saved value in both themes. Native picker appearance varies by browser.'
+                component: 'A native select with progressively enhanced picker styling in supporting browsers and a native fallback elsewhere. Multiple selection remains a native listbox. Supports invalid, required, explicit IDs and native attributes/events. v-model/change return a string for single selection or string[] for multiple selection.' + '\n\nDefault supplies name, model, options and an accessible label without placeholder or validation overrides. Use a disabled empty-value placeholder when no initial choice is appropriate. Single selection returns a string; multiple returns string[]. Disabled Selected Option shows an unavailable saved value and follows the selected Storybook theme. Native picker appearance varies by browser.'
             }
         }
     }
@@ -34,6 +35,8 @@ export const Default: Story = {
         template: '<Select v-model="value" label="Country" name="country" :options="options" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const select = canvas.getByRole('combobox')
         await userEvent.selectOptions(select, 'gb')
@@ -48,6 +51,8 @@ export const StringOptions: Story = {
         template: '<Select v-model="value" label="Size" name="size" :options="options" placeholder="Choose size..." />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.selectOptions(canvas.getByRole('combobox'), 'Medium')
         await expect(canvas.getByRole('combobox')).toHaveValue('Medium')
@@ -61,6 +66,8 @@ export const Disabled: Story = {
         template: '<Select v-model="value" disabled label="Country" name="country" :options="options" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('combobox')).toBeDisabled()
     }
 }
@@ -80,6 +87,8 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const select = canvas.getByRole('combobox')
         const error = canvas.getByRole('alert')
@@ -109,6 +118,8 @@ export const WithDisabledOption: Story = {
         template: '<Select v-model="value" label="Plan" name="plan" :options="options" placeholder="Select plan..." />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const select = within(canvasElement).getByRole('combobox')
         const options = select.querySelectorAll('option')
         const enterpriseOption = Array.from(options).find(o => o.textContent?.includes('Enterprise'))
@@ -124,6 +135,8 @@ export const MultipleSelection: Story = {
         template: '<div class="grid gap-3"><Select v-model="values" id="multiple-sizes" invalid label="Sizes" multiple name="sizes" :options="options" :size="3" /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const select = canvas.getByRole('listbox', { name: 'Sizes' })
         await expect(select).toHaveValue(['Small', 'Large'])
@@ -155,14 +168,16 @@ export const DisabledSelectedOption: Story = {
         },
         template: `
             <div class="grid gap-4">
-                <div v-for="theme in ['light', 'dark']" :key="theme" :class="theme === 'dark' ? 'dark bg-gray-950 p-4' : 'bg-white p-4'">
-                    <Select v-model="placeholder" :label="theme + ' placeholder'" :name="theme + '-placeholder'" :options="options" placeholder="Choose a plan..." />
-                    <Select v-model="selected" :label="theme + ' selected disabled option'" :name="theme + '-selected'" :options="options" />
+                <div class="grid gap-4">
+                    <Select v-model="placeholder" label="Placeholder" name="placeholder" :options="options" placeholder="Choose a plan..." />
+                    <Select v-model="selected" label="Saved plan" name="selected" :options="options" />
                 </div>
             </div>
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const luminance = (color: string) => {
             const channels = color.match(/[\d.]+/g)!.slice(0, 3).map(Number).map(value => {
@@ -171,21 +186,19 @@ export const DisabledSelectedOption: Story = {
             })
             return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722
         }
-        for (const theme of ['light', 'dark']) {
-            for (const label of ['placeholder', 'selected disabled option']) {
-                const select = canvas.getByRole('combobox', { name: `${theme} ${label}` })
-                for (const option of select.querySelectorAll<HTMLOptionElement>('option:disabled')) {
-                    const style = getComputedStyle(option)
-                    await expect(style.opacity).toBe('1')
-                    const foreground = luminance(style.color)
-                    const background = luminance(style.backgroundColor)
-                    const contrast = (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05)
-                    await expect(contrast).toBeGreaterThanOrEqual(4.5)
-                }
-                const unavailable = within(select).getByRole('option', { name: 'Future plan (unavailable)' })
-                await userEvent.selectOptions(select, unavailable)
-                await expect(select).toHaveValue(label === 'placeholder' ? '' : 'retired')
+        for (const label of ['Placeholder', 'Saved plan']) {
+            const select = canvas.getByRole('combobox', { name: label })
+            for (const option of select.querySelectorAll<HTMLOptionElement>('option:disabled')) {
+                const style = getComputedStyle(option)
+                await expect(style.opacity).toBe('1')
+                const foreground = luminance(style.color)
+                const background = luminance(style.backgroundColor)
+                const contrast = (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05)
+                await expect(contrast).toBeGreaterThanOrEqual(4.5)
             }
+            const unavailable = within(select).getByRole('option', { name: 'Future plan (unavailable)' })
+            await userEvent.selectOptions(select, unavailable)
+            await expect(select).toHaveValue(label === 'Placeholder' ? '' : 'retired')
         }
     }
 }

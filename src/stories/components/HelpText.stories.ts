@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import HelpText from '@Components/HelpText.vue'
@@ -13,6 +14,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('We only use your email to reply.')).toBeVisible()
         await expect(within(canvasElement).queryByRole('alert')).not.toBeInTheDocument()
     }
@@ -24,6 +27,8 @@ export const WithInput: Story = {
         template: '<div class="max-w-sm space-y-2"><Input aria-describedby="standalone-email-help" label="Email" type="email" /><HelpText id="standalone-email-help">Read our <a href="#privacy" class="underline">privacy policy</a> before subscribing.</HelpText></div><p id="privacy">We keep your details private.</p>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('textbox', { name: 'Email' })
         await expect(input).toHaveAccessibleDescription('Read our privacy policy before subscribing.')

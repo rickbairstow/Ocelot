@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, within } from 'storybook/test'
 import { ref } from 'vue'
@@ -26,6 +27,8 @@ export const Default: Story = {
         template: '<Switch v-model="enabled" label="Email notifications" name="notifications" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const switchEl = canvas.getByRole('switch')
         await expect(switchEl).not.toBeChecked()
@@ -43,6 +46,8 @@ export const Enabled: Story = {
         template: '<Switch v-model="enabled" label="Dark mode" name="dark-mode" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('switch')).toBeChecked()
     }
 }
@@ -54,6 +59,8 @@ export const Disabled: Story = {
         template: '<Switch v-model="enabled" disabled label="Unavailable option" name="unavailable" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('switch')).toBeDisabled()
     }
 }
@@ -65,6 +72,8 @@ export const NoLabel: Story = {
         template: '<Switch v-model="enabled" aria-label="Toggle dark mode" name="toggle" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const switchEl = canvas.getByRole('switch')
         await expect(switchEl).toHaveAttribute('aria-label', 'Toggle dark mode')
@@ -85,6 +94,8 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('You can change this at any time in settings.')).toBeInTheDocument()
     }
 }
@@ -108,6 +119,8 @@ export const SettingsPanel: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const switches = canvas.getAllByRole('switch')
         await expect(switches).toHaveLength(3)
@@ -125,6 +138,8 @@ export const RequiredAndInvalid: Story = {
         template: '<div class="grid gap-3"><Switch id="standalone-switch" v-model="value" :invalid="!value" label="Confirm choice" name="choice" required  /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const control = canvas.getByRole('switch', { name: 'Confirm choice' })
         await expect(control).toHaveAttribute('id', 'standalone-switch')

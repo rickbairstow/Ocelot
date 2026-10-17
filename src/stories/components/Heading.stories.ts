@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { expect, within } from 'storybook/test'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Heading from '@Components/Heading.vue'
@@ -59,6 +60,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('heading', { level: 1 })).toBeVisible()
     }
 }
@@ -69,6 +72,8 @@ export const Levels: Story = {
         template: '<div class="grid gap-4"><Heading v-for="level in 6" :key="level" :level="level">Heading {{ level }}</Heading></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         for (const level of [1, 2, 3, 4, 5, 6]) {
             await expect(within(canvasElement).getByRole('heading', { level })).toBeVisible()
         }
@@ -80,6 +85,8 @@ export const Levels: Story = {
 export const VisualLevel: Story = {
     args: { level: '2', styleLevel: '4' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('heading', { level: 2 })).toHaveClass('text-xl')
     }
 }

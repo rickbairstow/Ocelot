@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Tabs from '@Components/Tabs.vue'
 import TabList from '@Components/TabList.vue'
@@ -134,6 +135,8 @@ const checkKeyboard: NonNullable<Story['play']> = async ({ canvasElement }) => {
 
 export const Default: Story = {
     play: async (context) => {
+        if (!runInteractionTests) return
+
         await checkDefault(context)
         await checkKeyboard(context)
     }
@@ -143,6 +146,8 @@ export const Pill: Story = {
     args: { variant: 'pill' },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const [tab1, tab2] = canvas.getAllByRole('tab')
 
@@ -158,6 +163,8 @@ export const Contained: Story = {
     args: { variant: 'contained' },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const [tab1, tab2] = canvas.getAllByRole('tab')
 
@@ -190,6 +197,8 @@ export const WithIcons: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const [tab1] = canvas.getAllByRole('tab')
 
@@ -221,6 +230,8 @@ export const WithDisabledTab: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const [tab1, tab2, tab3] = canvas.getAllByRole('tab')
 

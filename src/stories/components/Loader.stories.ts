@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Loader from '@Components/Loader.vue'
@@ -47,7 +48,16 @@ const meta: Meta<typeof Loader> = {
         }
     },
 
-    args: {},
+    args: {
+        animation: 'spin',
+        ariaLabel: undefined,
+        color: 'default',
+        icon: 'Loader2',
+        size: 'base',
+        text: null,
+        variant: 'inline',
+        vertical: false
+    },
 
     render: (args) => ({
         components: { Loader },
@@ -57,6 +67,7 @@ const meta: Meta<typeof Loader> = {
         template: `
             <Loader
                 :animation="args.animation"
+                :aria-label="args.ariaLabel"
                 :color="args.color"
                 :icon="args.icon"
                 :size="args.size"
@@ -73,6 +84,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const loader = canvas.getByRole('status')
         await expect(loader).toBeVisible()
@@ -82,6 +95,8 @@ export const Default: Story = {
 export const WithText: Story = {
     args: { text: 'Loading your workspace…' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('status')).toHaveTextContent('Loading your workspace…')
     }
 }

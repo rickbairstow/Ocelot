@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Tooltip from '@Components/Tooltip.vue'
 import Button from '@Components/Button.vue'
@@ -55,6 +56,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'Hover me' })
 
@@ -104,6 +107,8 @@ export const Placements: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const topButton = canvas.getByRole('button', { name: 'top' })
         await userEvent.hover(topButton)
@@ -117,6 +122,8 @@ export const Disabled: Story = {
     args: { disabled: true },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'Hover me' })
 
@@ -133,6 +140,8 @@ export const WithDelay: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'Hover me' })
 

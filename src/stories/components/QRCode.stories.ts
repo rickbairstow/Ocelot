@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import QrCode from '@Components/QrCode.vue'
 import { faker } from '@faker-js/faker'
@@ -59,6 +60,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement, args }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         const img = await canvas.findByRole('img') as HTMLImageElement

@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, fireEvent, userEvent, within } from 'storybook/test'
 import { ref } from 'vue'
@@ -112,12 +113,22 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('textbox', { name: 'First name' })
         await expect(input).toHaveAttribute('type', 'text')
         await expect(input).not.toBeRequired()
         await userEvent.type(input, 'Jane')
         await expect(input).toHaveValue('Jane')
         await userEvent.clear(input)
+    }
+}
+
+export const Disabled: Story = {
+    args: { disabled: true, modelValue: 'Unavailable', label: 'Disabled field' },
+    play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+        await expect(within(canvasElement).getByRole('textbox')).toBeDisabled()
     }
 }
 
@@ -128,6 +139,8 @@ export const PrefixAndSuffix: Story = {
         template: '<Input v-model="value" label="Amount" name="amount" type="number"><template #prefix>£</template><template #suffix>GBP</template></Input>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('£')).toBeVisible()
         await expect(canvas.getByText('GBP')).toBeVisible()
@@ -145,6 +158,8 @@ export const EmailInput: Story = {
         template: '<Input v-model="value" type="email" label="Email address" name="email" placeholder="you@example.com" autocomplete="on" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('textbox')
         await expect(input).toHaveAttribute('type', 'email')
         await userEvent.type(input, 'bad-email')
@@ -159,6 +174,8 @@ export const TelInput: Story = {
         template: '<Input v-model="value" type="tel" label="Phone number" name="phone" placeholder="+44 7700 900000" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('textbox')
         await expect(input).toHaveAttribute('type', 'tel')
     }
@@ -171,6 +188,8 @@ export const PasswordInput: Story = {
         template: '<Input v-model="value" type="password" label="Password" name="password" placeholder="Enter your password" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByLabelText('Password') as HTMLInputElement
         const toggle = canvas.getByRole('button', { name: 'Show password' })
@@ -196,6 +215,8 @@ export const SearchInput: Story = {
         template: '<Input v-model="value" type="search" label="Search" name="search" placeholder="Search…" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('searchbox')
 
@@ -215,6 +236,8 @@ export const NumberInput: Story = {
         template: '<Input v-model="value" type="number" label="Quantity" name="quantity" :min="1" :max="99" :step="1" placeholder="1" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByRole('spinbutton')
         await expect(input).toHaveAttribute('min', '1')
         await expect(input).toHaveAttribute('max', '99')
@@ -232,6 +255,8 @@ export const DateInput: Story = {
         template: '<Input v-model="value" type="date" label="Date of birth" name="dob" min="1900-01-01" :max="new Date().toISOString().slice(0,10)" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByLabelText('Date of birth') as HTMLInputElement
         await expect(input).toHaveAttribute('type', 'date')
         await expect(input).toHaveAttribute('min', '1900-01-01')
@@ -245,6 +270,8 @@ export const TimeInput: Story = {
         template: '<Input v-model="value" type="time" label="Meeting time" name="meeting-time" min="09:00" max="17:00" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByLabelText('Meeting time') as HTMLInputElement
         await expect(input).toHaveAttribute('type', 'time')
         await expect(input).toHaveAttribute('min', '09:00')
@@ -259,6 +286,8 @@ export const DateTimeInput: Story = {
         template: '<Input v-model="value" type="datetime-local" label="Appointment" name="appointment" />'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const input = within(canvasElement).getByLabelText('Appointment') as HTMLInputElement
         await expect(input).toHaveAttribute('type', 'datetime-local')
     }
@@ -275,6 +304,8 @@ export const WithFormField: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('textbox')
         const error = canvas.getByRole('alert')
@@ -301,6 +332,8 @@ export const AdditionalTypes: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         for (const [label, type, value] of [
             ['Brand colour', 'color', '#ff0000'],
@@ -335,6 +368,8 @@ export const NativeAttributes: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const input = canvas.getByRole('textbox', { name: /work email/i })
         await expect(input).toHaveAttribute('id', 'native-contract-email')
@@ -359,6 +394,8 @@ export const Readonly: Story = {
         template: '<div class="grid gap-3"><Input v-model="value" label="Readonly search" name="readonly-search" readonly type="search" /><Input v-model="value" label="Readonly password" name="readonly-password" readonly type="password" /></div>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.queryByRole('button')).not.toBeInTheDocument()
         await expect(canvas.getByLabelText('Readonly search')).toHaveAttribute('readonly')

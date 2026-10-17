@@ -1,7 +1,7 @@
 <template>
     <div
         class="relative overflow-hidden"
-        :class="!hasSize ? 'min-h-16' : ''"
+        :class="!hasFrame && state !== 'loaded' ? (state === 'error' ? 'min-h-24' : 'min-h-16') : ''"
         :style="containerStyle"
     >
         <!-- Skeleton shown while loading -->
@@ -11,7 +11,7 @@
             class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 animate-pulse motion-reduce:animate-none"
         >
             <Icon
-                class="w-1/4 h-1/4 max-w-12 max-h-12 text-gray-300 dark:text-gray-600"
+                class="size-10 shrink-0 text-gray-400 dark:text-gray-500"
                 icon="Photo"
             />
         </div>
@@ -19,19 +19,20 @@
         <!-- Error state -->
         <div
             v-else-if="state === 'error'"
-            class="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-900"
+            class="absolute inset-0 flex flex-col items-center justify-center gap-2 border border-dashed border-gray-300 bg-gray-50 text-gray-600 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300"
             role="img"
-            :aria-label="alt"
+            :aria-label="alt ? `Image unavailable: ${alt}` : 'Image unavailable'"
         >
             <Icon
-                class="w-1/4 h-1/4 max-w-12 max-h-12 text-gray-400 dark:text-gray-500"
+                class="size-10 shrink-0"
                 icon="PhotoOff"
             />
+            <span class="text-sm">Image unavailable</span>
         </div>
 
         <!-- LQIP blur-up: fades out as main image fades in -->
         <img
-            v-if="placeholder"
+            v-if="placeholder && state !== 'error'"
             alt=""
             aria-hidden="true"
             class="absolute inset-0 w-full h-full transition-opacity duration-500 motion-reduce:transition-none pointer-events-none select-none"
@@ -44,9 +45,9 @@
         <img
             v-if="state !== 'error'"
             v-bind="$attrs"
-            class="absolute inset-0 w-full h-full transition-opacity duration-500 motion-reduce:transition-none"
+            class="block transition-opacity duration-500 motion-reduce:transition-none"
             :alt="alt"
-            :class="[fitClass, state === 'loaded' ? 'opacity-100' : 'opacity-0']"
+            :class="[fitClass, hasFrame ? 'absolute inset-0 w-full h-full' : props.width ? 'relative w-full h-auto' : 'relative max-w-full h-auto', state === 'loaded' ? 'opacity-100' : 'opacity-0']"
             :decoding="decoding"
             :fetchpriority="fetchpriority"
             :height="numericHeight"
@@ -123,19 +124,17 @@ watch(() => props.src, () => { state.value = 'loading' })
 /** Pixel value for the HTML width attribute (improves CLS) */
 const numericWidth = computed((): number | undefined => {
     if (!props.width) return undefined
-    const n = parseInt(String(props.width))
-    return isNaN(n) ? undefined : n
+    return /^\d+(\.\d+)?(px)?$/.test(String(props.width).trim()) ? parseFloat(String(props.width)) : undefined
 })
 
 /** Pixel value for the HTML height attribute (improves CLS) */
 const numericHeight = computed((): number | undefined => {
     if (!props.height) return undefined
-    const n = parseInt(String(props.height))
-    return isNaN(n) ? undefined : n
+    return /^\d+(\.\d+)?(px)?$/.test(String(props.height).trim()) ? parseFloat(String(props.height)) : undefined
 })
 
-/** Whether any explicit sizing is provided — used to add min-h fallback for skeleton */
-const hasSize = computed(() => !!(props.width || props.height || props.aspectRatio))
+/** Only a height or aspect ratio establishes a frame; width alone preserves natural height. */
+const hasFrame = computed(() => !!((props.height && props.height !== 'auto') || (props.aspectRatio && props.aspectRatio !== 'auto')))
 
 /** Ensures a value like "400" becomes "400px"; "100%" or "auto" are passed through unchanged */
 const toCssSize = (val: string | number): string => {

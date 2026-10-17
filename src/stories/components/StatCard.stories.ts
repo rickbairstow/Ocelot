@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import { iconControl } from '../iconControl'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import StatCard from '@Components/StatCard.vue'
@@ -37,6 +38,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await expect(canvas.getByText('Total Users')).toBeVisible()
@@ -54,6 +57,8 @@ export const PositiveTrend: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const trend = canvasElement.querySelector('[aria-label="Trend: up 8%"]')
         await expect(trend).not.toBeNull()
         await expect(trend!.textContent).toContain('8%')
@@ -71,6 +76,8 @@ export const NegativeTrend: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const trend = canvasElement.querySelector('[aria-label="Trend: down 3%"]')
         await expect(trend).not.toBeNull()
         await expect(trend!.textContent).toContain('3%')
@@ -86,6 +93,8 @@ export const WithDescription: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByText('$92,400')).toBeVisible()
     }
@@ -101,6 +110,8 @@ export const WithIcon: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const trend = canvasElement.querySelector('[aria-label^="Trend:"]')
         await expect(trend).toBeNull()
     }
@@ -130,6 +141,8 @@ export const Grid: Story = {
     }),
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const cards = canvasElement.querySelectorAll('.rounded-xl')
         await expect(cards.length).toBe(4)
     }

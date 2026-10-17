@@ -23,7 +23,7 @@ Optional feature dependencies:
 # Table
 npm install @tanstack/vue-table@^9.3.1
 
-# LightboxImage
+# LightboxImage / Gallery with lightbox enabled
 npm install photoswipe@^5.4.4
 
 # Video
@@ -33,7 +33,9 @@ npm install plyr@^3.8.5
 npm install qrcode@^1.5.4
 ```
 
-Install only the packages for the components you actually use. OUI warns in development if `Table`, `LightboxImage`, `Video`, or `QrCode` is mounted without its matching dependency.
+Install only the packages for the features you use. Gallery uses the same PhotoSwipe dependency as LightboxImage; set `:lightbox="false"` for a passive thumbnail list without it. Hero, Footer, CallToAction, HelpText and ErrorText need no additional feature dependencies.
+
+OUI warns in development when an optional feature dependency is missing. The lightbox dependency is loaded when opening the viewer.
 
 ## Setup
 
@@ -115,15 +117,24 @@ Dark mode is toggled via the `.dark` class on a parent element (typically `<html
 
 ---
 
-## Dialog and CommandPalette portal target
+## Overlay portal target
 
-The `Dialog` and `CommandPalette` components use Vue's `<Teleport>` to render outside the component tree.
-Add a `#portal-target` element to your `index.html`:
+Dialog, CommandPalette and Toast render outside the component tree using Vue's Teleport. They create `#portal-target` on the client if it is missing. You can also supply it in your `index.html`:
 
 ```html
 <div id="app"></div>
 <div id="portal-target"></div>
 ```
+
+To use a different shared target, configure it before mounting the application:
+
+```js
+import { configureTeleportTarget } from 'ocelot-ui'
+
+configureTeleportTarget('#overlays')
+```
+
+Keep the target outside containers that clip content, and apply the `.dark` class to `<html>` when overlays need to share the page theme.
 
 ---
 
@@ -141,18 +152,8 @@ See `ocelot-ui/tailwind.css` for the full list of available tokens.
 
 ---
 
-## Maintainer release flow
+## Next steps
 
-OUI releases are handled by the manual `Release Package` GitHub Actions workflow on `main`.
-
-Repository setup:
-
-- Configure npm Trusted Publishing for `release.yml`
-- Use the `npm-release` GitHub Environment for release approval protection
-- Add only trusted maintainers as required reviewers on that environment
-
-When running `Release Package`, choose `patch`, `minor`, or `major`. The workflow opens or updates a release PR that bumps `package.json` and `package-lock.json`.
-
-When that release PR is merged to `main`, the same workflow installs Playwright, runs linting, runs tests, builds the package, publishes to npm through Trusted Publishing, pushes the release tag, and creates the matching GitHub Release. If the npm version already exists, the workflow skips npm publish and still creates the missing tag/release.
-
-Do not manually bump the package version for normal releases. Let the release workflow do it.
+- See **Components → Inputs → Overview** for native controls, searchable selection and validation ownership.
+- See **Patterns → Marketing Page** for Hero, Gallery, CallToAction and Footer used together.
+- Use the theme switcher to inspect component examples in light and dark mode. Theme selection and persistence belong to your application.

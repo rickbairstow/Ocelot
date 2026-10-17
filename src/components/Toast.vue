@@ -62,7 +62,7 @@
 
                             <button
                                 v-if="toast.action"
-                                class="mt-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline focus-visible:outline focus-visible:outline-blue-500"
+                                class="mt-1 cursor-pointer text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline focus-visible:outline focus-visible:outline-blue-500"
                                 type="button"
                                 @click="toast.action.onClick(); remove(toast.id)"
                             >

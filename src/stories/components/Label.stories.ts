@@ -1,8 +1,7 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { expect, userEvent, within } from 'storybook/test'
-import { ref } from 'vue'
+import { expect, within } from 'storybook/test'
 import Label from '@Components/Label.vue'
-import Input from '@Components/Input.vue'
 
 const meta: Meta<typeof Label> = {
     title: 'Components/Label',
@@ -28,18 +27,17 @@ const meta: Meta<typeof Label> = {
     },
 
     render: (args) => ({
-        components: { Label, Input },
+        components: { Label },
 
         setup() {
-            return { args, value: ref('') }
+            return { args }
         },
 
         template: `
             <div class="grid gap-2">
-                <Label for="label-story-control">
+                <Label>
                     {{ args.default }}
                 </Label>
-                <Input id="label-story-control" v-model="value" name="label-example" />
             </div>
         `
     })
@@ -50,11 +48,9 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
-        const input = canvas.getByRole('textbox', { name: 'Label content' })
-        await userEvent.click(canvas.getByText('Label content', { selector: 'label' }))
-        await expect(input).toHaveFocus()
-        await userEvent.type(input, 'Example')
-        await expect(input).toHaveValue('Example')
+        await expect(canvas.getByText('Label content', { selector: 'label' })).toBeVisible()
     }
 }

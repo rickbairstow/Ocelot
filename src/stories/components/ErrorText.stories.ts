@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import { expect, userEvent, within } from 'storybook/test'
@@ -15,6 +16,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByRole('alert')).toHaveTextContent('Enter a valid email address.')
     }
 }
@@ -22,6 +25,8 @@ export const Default: Story = {
 export const StaticMessage: Story = {
     args: { announce: false },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).queryByRole('alert')).not.toBeInTheDocument()
         await expect(within(canvasElement).getByText('Enter a valid email address.')).toBeVisible()
     }
@@ -38,6 +43,8 @@ export const WithValidation: Story = {
         template: '<form class="max-w-sm space-y-3" novalidate @submit.prevent="validate"><Input v-model="email" :aria-describedby="error ? \'standalone-email-error\' : undefined" :invalid="!!error" label="Email" type="email" /><ErrorText v-if="error" id="standalone-email-error">{{ error }}</ErrorText><Button type="submit">Subscribe</Button></form>'
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
         await userEvent.click(canvas.getByRole('button', { name: 'Subscribe' }))
@@ -48,5 +55,9 @@ export const WithValidation: Story = {
         await userEvent.click(canvas.getByRole('button', { name: 'Subscribe' }))
         await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
         await expect(input).not.toHaveAttribute('aria-invalid', 'true')
+        await userEvent.clear(input)
+        await userEvent.click(canvas.getByRole('button', { name: 'Subscribe' }))
+        await expect(input).toHaveValue('')
+        await expect(canvas.getByRole('alert')).toHaveTextContent('Enter a valid email address.')
     }
 }

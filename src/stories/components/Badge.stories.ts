@@ -1,7 +1,8 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Badge from '@Components/Badge.vue'
 import { faker } from '@faker-js/faker'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, fn, userEvent, within } from 'storybook/test'
 
 const colors = ['blue', 'green', 'red', 'orange', 'purple', 'indigo', 'teal', 'pink', 'gray']
 const variants = ['primary', 'secondary', 'outline'] as const
@@ -14,7 +15,7 @@ const meta: Meta<typeof Badge> = {
     parameters: {
         docs: {
             description: {
-                component: 'Small status indicator for labels, counts, and tags. Supports primary, secondary, and outline variants, a dot mode for minimal indicators, and a removable variant that emits a dismiss event.'
+                component: 'Small status indicator for labels, counts, and tags. Supports primary, secondary, and outline variants, a dot mode for minimal indicators, and a removable variant that emits remove. Supply label to name the remove button. The remove icon inherits the badge text colour in both themes; the consumer handles removal.'
             }
         }
     },
@@ -53,15 +54,27 @@ const meta: Meta<typeof Badge> = {
         }
     },
 
-    args: { default: 'New' },
+    args: {
+        default: 'New',
+        ariaLabel: undefined,
+        color: 'blue',
+        dot: false,
+        label: undefined,
+        removable: false,
+        size: 'lg',
+        truncate: false,
+        variant: 'primary'
+    },
 
     render: (args) => ({
         components: { Badge },
         setup() { return { args } },
         template: `
             <Badge
+                :aria-label="args.ariaLabel"
                 :color="args.color"
                 :dot="args.dot"
+                :label="args.label"
                 :removable="args.removable"
                 :size="args.size"
                 :truncate="args.truncate"
@@ -78,6 +91,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await expect(within(canvasElement).getByText('New')).toBeVisible()
     }
 }
@@ -93,22 +108,54 @@ export const Dot: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const dots = canvasElement.querySelectorAll('[role="status"]')
         await expect(dots.length).toBeGreaterThan(0)
     }
 }
 
 export const Removable: Story = {
+    args: { label: 'Featured', removable: true, onRemove: fn() },
+    render: args => ({
+        components: { Badge },
+        setup() { return { args } },
+        template: '<Badge :label="args.label" removable @remove="args.onRemove">Featured</Badge>'
+    }),
+    play: async ({ canvasElement, args }) => {
+        if (!runInteractionTests) return
+
+        const canvas = within(canvasElement)
+        const removeBtn = canvas.getByRole('button', { name: 'Remove Featured' })
+        await expect(removeBtn).toBeVisible()
+        await expect(removeBtn).toHaveStyle({ cursor: 'pointer', opacity: '1' })
+        await expect(getComputedStyle(removeBtn).color).toBe(getComputedStyle(removeBtn.parentElement!).color)
+        await userEvent.click(removeBtn)
+        await expect(args.onRemove).toHaveBeenCalledTimes(1)
+        removeBtn.focus()
+        await userEvent.keyboard('{Enter}')
+        await expect(args.onRemove).toHaveBeenCalledTimes(2)
+    }
+}
+
+export const RemovableVariants: Story = {
     render: () => ({
         components: { Badge },
-        setup() { return { label: faker.lorem.word() } },
-        template: '<Badge color="blue" removable label="my badge">{{ label }}</Badge>'
+        setup: () => ({ variants, sizes }),
+        template: '<div class="flex flex-wrap items-center gap-3 p-4"><template v-for="variant in variants" :key="variant"><Badge v-for="size in sizes" :key="size" :label="variant + \' \' + size" :size="size" :variant="variant" removable>{{ variant }} {{ size }}</Badge></template></div>'
     }),
     play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement)
-        const removeBtn = canvas.getByRole('button', { name: /remove/i })
-        await expect(removeBtn).toBeVisible()
-        await userEvent.click(removeBtn)
+        if (!runInteractionTests) return
+
+        for (const button of within(canvasElement).getAllByRole('button')) {
+            const badge = button.parentElement!
+            const icon = button.querySelector('svg')!
+            await expect(getComputedStyle(icon).stroke).toBe(getComputedStyle(badge).color)
+            await expect(button).toHaveStyle({ cursor: 'pointer', opacity: '1' })
+            const bounds = badge.getBoundingClientRect()
+            const iconBounds = icon.getBoundingClientRect()
+            await expect(Math.abs(iconBounds.y + iconBounds.height / 2 - bounds.y - bounds.height / 2)).toBeLessThan(1)
+        }
     }
 }
 

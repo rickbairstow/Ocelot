@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import DropdownMenu from '@Components/DropdownMenu.vue'
@@ -45,6 +46,8 @@ export const Default: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         // Menu is closed initially
@@ -93,6 +96,8 @@ export const WithSubmenu: Story = {
         }
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await userEvent.click(canvas.getByRole('button', { name: 'File' }))
@@ -202,6 +207,8 @@ export const AllVariations: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         // Open the shortcuts menu and test keyboard navigation

@@ -1,7 +1,7 @@
 <template>
     <div
         ref="rootRef"
-        class="relative"
+        class="relative max-w-full"
         :class="!hasSize ? 'min-h-16' : ''"
         :style="containerStyle"
     >
@@ -105,7 +105,7 @@ const toCssSize = (val: string | number): string => {
  *  which is required for `absolute inset-0` on the button to stretch correctly. */
 const containerStyle = computed((): Record<string, string> => {
     const style: Record<string, string> = {}
-    style.width = props.width ? toCssSize(props.width) : '100%'
+    style.width = props.width ? toCssSize(props.width) : props.height || props.aspectRatio ? '100%' : 'fit-content'
     if (props.aspectRatio) {
         style['aspect-ratio'] = props.aspectRatio
     } else if (props.height) {

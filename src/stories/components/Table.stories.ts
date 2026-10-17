@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { faker } from '@faker-js/faker'
@@ -156,6 +157,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await waitFor(() => expect(canvas.getByRole('table')).toBeVisible())
         await expect(canvas.queryByRole('searchbox')).not.toBeInTheDocument()
@@ -166,6 +169,8 @@ export const Default: Story = {
 export const RowSelection: Story = {
     args: { rowSelection: 'multi' },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const controls = await canvas.findAllByRole('checkbox', { name: /select row/i })
         await userEvent.click(controls[0])
@@ -191,6 +196,8 @@ export const SearchAndSorting: Story = {
         stickyHeader: true
     },
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await waitFor(() => expect(canvas.getByRole('table')).toBeVisible())
@@ -242,6 +249,8 @@ export const RowActions: Story = {
         `
     }),
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         await waitFor(() => expect(within(canvasElement).getByRole('button', { name: 'View ' + users[0].name })).toBeVisible())
     }
 }
@@ -252,6 +261,8 @@ export const WithPagination: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await waitFor(() => expect(canvas.getByRole('table')).toBeVisible())
@@ -275,6 +286,8 @@ export const WithColumnVisibility: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await waitFor(() => expect(canvas.getByRole('button', { name: /settings/i })).toBeVisible())
@@ -294,6 +307,8 @@ export const WithColumnPinningControls: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await waitFor(() => expect(canvas.getByRole('button', { name: /settings/i })).toBeVisible())
@@ -379,6 +394,8 @@ export const ExpandableRows: Story = {
         `
     }),
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await waitFor(() => expect(canvas.getByRole('table')).toBeVisible())
@@ -397,6 +414,8 @@ export const HiddenColumnsPreset: Story = {
         }
     },
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
 
         await waitFor(() => expect(canvas.getByRole('table')).toBeVisible())

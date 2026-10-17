@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import FloatingPanel from '@Components/FloatingPanel.vue'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
@@ -95,6 +96,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: 'More information' })
         await userEvent.hover(trigger)
@@ -113,6 +116,8 @@ export const ClickOnly: Story = {
     },
 
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: /click me/i })
 
@@ -144,6 +149,8 @@ export const LabelledPopover: Story = {
         trigger: 'Open formatting options'
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await userEvent.click(canvas.getByRole('button', { name: /open formatting options/i }))
         const panel = await canvas.findByLabelText(/formatting options/i)
@@ -160,6 +167,8 @@ export const HoverOnly: Story = {
     },
 
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: /hover or focus me/i })
 
@@ -197,6 +206,8 @@ export const Tooltip: Story = {
     },
 
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: /hover for tooltip/i })
 
@@ -276,6 +287,8 @@ export const Menu: Story = {
     }),
 
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: /open menu/i })
 
@@ -370,6 +383,8 @@ export const Disabled: Story = {
     },
 
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const trigger = canvas.getByRole('button', { name: /i am disabled/i })
 

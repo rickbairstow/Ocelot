@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Breadcrumb from '@Components/Breadcrumb.vue'
 import type { BreadcrumbItem } from '@Components/Breadcrumb.vue'
@@ -38,6 +39,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const nav = canvas.getByRole('navigation', { name: 'Breadcrumb' })
         await expect(nav).toBeVisible()
@@ -57,6 +60,8 @@ export const SlashSeparator: Story = {
     args: { separator: 'slash' },
 
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('navigation')).toBeVisible()
 
@@ -76,6 +81,8 @@ export const WithIcons: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         await expect(canvas.getByRole('navigation')).toBeVisible()
 
@@ -92,6 +99,8 @@ export const LongPath: Story = {
     args: { items: makeItems(5) },
 
     async play({ canvasElement, args }) {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const links = canvas.getAllByRole('link')
         await expect(links).toHaveLength((args.items as BreadcrumbItem[]).length - 1)
@@ -104,6 +113,8 @@ export const SingleItem: Story = {
     },
 
     async play({ canvasElement }) {
+        if (!runInteractionTests) return
+
         const current = canvasElement.querySelector('[aria-current="page"]')
         await expect(current).not.toBeNull()
 

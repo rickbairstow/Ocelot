@@ -4,6 +4,7 @@
         :aria-label="effectiveAriaLabel"
         :class="containerCss"
         :href="href ?? undefined"
+        :role="!href && effectiveAriaLabel ? 'img' : undefined"
     >
         <!-- Image -->
         <img
@@ -71,6 +72,7 @@ const imgError = ref(false)
 const effectiveAriaLabel = computed((): string | undefined => {
     if (props.ariaLabel) return props.ariaLabel
     if (props.href) return props.alt || props.initials || 'Avatar link'
+    if (!props.src || imgError.value) return props.alt || props.initials || undefined
     return undefined
 })
 

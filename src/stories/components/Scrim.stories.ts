@@ -1,3 +1,4 @@
+import { runInteractionTests } from '../interactionMode'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Scrim from '@Components/Scrim.vue'
 import Button from '@Components/Button.vue'
@@ -64,6 +65,8 @@ export const Default: Story = {
         clickable: true
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         const canvas = within(canvasElement)
         const scrim = await canvas.getByRole('button', { name: 'Dismiss overlay' })
 
@@ -81,6 +84,8 @@ export const NonClickable: Story = {
         clickable: false
     },
     play: async ({ canvasElement }) => {
+        if (!runInteractionTests) return
+
         // Query by role if clickable, otherwise use a tag selector
         const scrim = canvasElement.querySelector('div.inset-0') as HTMLElement
 
