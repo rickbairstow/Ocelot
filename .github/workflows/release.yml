@@ -132,66 +132,53 @@ jobs:
           node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Check npm publication and release tag
+        id: release
+        run: node .github/scripts/check-release.mjs
+
       - name: Install dependencies
+        if: steps.release.outputs.published != 'true'
         run: npm ci
 
-      - name: Read package version
-        id: version
-        run: |
-          version=$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version")
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tag=v$version" >> "$GITHUB_OUTPUT"
-
-      - name: Check Git tag is new
-        id: tag
-        run: |
-          if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
-            echo "Tag ${{ steps.version.outputs.tag }} already exists. Nothing to publish."
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Test release checks
+        run: node --test .github/scripts/check-release.test.mjs
 
       - name: Install Playwright browsers
-        if: steps.tag.outputs.exists != 'true'
+        if: steps.release.outputs.published != 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Run lint
-        if: steps.tag.outputs.exists != 'true'
+        if: steps.release.outputs.published != 'true'
         run: npm run lint
 
       - name: Run tests
-        if: steps.tag.outputs.exists != 'true'
+        if: steps.release.outputs.published != 'true'
         run: npm run test:run
 
       - name: Check Vue and TypeScript types
-        if: steps.tag.outputs.exists != 'true'
+        if: steps.release.outputs.published != 'true'
         run: npm run check-types
 
       - name: Build package
-        if: steps.tag.outputs.exists != 'true'
+        if: steps.release.outputs.published != 'true'
         run: npm run build
 
-      - name: Check npm version
-        if: steps.tag.outputs.exists != 'true'
-        id: npm
-        run: |
-          if npm view "ocelot-ui@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
-            echo "ocelot-ui@${{ steps.version.outputs.version }} already exists on npm. Skipping npm publish."
-            echo "published=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Publish to npm
-        if: steps.tag.outputs.exists != 'true' && steps.npm.outputs.published != 'true'
+        if: steps.release.outputs.published != 'true'
         run: npm publish --access public --provenance
 
-      - name: Create GitHub release
-        if: steps.tag.outputs.exists != 'true'
+      - name: Create or verify GitHub release
         env:
           GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || secrets.RELEASE_PR_TOKEN || github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_COMMIT: ${{ steps.release.outputs.commit }}
         run: |
-          git tag "${{ steps.version.outputs.tag }}"
-          git push origin "${{ steps.version.outputs.tag }}"
-          gh release create "${{ steps.version.outputs.tag }}" --target "$GITHUB_SHA" --title "${{ steps.version.outputs.tag }}" --notes "Release ${{ steps.version.outputs.tag }}"
+          if [ "${{ steps.release.outputs.tag_exists }}" != 'true' ]; then
+            git tag "$RELEASE_TAG" "$RELEASE_COMMIT"
+            git push origin "refs/tags/$RELEASE_TAG"
+          fi
+          if ! gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$RELEASE_TAG" --notes "Release $RELEASE_TAG"
+          fi
+          printf '### Release ready\n\n[npm package](https://www.npmjs.com/package/ocelot-ui/v/%s) · [GitHub release](https://github.com/%s/releases/tag/%s)\n' \
+            "${{ steps.release.outputs.version }}" "$GITHUB_REPOSITORY" "$RELEASE_TAG" >> "$GITHUB_STEP_SUMMARY"

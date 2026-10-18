@@ -52,6 +52,8 @@ Story interaction tests run only in Vitest (`MODE=test`). Component stories use 
 
 Use the manual `Release Package` GitHub Actions workflow on `main`. Choose `patch`, `minor`, or `major`; the workflow prepares a version-bump PR, and merging it publishes through npm Trusted Publishing. Do not bump versions or publish locally for normal releases. See the README for repository credentials and environment setup.
 
+Publishing checks the exact version on npm. A Git tag alone does not mean the package was published. A tag pointing to another commit blocks an unpublished version with an explicit error; prepare a fresh patch release through the workflow rather than overwriting an existing tag. Rerunning a publish job skips an existing npm version and can finish a missing Git tag or GitHub release using the original package commit. Network/registry errors fail the check rather than being treated as a missing version. The job summary links to npm and the GitHub release when complete.
+
 ## Commits
 
 - Use clear, descriptive commit messages

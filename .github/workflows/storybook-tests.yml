@@ -57,6 +57,9 @@ jobs:
       - name: Run tests
         run: npm run test:run
 
+      - name: Test release checks
+        run: node --test .github/scripts/check-release.test.mjs
+
       - name: Build Storybook
         run: npm run build-storybook
 
